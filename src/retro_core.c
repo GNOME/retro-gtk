@@ -64,7 +64,7 @@ void retro_core_set_environment (retro_core_t *this, retro_core_environment_cb_t
 		return false;
 	}
 	
-	retro_library_set_environment (this->library, lambda);
+	this->library->set_environment (lambda);
 }
 
 void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_cb_t cb, void *user_data) {
@@ -76,7 +76,7 @@ void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_
 		// TODO g_assert_not_reached
 	}
 	
-	retro_library_set_video_refresh (this->library, lambda);
+	this->library->set_video_refresh (lambda);
 }
 
 void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb_t cb, void *user_data) {
@@ -88,7 +88,7 @@ void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb
 		// TODO g_assert_not_reached
 	}
 	
-	retro_library_set_audio_sample (this->library, lambda);
+	this->library->set_audio_sample (lambda);
 }
 
 void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sample_batch_cb_t cb, void *user_data) {
@@ -101,7 +101,7 @@ void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sam
 		return 0;
 	}
 	
-	retro_library_set_audio_sample_batch (this->library, lambda);
+	this->library->set_audio_sample_batch (lambda);
 }
 
 void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t cb, void *user_data) {
@@ -113,7 +113,7 @@ void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t c
 		// TODO g_assert_not_reached
 	}
 	
-	retro_library_set_input_poll (this->library, lambda);
+	this->library->set_input_poll (lambda);
 }
 
 void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t cb, void *user_data) {
@@ -126,7 +126,7 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
 		return 0;
 	}
 	
-	retro_library_set_input_state (this->library, lambda);
+	this->library->set_input_state (lambda);
 }
 
 /* 
@@ -144,12 +144,12 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
 
 void retro_core_init (retro_core_t *this) {
 	if (thread_global_retro_core == this) {
-		return retro_library_init (this->library);
+		return this->library->init ();
 	}
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		retro_library_init (this->library);
+		this->library->init ();
 		pthread_exit (NULL);
 	}
 	
@@ -165,12 +165,12 @@ void retro_core_init (retro_core_t *this) {
 
 void retro_core_deinit (retro_core_t *this) {
 	if (thread_global_retro_core == this) {
-		return retro_library_deinit (this->library);
+		return this->library->deinit ();
 	}
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		retro_library_deinit (this->library);
+		this->library->deinit ();
 		pthread_exit (NULL);
 	}
 	
@@ -186,14 +186,14 @@ void retro_core_deinit (retro_core_t *this) {
 
 unsigned retro_core_api_version (retro_core_t *this) {
 	if (thread_global_retro_core == this) {
-		return retro_library_api_version (this->library);
+		return this->library->api_version ();
 	}
 	
 	unsigned result;
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		result = retro_library_api_version (this->library);
+		result = this->library->api_version ();
 		pthread_exit (NULL);
 	}
 	
@@ -211,12 +211,12 @@ unsigned retro_core_api_version (retro_core_t *this) {
 
 void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *info) {
 	if (thread_global_retro_core == this) {
-		return retro_library_get_system_info (this->library, info);
+		return this->library->get_system_info (info);
 	}
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		retro_library_get_system_info (this->library, info);
+		this->library->get_system_info (info);
 		pthread_exit (NULL);
 	}
 	
@@ -232,12 +232,12 @@ void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *i
 
 void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_info *info) {
 	if (thread_global_retro_core == this) {
-		return retro_library_get_system_av_info (this->library, info);
+		return this->library->get_system_av_info (info);
 	}
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		retro_library_get_system_av_info (this->library, info);
+		this->library->get_system_av_info (info);
 		pthread_exit (NULL);
 	}
 	
@@ -257,12 +257,12 @@ void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_i
 
 void retro_core_run (retro_core_t *this) {
 	if (thread_global_retro_core == this) {
-		return retro_library_run (this->library);
+		return this->library->run ();
 	}
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		retro_library_run (this->library);
+		this->library->run ();
 		pthread_exit (NULL);
 	}
 	
@@ -286,14 +286,14 @@ void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, con
 */
 bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game) {
 	if (thread_global_retro_core == this) {
-		return retro_library_load_game (this->library, game);
+		return this->library->load_game (game);
 	}
 	
 	bool result;
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		result = retro_library_load_game(this->library, game);
+		result = this->library->load_game(game);
 		pthread_exit (NULL);
 	}
 	
@@ -311,14 +311,14 @@ bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *gam
 /*
 bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info) {
 	if (thread_global_retro_core == this) {
-		return retro_library_load_game_special (this->library, game_type, info, num_info);
+		return this->library->load_game_special (game_type, info, num_info);
 	}
 	
 	bool result;
 	
 	void *lambda (void *arg) {
 		thread_global_retro_core = this;
-		result = retro_library_load_game_special(this->library, game_type, info, num_info);
+		result = this->library->load_game_special(game_type, info, num_info);
 		pthread_exit (NULL);
 	}
 	

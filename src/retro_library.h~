@@ -49,8 +49,8 @@ typedef bool   (*retro_library_unserialize_t) (const void *data, size_t size);
 typedef void (*retro_library_cheat_reset_t) (void);
 typedef void (*retro_library_cheat_set_t) (unsigned index, bool enabled, const char *code);
 
-typedef bool (*retro_library_load_game_t) (const struct retro_game_info *game);
-typedef bool (*retro_library_load_game_special_t) (unsigned game_type, const struct retro_game_info *info, size_t num_info);
+typedef void (*retro_library_load_game_t) (const struct retro_game_info *game);
+typedef void (*retro_library_load_game_special_t) (unsigned game_type, const struct retro_game_info *info, size_t num_info);
 typedef void (*retro_library_unload_game_t) (void);
 
 typedef unsigned (*retro_library_get_region_t) (void);

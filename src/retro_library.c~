@@ -117,7 +117,7 @@ void retro_library_run(retro_library_t *library) {
 }
 
 bool retro_library_load_game(retro_library_t *library, const struct retro_game_info *game) {
-	return library->load_game (game);
+	library->load_game (game);
 }
 
 // Helper hunctions

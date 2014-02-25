@@ -75,63 +75,7 @@ void retro_library_free (retro_library_t *library) {
 	}
 }
 
-void retro_library_set_environment(retro_library_t *library, retro_environment_t environment) {
-	library->set_environment (environment);
-}
-
-void retro_library_set_video_refresh(retro_library_t *library, retro_video_refresh_t video_refresh) {
-	library->set_video_refresh (video_refresh);
-}
-
-void retro_library_set_audio_sample(retro_library_t *library, retro_audio_sample_t audio_sample) {
-	library->set_audio_sample (audio_sample);
-}
-
-void retro_library_set_audio_sample_batch(retro_library_t *library, retro_audio_sample_batch_t audio_sample_batch) {
-	library->set_audio_sample_batch (audio_sample_batch);
-}
-
-void retro_library_set_input_poll(retro_library_t *library, retro_input_poll_t input_poll) {
-	library->set_input_poll (input_poll);
-}
-
-void retro_library_set_input_state(retro_library_t *library, retro_input_state_t input_state) {
-	library->set_input_state (input_state);
-}
-
-void retro_library_init(retro_library_t *library) {
-	library->init ();
-}
-
-void retro_library_deinit(retro_library_t *library) {
-	library->deinit ();
-}
-
-unsigned retro_library_api_version(retro_library_t *library) {
-	return library->api_version ();
-}
-
-void retro_library_get_system_info(retro_library_t *library, struct retro_system_info *info) {
-	library->get_system_info (info);
-}
-
-void retro_library_get_system_av_info(retro_library_t *library, struct retro_system_av_info *info) {
-	library->get_system_av_info (info);
-}
-
-void retro_library_reset(retro_library_t *library) {
-	library->reset ();
-}
-
-void retro_library_run(retro_library_t *library) {
-	library->run ();
-}
-
-bool retro_library_load_game(retro_library_t *library, const struct retro_game_info *game) {
-	return library->load_game (game);
-}
-
-// Helper hunctions
+// Helper functions
 
 int create_temporary_file (retro_library_t *library) {
 	const char *template = "/tmp/retro-library-XXXXXX";

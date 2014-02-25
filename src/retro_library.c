@@ -24,11 +24,9 @@
 
 int create_temporary_file (retro_library_t *library);
 void file_copy (const char *src, const char *dst);
-void set_functions (retro_library_t *library);
+void init_functions (retro_library_t *library);
 
-retro_library_t *retro_library_new (char *shared_object) {
-	retro_library_t *library = (retro_library_t *) malloc (sizeof (retro_library_t));
-	
+void retro_library_construct (retro_library_t *library, char *shared_object) {
 	library->src_name = strdup (shared_object);
 	
 	int tmp_descriptor = create_temporary_file (library);
@@ -40,26 +38,39 @@ retro_library_t *retro_library_new (char *shared_object) {
 	
 	if (! library->handle) fprintf (stderr, "%s: %s\n", shared_object, dlerror ());
 	
-	set_functions (library);
+	init_functions (library);
+}
+
+void retro_library_finalize (retro_library_t *library) {
+	if (library) {
+		if (library->handle) {
+			dlclose (library->handle);
+			library->handle = NULL;
+		}
+		
+		if (library->tmp_name) {
+			unlink (library->tmp_name);
+			free (library->tmp_name);
+			library->tmp_name = NULL;
+		}
+		
+		if (library->src_name) {
+			free (library->src_name);
+			library->src_name = NULL;
+		}
+	}
+}
+
+retro_library_t *retro_library_new (char *shared_object) {
+	retro_library_t *library = (retro_library_t *) malloc (sizeof (retro_library_t));
+	retro_library_construct (library, shared_object);
 	
 	return library;
 }
 
 void retro_library_free (retro_library_t *library) {
 	if (library) {
-		if (library->handle) {
-			dlclose (library->handle);
-		}
-		
-		if (library->tmp_name) {
-			unlink (library->tmp_name);
-			free (library->tmp_name);
-		}
-		
-		if (library->src_name) {
-			free (library->src_name);
-		}
-		
+		retro_library_finalize (library);
 		free (library);
 	}
 }
@@ -145,7 +156,7 @@ void file_copy (const char *src, const char *dst) {
 	close (dst_desc);
 }
 
-void set_functions (retro_library_t *library) {
+void init_functions (retro_library_t *library) {
 	library->set_environment =
 	(retro_library_set_environment_t) dlsym (library->handle, "retro_set_environment");
 	

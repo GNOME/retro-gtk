@@ -19,12 +19,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib.h>
+
 #include <pthread.h>
 
 /* 
  * A thread local global variable used to mimic a closure.
  */
 static __thread retro_core_t *thread_global_retro_core;
+
+// Run a function isolated
+void run_isolated (retro_core_t *this, void (*func) (void *), const char *thread_name);
 
 void retro_core_construct (retro_core_t *this, char *library_path) {
 	this->library = retro_library_new (library_path);
@@ -87,207 +92,203 @@ void retro_core_free       (retro_core_t *this) {
  * this: a pointer to a retro_core_t to modify.
  * cb:   the callback to set.
  * 
- * lambda: a phony closure, getting the value of this from the
+ * lambda: a phony closure, retrieving the value of this from the
  * thread local global variable thread_global_retro_core.
  * 
  * Set lambda as a callback for this->library
+ * 
+ * If the libretro library call back from an invalid environment
+ * (without thread_global_retro_core pointing to a valid retro_core_t)
+ * the program will fail (g_assert_not_reached will be called).
+ * 
+ * These callbacks must be set with thread_global_retro_core set because
+ * the libretro library could call back even from a callback setter.
  */
 
 void retro_core_set_environment (retro_core_t *this, retro_core_environment_cb_t cb, void *user_data) {
-	this->environment_cb = cb;
-	this->environment_data = user_data;
-	bool lambda (unsigned cmd, void *data) {
+	// The callback to pass to the libretro library
+	bool real_cb (unsigned cmd, void *data) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) return core->environment_cb (cmd, data, core->environment_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			return core->environment_cb (cmd, data, core->environment_data);
+		}
+	
+		g_assert_not_reached ();
 		return false;
 	}
 	
-	this->library->set_environment (lambda);
+	void *lambda () {
+		this->environment_cb = cb;
+		this->environment_data = user_data;
+		this->library->set_environment (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_environment");
 }
 
 void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_cb_t cb, void *user_data) {
-	this->video_refresh_cb = cb;
-	this->video_refresh_data = user_data;
-	void lambda (const void *data, unsigned width, unsigned height, size_t pitch) {
+	// The callback to pass to the libretro library
+	void real_cb (const void *data, unsigned width, unsigned height, size_t pitch) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) core->video_refresh_cb (data, width, height, pitch, core->video_refresh_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			core->video_refresh_cb (data, width, height, pitch, core->video_refresh_data);
+			return;
+		}
+		
+		g_assert_not_reached ();
 	}
 	
-	this->library->set_video_refresh (lambda);
+	void *lambda () {
+		this->video_refresh_cb = cb;
+		this->video_refresh_data = user_data;
+		this->library->set_video_refresh (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_video_refresh");
 }
 
 void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb_t cb, void *user_data) {
-	this->audio_sample_cb = cb;
-	this->audio_sample_data = user_data;
-	void lambda (int16_t left, int16_t right) {
+	// The callback to pass to the libretro library
+	void real_cb (int16_t left, int16_t right) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) core->audio_sample_cb (left, right, core->audio_sample_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			core->audio_sample_cb (left, right, core->audio_sample_data);
+			return;
+		}
+		
+		g_assert_not_reached ();
 	}
 	
-	this->library->set_audio_sample (lambda);
+	void *lambda () {
+		this->audio_sample_cb = cb;
+		this->audio_sample_data = user_data;
+		this->library->set_audio_sample (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_audio_sample");
 }
 
 void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sample_batch_cb_t cb, void *user_data) {
-	this->audio_sample_batch_cb = cb;
-	this->audio_sample_batch_data = user_data;
-	size_t lambda (const int16_t *data, size_t frames) {
+	// The callback to pass to the libretro library
+	size_t real_cb (const int16_t *data, size_t frames) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) return core->audio_sample_batch_cb (data, frames, core->audio_sample_batch_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			return core->audio_sample_batch_cb (data, frames, core->audio_sample_batch_data);
+		}
+		
+		g_assert_not_reached ();
 		return 0;
 	}
 	
-	this->library->set_audio_sample_batch (lambda);
+	void *lambda () {
+		this->audio_sample_batch_cb = cb;
+		this->audio_sample_batch_data = user_data;
+		this->library->set_audio_sample_batch (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_audio_sample_batch");
 }
 
 void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t cb, void *user_data) {
-	this->input_poll_cb = cb;
-	this->input_poll_data = user_data;
-	void lambda (void) {
+	// The callback to pass to the libretro library
+	void real_cb (void) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) return core->input_poll_cb (core->input_poll_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			return core->input_poll_cb (core->input_poll_data);
+		}
+		
+		g_assert_not_reached ();
 	}
 	
-	this->library->set_input_poll (lambda);
+	void *lambda () {
+		this->input_poll_cb = cb;
+		this->input_poll_data = user_data;
+		this->library->set_input_poll (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_input_poll");
 }
 
 void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t cb, void *user_data) {
-	this->input_state_cb = cb;
-	this->input_state_data = user_data;
-	int16_t lambda (unsigned port, unsigned device, unsigned index, unsigned id) {
+	// The callback to pass to the libretro library
+	int16_t real_cb (unsigned port, unsigned device, unsigned index, unsigned id) {
 		retro_core_t *core = thread_global_retro_core;
-		if (core) return core->input_state_cb (port, device, index, id, core->input_state_data);
-		// TODO g_assert_not_reached
+		if (core) {
+			return core->input_state_cb (port, device, index, id, core->input_state_data);
+		}
+		
+		g_assert_not_reached ();
 		return 0;
 	}
 	
-	this->library->set_input_state (lambda);
+	void *lambda () {
+		this->input_state_cb = cb;
+		this->input_state_data = user_data;
+		this->library->set_input_state (real_cb);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_input_state");
 }
 
 /* 
- * The next functions start a new thread, store "this" in the thread local
- * global variable thread_global_retro_core and call the actual
+ * The next functions start a new thread, store the caller (this) in the thread
+ * local global variable thread_global_retro_core and call the actual
  * library function from within this thread.
  * 
- * Callbacks called within the library function will live in a thread where
- * thread_global_retro_core as the same value as the calling function's "this".
+ * Callbacks called within the library function will live in an environment where
+ * thread_global_retro_core as the same value as the function's caller (this).
  * 
- * It allows to mimic a closure where "this" exists without interfering with
- * other instances of retro_core_t and so to isolate libretro libraries and
- * their environment, overriding libretro's design faults.
+ * It allows to mimic a closure where _this_ exists without interfering with
+ * other instances of retro_core_t or libretro and so to isolate libretro libraries
+ * and their environment, overriding libretro's design faults (an unneeded singleton
+ * pattern).
+ * 
+ * If the thread creation fail, the program will fail (g_assert_not_reached will be
+ * called).
  */
 
 void retro_core_init (retro_core_t *this) {
-	if (thread_global_retro_core == this) {
-		return this->library->init ();
-	}
-	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		this->library->init ();
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_init");
 }
 
 void retro_core_deinit (retro_core_t *this) {
-	if (thread_global_retro_core == this) {
-		return this->library->deinit ();
-	}
-	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		this->library->deinit ();
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_deinit");
 }
 
 unsigned retro_core_api_version (retro_core_t *this) {
-	if (thread_global_retro_core == this) {
-		return this->library->api_version ();
-	}
-	
 	unsigned result;
 	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		result = this->library->api_version ();
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_api_version");
 	
 	return result;
 }
 
 void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *info) {
-	if (thread_global_retro_core == this) {
-		return this->library->get_system_info (info);
-	}
-	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		this->library->get_system_info (info);
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_get_system_info");
 }
 
 void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_info *info) {
-	if (thread_global_retro_core == this) {
-		return this->library->get_system_av_info (info);
-	}
-	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		this->library->get_system_av_info (info);
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_get_system_av_info");
 }
 
 //void retro_core_set_controller_port_device (unsigned port, unsigned device);
@@ -295,24 +296,11 @@ void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_i
 //void retro_core_reset (retro_core_t *this);
 
 void retro_core_run (retro_core_t *this) {
-	if (thread_global_retro_core == this) {
-		return this->library->run ();
-	}
-	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		this->library->run ();
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_init");
 }
 /*
 size_t retro_core_serialize_size (retro_core_t *this);
@@ -324,53 +312,25 @@ void retro_core_cheat_reset (retro_core_t *this);
 void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, const char *code);
 */
 bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game) {
-	if (thread_global_retro_core == this) {
-		return this->library->load_game (game);
-	}
-	
 	bool result;
 	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		result = this->library->load_game(game);
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
+	run_isolated (this, lambda, "retro_core_load_game");
 	
 	return result;
 }
 /*
 bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info) {
-	if (thread_global_retro_core == this) {
-		return this->library->load_game_special (game_type, info, num_info);
-	}
-	
 	bool result;
 	
-	void *lambda (void *arg) {
-		thread_global_retro_core = this;
+	void *lambda () {
 		result = this->library->load_game_special(game_type, info, num_info);
-		pthread_exit (NULL);
 	}
 	
-	pthread_t thread;
-	
-	if (pthread_create (&thread, NULL, lambda, "1") < 0) {
-		fprintf (stderr, "pthread_create error for thread 1\n");
-		return;
-	}
-	
-	pthread_join (thread, NULL);
-	
-	return result;
+	run_isolated (this, lambda, "retro_core_load_game_special");
 }
 /*
 void retro_core_unload_game (retro_core_t *this);
@@ -380,3 +340,26 @@ unsigned retro_core_get_region (retro_core_t *this);
 void *retro_core_get_memory_data (retro_core_t *this, unsigned id);
 size_t retro_core_get_memory_size (retro_core_t *this, unsigned id);
 */
+
+void run_isolated (retro_core_t *this, void (*func) (), const char *thread_name) {
+	if (thread_global_retro_core == this) {
+		func ();
+	}
+	else {
+		pthread_t thread;
+		
+		void *lambda () {
+			thread_global_retro_core = this;
+			func ();
+			pthread_exit (NULL);
+		}
+		
+		if (pthread_create (&thread, NULL, lambda, thread_name) < 0) {
+			fprintf (stderr, "pthread_create error for thread %s\n", thread_name);
+			g_assert_not_reached ();
+		}
+		
+		pthread_join (thread, NULL);
+	}
+}
+

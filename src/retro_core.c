@@ -117,7 +117,7 @@ void retro_core_set_environment (retro_core_t *this, retro_core_environment_cb_t
 		return false;
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->environment_cb = cb;
 		this->environment_data = user_data;
 		this->library->set_environment (real_cb);
@@ -138,7 +138,7 @@ void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_
 		g_assert_not_reached ();
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->video_refresh_cb = cb;
 		this->video_refresh_data = user_data;
 		this->library->set_video_refresh (real_cb);
@@ -159,7 +159,7 @@ void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb
 		g_assert_not_reached ();
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->audio_sample_cb = cb;
 		this->audio_sample_data = user_data;
 		this->library->set_audio_sample (real_cb);
@@ -180,7 +180,7 @@ void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sam
 		return 0;
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->audio_sample_batch_cb = cb;
 		this->audio_sample_batch_data = user_data;
 		this->library->set_audio_sample_batch (real_cb);
@@ -200,7 +200,7 @@ void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t c
 		g_assert_not_reached ();
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->input_poll_cb = cb;
 		this->input_poll_data = user_data;
 		this->library->set_input_poll (real_cb);
@@ -221,7 +221,7 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
 		return 0;
 	}
 	
-	void *lambda () {
+	void lambda () {
 		this->input_state_cb = cb;
 		this->input_state_data = user_data;
 		this->library->set_input_state (real_cb);
@@ -248,7 +248,7 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
  */
 
 void retro_core_init (retro_core_t *this) {
-	void *lambda () {
+	void lambda () {
 		this->library->init ();
 	}
 	
@@ -256,7 +256,7 @@ void retro_core_init (retro_core_t *this) {
 }
 
 void retro_core_deinit (retro_core_t *this) {
-	void *lambda () {
+	void lambda () {
 		this->library->deinit ();
 	}
 	
@@ -266,7 +266,7 @@ void retro_core_deinit (retro_core_t *this) {
 unsigned retro_core_api_version (retro_core_t *this) {
 	unsigned result;
 	
-	void *lambda () {
+	void lambda () {
 		result = this->library->api_version ();
 	}
 	
@@ -276,7 +276,7 @@ unsigned retro_core_api_version (retro_core_t *this) {
 }
 
 void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *info) {
-	void *lambda () {
+	void lambda () {
 		this->library->get_system_info (info);
 	}
 	
@@ -284,7 +284,7 @@ void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *i
 }
 
 void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_info *info) {
-	void *lambda () {
+	void lambda () {
 		this->library->get_system_av_info (info);
 	}
 	
@@ -296,7 +296,7 @@ void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_i
 //void retro_core_reset (retro_core_t *this);
 
 void retro_core_run (retro_core_t *this) {
-	void *lambda () {
+	void lambda () {
 		this->library->run ();
 	}
 	
@@ -314,7 +314,7 @@ void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, con
 bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game) {
 	bool result;
 	
-	void *lambda () {
+	void lambda () {
 		result = this->library->load_game(game);
 	}
 	
@@ -326,7 +326,7 @@ bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *gam
 bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info) {
 	bool result;
 	
-	void *lambda () {
+	void lambda () {
 		result = this->library->load_game_special(game_type, info, num_info);
 	}
 	
@@ -348,7 +348,7 @@ void run_isolated (retro_core_t *this, void (*func) (), const char *thread_name)
 	else {
 		pthread_t thread;
 		
-		void *lambda () {
+		void *lambda (void *args) {
 			thread_global_retro_core = this;
 			func ();
 			pthread_exit (NULL);

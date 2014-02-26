@@ -51,9 +51,11 @@ struct retro_core {
 	void *input_state_data;
 };
 
-void retro_core_new       (char *library_path);
 void retro_core_construct (retro_core_t *this, char *library_path);
 void retro_core_finalize  (retro_core_t *this);
+
+void retro_core_new  (char *library_path);
+void retro_core_free (retro_core_t *this);
 
 void retro_core_set_environment        (retro_core_t *this, retro_core_environment_cb_t, void *user_data);
 void retro_core_set_video_refresh      (retro_core_t *this, retro_core_video_refresh_cb_t, void *user_data);
@@ -67,38 +69,29 @@ void retro_core_deinit (retro_core_t *this);
 
 unsigned retro_core_api_version (retro_core_t *this);
 
-void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *info);
-
+void retro_core_get_system_info    (retro_core_t *this, struct retro_system_info *info);
 void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_info *info);
 
 void retro_core_set_controller_port_device (retro_core_t *this, unsigned port, unsigned device);
 
 void retro_core_reset (retro_core_t *this);
-
-void retro_core_run (retro_core_t *this);
+void retro_core_run   (retro_core_t *this);
 
 size_t retro_core_serialize_size (retro_core_t *this);
-
-bool retro_core_serialize   (retro_core_t *this, void *data, size_t size);
-bool retro_core_unserialize (retro_core_t *this, const void *data, size_t size);
+bool   retro_core_serialize      (retro_core_t *this, void *data, size_t size);
+bool   retro_core_unserialize    (retro_core_t *this, const void *data, size_t size);
 
 void retro_core_cheat_reset (retro_core_t *this);
 void retro_core_cheat_set   (retro_core_t *this, unsigned index, bool enabled, const char *code);
 
-bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game);
+bool retro_core_load_game         (retro_core_t *this, const struct retro_game_info *game);
+bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info);
+void retro_core_unload_game       (retro_core_t *this);
 
-bool retro_core_load_game_special(
-	retro_core_t *this,
-	unsigned game_type,
-	const struct retro_game_info *info, size_t num_info
-);
+unsigned retro_core_get_region (retro_core_t *this);
 
-void retro_core_unload_game(retro_core_t *this);
-
-unsigned retro_core_get_region(retro_core_t *this);
-
-void *retro_core_get_memory_data(retro_core_t *this, unsigned id);
-size_t retro_core_get_memory_size(retro_core_t *this, unsigned id);
+void  *retro_core_get_memory_data (retro_core_t *this, unsigned id);
+size_t retro_core_get_memory_size (retro_core_t *this, unsigned id);
 
 #endif
 

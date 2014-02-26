@@ -25,21 +25,60 @@
  * A thread local global variable used to mimic a closure.
  */
 static __thread retro_core_t *thread_global_retro_core;
-/*
+
+void retro_core_construct (retro_core_t *this, char *library_path) {
+	this->library = retro_library_new (library_path);
+	
+	this->environment_cb = NULL;
+	this->video_refresh_cb = NULL;
+	this->audio_sample_cb = NULL;
+	this->audio_sample_batch_cb = NULL;
+	this->input_poll_cb = NULL;
+	this->input_state_cb = NULL;
+	
+	this->environment_data = NULL;
+	this->video_refresh_data = NULL;
+	this->audio_sample_data = NULL;
+	this->audio_sample_batch_data = NULL;
+	this->input_poll_data = NULL;
+	this->input_state_data = NULL;
+}
+
+void retro_core_finalize (retro_core_t *this) {
+	if (this) {
+		retro_core_deinit (this);
+		retro_library_free (this->library);
+		
+		this->library = NULL;
+		
+		this->environment_cb = NULL;
+		this->video_refresh_cb = NULL;
+		this->audio_sample_cb = NULL;
+		this->audio_sample_batch_cb = NULL;
+		this->input_poll_cb = NULL;
+		this->input_state_cb = NULL;
+		
+		this->environment_data = NULL;
+		this->video_refresh_data = NULL;
+		this->audio_sample_data = NULL;
+		this->audio_sample_batch_data = NULL;
+		this->input_poll_data = NULL;
+		this->input_state_data = NULL;
+	}
+}
+
 void retro_core_new       (char *library_path) {
 	retro_core_t *this = (retro_core_t *) malloc (sizeof (retro_core_t));
 	retro_core_construct (this, library_path);
 	
 	return this;
 }
-*/
-void retro_core_construct (retro_core_t *this, char *library_path) {
-	this->library = retro_library_new (library_path);
-}
 
-void retro_core_finalize (retro_core_t *this) {
-	retro_core_deinit (this);
-	retro_library_free (this->library);
+void retro_core_free       (retro_core_t *this) {
+	if (this) {
+		retro_core_finalize (this);
+		free (this);
+	}
 }
 
 /*

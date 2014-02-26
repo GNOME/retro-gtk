@@ -72,7 +72,7 @@ void retro_core_finalize (retro_core_t *this) {
 	}
 }
 
-void retro_core_new       (char *library_path) {
+retro_core_t *retro_core_new       (char *library_path) {
 	retro_core_t *this = (retro_core_t *) malloc (sizeof (retro_core_t));
 	retro_core_construct (this, library_path);
 	

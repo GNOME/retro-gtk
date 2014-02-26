@@ -291,26 +291,82 @@ void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_i
 	run_isolated (this, lambda, "retro_core_get_system_av_info");
 }
 
-//void retro_core_set_controller_port_device (unsigned port, unsigned device);
+void retro_core_set_controller_port_device (retro_core_t *this, unsigned port, unsigned device) {
+	void lambda () {
+		this->library->set_controller_port_device (port, device);
+	}
+	
+	run_isolated (this, lambda, "retro_core_set_controller_port_device");
+}
 
-//void retro_core_reset (retro_core_t *this);
+void retro_core_reset (retro_core_t *this) {
+	void lambda () {
+		this->library->reset ();
+	}
+	
+	run_isolated (this, lambda, "retro_core_reset");
+}
 
 void retro_core_run (retro_core_t *this) {
 	void lambda () {
 		this->library->run ();
 	}
 	
-	run_isolated (this, lambda, "retro_core_init");
+	run_isolated (this, lambda, "retro_core_run");
 }
-/*
-size_t retro_core_serialize_size (retro_core_t *this);
 
-bool retro_core_serialize (retro_core_t *this, void *data, size_t size);
-bool retro_core_unserialize (retro_core_t *this, const void *data, size_t size);
+size_t retro_core_serialize_size (retro_core_t *this) {
+	size_t result;
+	
+	void lambda () {
+		result = this->library->serialize_size ();
+	}
+	
+	run_isolated (this, lambda, "retro_core_serialize_size");
+	
+	return result;
+}
 
-void retro_core_cheat_reset (retro_core_t *this);
-void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, const char *code);
-*/
+bool retro_core_serialize (retro_core_t *this, void *data, size_t size) {
+	bool result;
+	
+	void lambda () {
+		result = this->library->serialize (data, size);
+	}
+	
+	run_isolated (this, lambda, "retro_core_serialize");
+	
+	return result;
+}
+
+bool retro_core_unserialize (retro_core_t *this, const void *data, size_t size) {
+	bool result;
+	
+	void lambda () {
+		result = this->library->unserialize (data, size);
+	}
+	
+	run_isolated (this, lambda, "retro_core_unserialize");
+	
+	return result;
+}
+
+void retro_core_cheat_reset (retro_core_t *this) {
+	void lambda () {
+		this->library->cheat_reset ();
+	}
+	
+	run_isolated (this, lambda, "retro_core_cheat_reset");
+}
+
+void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, const char *code) {
+	void lambda () {
+		this->library->cheat_set (index, enabled, code);
+	}
+	
+	run_isolated (this, lambda, "retro_core_cheat_set");
+}
+
 bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game) {
 	bool result;
 	
@@ -322,7 +378,7 @@ bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *gam
 	
 	return result;
 }
-/*
+
 bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info) {
 	bool result;
 	
@@ -331,15 +387,49 @@ bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const
 	}
 	
 	run_isolated (this, lambda, "retro_core_load_game_special");
+	
+	return result;
 }
-/*
-void retro_core_unload_game (retro_core_t *this);
 
-unsigned retro_core_get_region (retro_core_t *this);
+void retro_core_unload_game (retro_core_t *this) {
+	void lambda () {
+		this->library->unload_game ();
+	}
+	
+	run_isolated (this, lambda, "retro_core_unload_game");
+}
 
-void *retro_core_get_memory_data (retro_core_t *this, unsigned id);
-size_t retro_core_get_memory_size (retro_core_t *this, unsigned id);
-*/
+unsigned retro_core_get_region (retro_core_t *this) {
+	unsigned result;
+	
+	void lambda () {
+		result = this->library->get_region();
+	}
+	
+	run_isolated (this, lambda, "retro_core_load_get_region");
+	
+	return result;
+}
+
+void *retro_core_get_memory_data (retro_core_t *this, unsigned id) {
+	void lambda () {
+		this->library->get_memory_data (id);
+	}
+	
+	run_isolated (this, lambda, "retro_core_get_memory_data");
+}
+
+size_t retro_core_get_memory_size (retro_core_t *this, unsigned id) {
+	size_t result;
+	
+	void lambda () {
+		result = this->library->get_memory_size(id);
+	}
+	
+	run_isolated (this, lambda, "retro_core_get_memory_size");
+	
+	return result;
+}
 
 void run_isolated (retro_core_t *this, void (*func) (), const char *thread_name) {
 	if (thread_global_retro_core == this) {

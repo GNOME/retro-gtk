@@ -29,7 +29,7 @@
 static __thread retro_core_t *thread_global_retro_core;
 
 // Run a function isolated
-void run_isolated (retro_core_t *this, void (*func) (void *), const char *thread_name);
+void run_isolated (retro_core_t *this, void (*func) (void *), char *thread_name);
 
 void retro_core_construct (retro_core_t *this, char *library_path) {
 	this->library = retro_library_new (library_path);
@@ -431,7 +431,7 @@ size_t retro_core_get_memory_size (retro_core_t *this, unsigned id) {
 	return result;
 }
 
-void run_isolated (retro_core_t *this, void (*func) (), const char *thread_name) {
+void run_isolated (retro_core_t *this, void (*func) (), char *thread_name) {
 	if (thread_global_retro_core == this) {
 		func ();
 	}

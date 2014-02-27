@@ -432,24 +432,7 @@ size_t retro_core_get_memory_size (retro_core_t *this, unsigned id) {
 }
 
 void run_isolated (retro_core_t *this, void (*func) (), char *thread_name) {
-	if (thread_global_retro_core == this) {
-		func ();
-	}
-	else {
-		pthread_t thread;
-		
-		void *lambda (void *args) {
-			thread_global_retro_core = this;
-			func ();
-			pthread_exit (NULL);
-		}
-		
-		if (pthread_create (&thread, NULL, lambda, thread_name) < 0) {
-			fprintf (stderr, "pthread_create error for thread %s\n", thread_name);
-			g_assert_not_reached ();
-		}
-		
-		pthread_join (thread, NULL);
-	}
+	thread_global_retro_core = this;
+	func ();
 }
 

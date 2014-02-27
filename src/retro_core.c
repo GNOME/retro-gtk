@@ -21,15 +21,10 @@
 #include <stdlib.h>
 #include <glib.h>
 
-#include <pthread.h>
-
 /* 
  * A thread local global variable used to mimic a closure.
  */
 static __thread retro_core_t *thread_global_retro_core;
-
-// Run a function isolated
-void run_isolated (retro_core_t *this, void (*func) (void *), char *thread_name);
 
 void retro_core_construct (retro_core_t *this, char *library_path) {
 	this->library = retro_library_new (library_path);
@@ -106,6 +101,8 @@ void retro_core_free       (retro_core_t *this) {
  */
 
 void retro_core_set_environment (retro_core_t *this, retro_core_environment_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	bool real_cb (unsigned cmd, void *data) {
 		retro_core_t *core = thread_global_retro_core;
@@ -117,16 +114,14 @@ void retro_core_set_environment (retro_core_t *this, retro_core_environment_cb_t
 		return false;
 	}
 	
-	void lambda () {
-		this->environment_cb = cb;
-		this->environment_data = user_data;
-		this->library->set_environment (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_environment");
+	this->environment_cb = cb;
+	this->environment_data = user_data;
+	this->library->set_environment (real_cb);
 }
 
 void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	void real_cb (const void *data, unsigned width, unsigned height, size_t pitch) {
 		retro_core_t *core = thread_global_retro_core;
@@ -138,16 +133,14 @@ void retro_core_set_video_refresh (retro_core_t *this, retro_core_video_refresh_
 		g_assert_not_reached ();
 	}
 	
-	void lambda () {
-		this->video_refresh_cb = cb;
-		this->video_refresh_data = user_data;
-		this->library->set_video_refresh (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_video_refresh");
+	this->video_refresh_cb = cb;
+	this->video_refresh_data = user_data;
+	this->library->set_video_refresh (real_cb);
 }
 
 void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	void real_cb (int16_t left, int16_t right) {
 		retro_core_t *core = thread_global_retro_core;
@@ -159,16 +152,14 @@ void retro_core_set_audio_sample (retro_core_t *this, retro_core_audio_sample_cb
 		g_assert_not_reached ();
 	}
 	
-	void lambda () {
-		this->audio_sample_cb = cb;
-		this->audio_sample_data = user_data;
-		this->library->set_audio_sample (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_audio_sample");
+	this->audio_sample_cb = cb;
+	this->audio_sample_data = user_data;
+	this->library->set_audio_sample (real_cb);
 }
 
 void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sample_batch_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	size_t real_cb (const int16_t *data, size_t frames) {
 		retro_core_t *core = thread_global_retro_core;
@@ -180,16 +171,14 @@ void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sam
 		return 0;
 	}
 	
-	void lambda () {
-		this->audio_sample_batch_cb = cb;
-		this->audio_sample_batch_data = user_data;
-		this->library->set_audio_sample_batch (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_audio_sample_batch");
+	this->audio_sample_batch_cb = cb;
+	this->audio_sample_batch_data = user_data;
+	this->library->set_audio_sample_batch (real_cb);
 }
 
 void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	void real_cb (void) {
 		retro_core_t *core = thread_global_retro_core;
@@ -200,16 +189,14 @@ void retro_core_set_input_poll (retro_core_t *this, retro_core_input_poll_cb_t c
 		g_assert_not_reached ();
 	}
 	
-	void lambda () {
-		this->input_poll_cb = cb;
-		this->input_poll_data = user_data;
-		this->library->set_input_poll (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_input_poll");
+	this->input_poll_cb = cb;
+	this->input_poll_data = user_data;
+	this->library->set_input_poll (real_cb);
 }
 
 void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t cb, void *user_data) {
+	thread_global_retro_core = this;
+	
 	// The callback to pass to the libretro library
 	int16_t real_cb (unsigned port, unsigned device, unsigned index, unsigned id) {
 		retro_core_t *core = thread_global_retro_core;
@@ -221,13 +208,9 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
 		return 0;
 	}
 	
-	void lambda () {
-		this->input_state_cb = cb;
-		this->input_state_data = user_data;
-		this->library->set_input_state (real_cb);
-	}
-	
-	run_isolated (this, lambda, "retro_core_set_input_state");
+	this->input_state_cb = cb;
+	this->input_state_data = user_data;
+	this->library->set_input_state (real_cb);
 }
 
 /* 
@@ -248,191 +231,116 @@ void retro_core_set_input_state (retro_core_t *this, retro_core_input_state_cb_t
  */
 
 void retro_core_init (retro_core_t *this) {
-	void lambda () {
-		this->library->init ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_init");
+	this->library->init ();
 }
 
 void retro_core_deinit (retro_core_t *this) {
-	void lambda () {
-		this->library->deinit ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_deinit");
+	this->library->deinit ();
 }
 
 unsigned retro_core_api_version (retro_core_t *this) {
-	unsigned result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->api_version ();
-	}
-	
-	run_isolated (this, lambda, "retro_core_api_version");
-	
-	return result;
+	return this->library->api_version ();
 }
 
 void retro_core_get_system_info (retro_core_t *this, struct retro_system_info *info) {
-	void lambda () {
-		this->library->get_system_info (info);
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_get_system_info");
+	this->library->get_system_info (info);
 }
 
 void retro_core_get_system_av_info (retro_core_t *this, struct retro_system_av_info *info) {
-	void lambda () {
-		this->library->get_system_av_info (info);
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_get_system_av_info");
+	this->library->get_system_av_info (info);
 }
 
 void retro_core_set_controller_port_device (retro_core_t *this, unsigned port, unsigned device) {
-	void lambda () {
-		this->library->set_controller_port_device (port, device);
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_set_controller_port_device");
+	this->library->set_controller_port_device (port, device);
 }
 
 void retro_core_reset (retro_core_t *this) {
-	void lambda () {
-		this->library->reset ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_reset");
+	this->library->reset ();
 }
 
 void retro_core_run (retro_core_t *this) {
-	void lambda () {
-		this->library->run ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_run");
+	this->library->run ();
 }
 
 size_t retro_core_serialize_size (retro_core_t *this) {
-	size_t result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->serialize_size ();
-	}
-	
-	run_isolated (this, lambda, "retro_core_serialize_size");
-	
-	return result;
+	return this->library->serialize_size ();
 }
 
 bool retro_core_serialize (retro_core_t *this, void *data, size_t size) {
-	bool result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->serialize (data, size);
-	}
-	
-	run_isolated (this, lambda, "retro_core_serialize");
-	
-	return result;
+	return this->library->serialize (data, size);
 }
 
 bool retro_core_unserialize (retro_core_t *this, const void *data, size_t size) {
-	bool result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->unserialize (data, size);
-	}
-	
-	run_isolated (this, lambda, "retro_core_unserialize");
-	
-	return result;
+	return this->library->unserialize (data, size);
 }
 
 void retro_core_cheat_reset (retro_core_t *this) {
-	void lambda () {
-		this->library->cheat_reset ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_cheat_reset");
+	this->library->cheat_reset ();
 }
 
 void retro_core_cheat_set (retro_core_t *this, unsigned index, bool enabled, const char *code) {
-	void lambda () {
-		this->library->cheat_set (index, enabled, code);
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_cheat_set");
+	this->library->cheat_set (index, enabled, code);
 }
 
 bool retro_core_load_game (retro_core_t *this, const struct retro_game_info *game) {
-	bool result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->load_game(game);
-	}
-	
-	run_isolated (this, lambda, "retro_core_load_game");
-	
-	return result;
+	return this->library->load_game(game);
 }
 
 bool retro_core_load_game_special (retro_core_t *this, unsigned game_type, const struct retro_game_info *info, size_t num_info) {
-	bool result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->load_game_special(game_type, info, num_info);
-	}
-	
-	run_isolated (this, lambda, "retro_core_load_game_special");
-	
-	return result;
+	return this->library->load_game_special(game_type, info, num_info);
 }
 
 void retro_core_unload_game (retro_core_t *this) {
-	void lambda () {
-		this->library->unload_game ();
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_unload_game");
+	this->library->unload_game ();
 }
 
 unsigned retro_core_get_region (retro_core_t *this) {
-	unsigned result;
+	thread_global_retro_core = this;
 	
-	void lambda () {
-		result = this->library->get_region();
-	}
-	
-	run_isolated (this, lambda, "retro_core_load_get_region");
-	
-	return result;
+	return this->library->get_region();
 }
 
 void *retro_core_get_memory_data (retro_core_t *this, unsigned id) {
-	void lambda () {
-		this->library->get_memory_data (id);
-	}
+	thread_global_retro_core = this;
 	
-	run_isolated (this, lambda, "retro_core_get_memory_data");
+	this->library->get_memory_data (id);
 }
 
 size_t retro_core_get_memory_size (retro_core_t *this, unsigned id) {
-	size_t result;
-	
-	void lambda () {
-		result = this->library->get_memory_size(id);
-	}
-	
-	run_isolated (this, lambda, "retro_core_get_memory_size");
-	
-	return result;
-}
-
-void run_isolated (retro_core_t *this, void (*func) (), char *thread_name) {
 	thread_global_retro_core = this;
-	func ();
+	
+	return this->library->get_memory_size(id);
 }
 

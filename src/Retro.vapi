@@ -306,6 +306,7 @@ namespace Environment {
 		PRIVATE
 	}
 	
+	[CCode (cname = "retro_core_environment_cb_t")]
 	delegate bool Callback (Command cmd, void *data);
 }
 
@@ -321,21 +322,31 @@ namespace Video {
 		UNKNOWN
 	}
 	
+	[CCode (cname = "retro_core_video_refresh_cb_t")]
 	delegate void Refresh (void *data, uint width, uint height, size_t pitch);
 }
 
-// TODO Log
+// Log
 
-[CCode (cname = "enum retro_log_level", cprefix = "RETRO_LOG_")]
-enum LogLevel {
-	DEBUG,
-	INFO,
-	WARN,
-	ERROR
+namespace Log {
+	[CCode (cname = "enum retro_log_level", cprefix = "RETRO_LOG_")]
+	enum Level {
+		DEBUG,
+		INFO,
+		WARN,
+		ERROR
+	}
+	
+	[CCode (cname = "retro_core_environment_cb_t")]
+	delegate bool Printf (Level level, string fmt, ...);
+	
+	[CCode (cname = "struct retro_log_callback")]
+	struct Callback {
+		Printf log;
+	}
 }
 
-//retro_log_printf_t
-//struct retro_log_callback
+// Performance
 
 namespace Perf {
 	[CCode (cname = "uint64_t", cprefix = "RETRO_SIMD_")]

@@ -272,6 +272,8 @@ enum ModifierKey {
 	SCROLLOCK
 }
 
+// Environment
+
 namespace Environment {
 	[CCode (cname = "unsigned", cprefix = "RETRO_ENVIRONMENT_")]
 	enum Command {
@@ -307,7 +309,22 @@ namespace Environment {
 	delegate bool Callback (Command cmd, void *data);
 }
 
-// Log
+// Video
+
+namespace Video {
+	[CCode (cname = "enum retro_pixel_format")]
+	enum PixelFormat {
+		[CCode (cname = "RETRO_PIXEL_FORMAT_0RGB1555")]
+		ORGB1555,
+		XRGB8888,
+		RGB565,
+		UNKNOWN
+	}
+	
+	delegate void Refresh void *data, uint width, uint height, size_t pitch);
+}
+
+// TODO Log
 
 [CCode (cname = "enum retro_log_level", cprefix = "RETRO_LOG_")]
 enum LogLevel {
@@ -479,8 +496,6 @@ namespace FrameTime {
 	} 
 }
 
-// TODO Reprendre à la ligne 790 de libretro.h
-
 [CCode (cname = "uintptr_t", simple_type = 1)]
 struct uintptr_t {}
 
@@ -570,15 +585,6 @@ namespace Disk {
 	}
 }
 
-[CCode (cname = "enum retro_pixel_format")]
-enum PixelFormat {
-	[CCode (cname = "RETRO_PIXEL_FORMAT_0RGB1555")]
-	ORGB1555,
-	XRGB8888,
-	RGB565,
-	UNKNOWN
-}
-
 [CCode (cname = "struct retro_message")]
 struct Message {
    const string msg;
@@ -645,7 +651,6 @@ struct GameInfo {
 	string meta;
 }
 
-delegate void   VideoRefresh     (void *data, uint width, uint height, size_t pitch);
 delegate void   AudioSample      (int16 left, int16 right);
 delegate size_t AudioSampleBatch (int16 *data, size_t frames);
 delegate void   InputPoll        ();

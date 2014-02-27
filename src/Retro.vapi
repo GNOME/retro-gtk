@@ -312,7 +312,7 @@ namespace Environment {
 // Video
 
 namespace Video {
-	[CCode (cname = "enum retro_pixel_format")]
+	[CCode (cname = "enum retro_pixel_format", cprefix = "RETRO_PIXEL_FORMAT_")]
 	enum PixelFormat {
 		[CCode (cname = "RETRO_PIXEL_FORMAT_0RGB1555")]
 		ORGB1555,
@@ -321,7 +321,7 @@ namespace Video {
 		UNKNOWN
 	}
 	
-	delegate void Refresh void *data, uint width, uint height, size_t pitch);
+	delegate void Refresh (void *data, uint width, uint height, size_t pitch);
 }
 
 // TODO Log
@@ -664,7 +664,7 @@ struct Core {
 	public void finalize ();
 	
 	public void set_environment (Environment.Callback cb);
-	public void set_video_refresh (VideoRefresh cb);
+	public void set_video_refresh (Video.Refresh cb);
 	public void set_audio_sample (AudioSample cb);
 	public void set_audio_sample_batch (AudioSampleBatch cb);
 	public void set_input_poll (InputPoll cb);

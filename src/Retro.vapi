@@ -272,35 +272,39 @@ enum ModifierKey {
 	SCROLLOCK
 }
 
-[CCode (cname = "unsigned", cprefix = "RETRO_ENVIRONMENT_")]
-enum EnvironmentCommand {
-	SET_ROTATION,
-	GET_OVERSCAN,
-	GET_CAN_DUPE,
-	SET_MESSAGE,
-	SHUTDOWN,
-	SET_PERFORMANCE_LEVEL,
-	GET_SYSTEM_DIRECTORY,
-	SET_PIXEL_FORMAT,
-	SET_INPUT_DESCRIPTORS,
-	SET_KEYBOARD_CALLBACK,
-	SET_DISK_CONTROL_INTERFACE,
-	SET_HW_RENDER,
-	GET_VARIABLE,
-	SET_VARIABLES,
-	GET_VARIABLE_UPDATE,
-	SET_SUPPORT_NO_GAME,
-	GET_LIBRETRO_PATH,
-	SET_AUDIO_CALLBACK,
-	SET_FRAME_TIME_CALLBACK,
-	GET_RUMBLE_INTERFACE,
-	GET_INPUT_DEVICE_CAPABILITIES,
-	GET_SENSOR_INTERFACE,
-	GET_CAMERA_INTERFACE,
-	GET_LOG_INTERFACE,
-	GET_PERF_INTERFACE,
-	EXPERIMENTAL,
-	PRIVATE
+namespace Environment {
+	[CCode (cname = "unsigned", cprefix = "RETRO_ENVIRONMENT_")]
+	enum Command {
+		SET_ROTATION,
+		GET_OVERSCAN,
+		GET_CAN_DUPE,
+		SET_MESSAGE,
+		SHUTDOWN,
+		SET_PERFORMANCE_LEVEL,
+		GET_SYSTEM_DIRECTORY,
+		SET_PIXEL_FORMAT,
+		SET_INPUT_DESCRIPTORS,
+		SET_KEYBOARD_CALLBACK,
+		SET_DISK_CONTROL_INTERFACE,
+		SET_HW_RENDER,
+		GET_VARIABLE,
+		SET_VARIABLES,
+		GET_VARIABLE_UPDATE,
+		SET_SUPPORT_NO_GAME,
+		GET_LIBRETRO_PATH,
+		SET_AUDIO_CALLBACK,
+		SET_FRAME_TIME_CALLBACK,
+		GET_RUMBLE_INTERFACE,
+		GET_INPUT_DEVICE_CAPABILITIES,
+		GET_SENSOR_INTERFACE,
+		GET_CAMERA_INTERFACE,
+		GET_LOG_INTERFACE,
+		GET_PERF_INTERFACE,
+		EXPERIMENTAL,
+		PRIVATE
+	}
+	
+	delegate bool Callback (Command cmd, void *data);
 }
 
 // Log
@@ -641,7 +645,6 @@ struct GameInfo {
 	string meta;
 }
 
-delegate bool   Environment      (EnvironmentCommand cmd, void *data);
 delegate void   VideoRefresh     (void *data, uint width, uint height, size_t pitch);
 delegate void   AudioSample      (int16 left, int16 right);
 delegate size_t AudioSampleBatch (int16 *data, size_t frames);
@@ -655,7 +658,7 @@ struct Core {
 	
 	public void finalize ();
 	
-	public void set_environment (Environment cb);
+	public void set_environment (Environment.Callback cb);
 	public void set_video_refresh (VideoRefresh cb);
 	public void set_audio_sample (AudioSample cb);
 	public void set_audio_sample_batch (AudioSampleBatch cb);

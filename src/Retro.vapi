@@ -663,7 +663,7 @@ struct GameInfo {
 }
 
 delegate void   AudioSample      (int16 left, int16 right);
-delegate size_t AudioSampleBatch (int16 *data, size_t frames);
+delegate size_t AudioSampleBatch ([CCode (array_length_cname = "frames", array_length_type = "size_t")] int16[] data);
 delegate void   InputPoll        ();
 delegate int16  InputState       (uint port, uint device, uint index, uint id);
 

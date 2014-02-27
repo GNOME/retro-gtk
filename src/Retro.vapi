@@ -101,7 +101,7 @@ enum GameType {
 	SUPER_GAME_BOY
 }
 
-[CCode (cname = "enum retro_key", cprefix = "RETROK_")]
+[CCode (cname = "unsigned", cprefix = "RETROK_")]
 enum Key {
 	UNKNOWN,
 	FIRST,
@@ -258,7 +258,7 @@ enum Key {
 	LAST
 }
 
-[CCode (cname = "enum retro_mod", cprefix = "RETROKMOD_")]
+[CCode (cname = "uint16_t", cprefix = "RETROKMOD_")]
 enum ModifierKey {
 	NONE,
 	
@@ -323,7 +323,7 @@ namespace Video {
 	}
 	
 	[CCode (cname = "retro_core_video_refresh_cb_t")]
-	delegate void Refresh (void *data, uint width, uint height, size_t pitch);
+	delegate void Refresh ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
 }
 
 // Log
@@ -554,7 +554,7 @@ namespace Hardware {
 
 namespace Keyboard {
 	[CCode (cname = "retro_keyboard_event_t")]
-	delegate void Event (bool down, uint keycode, uint32 character, uint16 key_modifiers);
+	delegate void Event (bool down, Key keycode, uint32 character, ModifierKey key_modifiers);
 	
 	[CCode (cname = "struct retro_keyboard_callback")]
 	struct Callback {
@@ -657,9 +657,10 @@ struct Variable {
 struct GameInfo {
 	[CCode (weak = 1)]
 	public const string path;
-	void  *data;
-	size_t size;
-	string meta;
+	
+	[CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")]
+	uint8[] data;
+	string  meta;
 }
 
 delegate void   AudioSample      (int16 left, int16 right);
@@ -689,26 +690,26 @@ struct Core {
 	public void get_system_info (out SystemInfo info);
 	public void get_system_av_info (out SystemAvInfo *info);
 	
-	public void set_controller_port_device (uint port, uint device);
+	public void set_controller_port_device (uint port, Device device);
 	
 	public void reset ();
 	public void run ();
 	
 	public size_t serialize_size ();
-	public bool serialize (void *data, size_t size);
-	public bool unserialize (void *data, size_t size);
+	public bool serialize ([CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")] uint8[] data);
+	public bool unserialize ([CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")] uint8[] data);
 	
 	public void cheat_reset ();
 	public void cheat_set (uint index, bool enabled, string code);
 	
 	public bool load_game (GameInfo *game);
-	public bool load_game_special (uint game_type, GameInfo *info, size_t num_info);
+	public bool load_game_special (GameType game_type, GameInfo *info, size_t num_info);
 	public void unload_game ();
 	
 	public Region get_region ();
 	
-	public void *get_memory_data (uint id);
-	public size_t get_memory_size (uint id);
+	public void *get_memory_data (Memory id);
+	public size_t get_memory_size (Memory id);
 }
 
 }

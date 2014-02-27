@@ -362,26 +362,26 @@ namespace Perf {
 	}
 	
 	[CCode (cname = "retro_perf_tick_t", simple_type = 1)]
-	struct Tick {}
+	struct tick_t {}
 	
 	[CCode (cname = "retro_time_t", simple_type = 1)]
-	struct Time {}
+	struct time_t {}
 	
 	[CCode (cname = "struct retro_perf_counter")]
 	struct Counter {
 		const string ident;
-		Tick start;
-		Tick total;
-		Tick call_cnt;
+		tick_t start;
+		tick_t total;
+		tick_t call_cnt;
 	
 		bool registered;
 	}
 	
 	[CCode (cname = "retro_perf_get_time_usec_t")]
-	delegate Retro.Perf.Time GetTimeUsec ();
+	delegate Retro.Perf.time_t GetTimeUsec ();
 	
 	[CCode (cname = "retro_perf_get_counter_t")]
-	delegate Tick GetCounter ();
+	delegate tick_t GetCounter ();
 	
 	[CCode (cname = "retro_get_cpu_features_t")]
 	delegate uint64 GetCpuFeatures ();
@@ -605,9 +605,9 @@ struct Message {
 [CCode (cname = "struct retro_input_descriptor")]
 struct InputDescriptor {
    uint port;
-   uint device;
-   uint index;
-   uint id;
+   Device      device;
+   DeviceIndex index;
+   DeviceID    id;
 	
    const string description;
 }

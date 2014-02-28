@@ -51,11 +51,11 @@ struct retro_core {
 	void *input_state_data;
 };
 
-void retro_core_construct (retro_core_t *this, char *library_path);
+void retro_core_construct (retro_core_t *this, const char *library_path);
 void retro_core_finalize  (retro_core_t *this);
 
-retro_core_t *retro_core_new  (char *library_path);
-void retro_core_free (retro_core_t *this);
+retro_core_t *retro_core_new  (const char *library_path);
+void          retro_core_free (retro_core_t *this);
 
 void retro_core_set_environment        (retro_core_t *this, retro_core_environment_cb_t, void *user_data);
 void retro_core_set_video_refresh      (retro_core_t *this, retro_core_video_refresh_cb_t, void *user_data);

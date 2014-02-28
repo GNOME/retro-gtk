@@ -100,10 +100,10 @@ struct retro_library {
 	retro_library_get_memory_size_t   get_memory_size;
 };
 
-void retro_library_construct (retro_library_t *library, char *shared_object);
+void retro_library_construct (retro_library_t *library, const char *shared_object);
 void retro_library_finalize  (retro_library_t *library);
 
-retro_library_t *retro_library_new  (char *shared_object);
+retro_library_t *retro_library_new  (const char *shared_object);
 void             retro_library_free (retro_library_t *library);
 
 #endif

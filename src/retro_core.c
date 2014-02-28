@@ -26,7 +26,7 @@
  */
 static __thread retro_core_t *thread_global_retro_core;
 
-void retro_core_construct (retro_core_t *this, char *library_path) {
+void retro_core_construct (retro_core_t *this, const char *library_path) {
 	this->library = retro_library_new (library_path);
 	
 	this->environment_cb = NULL;
@@ -67,14 +67,14 @@ void retro_core_finalize (retro_core_t *this) {
 	}
 }
 
-retro_core_t *retro_core_new       (char *library_path) {
+retro_core_t *retro_core_new (const char *library_path) {
 	retro_core_t *this = (retro_core_t *) malloc (sizeof (retro_core_t));
 	retro_core_construct (this, library_path);
 	
 	return this;
 }
 
-void retro_core_free       (retro_core_t *this) {
+void retro_core_free (retro_core_t *this) {
 	if (this) {
 		retro_core_finalize (this);
 		free (this);

@@ -19,6 +19,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
+
 #include <fcntl.h>
 #include <dlfcn.h>
 
@@ -26,7 +31,7 @@ int create_temporary_file (retro_library_t *library);
 void file_copy (const char *src, const char *dst);
 void init_functions (retro_library_t *library);
 
-void retro_library_construct (retro_library_t *library, char *shared_object) {
+void retro_library_construct (retro_library_t *library, const char *shared_object) {
 	library->src_name = strdup (shared_object);
 	
 	int tmp_descriptor = create_temporary_file (library);
@@ -61,7 +66,7 @@ void retro_library_finalize (retro_library_t *library) {
 	}
 }
 
-retro_library_t *retro_library_new (char *shared_object) {
+retro_library_t *retro_library_new (const char *shared_object) {
 	retro_library_t *library = (retro_library_t *) malloc (sizeof (retro_library_t));
 	retro_library_construct (library, shared_object);
 	

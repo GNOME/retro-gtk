@@ -642,7 +642,7 @@ struct SystemTiming {
 }
 
 [CCode (cname = "struct retro_system_av_info", has_destroy_function = 0)]
-struct SystemAvInfo {
+struct SystemAVInfo {
 	public GameGeometry geometry;
 	public SystemTiming timing;
 }
@@ -688,7 +688,7 @@ struct Core {
 	public uint api_version ();
 	
 	public void get_system_info (out SystemInfo info);
-	public void get_system_av_info (out SystemAvInfo *info);
+	public void get_system_av_info (out SystemAVInfo info);
 	
 	public void set_controller_port_device (uint port, Device device);
 	

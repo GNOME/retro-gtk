@@ -29,7 +29,7 @@ typedef struct retro_core retro_core_t;
 typedef bool    (*retro_core_environment_cb_t)        (unsigned cmd, void *data, void *user_data);
 typedef void    (*retro_core_video_refresh_cb_t)      (const void *data, unsigned width, unsigned height, size_t pitch, void *user_data);
 typedef void    (*retro_core_audio_sample_cb_t)       (int16_t left, int16_t right, void *user_data);
-typedef size_t  (*retro_core_audio_sample_batch_cb_t) (const int16_t *data, size_t frames, void *user_data);
+typedef size_t  (*retro_core_audio_sample_batch_cb_t) (const int16_t *data, size_t size, void *user_data);
 typedef void    (*retro_core_input_poll_cb_t)         (void *user_data);
 typedef int16_t (*retro_core_input_state_cb_t)        (unsigned port, unsigned device, unsigned index, unsigned id, void *user_data);
 

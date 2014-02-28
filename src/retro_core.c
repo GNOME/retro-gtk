@@ -164,7 +164,8 @@ void retro_core_set_audio_sample_batch (retro_core_t *this, retro_core_audio_sam
 	size_t real_cb (const int16_t *data, size_t frames) {
 		retro_core_t *core = thread_global_retro_core;
 		if (core) {
-			return core->audio_sample_batch_cb (data, frames, core->audio_sample_batch_data);
+			// A frame is a L frame and a R frame, so the size of the data array is frames * 2.
+			return core->audio_sample_batch_cb (data, frames * 2, core->audio_sample_batch_data);
 		}
 		
 		g_assert_not_reached ();

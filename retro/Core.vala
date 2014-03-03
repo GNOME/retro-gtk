@@ -1,7 +1,7 @@
 namespace Retro {
 
 class Core {
-	// Callbacks for the libretro module	
+	// Callbacks for the libretro module
 	
 	public delegate bool   Environment      (Retro.Environment.Command cmd, void *data);
 	public delegate void   VideoRefresh     ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
@@ -9,7 +9,9 @@ class Core {
 	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
 	public delegate void   InputPoll        ();
 	public delegate int16  InputState       (uint port, uint device, uint index, uint id);
-
+	
+	// Callbacks for the libretro module: end
+	
 	// Types of the module's functions
 	
 	[CCode (has_target = false)]
@@ -63,6 +65,8 @@ class Core {
 	[CCode (has_target = false)]
 	private delegate size_t GetMemorySize (Memory id);
 	
+	// Types of the module's functions: end
+	
 	// Helper C methods
 	
 	private extern void set_global_self ();
@@ -74,9 +78,12 @@ class Core {
 	private extern void *get_real_input_poll_cb ();
 	private extern void *get_real_input_state_cb ();
 	
+	// Helper C methods: end
+	
 	private Module module;
 	
-	// The module's functions
+	// Module's functions
+	
 	private SetCallback _set_environment;
 	private SetCallback _set_video_refresh;
 	private SetCallback _set_audio_sample;
@@ -112,7 +119,9 @@ class Core {
 	private GetMemoryData _get_memory_data;
 	private GetMemorySize _get_memory_size;
 	
-	// The callback setters and getters
+	// Module's functions: end
+	
+	// Callback setters and getters
 	
 	private Environment _environment_cb;
 	public Environment environment_cb {
@@ -192,10 +201,14 @@ class Core {
 		}
 	}
 	
+	// Callback setters and getters: end
+	
 	public Core (string file_name) {
 		module = Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 		
 		void *function;
+		
+		// Get the callback setters
 		
 		module.symbol ("retro_set_environment", out function);
 		_set_environment = (SetCallback) function;
@@ -209,6 +222,8 @@ class Core {
 		_set_input_poll = (SetCallback) function;
 		module.symbol ("retro_set_input_state", out function);
 		_set_input_state = (SetCallback) function;
+		
+		// Get the other functions
 		
 		module.symbol ("retro_init", out function);
 		_init = (Init) function;

@@ -40,7 +40,7 @@ $(DEMO): $(RETRO_SRC) $(DEMO_SRC)
 	valac -b $(SRC_DIR) -d $(@D) \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
-		-g --Xcc="-lm"
+		-g
 
 clean:
 	rm -Rf $(OUT_DIR)

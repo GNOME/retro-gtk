@@ -1,4 +1,4 @@
-[CCode (cheader_filename = "retro.h")]
+[CCode (cheader_filename = "libretro.h")]
 
 namespace Retro {
 
@@ -305,9 +305,6 @@ namespace Environment {
 		EXPERIMENTAL,
 		PRIVATE
 	}
-	
-	[CCode (cname = "retro_core_environment_cb_t")]
-	delegate bool Callback (Command cmd, void *data);
 }
 
 // Video
@@ -321,9 +318,6 @@ namespace Video {
 		RGB565,
 		UNKNOWN
 	}
-	
-	[CCode (cname = "retro_core_video_refresh_cb_t")]
-	delegate void Refresh ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
 }
 
 // Log
@@ -642,7 +636,7 @@ struct SystemTiming {
 }
 
 [CCode (cname = "struct retro_system_av_info", has_destroy_function = 0)]
-struct SystemAVInfo {
+struct SystemAvInfo {
 	public GameGeometry geometry;
 	public SystemTiming timing;
 }
@@ -661,55 +655,6 @@ struct GameInfo {
 	[CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")]
 	uint8[] data;
 	string  meta;
-}
-
-delegate void   AudioSample      (int16 left, int16 right);
-delegate size_t AudioSampleBatch ([CCode (array_length_cname = "size", array_length_type = "size_t")] int16[] data);
-delegate void   InputPoll        ();
-delegate int16  InputState       (uint port, uint device, uint index, uint id);
-
-[CCode (cname = "retro_core_t", cheader_filename = "retro_core.h")]
-struct Core {
-	[CCode (cname = "retro_core_construct")]
-	public Core (string library_path);
-	
-	public void finalize ();
-	
-	public void set_environment (Environment.Callback cb);
-	public void set_video_refresh (Video.Refresh cb);
-	public void set_audio_sample (AudioSample cb);
-	public void set_audio_sample_batch (AudioSampleBatch cb);
-	public void set_input_poll (InputPoll cb);
-	public void set_input_state (InputState cb);
-	
-	public void init ();
-	public void deinit ();
-	
-	public uint api_version ();
-	
-	public void get_system_info (out SystemInfo info);
-	public void get_system_av_info (out SystemAVInfo info);
-	
-	public void set_controller_port_device (uint port, Device device);
-	
-	public void reset ();
-	public void run ();
-	
-	public size_t serialize_size ();
-	public bool serialize ([CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")] uint8[] data);
-	public bool unserialize ([CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")] uint8[] data);
-	
-	public void cheat_reset ();
-	public void cheat_set (uint index, bool enabled, string code);
-	
-	public bool load_game (GameInfo *game);
-	public bool load_game_special (GameType game_type, GameInfo *info, size_t num_info);
-	public void unload_game ();
-	
-	public Region get_region ();
-	
-	public void *get_memory_data (Memory id);
-	public size_t get_memory_size (Memory id);
 }
 
 }

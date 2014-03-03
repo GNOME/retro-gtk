@@ -1,19 +1,15 @@
 namespace Retro {
 
-namespace Video {
-	delegate void Refresh ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
-}
-
-namespace Environment {
-	delegate bool Callback (Command cmd, void *data);
-}
-
-delegate void   AudioSample      (int16 left, int16 right);
-delegate size_t AudioSampleBatch (int16[] data, size_t frames);
-delegate void   InputPoll        ();
-delegate int16  InputState       (uint port, uint device, uint index, uint id);
-
 class Core {
+	// Callbacks for the libretro module	
+	
+	public delegate bool   Environment      (Retro.Environment.Command cmd, void *data);
+	public delegate void   VideoRefresh     ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
+	public delegate void   AudioSample      (int16 left, int16 right);
+	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
+	public delegate void   InputPoll        ();
+	public delegate int16  InputState       (uint port, uint device, uint index, uint id);
+
 	// Types of the module's functions
 	
 	[CCode (has_target = false)]
@@ -118,8 +114,8 @@ class Core {
 	
 	// The callback setters and getters
 	
-	private Environment.Callback _environment_cb;
-	public Environment.Callback environment_cb {
+	private Environment _environment_cb;
+	public Environment environment_cb {
 		set {
 			_environment_cb = value;
 			
@@ -131,8 +127,8 @@ class Core {
 		}
 	}
 	
-	private Video.Refresh _video_refresh_cb;
-	public Video.Refresh video_refresh_cb {
+	private VideoRefresh _video_refresh_cb;
+	public VideoRefresh video_refresh_cb {
 		set {
 			_video_refresh_cb = value;
 			

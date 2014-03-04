@@ -24,7 +24,11 @@ class Engine : Object {
 	public Gdk.PixbufRotation rotation { private set; get; default = Gdk.PixbufRotation.NONE; }
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
+	
 	public Video.PixelFormat pixel_format;
+	
+	private bool variable_changed;
+	private VariableHandler variable_handler;
 	
 	private AudioDevice audio_dev;
 	
@@ -40,6 +44,12 @@ class Engine : Object {
 	
 	public Engine (string library_path) {
 		pixel_format = Video.PixelFormat.UNKNOWN;
+		
+		variable_changed = false;
+		variable_handler = new VariableHandler ();
+		variable_handler.value_changed.connect (() => {
+			variable_changed = true;
+		});
 		
 		core = new Core (library_path);
 		
@@ -58,7 +68,6 @@ class Engine : Object {
 	}
 	
 	private bool on_environment_cb (Environment.Command cmd, void *data) {
-		stdout.printf ("on_environment_cb: %d\n", cmd);
 		switch (cmd) {
 			case Environment.Command.SET_ROTATION:
 				rotation = *((Gdk.PixbufRotation *) data);
@@ -67,16 +76,21 @@ class Engine : Object {
 			case Environment.Command.GET_OVERSCAN:
 				*((bool *) data) = overscan;
 				break;
+			
 			case Environment.Command.GET_CAN_DUPE:
 				*((bool *) data) = can_dupe;
 				break;
+			
 			case Environment.Command.SET_MESSAGE:
+				stdout.printf ("on_environment_cb: SET_MESSAGE\n");
 				// TODO
 				break;
 			case Environment.Command.SHUTDOWN:
+				stdout.printf ("on_environment_cb: SHUTDOWN\n");
 				// TODO
 				break;
 			case Environment.Command.SET_PERFORMANCE_LEVEL:
+				stdout.printf ("on_environment_cb: SET_PERFORMANCE_LEVEL\n");
 				// TODO
 				break;
 			case Environment.Command.GET_SYSTEM_DIRECTORY:
@@ -88,62 +102,86 @@ class Engine : Object {
 				// TODO annoncer le changement d'une valeur
 				break;
 			case Environment.Command.SET_INPUT_DESCRIPTORS:
+				stdout.printf ("on_environment_cb: SET_INPUT_DESCRIPTORS\n");
 				// TODO
 				break;
 			case Environment.Command.SET_KEYBOARD_CALLBACK:
+				stdout.printf ("on_environment_cb: SET_KEYBOARD_CALLBACK\n");
 				// TODO
 				break;
 			case Environment.Command.SET_DISK_CONTROL_INTERFACE:
+				stdout.printf ("on_environment_cb: SET_DISK_CONTROL_INTERFACE\n");
 				// TODO
 				break;
 			case Environment.Command.SET_HW_RENDER:
+				stdout.printf ("on_environment_cb: SET_HW_RENDER\n");
 				// TODO
 				break;
 			case Environment.Command.GET_VARIABLE:
-				*(((char **) data)+1) = "";
-				// TODO
+				/* data is an unowned Variable *
+				 * Its key is the key that the core want to get back.
+				 * Its value must be set to the one stored in the variable handler.
+				 */
+				
+				Variable *variable = (Variable *) data;
+				string **variable_value = &(variable.value);
+				*variable_value = variable_handler[variable->key];
 				break;
+			
 			case Environment.Command.SET_VARIABLES:
-				var pairs = Environment.data_to_variable_array (data);
-				foreach (var pair in pairs) {
-					stdout.printf ("%s: %s\n", pair.key, pair.value);
-				}
-				// TODO
+				var variables = Environment.data_to_variable_array (data);
+				variable_handler.insert_multiple (variables);
 				break;
+			
 			case Environment.Command.GET_VARIABLE_UPDATE:
-				// TODO
+				*((bool *) data) = variable_changed;
+				variable_changed = false;
 				break;
+			
 			case Environment.Command.SET_SUPPORT_NO_GAME:
+				stdout.printf ("on_environment_cb: SET_SUPPORT_NO_GAME\n");
 				// TODO
 				break;
 			case Environment.Command.GET_LIBRETRO_PATH:
+				stdout.printf ("on_environment_cb: GET_LIBRETRO_PATH\n");
 				// TODO
 				break;
 			case Environment.Command.SET_AUDIO_CALLBACK:
+				stdout.printf ("on_environment_cb: SET_AUDIO_CALLBACK\n");
 				// TODO
 				break;
 			case Environment.Command.SET_FRAME_TIME_CALLBACK:
+				stdout.printf ("on_environment_cb: SET_FRAME_TIME_CALLBACK\n");
 				// TODO
 				break;
 			case Environment.Command.GET_RUMBLE_INTERFACE:
+				stdout.printf ("on_environment_cb: GET_RUMBLE_INTERFACE\n");
 				// TODO
 				break;
 			case Environment.Command.GET_INPUT_DEVICE_CAPABILITIES:
+				stdout.printf ("on_environment_cb: GET_INPUT_DEVICE_CAPABILITIES\n");
 				// TODO
 				break;
 			case Environment.Command.GET_SENSOR_INTERFACE:
+				stdout.printf ("on_environment_cb: GET_SENSOR_INTERFACE\n");
 				// TODO
 				break;
 			case Environment.Command.GET_CAMERA_INTERFACE:
+				stdout.printf ("on_environment_cb: GET_CAMERA_INTERFACE\n");
 				// TODO
 				break;
 			case Environment.Command.GET_LOG_INTERFACE:
-				((Log.Callback *) data)->log = (Log.Printf) Log.printf;
-				//*((void **) data) = null;
+				stdout.printf ("on_environment_cb: GET_LOG_INTERFACE\n");
+				//((Log.Callback *) data)->log = (Log.Printf) Log.printf;
+				*((void **) data) = null;
 				// TODO
 				break;
 			case Environment.Command.GET_PERF_INTERFACE:
+				stdout.printf ("on_environment_cb: GET_PERF_INTERFACE\n");
 				// TODO
+				break;
+			default:
+				stdout.printf ("on_environment_cb: unknown command: %d\n", cmd);
 				break;
 		}
 		return true;

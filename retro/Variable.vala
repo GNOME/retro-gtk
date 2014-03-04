@@ -23,7 +23,7 @@ public struct Variable {
 	public string value;
 }
 
-public struct Option {
+public class Option : Object {
 	public string key;
 	public string description;
 	public string[] values;
@@ -32,7 +32,7 @@ public struct Option {
 	public string current {
 		set {
 			if (value in values) {
-				_current = value;
+				_current = value.dup ();
 			}
 		}
 		get {
@@ -51,12 +51,12 @@ public struct Option {
 }
 
 public class VariableHandler: Object {
-	private HashTable<string,Option?> table;
+	private HashTable<string,Option> table;
 	
 	public signal void value_changed (string key);
 	
 	public VariableHandler () {
-		table = new HashTable<string,Option?> (str_hash, str_equal);
+		table = new HashTable<string,Option> (str_hash, str_equal);
 	}
 	
 	public void insert_multiple (Variable[] variables) {
@@ -66,7 +66,7 @@ public class VariableHandler: Object {
 	}
 	
 	public void insert (owned string key, owned Variable value) {
-		table.insert (key, Option (value));
+		table.insert (key, new Option (value));
 		value_changed (key);
 	}
 	
@@ -79,15 +79,19 @@ public class VariableHandler: Object {
 		return table.contains (key);
 	}
 	
-	public string lookup (string key) {
+	public unowned string lookup (string key) {
 		return table[key].current;
 	}
 	
-	public string[] lookup_values (string key) {
+	public unowned string lookup_description (string key) {
+		return table[key].description;
+	}
+	
+	public unowned string[] lookup_values (string key) {
 		return table[key].values;
 	}
 	
-	public new string @get (string key) {
+	public new unowned string @get (string key) {
 		return lookup (key);
 	}
 	
@@ -95,11 +99,11 @@ public class VariableHandler: Object {
 		set_option (key, value);
 	}
 	
-	public List<string> get_keys () {
+	public List<unowned string> get_keys () {
 		return table.get_keys ();
 	}
 	
-	public List<string> get_values () {
+	public List<unowned string> get_values () {
 		var list = new List<string> ();
 		
 		foreach (var key in get_keys ()) {

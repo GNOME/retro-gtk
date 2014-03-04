@@ -33,7 +33,7 @@ namespace Retro.Log {
 	
 	bool printf (Level level, string fmt, ...) {
 		var list = va_list();
-		stderr.printf (fmt, list);
+		stderr.printf ((string) level + ": " + fmt, list);
 		return true;
 	}
 }

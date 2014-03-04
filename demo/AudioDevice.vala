@@ -72,10 +72,10 @@ public class AudioDevice : GLib.Object {
 			//Stream stream = new Stream (context, "", spec);
 			stream = new Stream (context, "", spec);
 			stream.set_overflow_callback (() => {
-				print ("AudioDevice: stream overflow...\n");
+				//print ("AudioDevice: stream overflow...\n");
 			});
 			stream.set_underflow_callback (() => {
-				print ("AudioDevice: stream underflow...\n");
+				//print ("AudioDevice: stream underflow...\n");
 			});
 			
 			size_t fs = spec.frame_size ();
@@ -123,8 +123,6 @@ public class AudioDevice : GLib.Object {
 		if (stream != null) {
 			var buffer = (void *) data;
 			var bytes  =  sizeof(int16) * data.length;
-			
-			stdout.printf ("writing %lu / %lu\n", bytes, stream.writable_size ());
 			
 			stream.write (buffer, bytes);
 		}

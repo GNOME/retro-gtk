@@ -46,5 +46,14 @@ namespace Retro.Environment {
 		GET_LOG_INTERFACE             = 27,
 		GET_PERF_INTERFACE            = 28
 	}
+	
+	public static unowned Variable[] data_to_variable_array (void *data) {
+		unowned Variable[] array = (Variable[]) data;
+		
+		size_t i = 0;
+		for (i = 0 ; array[i].key != null && array[i].value != null ; i++);
+		
+		return array[0:i];
+	}
 }
 

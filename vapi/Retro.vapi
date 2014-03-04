@@ -586,12 +586,6 @@ struct SystemAvInfo {
 	public SystemTiming timing;
 }
 
-[CCode (cname = "struct retro_variable", has_destroy_function = 0)]
-struct Variable {
-	public string key;
-	public string value;
-}
-
 [CCode (cname = "struct retro_game_info", has_destroy_function = 0)]
 struct GameInfo {
 	[CCode (weak = 1)]

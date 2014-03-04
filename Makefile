@@ -11,6 +11,7 @@ RETRO_FILES= \
 	Core.vala \
 	Environment.vala \
 	Log.vala \
+	Variable.vala \
 	retro-core-extern.c \
 	$(NULL)
 
@@ -42,6 +43,7 @@ $(DEMO): $(RETRO_SRC) $(DEMO_SRC)
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
 		-g
+		
 
 clean:
 	rm -Rf $(OUT_DIR)

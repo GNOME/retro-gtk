@@ -13,12 +13,14 @@ RETRO_FILES= \
 	Log.vala \
 	Variable.vala \
 	retro-core-extern.c \
+	retro-environment-extern.c \
 	$(NULL)
 
 DEMO_FILES= \
 	Demo.vala \
 	Engine.vala \
 	Window.vala \
+	OptionsDialog.vala \
 	AudioDevice.vala \
 	lol.c \
 	$(NULL)
@@ -42,7 +44,7 @@ $(DEMO): $(RETRO_SRC) $(DEMO_SRC)
 	valac -b $(SRC_DIR) -d $(@D) \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
-		-g
+		--Xcc="-g"
 		
 
 clean:

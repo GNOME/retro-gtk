@@ -55,5 +55,7 @@ namespace Retro.Environment {
 		
 		return array[0:i];
 	}
+	
+	extern void get_variable (void *data, string value);
 }
 

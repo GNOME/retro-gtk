@@ -20,22 +20,26 @@ namespace Retro {
 
 class OptionsDialog : Gtk.Dialog {
 	private VariableHandler variables;
+	private Gtk.Grid grid;
 	
 	public OptionsDialog (VariableHandler variables) {
 		this.variables = variables;
 		
+		grid = new Gtk.Grid ();
+		
+		int i = 0;
 		foreach (var key in variables.get_keys ()) {
-			add_option (key);
+			add_option (key, i);
+			i++;
 		}
+		
+		get_content_area ().pack_start (grid);
 	}
 	
-	private void add_option (string key) {
+	private void add_option (string key, int row) {
 		var description = variables.lookup_description (key);
 		var values = variables.lookup_values (key);
 		var current = variables.lookup (key);
-		
-		var line = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-		line.pack_start (new Gtk.Label (description));
 		
 		var list_store = new Gtk.ListStore (1, typeof (string));
 		Gtk.TreeIter? iter = null;
@@ -46,7 +50,6 @@ class OptionsDialog : Gtk.Dialog {
 		}
 		
 		Gtk.ComboBox box = new Gtk.ComboBox.with_model (list_store);
-		line.pack_start (box);
 		
 		Gtk.CellRendererText renderer = new Gtk.CellRendererText ();
 		box.pack_start (renderer, true);
@@ -62,7 +65,10 @@ class OptionsDialog : Gtk.Dialog {
 			variables.set_option (key, (string) val);
 		});
 		
-		get_content_area ().pack_start (line);
+		// TODO set the combo's defaut value to the current one of the variable handler
+		
+		grid.attach (new Gtk.Label (description), 0, row, 1, 1);
+		grid.attach (box, 1, row, 1, 1);
 	}
 }
 

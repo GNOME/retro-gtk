@@ -104,6 +104,10 @@ class Engine : Object {
 				// TODO
 				break;
 			case Environment.Command.SET_VARIABLES:
+				var pairs = Environment.data_to_variable_array (data);
+				foreach (var pair in pairs) {
+					stdout.printf ("%s: %s\n", pair.key, pair.value);
+				}
 				// TODO
 				break;
 			case Environment.Command.GET_VARIABLE_UPDATE:

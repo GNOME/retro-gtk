@@ -10,6 +10,7 @@ DEMO = $(OUT_DIR)/demo
 RETRO_FILES= \
 	Core.vala \
 	Environment.vala \
+	Log.vala \
 	retro-core-extern.c \
 	$(NULL)
 

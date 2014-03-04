@@ -285,26 +285,6 @@ namespace Video {
 	}
 }
 
-// Log
-
-namespace Log {
-	[CCode (cname = "enum retro_log_level", cprefix = "RETRO_LOG_")]
-	enum Level {
-		DEBUG,
-		INFO,
-		WARN,
-		ERROR
-	}
-	
-	[CCode (cname = "retro_core_environment_cb_t")]
-	delegate bool Printf (Level level, string fmt, ...);
-	
-	[CCode (cname = "struct retro_log_callback")]
-	struct Callback {
-		Printf log;
-	}
-}
-
 // Performance
 
 namespace Perf {

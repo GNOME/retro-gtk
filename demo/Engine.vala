@@ -119,10 +119,9 @@ class Engine : Core {
 				 * Its key is the key that the core want to get back.
 				 * Its value must be set to the one stored in the variable handler.
 				 */
+				unowned Variable *variable = (Variable *) data;
+				Retro.Environment.get_variable (data, variable_handler[variable->key]);
 				
-				Variable *variable = (Variable *) data;
-				string **variable_value = &(variable.value);
-				*variable_value = variable_handler[variable->key];
 				break;
 			
 			case Retro.Environment.Command.SET_VARIABLES:

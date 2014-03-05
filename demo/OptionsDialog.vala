@@ -26,6 +26,12 @@ class OptionsDialog : Gtk.Dialog {
 		this.variables = variables;
 		
 		grid = new Gtk.Grid ();
+		grid.margin_left = 12;
+		grid.margin_right = 12;
+		grid.margin_top = 6;
+		grid.margin_bottom = 6;
+		grid.column_spacing = 12;
+		grid.row_spacing = 6;
 		
 		int i = 0;
 		foreach (var key in variables.get_keys ()) {

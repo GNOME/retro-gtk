@@ -18,7 +18,7 @@
 
 namespace Retro {
 
-class Core {
+public class Core : Object, Runnable {
 	// Callbacks for the libretro module
 	
 	public delegate bool   Environment      (Retro.Environment.Command cmd, void *data);

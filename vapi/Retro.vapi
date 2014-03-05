@@ -3,10 +3,10 @@
 namespace Retro {
 
 [CCode (cname = "RETRO_API_VERSION")]
-const uint api_version;
+public const uint api_version;
 
 [CCode (cname = "unsigned")]
-enum Device {
+public enum Device {
 	MASK,
 	NONE,
 	JOYPAD,
@@ -23,13 +23,13 @@ enum Device {
 }
 
 [CCode (cname = "unsigned")]
-enum DeviceIndex {
+public enum DeviceIndex {
 	ANALOG_LEFT,
 	ANALOG_RIGHT
 }
 
 [CCode (cname = "unsigned", cprefix = "RETRO_DEVICE_ID_")]
-enum DeviceID {
+public enum DeviceID {
 	JOYPAD_B,
 	JOYPAD_Y,
 	JOYPAD_SELECT,
@@ -73,13 +73,13 @@ enum DeviceID {
 }
 
 [CCode (cname = "unsigned")]
-enum Region {
+public enum Region {
 	NTSC,
 	PAL
 }
 
 [CCode (cname = "unsigned")]
-enum Memory {
+public enum Memory {
 	MASK,
 	SAVE_RAM,
 	RTC,
@@ -94,7 +94,7 @@ enum Memory {
 }
 
 [CCode (cname = "unsigned")]
-enum GameType {
+public enum GameType {
 	BSX,
 	BSX_SLOTTED,
 	SUFAMI_TURBO,
@@ -102,7 +102,7 @@ enum GameType {
 }
 
 [CCode (cname = "unsigned", cprefix = "RETROK_")]
-enum Key {
+public enum Key {
 	UNKNOWN,
 	FIRST,
 	BACKSPACE,
@@ -259,7 +259,7 @@ enum Key {
 }
 
 [CCode (cname = "uint16_t", cprefix = "RETROKMOD_")]
-enum ModifierKey {
+public enum ModifierKey {
 	NONE,
 	
 	SHIFT,
@@ -276,7 +276,7 @@ enum ModifierKey {
 
 namespace Video {
 	[CCode (cname = "enum retro_pixel_format", cprefix = "RETRO_PIXEL_FORMAT_")]
-	enum PixelFormat {
+	public enum PixelFormat {
 		[CCode (cname = "RETRO_PIXEL_FORMAT_0RGB1555")]
 		ORGB1555,
 		XRGB8888,
@@ -289,7 +289,7 @@ namespace Video {
 
 namespace Perf {
 	[CCode (cname = "uint64_t", cprefix = "RETRO_SIMD_")]
-	enum SIMD {
+	public enum SIMD {
 		SSE,
 		SSE2,
 		VMX,
@@ -301,13 +301,13 @@ namespace Perf {
 	}
 	
 	[CCode (cname = "retro_perf_tick_t", simple_type = 1)]
-	struct tick_t {}
+	public struct tick_t {}
 	
 	[CCode (cname = "retro_time_t", simple_type = 1)]
-	struct time_t {}
+	public struct time_t {}
 	
 	[CCode (cname = "struct retro_perf_counter")]
-	struct Counter {
+	public struct Counter {
 		const string ident;
 		tick_t start;
 		tick_t total;
@@ -317,28 +317,28 @@ namespace Perf {
 	}
 	
 	[CCode (cname = "retro_perf_get_time_usec_t")]
-	delegate Retro.Perf.time_t GetTimeUsec ();
+	public delegate Retro.Perf.time_t GetTimeUsec ();
 	
 	[CCode (cname = "retro_perf_get_counter_t")]
-	delegate tick_t GetCounter ();
+	public delegate tick_t GetCounter ();
 	
 	[CCode (cname = "retro_get_cpu_features_t")]
-	delegate uint64 GetCpuFeatures ();
+	public delegate uint64 GetCpuFeatures ();
 	
 	[CCode (cname = "retro_perf_log_t")]
-	delegate void Log ();
+	public delegate void Log ();
 	
 	[CCode (cname = "retro_perf_register_t")]
-	delegate void Register (Counter counter);
+	public delegate void Register (Counter counter);
 	
 	[CCode (cname = "retro_perf_start_t")]
-	delegate void Start (Counter counter);
+	public delegate void Start (Counter counter);
 	
 	[CCode (cname = "retro_perf_stop_t")]
-	delegate void Stop (Counter counter);
+	public delegate void Stop (Counter counter);
 	
 	[CCode (cname = "struct retro_perf_callback")]
-	struct Callback {
+	public struct Callback {
 		GetTimeUsec    get_time_usec;
 		GetCpuFeatures get_cpu_features;
 		GetCounter     get_perf_counter;
@@ -352,44 +352,44 @@ namespace Perf {
 
 namespace Sensor {
 	[CCode (cname = "unsigned", cprefix = "RETRO_SENSOR_")]
-	enum Action {
+	public enum Action {
 		ACCELEROMETER_ENABLE,
 		ACCELEROMETER_DISABLE
 	}
 	
 	[CCode (cname = "retro_set_sensor_state_t")]
-	delegate bool SetState (uint port, Action action, uint rate);
+	public delegate bool SetState (uint port, Action action, uint rate);
 	
 	[CCode (cname = "struct retro_sensor_interface")]
-	struct Interface {
+	public struct Interface {
 		SetState set_sensor_state;
 	}
 }
 
 namespace Camera {
 	[CCode (cname = "unsigned")]
-	enum Buffer {
+	public enum Buffer {
 		OPENGL_TEXTURE,
 		RAW_FRAMEBUFFER
 	}
 	
 	[CCode (cname = "retro_camera_start_t")]
-	delegate bool Start ();
+	public delegate bool Start ();
 	
 	[CCode (cname = "retro_camera_stop_t")]
-	delegate void Stop ();
+	public delegate void Stop ();
 	
 	[CCode (cname = "retro_camera_lifetime_status_t")]
-	delegate void LifetimeStatus ();
+	public delegate void LifetimeStatus ();
 	
 	[CCode (cname = "retro_camera_frame_raw_framebuffer_t")]
-	delegate void FrameRawFramebuffer (uint32[] buffer, uint width, uint height, size_t pitch);
+	public delegate void FrameRawFramebuffer (uint32[] buffer, uint width, uint height, size_t pitch);
 	
 	[CCode (cname = "retro_camera_frame_opengl_texture_t")]
-	delegate void FrameOpenglTexture (uint texture_id, uint texture_target, float[] affine);
+	public delegate void FrameOpenglTexture (uint texture_id, uint texture_target, float[] affine);
 	
 	[CCode (cname = "struct retro_camera_callback")]
-	struct Callback {
+	public struct Callback {
 		uint64              caps;
 		uint                width;
 		uint                height;
@@ -404,29 +404,29 @@ namespace Camera {
 
 namespace Rumble {
 	[CCode (cname = "unsigned")]
-	enum Effect {
+	public enum Effect {
 		STRONG,
 		WEAK
 	}
 	
 	[CCode (cname = "retro_set_rumble_state_t")]
-	delegate bool SetState (uint port, Effect effect, uint16 strength);
+	public delegate bool SetState (uint port, Effect effect, uint16 strength);
 	
 	[CCode (cname = "struct retro_rumble_interface")]
-	struct Interface {
+	public struct Interface {
 		SetState set_rumble_state;
 	}
 }
 
 namespace Audio {
 	[CCode (cname = "retro_audio_callback_t")]
-	delegate void AudioCallback ();
+	public delegate void AudioCallback ();
 	
 	[CCode (cname = "retro_audio_set_state_callback_t")]
-	delegate void SetStateCallback (bool enabled);
+	public delegate void SetStateCallback (bool enabled);
 	
 	[CCode (cname = "struct retro_rumble_interface")]
-	struct Callback {
+	public struct Callback {
 		AudioCallback    callback;
 		SetStateCallback set_state;
 	} 
@@ -434,39 +434,39 @@ namespace Audio {
 
 namespace FrameTime {
 	[CCode (cname = "retro_usec_t", simple_type = 1)]
-	struct Usec {}
+	public struct Usec {}
 	
 	[CCode (cname = "retro_frame_time_callback_t")]
-	delegate void FrameTimeCallback (Usec usec);
+	public delegate void FrameTimeCallback (Usec usec);
 	
 	[CCode (cname = "struct retro_frame_time_callback")]
-	struct Callback {
+	public struct Callback {
 		FrameTimeCallback callback;
 		Usec              reference;
 	} 
 }
 
 [CCode (cname = "uintptr_t", simple_type = 1)]
-struct uintptr_t {}
+public struct uintptr_t {}
 
 namespace Hardware {
 	[CCode (cname = "RETRO_HW_FRAME_BUFFER_VALID")]
-	const uintptr_t frame_buffer_valid;
+	public const uintptr_t frame_buffer_valid;
 	
 	[CCode (cname = "retro_hw_context_reset_t")]
-	delegate void ContextReset ();
+	public delegate void ContextReset ();
 	
 	[CCode (cname = "retro_hw_get_current_framebuffer_t")]
-	delegate uintptr_t GetCurrentFramebuffer ();
+	public delegate uintptr_t GetCurrentFramebuffer ();
 	
 	[CCode (cname = "retro_proc_address_t")]
-	delegate void ProcAdress ();
+	public delegate void ProcAdress ();
 	
 	[CCode (cname = "retro_hw_get_proc_address_t")]
-	delegate ProcAdress GetProcAdress (string sym);
+	public delegate ProcAdress GetProcAdress (string sym);
 	
 	[CCode (cname = "unsigned", cprefix = "RETRO_HW_CONTEXT_")]
-	enum ContexType {
+	public enum ContexType {
 		NONE,
 		OPENGL,
 		OPENGLES2,
@@ -475,7 +475,7 @@ namespace Hardware {
 	}
 	
 	[CCode (cname = "struct retro_hw_render_callback")]
-	struct RenderCallback {
+	public struct RenderCallback {
 		ContexType            context_type;
 		ContextReset          context_reset;
 		GetCurrentFramebuffer get_current_framebuffer;
@@ -493,38 +493,38 @@ namespace Hardware {
 
 namespace Keyboard {
 	[CCode (cname = "retro_keyboard_event_t")]
-	delegate void Event (bool down, Key keycode, uint32 character, ModifierKey key_modifiers);
+	public delegate void Event (bool down, Key keycode, uint32 character, ModifierKey key_modifiers);
 	
 	[CCode (cname = "struct retro_keyboard_callback")]
-	struct Callback {
+	public struct Callback {
 		Event callback;
 	}
 }
 
 namespace Disk {
 	[CCode (cname = "retro_set_eject_state_t")]
-	delegate bool SetEjectState (bool ejected);
+	public delegate bool SetEjectState (bool ejected);
 	
 	[CCode (cname = "retro_get_eject_state_t")]
-	delegate bool GetEjectState ();
+	public delegate bool GetEjectState ();
 	
 	[CCode (cname = "retro_get_image_index_t")]
-	delegate uint GetImageIndex ();
+	public delegate uint GetImageIndex ();
 	
 	[CCode (cname = "retro_set_image_index_t")]
-	delegate bool SetImageIndex (uint index);
+	public delegate bool SetImageIndex (uint index);
 	
 	[CCode (cname = "retro_get_num_images_t")]
-	delegate uint GetNumImages ();
+	public delegate uint GetNumImages ();
 	
 	[CCode (cname = "retro_replace_image_index_t")]
-	delegate bool ReplaceImageIndex (uint index, GameInfo info);
+	public delegate bool ReplaceImageIndex (uint index, GameInfo info);
 	
 	[CCode (cname = "retro_add_image_index_t")]
-	delegate bool AddImageIndex ();
+	public delegate bool AddImageIndex ();
 	
 	[CCode (cname = "struct retro_disk_control_callback")]
-	struct Callback {
+	public struct Callback {
 		SetEjectState     set_eject_state;
 		GetEjectState     get_eject_state;
 		GetImageIndex     get_image_index;
@@ -536,13 +536,13 @@ namespace Disk {
 }
 
 [CCode (cname = "struct retro_message")]
-struct Message {
+public struct Message {
    const string msg;
    uint         frames;
 }
 
 [CCode (cname = "struct retro_input_descriptor")]
-struct InputDescriptor {
+public struct InputDescriptor {
    uint port;
    Device      device;
    DeviceIndex index;
@@ -552,7 +552,7 @@ struct InputDescriptor {
 }
 
 [CCode (cname = "struct retro_game_geometry", has_destroy_function = 0)]
-struct GameGeometry {
+public struct GameGeometry {
 	public uint  base_width;
 	public uint  base_height;
 	public uint  max_width;
@@ -561,19 +561,19 @@ struct GameGeometry {
 }
 
 [CCode (cname = "struct retro_system_timing", has_destroy_function = 0)]
-struct SystemTiming {
+public struct SystemTiming {
 	public double fps;
 	public double sample_rate;
 }
 
 [CCode (cname = "struct retro_system_av_info", has_destroy_function = 0)]
-struct SystemAvInfo {
+public struct SystemAvInfo {
 	public GameGeometry geometry;
 	public SystemTiming timing;
 }
 
 [CCode (cname = "struct retro_game_info", has_destroy_function = 0)]
-struct GameInfo {
+public struct GameInfo {
 	[CCode (weak = 1)]
 	public const string path;
 	

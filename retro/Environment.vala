@@ -17,7 +17,7 @@
  */
 
 namespace Retro.Environment {
-	enum Command {
+	public enum Command {
 		EXPERIMENTAL_MASK             = 0x10000,
 		PRIVATE_MASK                  = 0x20000,
 		SET_ROTATION                  = 1,

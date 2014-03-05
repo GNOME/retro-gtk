@@ -18,7 +18,7 @@
 
 namespace Retro {
 
-struct SystemInfo {
+public struct SystemInfo {
 	public string library_name;
 	public string library_version;
 	public string valid_extensions;

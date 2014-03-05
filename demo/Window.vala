@@ -65,14 +65,21 @@ class Window : Gtk.Window {
 			var pbx2 = pb.scale_simple (pb.get_width () * 2, pb.get_height () * 2, Gdk.InterpType.NEAREST);
 			game_screen.set_from_pixbuf (pbx2);
 		});
+		
+		var si = engine.get_system_info ();
+		
+		header.set_title (si.library_name);
 	}
 	
 	public void set_game (string path) {
+		var si = engine.get_system_info ();
+		
 		GameInfo game;
-		//set_game_info (out game, path, engine.core.need_fullpath);
-		set_game_info (out game, path, false);
+		set_game_info (out game, path, si.need_fullpath);
 		
 		bool loaded = engine.load_game (game);
+		
+		header.set_subtitle (File.new_for_path (path).get_basename ());
 	}
 	
 	public void start () {

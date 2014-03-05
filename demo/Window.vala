@@ -131,7 +131,10 @@ class Window : Gtk.Window {
 	
 	public void set_engine (string path) {
 		stdout.printf ("set_engine (%s)\n", path);
-		runner.stop ();
+		if (runner != null) {
+			runner.stop ();
+			runner = null;
+		}
 		
 		engine = new Engine(path);
 		engine.init ();

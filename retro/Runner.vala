@@ -54,9 +54,8 @@ public class Runner : Object {
 	public void stop () {
 		if (loop != null) {
 			Source.remove (loop);
+			loop = null;
 		}
-		
-		loop = null;
 	}
 	
 	private bool run () {

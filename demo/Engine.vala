@@ -198,7 +198,10 @@ class Engine : Core, Runnable {
 	}
 	
 	private size_t on_audio_sample_batch_cb (int16[] data) {
-		audio_dev.play (data);
+		//audio_dev.play (data);
+		/* FIXME switching from genesis plus to snes9x causes the
+		 * main loop of the audio device to crash the program,
+		 */
 		return 0;
 	}
 	

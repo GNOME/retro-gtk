@@ -18,7 +18,7 @@
 
 namespace Retro {
 
-class Engine : Core {
+class Engine : Core, Runnable {
 	public Gdk.PixbufRotation rotation { private set; get; default = Gdk.PixbufRotation.NONE; }
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
@@ -57,9 +57,10 @@ class Engine : Core {
 		input_poll_cb         = on_input_poll_cb;
 		input_state_cb        = on_input_state_cb;
 		
-		get_system_av_info (out av_info);
+		av_info = get_system_av_info ();
 		
 		stdout.printf ("sample_rate: %lf\n", av_info.timing.sample_rate);
+		stdout.printf ("fps: %lf\n", av_info.timing.fps);
 		
 		audio_dev = new AudioDevice ((uint32) av_info.timing.sample_rate);
 	}
@@ -208,6 +209,12 @@ class Engine : Core {
 	private int16 on_input_state_cb (uint port, uint device, uint index, uint id) {
 		//input_state (port, device, index, id);
 		return 0; // TODO
+	}
+	
+	public double get_iterations_per_second () {
+		var info = get_system_av_info ();
+		
+		return info.timing.fps;
 	}
 }
 

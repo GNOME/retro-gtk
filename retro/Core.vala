@@ -99,6 +99,8 @@ public class Core : Object {
 	// Helper C methods: end
 	
 	private Module module;
+	private bool is_init { set; get; default = false; }
+	private bool game_loaded { set; get; default = false; }
 	
 	// Module's functions
 	
@@ -284,17 +286,20 @@ public class Core : Object {
 	}
 	
 	~Core () {
-		deinit ();
+		if (game_loaded) unload_game ();
+		if (is_init) deinit ();
 	}
 	
 	public void init () {
 		set_global_self ();
 		_init ();
+		is_init = true;
 	}
 	
-	public void deinit () {
+	private void deinit () {
 		set_global_self ();
 		_deinit ();
+		is_init = false;
 	}
 	
 	public uint api_version () {
@@ -359,16 +364,22 @@ public class Core : Object {
 	}
 	
 	public bool load_game (GameInfo game) {
+		if (game_loaded) unload_game ();
+		
 		set_global_self ();
-		return _load_game (game);
+		game_loaded = _load_game (game);
+		return game_loaded;
 	}
 	
 	public bool load_game_special (GameType game_type, GameInfo info, size_t num_info) {
+		if (game_loaded) unload_game ();
+		
 		set_global_self ();
-		return _load_game_special (game_type, info, num_info);
+		game_loaded = _load_game_special (game_type, info, num_info);
+		return game_loaded;
 	}
 	
-	public void unload_game () {
+	private void unload_game () {
 		set_global_self ();
 		_unload_game ();
 	}

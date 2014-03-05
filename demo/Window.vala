@@ -31,6 +31,8 @@ class Window : Gtk.Window {
 	private Gtk.Button stop_button;
 	private Gtk.Button properties_button;
 	
+	private AudioDevice audio_dev;
+	
 	private Engine engine;
 	private Runner runner;
 	
@@ -75,6 +77,8 @@ class Window : Gtk.Window {
 		pause_button.clicked.connect (on_pause_button_clicked);
 		stop_button.clicked.connect (on_stop_button_clicked);
 		properties_button.clicked.connect (on_properties_button_clicked);
+		
+		audio_dev = new AudioDevice ();
 	}
 	
 	void set_titles () {
@@ -142,6 +146,11 @@ class Window : Gtk.Window {
 		engine.video_refresh.connect ((pb) => {
 			var pbx2 = pb.scale_simple (pb.get_width () * 2, pb.get_height () * 2, Gdk.InterpType.NEAREST);
 			game_screen.set_from_pixbuf (pbx2);
+		});
+		
+		engine.audio_refresh.connect ((audio, rate) => {
+			audio_dev.play (audio.get_samples ());
+			// TODO add a way to set the sample rate of the audio device
 		});
 		
 		runner = new Runner (engine);

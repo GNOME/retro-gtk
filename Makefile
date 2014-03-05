@@ -16,6 +16,7 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	Runnable.vala \
 	Runner.vala \
+	AudioSamples.vala \
 	retro-core-extern.c \
 	retro-environment-extern.c \
 	$(NULL)

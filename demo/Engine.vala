@@ -28,8 +28,6 @@ class Engine : Core, Runnable {
 	private bool variable_changed;
 	public VariableHandler variable_handler;
 	
-	private AudioDevice audio_dev;
-	
 	private SystemAvInfo av_info;
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
@@ -60,8 +58,6 @@ class Engine : Core, Runnable {
 		
 		stdout.printf ("sample_rate: %lf\n", av_info.timing.sample_rate);
 		stdout.printf ("fps: %lf\n", av_info.timing.fps);
-		
-		audio_dev = new AudioDevice ((uint32) av_info.timing.sample_rate);
 	}
 	
 	private bool on_environment_cb (Retro.Environment.Command cmd, void *data) {
@@ -199,10 +195,6 @@ class Engine : Core, Runnable {
 	private size_t on_audio_sample_batch_cb (int16[] data, size_t frames) {
 		var audio_samples = new AudioSamples (data);
 		audio_refresh (audio_samples, av_info.timing.sample_rate);
-		//audio_dev.play (data);
-		/* FIXME switching from genesis plus to snes9x causes the
-		 * main loop of the audio device to crash the program,
-		 */
 		return 0;
 	}
 	

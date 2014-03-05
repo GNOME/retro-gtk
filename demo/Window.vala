@@ -22,6 +22,7 @@ namespace Retro {
 
 class Window : Gtk.Window {
 	private Gtk.HeaderBar header;
+	private KeyboardHandler kb_handler;
 	private Gtk.Image game_screen;
 	
 	private Gtk.Button open_core_button;
@@ -40,6 +41,7 @@ class Window : Gtk.Window {
 		engine = null;
 		
 		header = new Gtk.HeaderBar ();
+		kb_handler = new KeyboardHandler ();
 		game_screen = new Gtk.Image ();
 		
 		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
@@ -49,18 +51,9 @@ class Window : Gtk.Window {
 		stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
-		header.show ();
-		game_screen.show ();
-		
-		open_core_button.show ();
-		open_game_button.show ();
-		start_button.show ();
-		pause_button.show ();
-		stop_button.show ();
-		properties_button.show ();
-		
 		set_titlebar (header);
-		add (game_screen);
+		add (kb_handler);
+		kb_handler.add (game_screen);
 		
 		header.pack_start (open_core_button);
 		header.pack_start (open_game_button);
@@ -79,6 +72,18 @@ class Window : Gtk.Window {
 		properties_button.clicked.connect (on_properties_button_clicked);
 		
 		audio_dev = new AudioDevice ();
+		
+		header.show ();
+		kb_handler.show ();
+		game_screen.show ();
+		
+		open_core_button.show ();
+		open_game_button.show ();
+		start_button.show ();
+		pause_button.show ();
+		stop_button.show ();
+		properties_button.show ();
+		
 	}
 	
 	void set_titles () {

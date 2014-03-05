@@ -33,11 +33,6 @@ class Demo : Object {
 			Gtk.main_quit();
 		});
 		
-		w.set_engine (argv[1]);
-		w.set_game (argv[2]);
-		
-		w.start ();
-		
 		Gtk.main ();
 		
 		return 0;

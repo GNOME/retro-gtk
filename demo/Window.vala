@@ -16,40 +16,113 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+using Gtk;
+
 namespace Retro {
 
 class Window : Gtk.Window {
 	private Gtk.HeaderBar header;
 	private Gtk.Image game_screen;
+	
+	private Gtk.Button open_core_button;
+	private Gtk.Button open_game_button;
+	private Gtk.Button start_button;
+	private Gtk.Button pause_button;
+	private Gtk.Button stop_button;
 	private Gtk.Button properties_button;
 	
 	private Engine engine;
-	
-	private uint loop;
+	private Runner runner;
 	
 	public Window () {
 		engine = null;
 		
 		header = new Gtk.HeaderBar ();
 		game_screen = new Gtk.Image ();
+		
+		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		start_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		pause_button = new Gtk.Button.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
 		header.show ();
 		game_screen.show ();
+		
+		open_core_button.show ();
+		open_game_button.show ();
+		start_button.show ();
+		pause_button.show ();
+		stop_button.show ();
 		properties_button.show ();
 		
 		set_titlebar (header);
 		add (game_screen);
 		
+		header.pack_start (open_core_button);
+		header.pack_start (open_game_button);
+		header.pack_start (start_button);
+		header.pack_start (pause_button);
+		header.pack_start (stop_button);
 		header.pack_end (properties_button);
 		
 		header.set_show_close_button (true);
 		
+		open_core_button.clicked.connect (on_open_core_button_clicked);
+		open_game_button.clicked.connect (on_open_game_button_clicked);
+		start_button.clicked.connect (on_start_button_clicked);
+		pause_button.clicked.connect (on_pause_button_clicked);
+		stop_button.clicked.connect (on_stop_button_clicked);
 		properties_button.clicked.connect (on_properties_button_clicked);
 	}
 	
-	~Window () {
-		Source.remove (loop);
+	void set_titles () {
+		if (state >= State.HAS_CORE) {
+			var si = engine.get_system_info ();
+			header.set_title (si.library_name);
+		}
+		/*
+		if (state >= State.HAS_GAME) {
+			header.set_subtitle (si.library_name);
+		}*/
+	}
+	
+	void on_open_core_button_clicked (Gtk.Button button) {
+		print ("on_open_core_button_clicked\n");
+		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
+		
+		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
+			set_engine (dialog.get_filename ());
+		}
+		
+		dialog.destroy ();
+	}
+	
+	void on_open_game_button_clicked (Gtk.Button button) {
+		print ("on_open_game_button_clicked\n");
+		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
+		
+		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
+			set_game (dialog.get_filename ());
+		}
+		
+		dialog.destroy ();
+	}
+	
+	void on_start_button_clicked (Gtk.Button button) {
+		print ("on_start_button_clicked\n");
+		runner.start ();
+	}
+	
+	void on_pause_button_clicked (Gtk.Button button) {
+		print ("on_pause_button_clicked\n");
+		//runner.start ();
+	}
+	
+	void on_stop_button_clicked (Gtk.Button button) {
+		print ("on_stop_button_clicked\n");
+		runner.stop ();
 	}
 	
 	void on_properties_button_clicked (Gtk.Button button) {
@@ -58,6 +131,9 @@ class Window : Gtk.Window {
 	}
 	
 	public void set_engine (string path) {
+		stdout.printf ("set_engine (%s)\n", path);
+		runner.stop ();
+		
 		engine = new Engine(path);
 		engine.init ();
 		
@@ -66,12 +142,13 @@ class Window : Gtk.Window {
 			game_screen.set_from_pixbuf (pbx2);
 		});
 		
-		var si = engine.get_system_info ();
-		
-		header.set_title (si.library_name);
+		runner = new Runner (engine);
+		open_game_button.show ();
+		set_titles ();
 	}
 	
 	public void set_game (string path) {
+		stdout.printf ("set_game (%s)\n", path);
 		var si = engine.get_system_info ();
 		
 		GameInfo game;
@@ -80,19 +157,6 @@ class Window : Gtk.Window {
 		bool loaded = engine.load_game (game);
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
-	}
-	
-	public void start () {
-		loop = Timeout.add (100/6, run);
-	}
-	
-	public bool run () {
-		if (engine != null) {
-			engine.run ();
-			return true;
-		}
-		
-		return false;
 	}
 }
 

@@ -20,6 +20,7 @@ namespace Retro {
 
 public interface Runnable : Object {
 	public abstract void run ();
+	public abstract double get_iterations_per_second ();
 }
 
 }

@@ -18,7 +18,7 @@
 
 namespace Retro {
 
-public class Core : Object, Runnable {
+public class Core : Object {
 	// Callbacks for the libretro module
 	
 	public delegate bool   Environment      (Retro.Environment.Command cmd, void *data);
@@ -310,9 +310,12 @@ public class Core : Object, Runnable {
 		return info;
 	}
 	
-	public void get_system_av_info (out unowned SystemAvInfo info) {
+	public SystemAvInfo get_system_av_info () {
 		set_global_self ();
+		
+		SystemAvInfo info;
 		_get_system_av_info (out info);
+		return info;
 	}
 	
 	public void set_controller_port_device (uint port, Device device) {

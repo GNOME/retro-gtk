@@ -50,17 +50,25 @@ class OptionsDialog : Gtk.Dialog {
 		var list_store = new Gtk.ListStore (1, typeof (string));
 		Gtk.TreeIter? iter = null;
 		
+		int current_i = 0;
+		
+		int i = 0;
 		foreach (var option in values) {
+			if (option == current) current_i = i;
+			
 			list_store.append (out iter);
 			list_store.set (iter, 0, option);
+			i++;
 		}
 		
-		Gtk.ComboBox box = new Gtk.ComboBox.with_model (list_store);
+		var box = new Gtk.ComboBox.with_model (list_store);
 		
-		Gtk.CellRendererText renderer = new Gtk.CellRendererText ();
+		var renderer = new Gtk.CellRendererText ();
 		box.pack_start (renderer, true);
 		box.add_attribute (renderer, "text", 0);
+		
 		box.active = 0;
+		box.set_active (current_i);
 		
 		box.changed.connect (() => {
 			Value val;
@@ -71,7 +79,6 @@ class OptionsDialog : Gtk.Dialog {
 			variables.set_option (key, (string) val);
 		});
 		
-		// TODO set the combo's defaut value to the current one of the variable handler
 		
 		grid.attach (new Gtk.Label (description), 0, row, 1, 1);
 		grid.attach (box, 1, row, 1, 1);

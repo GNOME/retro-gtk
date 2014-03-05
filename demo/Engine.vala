@@ -32,10 +32,9 @@ class Engine : Core, Runnable {
 	
 	private SystemAvInfo av_info;
 	
-	public signal void   video_refresh         (Gdk.Pixbuf pixbuf);
-	//public signal void   audio_sample       (int16 left, int16 right);
-	//public signal size_t audio_sample_batch (int16 *data, size_t frames);
-	public signal void   input_poll         ();
+	public signal void video_refresh         (Gdk.Pixbuf pixbuf);
+	public signal void audio_refresh (AudioSamples samples);
+	public signal void input_poll         ();
 	//public signal int16  input_state        (uint port, uint device, uint index, uint id);
 	
 	public signal Gdk.PixbufRotation rotation_changed ();
@@ -193,11 +192,13 @@ class Engine : Core, Runnable {
 	}
 	
 	private void on_audio_sample_cb (int16 left, int16 right) {
-		stdout.printf ("TODO on_audio_sample_cb: %d, %d\n", left, right);
-		// TODO
+		var audio_samples = new AudioSamples.from_sample (left, right);
+		audio_refresh (audio_samples);
 	}
 	
-	private size_t on_audio_sample_batch_cb (int16[] data) {
+	private size_t on_audio_sample_batch_cb (int16[] data, size_t frames) {
+		var audio_samples = new AudioSamples (data);
+		audio_refresh (audio_samples);
 		//audio_dev.play (data);
 		/* FIXME switching from genesis plus to snes9x causes the
 		 * main loop of the audio device to crash the program,

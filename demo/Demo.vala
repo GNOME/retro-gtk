@@ -23,8 +23,6 @@ extern void set_game_info (out GameInfo game, string path, bool need_fullpath);
 
 class Demo : Object {
 	public static int main (string[] argv) {
-		if (argv.length < 3) return 1;
-		
 		Gtk.init (ref argv);
 		
 		var w = new Retro.Window ();
@@ -32,6 +30,11 @@ class Demo : Object {
 		w.destroy.connect (()=>{
 			Gtk.main_quit();
 		});
+		
+		
+		if (argv.length >= 2) w.set_engine (argv[1]);
+		
+		if (argv.length >= 3) w.set_game (argv[2]);
 		
 		Gtk.main ();
 		

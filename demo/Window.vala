@@ -78,10 +78,9 @@ class Window : Gtk.Window {
 	}
 	
 	void set_titles () {
-		if (state >= State.HAS_CORE) {
-			var si = engine.get_system_info ();
-			header.set_title (si.library_name);
-		}
+		var si = engine.get_system_info ();
+		header.set_title (si.library_name);
+		
 		/*
 		if (state >= State.HAS_GAME) {
 			header.set_subtitle (si.library_name);

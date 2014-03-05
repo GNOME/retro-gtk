@@ -1,4 +1,4 @@
-/* SystemInfo.vala  Get informations from a Core.
+/* SystemAvInfo.vala  Get AV informations from a Core.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,22 @@
 
 namespace Retro {
 
-public struct SystemInfo {
-	public string library_name;
-	public string library_version;
-	public string valid_extensions;
+public struct GameGeometry {
+	public uint  base_width;
+	public uint  base_height;
+	public uint  max_width;
+	public uint  max_height;
+	public float aspect_ratio;
+}
 
-	public bool   need_fullpath;
-	public bool   block_extract;
+public struct SystemTiming {
+	public double fps;
+	public double sample_rate;
+}
+
+public struct SystemAvInfo {
+	public GameGeometry geometry;
+	public SystemTiming timing;
 }
 
 }

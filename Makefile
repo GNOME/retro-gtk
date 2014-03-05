@@ -13,6 +13,7 @@ RETRO_FILES= \
 	Log.vala \
 	Variable.vala \
 	SystemInfo.vala \
+	SystemAvInfo.vala \
 	Runnable.vala \
 	Runner.vala \
 	retro-core-extern.c \

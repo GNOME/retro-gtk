@@ -551,27 +551,6 @@ public struct InputDescriptor {
    const string description;
 }
 
-[CCode (cname = "struct retro_game_geometry", has_destroy_function = 0)]
-public struct GameGeometry {
-	public uint  base_width;
-	public uint  base_height;
-	public uint  max_width;
-	public uint  max_height;
-	public float aspect_ratio;
-}
-
-[CCode (cname = "struct retro_system_timing", has_destroy_function = 0)]
-public struct SystemTiming {
-	public double fps;
-	public double sample_rate;
-}
-
-[CCode (cname = "struct retro_system_av_info", has_destroy_function = 0)]
-public struct SystemAvInfo {
-	public GameGeometry geometry;
-	public SystemTiming timing;
-}
-
 [CCode (cname = "struct retro_game_info", has_destroy_function = 0)]
 public struct GameInfo {
 	[CCode (weak = 1)]

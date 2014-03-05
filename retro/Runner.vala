@@ -45,7 +45,7 @@ public class Runner : Object {
 	}
 	
 	public void start () {
-		if (speed_rate > 0) {
+		if (loop == null && speed_rate > 0) {
 			var ips = runnable.get_iterations_per_second ();
 			loop = Timeout.add ((uint) (1000 / (ips * speed_rate)), run);
 		}

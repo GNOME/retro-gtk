@@ -12,6 +12,7 @@ RETRO_FILES= \
 	Environment.vala \
 	Log.vala \
 	Variable.vala \
+	SystemInfo.vala \
 	retro-core-extern.c \
 	retro-environment-extern.c \
 	$(NULL)

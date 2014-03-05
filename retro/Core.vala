@@ -44,9 +44,9 @@ class Core {
 	private delegate uint ApiVersion ();
 	
 	[CCode (has_target = false)]
-	private delegate void GetSystemInfo (out SystemInfo info);
+	private delegate void GetSystemInfo (out unowned SystemInfo info);
 	[CCode (has_target = false)]
-	private delegate void GetSystemAvInfo (out SystemAvInfo info);
+	private delegate void GetSystemAvInfo (out unowned SystemAvInfo info);
 	
 	[CCode (has_target = false)]
 	private delegate void SetControllerPortDevice (uint port, Device device);
@@ -302,12 +302,12 @@ class Core {
 		return _api_version ();
 	}
 	
-	public void get_system_info (out SystemInfo info) {
+	public void get_system_info (out unowned SystemInfo info) {
 		set_global_self ();
 		_get_system_info (out info);
 	}
 	
-	public void get_system_av_info (out SystemAvInfo info) {
+	public void get_system_av_info (out unowned SystemAvInfo info) {
 		set_global_self ();
 		_get_system_av_info (out info);
 	}

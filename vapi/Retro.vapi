@@ -551,20 +551,6 @@ struct InputDescriptor {
    const string description;
 }
 
-[CCode (cname = "struct retro_system_info", has_destroy_function = 0)]
-struct SystemInfo {
-	[CCode (weak = 1)]
-	public const string library_name;
-	[CCode (weak = 1)]
-	public const string library_version;
-	
-	[CCode (weak = 1)]
-	public const string valid_extensions;
-
-	public bool   need_fullpath;
-	public bool   block_extract;
-}
-
 [CCode (cname = "struct retro_game_geometry", has_destroy_function = 0)]
 struct GameGeometry {
 	public uint  base_width;

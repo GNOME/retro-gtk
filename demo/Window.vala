@@ -21,7 +21,7 @@ namespace Retro {
 class Window : Gtk.Window {
 	private Gtk.HeaderBar header;
 	private Gtk.Image game_screen;
-	private Gtk.ToolButton properties_button;
+	private Gtk.Button properties_button;
 	
 	private Engine engine;
 	
@@ -32,7 +32,7 @@ class Window : Gtk.Window {
 		
 		header = new Gtk.HeaderBar ();
 		game_screen = new Gtk.Image ();
-		properties_button = new Gtk.ToolButton.from_stock (Gtk.Stock.PROPERTIES);
+		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
 		header.show ();
 		game_screen.show ();
@@ -52,7 +52,7 @@ class Window : Gtk.Window {
 		Source.remove (loop);
 	}
 	
-	void on_properties_button_clicked (Gtk.ToolButton button) {
+	void on_properties_button_clicked (Gtk.Button button) {
 		var dialog = new OptionsDialog (engine.variable_handler);
 		dialog.show_all ();
 	}

@@ -302,9 +302,12 @@ class Core {
 		return _api_version ();
 	}
 	
-	public void get_system_info (out unowned SystemInfo info) {
+	public SystemInfo get_system_info () {
 		set_global_self ();
+		
+		SystemInfo info;
 		_get_system_info (out info);
+		return info;
 	}
 	
 	public void get_system_av_info (out unowned SystemAvInfo info) {

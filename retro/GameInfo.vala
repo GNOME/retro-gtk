@@ -22,6 +22,11 @@ public struct GameInfo {
 	public string  path;
 	public uint8[] data;
 	public string  meta;
+	
+	public GameInfo (string filename) throws FileError {
+		path = filename;
+		FileUtils.get_data (filename, out data);
+	}
 }
 
 }

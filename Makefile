@@ -29,6 +29,7 @@ DEMO_FILES= \
 	Window.vala \
 	OptionsDialog.vala \
 	AudioDevice.vala \
+	ControllerDevice.vala \
 	KeyboardHandler.vala \
 	lol.c \
 	$(NULL)

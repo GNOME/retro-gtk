@@ -6,73 +6,6 @@ namespace Retro {
 public const uint api_version;
 
 [CCode (cname = "unsigned")]
-public enum Device {
-	MASK,
-	NONE,
-	JOYPAD,
-	MOUSE,
-	KEYBOARD,
-	LIGHTGUN,
-	ANALOG,
-	POINTER,
-	SENSOR_ACCELEROMETER,
-	JOYPAD_MULTITAP,
-	LIGHTGUN_SUPER_SCOPE,
-	LIGHTGUN_JUSTIFIER,
-	LIGHTGUN_JUSTIFIERS
-}
-
-[CCode (cname = "unsigned")]
-public enum DeviceIndex {
-	ANALOG_LEFT,
-	ANALOG_RIGHT
-}
-
-[CCode (cname = "unsigned", cprefix = "RETRO_DEVICE_ID_")]
-public enum DeviceID {
-	JOYPAD_B,
-	JOYPAD_Y,
-	JOYPAD_SELECT,
-	JOYPAD_START,
-	JOYPAD_UP,
-	JOYPAD_DOWN,
-	JOYPAD_LEFT,
-	JOYPAD_RIGHT,
-	JOYPAD_A,
-	JOYPAD_X,
-	JOYPAD_L,
-	JOYPAD_R,
-	JOYPAD_L2,
-	JOYPAD_R2,
-	JOYPAD_L3,
-	JOYPAD_R3,
-	
-	ANALOG_X,
-	ANALOG_Y,
-	
-	MOUSE_X,
-	MOUSE_Y,
-	MOUSE_LEFT,
-	MOUSE_RIGHT,
-	
-	LIGHTGUN_X,
-	LIGHTGUN_Y,
-	LIGHTGUN_TRIGGER,
-	LIGHTGUN_CURSOR,
-	LIGHTGUN_TURBO,
-	LIGHTGUN_PAUSE,
-	LIGHTGUN_START,
-	
-	POINTER_X,
-	POINTER_Y,
-	POINTER_PRESSED,
-	
-	SENSOR_ACCELEROMETER_X,
-	SENSOR_ACCELEROMETER_Y,
-	SENSOR_ACCELEROMETER_Z
-}
-
-[CCode (cname = "unsigned")]
 public enum Region {
 	NTSC,
 	PAL
@@ -539,26 +472,6 @@ namespace Disk {
 public struct Message {
    const string msg;
    uint         frames;
-}
-
-[CCode (cname = "struct retro_input_descriptor")]
-public struct InputDescriptor {
-   uint port;
-   Device      device;
-   DeviceIndex index;
-   DeviceID    id;
-	
-   const string description;
-}
-
-[CCode (cname = "struct retro_game_info", has_destroy_function = 0)]
-public struct GameInfo {
-	[CCode (weak = 1)]
-	public const string path;
-	
-	[CCode (type = "void *", array_length_cname = "size", array_length_type = "size_t")]
-	uint8[] data;
-	string  meta;
 }
 
 }

@@ -195,6 +195,7 @@ public class Core : Object {
 	
 	// Various members
 	
+	public string file_name { construct; get; }
 	private Module module;
 	private bool is_init { set; get; default = false; }
 	private bool game_loaded { set; get; default = false; }
@@ -367,6 +368,10 @@ public class Core : Object {
 	
 	
 	public Core (string file_name) {
+		Object (file_name: file_name);
+	}
+	
+	construct {
 		module = Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 		
 		void *function;

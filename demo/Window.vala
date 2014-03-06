@@ -133,7 +133,7 @@ class Window : Gtk.Window {
 	}
 	
 	void on_properties_button_clicked (Gtk.Button button) {
-		var dialog = new OptionsDialog (engine.variable_handler);
+		var dialog = new OptionsDialog (engine.get_options ());
 		dialog.show_all ();
 	}
 	

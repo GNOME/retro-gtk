@@ -25,8 +25,8 @@ class Engine : Core, Runnable {
 	
 	public Video.PixelFormat pixel_format;
 	
-	private bool variable_changed;
-	public VariableHandler variable_handler;
+	private bool option_changed;
+	private OptionsHandler options;
 	
 	private SystemAvInfo av_info;
 	private HashTable<uint?, ControllerDevice> controller_devices;
@@ -38,10 +38,10 @@ class Engine : Core, Runnable {
 		base (file_name);
 		pixel_format = Video.PixelFormat.UNKNOWN;
 		
-		variable_changed = false;
-		variable_handler = new VariableHandler ();
-		variable_handler.value_changed.connect (() => {
-			variable_changed = true;
+		option_changed = false;
+		options = new OptionsHandler ();
+		options.value_changed.connect (() => {
+			option_changed = true;
 		});
 		
 		environment_cb        = on_environment_cb;
@@ -115,18 +115,18 @@ class Engine : Core, Runnable {
 				 * Its value must be set to the one stored in the variable handler.
 				 */
 				unowned Variable *variable = (Variable *) data;
-				Retro.Environment.get_variable (data, variable_handler[variable->key]);
+				Retro.Environment.get_variable (data, options[variable->key]);
 				
 				break;
 			
 			case Retro.Environment.Command.SET_VARIABLES:
 				var variables = Retro.Environment.data_to_variable_array (data);
-				variable_handler.insert_multiple (variables);
+				options.insert_multiple (variables);
 				break;
 			
 			case Retro.Environment.Command.GET_VARIABLE_UPDATE:
-				*((bool *) data) = variable_changed;
-				variable_changed = false;
+				*((bool *) data) = option_changed;
+				option_changed = false;
 				break;
 			
 			case Retro.Environment.Command.SET_SUPPORT_NO_GAME:
@@ -212,6 +212,10 @@ class Engine : Core, Runnable {
 		}
 		
 		return 0;
+	}
+	
+	public OptionsHandler get_options () {
+		return options;
 	}
 	
 	public void set_controller_device (uint port, ControllerDevice device) {

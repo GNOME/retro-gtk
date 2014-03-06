@@ -19,11 +19,11 @@
 namespace Retro {
 
 class OptionsDialog : Gtk.Dialog {
-	private VariableHandler variables;
+	private OptionsHandler options;
 	private Gtk.Grid grid;
 	
-	public OptionsDialog (VariableHandler variables) {
-		this.variables = variables;
+	public OptionsDialog (OptionsHandler options) {
+		this.options = options;
 		
 		grid = new Gtk.Grid ();
 		grid.margin_left = 12;
@@ -34,7 +34,7 @@ class OptionsDialog : Gtk.Dialog {
 		grid.row_spacing = 6;
 		
 		int i = 0;
-		foreach (var key in variables.get_keys ()) {
+		foreach (var key in options.get_keys ()) {
 			add_option (key, i);
 			i++;
 		}
@@ -43,9 +43,9 @@ class OptionsDialog : Gtk.Dialog {
 	}
 	
 	private void add_option (string key, int row) {
-		var description = variables.lookup_description (key);
-		var values = variables.lookup_values (key);
-		var current = variables.lookup (key);
+		var description = options.lookup_description (key);
+		var values = options.lookup_values (key);
+		var current = options.lookup (key);
 		
 		var list_store = new Gtk.ListStore (1, typeof (string));
 		Gtk.TreeIter? iter = null;
@@ -76,7 +76,7 @@ class OptionsDialog : Gtk.Dialog {
 			box.get_active_iter (out iter);
 			list_store.get_value (iter, 0, out val);
 			
-			variables.set_option (key, (string) val);
+			options.set_option (key, (string) val);
 		});
 		
 		

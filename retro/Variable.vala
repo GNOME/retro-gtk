@@ -50,12 +50,12 @@ public class Option : Object {
 	}
 }
 
-public class VariableHandler: Object {
+public class OptionsHandler: Object {
 	private HashTable<string,Option> table;
 	
 	public signal void value_changed (string key);
 	
-	public VariableHandler () {
+	public OptionsHandler () {
 		table = new HashTable<string,Option> (str_hash, str_equal);
 	}
 	

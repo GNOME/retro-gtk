@@ -157,7 +157,7 @@ class Window : Gtk.Window {
 			// TODO add a way to set the sample rate of the audio device
 		});
 		
-		engine.set_controller_port_device (0, Device.Type.JOYPAD);
+		engine.set_controller_device (0, kb_handler);
 		
 		runner = new Runner (engine);
 		open_game_button.show ();

@@ -29,13 +29,10 @@ class Engine : Core, Runnable {
 	public VariableHandler variable_handler;
 	
 	private SystemAvInfo av_info;
+	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
 	public signal void audio_refresh (AudioSamples samples, double sample_rate);
-	
-	private HashTable<uint?, ControllerDevice> controller_devices;
-	
-	public signal Gdk.PixbufRotation rotation_changed ();
 	
 	public Engine (string file_name) {
 		base (file_name);

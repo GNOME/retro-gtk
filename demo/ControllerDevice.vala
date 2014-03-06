@@ -20,7 +20,7 @@ namespace Retro {
 
 public interface ControllerDevice : Object {
 	public abstract void  poll ();
-	public abstract int16 get_state (Device.Type device, uint index, uint id);
+	public abstract int16 get_input_state (Device.Type device, uint index, uint id);
 	
 	public abstract Device.Type   get_device_type ();
 	public abstract Device.Type[] get_device_capabilities ();

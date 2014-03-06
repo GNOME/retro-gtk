@@ -207,7 +207,7 @@ class Engine : Core, Runnable {
 		if (controller_devices.contains (port)) {
 			var controller_device = controller_devices.lookup (port);
 			if (controller_device != null) {
-				return controller_device.get_state (device, index, id);
+				return controller_device.get_input_state (device, index, id);
 			}
 		}
 		

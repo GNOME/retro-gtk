@@ -32,8 +32,8 @@ class Engine : Core, Runnable {
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
 	public signal void audio_refresh (AudioSamples samples, double sample_rate);
-	public signal void input_poll    ();
-	//public signal void input_state   (uint port, uint device, uint index, uint id);
+	
+	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public signal Gdk.PixbufRotation rotation_changed ();
 	
@@ -58,6 +58,8 @@ class Engine : Core, Runnable {
 		
 		stdout.printf ("sample_rate: %lf\n", av_info.timing.sample_rate);
 		stdout.printf ("fps: %lf\n", av_info.timing.fps);
+		
+		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 	}
 	
 	private bool on_environment_cb (Retro.Environment.Command cmd, void *data) {
@@ -199,12 +201,39 @@ class Engine : Core, Runnable {
 	}
 	
 	private void on_input_poll_cb () {
-		input_poll ();
+		foreach (var device in controller_devices.get_values ()) {
+			if (device != null) device.poll ();
+		}
 	}
 	
 	private int16 on_input_state_cb (uint port, uint device, uint index, uint id) {
-		//input_state (port, device, index, id);
-		return 0; // TODO
+		if (controller_devices.contains (port)) {
+			var controller_device = controller_devices.lookup (port);
+			if (controller_device != null) {
+				return controller_device.get_state (device, index, id);
+			}
+		}
+		
+		return 0;
+	}
+	
+	public void set_controller_device (uint port, ControllerDevice device) {
+		if (controller_devices.contains (port)) {
+			controller_devices.replace (port, device);
+		}
+		else {
+			controller_devices.insert (port, device);
+		}
+		
+		set_controller_port_device (port, device.get_device_type ());
+	}
+	
+	public void remove_controller_device (uint port) {
+		if (controller_devices.contains (port)) {
+			controller_devices.remove (port);
+		}
+		
+		set_controller_port_device (port, Device.Type.NONE);
 	}
 	
 	public double get_iterations_per_second () {

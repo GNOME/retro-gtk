@@ -19,8 +19,6 @@
 using Retro;
 using Gtk;
 
-extern void set_game_info (out GameInfo game, string path, bool need_fullpath);
-
 class Demo : Object {
 	public static int main (string[] argv) {
 		Gtk.init (ref argv);

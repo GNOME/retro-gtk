@@ -165,32 +165,3 @@ GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, 
 	return pb;
 }
 
-void *set_game_info (struct retro_game_info *game, const char *path, bool need_fullpath) {
-	if (need_fullpath) {
-		game->path = path;
-		game->data = NULL;
-		game->size = 0;
-		game->meta = NULL;
-		
-		return NULL;
-	}
-	else {
-		int fd = open (path, O_RDONLY);
-		size_t size = (size_t) lseek (fd, 0, SEEK_END);
-		printf ("taille %lu\n", size);
-		
-		lseek (fd, 0, SEEK_SET);
-		
-		void *data = malloc (size);
-		
-		printf ("lu     %lu\n", read (fd, data, size));
-		
-		game->path = path;
-		game->data = data;
-		game->size = size;
-		game->meta = NULL;
-		
-		return data;
-	}
-}
-

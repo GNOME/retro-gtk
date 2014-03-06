@@ -167,13 +167,7 @@ class Window : Gtk.Window {
 	}
 	
 	public void set_game (string path) {
-		stdout.printf ("set_game (%s)\n", path);
-		var si = engine.get_system_info ();
-		
-		GameInfo game;
-		set_game_info (out game, path, si.need_fullpath);
-		
-		bool loaded = engine.load_game (game);
+		engine.load_game (GameInfo (path));
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
 	}

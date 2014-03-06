@@ -40,7 +40,7 @@ void retro_core_set_global_self (RetroCore *self) {
 	global_self = (void *) self;
 }
 
-gpointer retro_core_get_real_environment_cb (RetroCore *self) {
+gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (guint cmd, gpointer data) {
 		if (global_self) {
 			void *result;
@@ -55,7 +55,7 @@ gpointer retro_core_get_real_environment_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gpointer retro_core_get_real_video_refresh_cb (RetroCore *self) {
+gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 	gboolean real_cb (guint8* data, guint width, guint height, gsize pitch) {
 		if (global_self) {
 			void *result;
@@ -70,7 +70,7 @@ gpointer retro_core_get_real_video_refresh_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gpointer retro_core_get_real_audio_sample_cb (RetroCore *self) {
+gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 	gboolean real_cb (gint16 left, gint16 right) {
 		if (global_self) {
 			void *result;
@@ -85,7 +85,7 @@ gpointer retro_core_get_real_audio_sample_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gpointer retro_core_get_real_audio_sample_batch_cb (RetroCore *self) {
+gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 	gboolean real_cb (gint16* data, int frames) {
 		if (global_self) {
 			void *result;
@@ -100,7 +100,7 @@ gpointer retro_core_get_real_audio_sample_batch_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gpointer retro_core_get_real_input_poll_cb (RetroCore *self) {
+gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 	gboolean real_cb () {
 		if (global_self) {
 			void *result;
@@ -115,7 +115,7 @@ gpointer retro_core_get_real_input_poll_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gpointer retro_core_get_real_input_state_cb (RetroCore *self) {
+gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	gboolean real_cb (guint port, guint device, guint index, guint id) {
 		if (global_self) {
 			void *result;

@@ -161,18 +161,33 @@ public class Core : Object {
 	[CCode (has_target = false)]
 	private delegate size_t GetMemorySize (Memory id);
 	
-	// Types of the module's functions: end
+	
+	
+	
 	
 	// Helper C methods
 	
+	/**
+	 * Store the current instance.
+	 * 
+	 * Store the current instance of Core in a thread local global variable.
+	 * It allows to know wich module call back and associate it with its Core.
+	 * 
+	 * Must be called before any call to a function from the module.
+	 */
 	private extern void set_global_self ();
 	
-	private extern void *get_real_environment_cb ();
-	private extern void *get_real_video_refresh_cb ();
-	private extern void *get_real_audio_sample_cb ();
-	private extern void *get_real_audio_sample_batch_cb ();
-	private extern void *get_real_input_poll_cb ();
-	private extern void *get_real_input_state_cb ();
+	/*
+	 * Get a callback that can be passed to the module.
+	 * 
+	 * These callback act like wrappers around the real callbacks.
+	 */
+	private extern void *get_module_environment_cb ();
+	private extern void *get_module_video_refresh_cb ();
+	private extern void *get_module_audio_sample_cb ();
+	private extern void *get_module_audio_sample_batch_cb ();
+	private extern void *get_module_input_poll_cb ();
+	private extern void *get_module_input_state_cb ();
 	
 	// Helper C methods: end
 	
@@ -227,7 +242,7 @@ public class Core : Object {
 			_environment_cb = value;
 			
 			set_global_self ();
-			_set_environment (get_real_environment_cb ());
+			_set_environment (get_module_environment_cb ());
 		}
 		get {
 			return _environment_cb;
@@ -240,7 +255,7 @@ public class Core : Object {
 			_video_refresh_cb = value;
 			
 			set_global_self ();
-			_set_video_refresh (get_real_video_refresh_cb ());
+			_set_video_refresh (get_module_video_refresh_cb ());
 		}
 		get {
 			return _video_refresh_cb;
@@ -253,7 +268,7 @@ public class Core : Object {
 			_audio_sample_cb = value;
 			
 			set_global_self ();
-			_set_audio_sample (get_real_audio_sample_cb ());
+			_set_audio_sample (get_module_audio_sample_cb ());
 		}
 		get {
 			return _audio_sample_cb;
@@ -266,7 +281,7 @@ public class Core : Object {
 			_audio_sample_batch_cb = value;
 			
 			set_global_self ();
-			_set_audio_sample_batch (get_real_audio_sample_batch_cb ());
+			_set_audio_sample_batch (get_module_audio_sample_batch_cb ());
 		}
 		get {
 			return _audio_sample_batch_cb;
@@ -279,7 +294,7 @@ public class Core : Object {
 			_input_poll_cb = value;
 			
 			set_global_self ();
-			_set_input_poll (get_real_input_poll_cb ());
+			_set_input_poll (get_module_input_poll_cb ());
 		}
 		get {
 			return _input_poll_cb;
@@ -292,7 +307,7 @@ public class Core : Object {
 			_input_state_cb = value;
 			
 			set_global_self ();
-			_set_input_state (get_real_input_state_cb ());
+			_set_input_state (get_module_input_state_cb ());
 		}
 		get {
 			return _input_state_cb;

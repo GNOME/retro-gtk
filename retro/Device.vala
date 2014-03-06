@@ -18,7 +18,7 @@
 
 namespace Retro.Device {
 
-private static const uint TYPE_MASK = 0xff;
+public static const uint TYPE_MASK = 0xff;
 
 public enum Type {
 	NONE,

@@ -21,7 +21,7 @@
 typedef void RetroCore;
 
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
-typedef void (*RetroVideoRefresh) (guint8* data, guint width, guint height, gsize pitch, void* user_data);
+typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
 typedef void (*RetroAudioSample) (gint16 left, gint16 right, void* user_data);
 typedef gsize (*RetroAudioSampleBatch) (gint16* data, int size, gsize frames, void* user_data);
 typedef void (*RetroInputPoll) (void* user_data);
@@ -60,7 +60,7 @@ gpointer retro_core_get_real_video_refresh_cb (RetroCore *self) {
 		if (global_self) {
 			void *result;
 			RetroVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
-			cb (data, width, height, pitch, result);
+			cb (data, pitch * height, width, height, pitch, result);
 			return;
 		}
 	

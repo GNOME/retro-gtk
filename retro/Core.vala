@@ -18,17 +18,95 @@
 
 namespace Retro {
 
+/**
+ * Handle a libretro module.
+ * 
+ * Core can load a libretro module and handle is isolated from other cores.
+ * In contrary to what the libretro API allows, multiple Cores can live in
+ * the same process.
+ */
 public class Core : Object {
 	// Callbacks for the libretro module
 	
-	public delegate bool   Environment      (Retro.Environment.Command cmd, void *data);
-	public delegate void   VideoRefresh     ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch);
-	public delegate void   AudioSample      (int16 left, int16 right);
-	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
-	public delegate void   InputPoll        ();
-	public delegate int16  InputState       (uint port, Device.Type device, uint index, uint id);
+	/**
+	 * Environment callback. 
+	 * 
+	 * Gives implementations a way of performing uncommon tasks. Extensible.
+	 * 
+	 * @return [FIXME]
+	 * @param [cmd] [the command to execute]
+	 * @param [data] [an obscure data pointer, its definition changes with the command]
+	 */
+	public delegate bool Environment (Retro.Environment.Command cmd, void *data);
 	
-	// Callbacks for the libretro module: end
+	/**
+	 * Render a frame.
+	 * 
+	 * Pixel format is 15-bit 0RGB1555 native endian unless changed
+	 * (see {@link [Retro.Environment.SET_PIXEL_FORMAT]}).
+	 * 
+	 * For performance reasons, it is highly recommended to have a frame that is
+	 * packed in memory, i.e. pitch == width * byte_per_pixel.
+	 * Certain graphic APIs, such as OpenGL ES, do not like textures that are
+	 * not packed in memory.
+	 * 
+	 * @param [data] [the frame data]
+	 * @param [width] [width of the frame]
+	 * @param [height] [height of the frame]
+	 * @param [pitch] [length in bytes between two lines in buffer]
+	 */
+	public delegate void VideoRefresh (uint8[] data, uint width, uint height, size_t pitch);
+	
+	/**
+	 * Renders a single audio frame.
+	 * 
+	 * Should only be used if implementation generates a single sample at a
+	 * time. Format is signed 16-bit native endian.
+	 * 
+	 * @param [left] [the left channel of the audio frame]
+	 * @param [right] [the right channel of the audio frame]
+	 */
+	public delegate void AudioSample (int16 left, int16 right);
+	
+	/**
+	 * Renders multiple audio frames in one go.
+	 * 
+	 * One frame is defined as a sample of left and right channels, interleaved.
+	 * I.e. int16[] buf = { l, r, l, r }; would be 2 frames.
+	 * 
+	 * Only one of the audio callbacks must ever be used.
+	 * 
+	 * @return [FIXME]
+	 * @param [data] [the audio sample batch]
+	 * @param [frames] [the number of frames in the batch]
+	 */
+	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
+	
+	/**
+	 * Polls input.
+	 */
+	public delegate void InputPoll ();
+	
+	/**
+	 * Queries for input for player 'port'.
+	 * 
+	 * Device will be masked with {@link [Retro.Device.TYPE_MASK]}.
+	 * Specialization of devices such as
+	 * {@link [Retro.Device.Type.JOYPAD_MULTITAP]} that have been set with
+	 * {@link [Retro.Core.set_controller_port_device()]} will still use the
+	 * higher level {@link [Retro.Device.Type.JOYPAD]} to request input.
+	 * 
+	 * @return [the state of the input]
+	 * @param [port] [the port number]
+	 * @param [device] [the type of device]
+	 * @param [index] [the index, its definition changes with the device]
+	 * @param [id] [the id, its definition changes with the device]
+	 */
+	public delegate int16 InputState (uint port, Device.Type device, uint index, uint id);
+	
+	
+	
+	
 	
 	// Types of the module's functions
 	

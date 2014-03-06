@@ -26,7 +26,7 @@ public class Core : Object {
 	public delegate void   AudioSample      (int16 left, int16 right);
 	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
 	public delegate void   InputPoll        ();
-	public delegate int16  InputState       (uint port, uint device, uint index, uint id);
+	public delegate int16  InputState       (uint port, Device.Type device, uint index, uint id);
 	
 	// Callbacks for the libretro module: end
 	
@@ -49,7 +49,7 @@ public class Core : Object {
 	private delegate void GetSystemAvInfo (out unowned SystemAvInfo info);
 	
 	[CCode (has_target = false)]
-	private delegate void SetControllerPortDevice (uint port, uint device);
+	private delegate void SetControllerPortDevice (uint port, Device.Type device);
 	
 	[CCode (has_target = false)]
 	private delegate void Reset ();
@@ -323,7 +323,7 @@ public class Core : Object {
 		return info;
 	}
 	
-	public void set_controller_port_device (uint port, uint device) {
+	public void set_controller_port_device (uint port, Device.Type device) {
 		set_global_self ();
 		_set_controller_port_device (port, device);
 	}

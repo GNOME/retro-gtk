@@ -18,10 +18,12 @@
 
 namespace Retro {
 
-interface ControllerDevice : Object {
+public interface ControllerDevice : Object {
 	public abstract void  poll ();
-	public abstract int16 get_state (uint device, uint index, uint id);
-	public abstract uint  get_device_type ();
+	public abstract int16 get_state (Device.Type device, uint index, uint id);
+	
+	public abstract Device.Type   get_device_type ();
+	public abstract Device.Type[] get_device_capabilities ();
 }
 
 }

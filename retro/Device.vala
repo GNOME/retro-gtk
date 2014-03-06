@@ -18,6 +18,8 @@
 
 namespace Retro.Device {
 
+private static const uint TYPE_MASK = 0xff;
+
 public enum Type {
 	NONE,
 	JOYPAD,
@@ -26,15 +28,16 @@ public enum Type {
 	LIGHTGUN,
 	ANALOG,
 	POINTER,
-	SENSOR_ACCELEROMETER
-}
-
-public enum TypeModifier {
-	MASK                 = 0xff,
+	SENSOR_ACCELEROMETER,
 	JOYPAD_MULTITAP      = (1 << 8) | Type.JOYPAD,
 	LIGHTGUN_SUPER_SCOPE = (1 << 8) | Type.LIGHTGUN,
 	LIGHTGUN_JUSTIFIER   = (2 << 8) | Type.LIGHTGUN,
-	LIGHTGUN_JUSTIFIERS  = (3 << 8) | Type.LIGHTGUN
+	LIGHTGUN_JUSTIFIERS  = (3 << 8) | Type.LIGHTGUN;
+	
+	public Type get_basic_type () {
+		var basic_type = this & TYPE_MASK;
+		return basic_type > Type.SENSOR_ACCELEROMETER ? Type.NONE : basic_type;
+	}
 }
 
 public enum JoypadId {
@@ -97,7 +100,7 @@ public enum SensorId {
 
 public struct InputDescriptor {
    uint port;
-   uint device;
+   Device.Type device;
    uint index;
    uint id;
 	

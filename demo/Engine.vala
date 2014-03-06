@@ -203,7 +203,7 @@ class Engine : Core, Runnable {
 		}
 	}
 	
-	private int16 on_input_state_cb (uint port, uint device, uint index, uint id) {
+	private int16 on_input_state_cb (uint port, Device.Type device, uint index, uint id) {
 		if (controller_devices.contains (port)) {
 			var controller_device = controller_devices.lookup (port);
 			if (controller_device != null) {
@@ -238,9 +238,7 @@ class Engine : Core, Runnable {
 	}
 	
 	public double get_iterations_per_second () {
-		var info = get_system_av_info ();
-		
-		return info.timing.fps;
+		return av_info.timing.fps;
 	}
 }
 

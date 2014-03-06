@@ -1,7 +1,9 @@
 NULL=
 
-SRC_DIR = retro
+RETRO_DIR = retro
+FLICKY_DIR = flicky
 DEMO_DIR = demo
+
 OUT_DIR = out
 VAPI_DIR = vapi
 
@@ -16,11 +18,14 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	GameInfo.vala \
 	Device.vala \
-	Runnable.vala \
-	Runner.vala \
 	AudioSamples.vala \
 	retro-core-extern.c \
 	retro-environment-extern.c \
+	$(NULL)
+
+FLICKY_FILES= \
+	Runnable.vala \
+	Runner.vala \
 	$(NULL)
 
 DEMO_FILES= \
@@ -42,15 +47,16 @@ PKG= \
 	Retro \
 	$(NULL)
 
-RETRO_SRC = $(RETRO_FILES:%=$(SRC_DIR)/%)
+RETRO_SRC = $(RETRO_FILES:%=$(RETRO_DIR)/%)
+FLICKY_SRC = $(FLICKY_FILES:%=$(FLICKY_DIR)/%)
 DEMO_SRC = $(DEMO_FILES:%=$(DEMO_DIR)/%)
 
 all: $(DEMO)
 
-$(DEMO): $(RETRO_SRC) $(DEMO_SRC)
+$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC)
 	mkdir -p $(OUT_DIR)
-	cp -f $(SRC_DIR)/libretro.h $(OUT_DIR)/libretro.h
-	valac -b $(SRC_DIR) -d $(@D) \
+	cp -f $(RETRO_DIR)/libretro.h $(OUT_DIR)/libretro.h
+	valac -b $(RETRO_DIR) -d $(@D) \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
 		--Xcc="-g"

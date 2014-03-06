@@ -24,6 +24,7 @@ namespace Retro {
 public class KeyboardHandler : EventBox, ControllerDevice {
 	// TODO use hardware key values instead of key values
 	private HashTable<uint?, bool?> key_state;
+	private Keymap keymap;
 	
 	construct {
 		set_can_focus (true);
@@ -48,6 +49,8 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 		key_release_event.connect (on_key_release_event);
 		
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
+		
+		keymap = Keymap.get_default ();
 	}
 	
 	private bool on_key_press_event (Widget source, EventKey event) {
@@ -83,6 +86,14 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	
 	private static void print_event_key (EventKey event) {
 		stdout.printf ("str: %s, send event: %d, time: %u, state: %d, keyval: %u, length: %d, hw keycode: %u, group: %u, is mod: %u\n", event.str, event.send_event, event.time, (int) event.state, event.keyval, event.length, event.hardware_keycode, event.group, event.is_modifier );
+	}
+	
+	private string hardware_keycode_to_string (uint hardware_keycode) {
+		KeymapKey[] keys;
+		uint[] keyvals;
+		keymap.get_entries_for_keycode (hardware_keycode, out keys, out keyvals);
+		
+		return (keyvals.length > 0) ? keyval_name (keyvals[0]) : "";
 	}
 	
 	public void  poll () {}

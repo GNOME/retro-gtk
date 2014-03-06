@@ -83,7 +83,6 @@ class Window : Gtk.Window {
 		pause_button.show ();
 		stop_button.show ();
 		properties_button.show ();
-		
 	}
 	
 	void set_titles () {
@@ -157,6 +156,8 @@ class Window : Gtk.Window {
 			audio_dev.play (audio.get_samples ());
 			// TODO add a way to set the sample rate of the audio device
 		});
+		
+		engine.set_controller_port_device (0, Device.Type.JOYPAD);
 		
 		runner = new Runner (engine);
 		open_game_button.show ();

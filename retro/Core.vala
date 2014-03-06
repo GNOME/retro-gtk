@@ -180,7 +180,7 @@ public class Core : Object {
 	/*
 	 * Get a callback that can be passed to the module.
 	 * 
-	 * These callback act like wrappers around the real callbacks.
+	 * These callbacks act like wrappers around the real callbacks.
 	 */
 	private extern void *get_module_environment_cb ();
 	private extern void *get_module_video_refresh_cb ();
@@ -189,14 +189,25 @@ public class Core : Object {
 	private extern void *get_module_input_poll_cb ();
 	private extern void *get_module_input_state_cb ();
 	
-	// Helper C methods: end
+	
+	
+	
+	
+	// Various members
 	
 	private Module module;
 	private bool is_init { set; get; default = false; }
 	private bool game_loaded { set; get; default = false; }
 	
+	
+	
+	
+	
 	// Module's functions
 	
+	/*
+	 * Store the functions taken from the module.
+	 */
 	private SetCallback _set_environment;
 	private SetCallback _set_video_refresh;
 	private SetCallback _set_audio_sample;
@@ -232,11 +243,18 @@ public class Core : Object {
 	private GetMemoryData _get_memory_data;
 	private GetMemorySize _get_memory_size;
 	
-	// Module's functions: end
+	
+	
+	
 	
 	// Callback setters and getters
 	
 	private Environment _environment_cb;
+	/* 
+	 * The environment callback.
+	 * 
+	 * Must be set before {@link [Retro.Core.init]} is called.
+	 */
 	public Environment environment_cb {
 		set {
 			_environment_cb = value;
@@ -250,6 +268,12 @@ public class Core : Object {
 	}
 	
 	private VideoRefresh _video_refresh_cb;
+	/* 
+	 * The video refresh callback.
+	 * 
+	 * Must be set before the first call to
+	 * {@link [Retro.Core.run]} is made.
+	 */
 	public VideoRefresh video_refresh_cb {
 		set {
 			_video_refresh_cb = value;
@@ -263,6 +287,12 @@ public class Core : Object {
 	}
 	
 	private AudioSample _audio_sample_cb;
+	/* 
+	 * The audio sample callback.
+	 * 
+	 * Must be set before the first call to
+	 * {@link [Retro.Core.run]} is made.
+	 */
 	public AudioSample audio_sample_cb {
 		set {
 			_audio_sample_cb = value;
@@ -276,6 +306,12 @@ public class Core : Object {
 	}
 	
 	private AudioSampleBatch _audio_sample_batch_cb;
+	/* 
+	 * The audio sample batch callback.
+	 * 
+	 * Must be set before the first call to
+	 * {@link [Retro.Core.run]} is made.
+	 */
 	public AudioSampleBatch audio_sample_batch_cb {
 		set {
 			_audio_sample_batch_cb = value;
@@ -289,6 +325,12 @@ public class Core : Object {
 	}
 	
 	private InputPoll _input_poll_cb;
+	/* 
+	 * The input poll callback.
+	 * 
+	 * Must be set before the first call to
+	 * {@link [Retro.Core.run]} is made.
+	 */
 	public InputPoll input_poll_cb {
 		set {
 			_input_poll_cb = value;
@@ -302,6 +344,12 @@ public class Core : Object {
 	}
 	
 	private InputState _input_state_cb;
+	/* 
+	 * The input state callback.
+	 * 
+	 * Must be set before the first call to
+	 * {@link [Retro.Core.run]} is made.
+	 */
 	public InputState input_state_cb {
 		set {
 			_input_state_cb = value;
@@ -314,7 +362,9 @@ public class Core : Object {
 		}
 	}
 	
-	// Callback setters and getters: end
+	
+	
+	
 	
 	public Core (string file_name) {
 		module = Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);

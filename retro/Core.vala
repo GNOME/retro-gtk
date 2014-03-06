@@ -564,26 +564,57 @@ public class Core : Object {
 		return _serialize_size ();
 	}
 	
-	public bool serialize (uint8[] data) {
+	/**
+	 * Serializes the internal state.
+	 * 
+	 * If failed, or size is lower than {@link [Retro.Core.serialize_size]}, it
+	 * should return false, true otherwise.
+	 * 
+	 * @param [data] [the buffer where the data will be stored]
+	 * @return [false if the serialization failed, true otherwise]
+	 */
+	public bool serialize (out uint8[] data) {
 		set_global_self ();
 		return _serialize (data);
 	}
 	
+	/**
+	 * Unserializes the internal state.
+	 * 
+	 * @param [data] [the buffer where the data is stored]
+	 * @return [false if the unserialization failed, true otherwise]
+	 */
 	public bool unserialize (uint8[] data) {
 		set_global_self ();
 		return _unserialize (data);
 	}
 	
+	/**
+	 * FIXME
+	 */
 	public void cheat_reset () {
 		set_global_self ();
 		_cheat_reset ();
 	}
 	
+	/**
+	 * FIXME
+	 * 
+	 * @param [index] [FIXME]
+	 * @param [enabled] [FIXME]
+	 * @param [code] [FIXME]
+	 */
 	public void cheat_set (uint index, bool enabled, string code) {
 		set_global_self ();
 		_cheat_set (index, enabled, code);
 	}
 	
+	/**
+	 * Loads a game.
+	 * 
+	 * @param [game] [information to load the game]
+	 * @return [false if the loading failed, true otherwise]
+	 */
 	public bool load_game (GameInfo game) {
 		if (game_loaded) unload_game ();
 		
@@ -592,6 +623,15 @@ public class Core : Object {
 		return game_loaded;
 	}
 	
+	/**
+	 * Loads a "special" kind of game. Should not be used except in extreme
+	 * cases.
+	 * 
+	 * @param [game_type] [the type of game to load]
+	 * @param [game] [information to load the game]
+	 * @param [num_info] [FIXME]
+	 * @return [false if the loading failed, true otherwise]
+	 */
 	public bool load_game_special (GameType game_type, GameInfo info, size_t num_info) {
 		if (game_loaded) unload_game ();
 		
@@ -600,21 +640,41 @@ public class Core : Object {
 		return game_loaded;
 	}
 	
+	/**
+	 * Unloads a currently loaded game.
+	 */
 	private void unload_game () {
 		set_global_self ();
 		_unload_game ();
 	}
 	
+	/**
+	 * Gets region of the loaded game.
+	 * 
+	 * @return [the region of the game]
+	 */
 	public Region get_region () {
 		set_global_self ();
 		return _get_region ();
 	}
 	
+	/**
+	 * Gets a region of memory.
+	 * 
+	 * @param [id] [the region of memory]
+	 * @return [the region of memory]
+	 */
 	public void *get_memory_data (Memory id) {
 		set_global_self ();
 		return _get_memory_data (id);
 	}
 	
+	/**
+	 * Gets the size of a region of memory.
+	 * 
+	 * @param [id] [the region of memory]
+	 * @return [the size of the region of memory]
+	 */
 	public size_t get_memory_size (Memory id) {
 		set_global_self ();
 		return _get_memory_size (id);

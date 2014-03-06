@@ -14,6 +14,7 @@ RETRO_FILES= \
 	Variable.vala \
 	SystemInfo.vala \
 	SystemAvInfo.vala \
+	GameInfo.vala \
 	Runnable.vala \
 	Runner.vala \
 	AudioSamples.vala \

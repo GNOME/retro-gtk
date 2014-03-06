@@ -18,6 +18,8 @@
 
 namespace Retro {
 
+public static const uint API_VERSION = 1;
+
 /**
  * Handle a libretro module.
  * 
@@ -367,6 +369,11 @@ public class Core : Object {
 	
 	
 	
+	/**
+	 * Create a Core from the file name of a libretro implementation.
+	 * 
+	 * @param [file_name] [the file name of the libretro implementation to load]
+	 */
 	public Core (string file_name) {
 		Object (file_name: file_name);
 	}
@@ -376,7 +383,7 @@ public class Core : Object {
 		
 		void *function;
 		
-		// Get the callback setters
+		// Get the callback setters from the module
 		
 		module.symbol ("retro_set_environment", out function);
 		_set_environment = (SetCallback) function;
@@ -391,7 +398,7 @@ public class Core : Object {
 		module.symbol ("retro_set_input_state", out function);
 		_set_input_state = (SetCallback) function;
 		
-		// Get the other functions
+		// Get the other functions from the module
 		
 		module.symbol ("retro_init", out function);
 		_init = (Init) function;
@@ -438,23 +445,44 @@ public class Core : Object {
 		if (is_init) deinit ();
 	}
 	
+	/**
+	 * Initialize the module.
+	 */
 	public void init () {
 		set_global_self ();
 		_init ();
 		is_init = true;
 	}
 	
+	/**
+	 * Deinitialize the module.
+	 */
 	private void deinit () {
 		set_global_self ();
 		_deinit ();
 		is_init = false;
 	}
 	
+	/**
+	 * The version of libretro used by the module.
+	 * 
+	 * Can be compared with {@link [Retro.API_VERSION]} to validate ABI
+	 * compatibility.
+	 * 
+	 * @return [the libretro version of the module]
+	 */
 	public uint api_version () {
 		set_global_self ();
 		return _api_version ();
 	}
 	
+	/**
+	 * Gets system information.
+	 * 
+	 * Can be called at any time, even before {@link [Retro.Core.init]}.
+	 * 
+	 * @return [information on the system implemented in the module]
+	 */
 	public SystemInfo get_system_info () {
 		set_global_self ();
 		
@@ -463,6 +491,19 @@ public class Core : Object {
 		return info;
 	}
 	
+	/**
+	 * Gets information about system audio/video timings and geometry.
+	 * 
+	 * Can be called only after {@link [Retro.Core.load_game]} has successfully
+	 * completed.
+	 * 
+	 * NOTE: The implementation of this function might not initialize every
+	 * variable if needed.
+	 * E.g. geometry.aspect_ratio might not be initialized if the core doesn't
+	 * desire a particular aspect ratio.
+	 * 
+	 * @return [information on the system audio/video timings and geometry]
+	 */
 	public SystemAvInfo get_system_av_info () {
 		set_global_self ();
 		
@@ -471,21 +512,53 @@ public class Core : Object {
 		return info;
 	}
 	
+	/**
+	 * Sets device to be used for player 'port'.
+	 * 
+	 * @param [port] [the port on wich to connect a device]
+	 * @param [device] [the type of the device connected]
+	 */
 	public void set_controller_port_device (uint port, Device.Type device) {
 		set_global_self ();
 		_set_controller_port_device (port, device);
 	}
 	
+	/**
+	 * Resets the current game.
+	 */
 	public void reset () {
 		set_global_self ();
 		_reset ();
 	}
 	
+	/**
+	 * Runs the game for one video frame.
+	 * 
+	 * During {@link [Retro.Core.run]}, the input_poll callback will be called
+	 * at least once.
+	 * 
+	 * If a frame is not rendered for reasons where a game "dropped" a frame,
+	 * this still counts as a frame, and {@link [Retro.Core.run]} will
+	 * explicitly dupe a frame if
+	 * {@link [Retro.Environment.Command.GET_CAN_DUPE]} returns true.
+	 * In this case, the video callback can take a null argument for data.
+	 */
 	public void run () {
 		set_global_self ();
 		_run ();
 	}
 	
+	/**
+	 * Returns the amount of data the implementation requires to serialize the
+	 * internal state (save states).
+	 * 
+	 * Beetween calls to {@link [Retro.Core.load_game]} and
+	 * {@link [Retro.Core.unload_game]}, the returned size is never allowed to
+	 * be larger than a previous returned value, to ensure that the frontend can
+	 * allocate a save state buffer once.
+	 * 
+	 * @return [the size needed to serialize the internal state]
+	 */
 	public size_t serialize_size () {
 		set_global_self ();
 		return _serialize_size ();

@@ -49,7 +49,7 @@ public class Core : Object {
 	private delegate void GetSystemAvInfo (out unowned SystemAvInfo info);
 	
 	[CCode (has_target = false)]
-	private delegate void SetControllerPortDevice (uint port, Device device);
+	private delegate void SetControllerPortDevice (uint port, uint device);
 	
 	[CCode (has_target = false)]
 	private delegate void Reset ();
@@ -323,7 +323,7 @@ public class Core : Object {
 		return info;
 	}
 	
-	public void set_controller_port_device (uint port, Device device) {
+	public void set_controller_port_device (uint port, uint device) {
 		set_global_self ();
 		_set_controller_port_device (port, device);
 	}

@@ -29,6 +29,7 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
+	Video.vala \
 	retro-core-extern.c \
 	retro-environment-extern.c \
 	$(NULL)

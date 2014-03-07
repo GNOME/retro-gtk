@@ -2,19 +2,6 @@
 
 namespace Retro {
 
-// Video
-
-namespace Video {
-	[CCode (cname = "enum retro_pixel_format", cprefix = "RETRO_PIXEL_FORMAT_")]
-	public enum PixelFormat {
-		[CCode (cname = "RETRO_PIXEL_FORMAT_0RGB1555")]
-		ORGB1555,
-		XRGB8888,
-		RGB565,
-		UNKNOWN
-	}
-}
-
 // Performance
 
 namespace Perf {

@@ -336,22 +336,6 @@ namespace Camera {
 	}
 }
 
-namespace Rumble {
-	[CCode (cname = "gint")]
-	public enum Effect {
-		STRONG,
-		WEAK
-	}
-	
-	[CCode (cname = "retro_set_rumble_state_t")]
-	public delegate bool SetState (uint port, Effect effect, uint16 strength);
-	
-	[CCode (cname = "struct retro_rumble_interface")]
-	public struct Interface {
-		SetState set_rumble_state;
-	}
-}
-
 namespace Audio {
 	[CCode (cname = "retro_audio_callback_t")]
 	public delegate void AudioCallback ();

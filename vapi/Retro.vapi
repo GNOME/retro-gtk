@@ -350,20 +350,6 @@ namespace Audio {
 	} 
 }
 
-namespace FrameTime {
-	[CCode (cname = "retro_usec_t", simple_type = 1)]
-	public struct Usec {}
-	
-	[CCode (cname = "retro_frame_time_callback_t")]
-	public delegate void FrameTimeCallback (Usec usec);
-	
-	[CCode (cname = "struct retro_frame_time_callback")]
-	public struct Callback {
-		FrameTimeCallback callback;
-		Usec              reference;
-	} 
-}
-
 namespace Keyboard {
 	[CCode (cname = "retro_keyboard_event_t")]
 	public delegate void Event (bool down, Key keycode, uint32 character, ModifierKey key_modifiers);

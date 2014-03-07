@@ -34,7 +34,7 @@ public enum GameType {
 	SUPER_GAME_BOY
 }
 
-[CCode (cname = "unsigned", cprefix = "RETROK_")]
+[CCode (cname = "gint", cprefix = "RETROK_")]
 public enum Key {
 	UNKNOWN,
 	FIRST,
@@ -191,7 +191,7 @@ public enum Key {
 	LAST
 }
 
-[CCode (cname = "uint16_t", cprefix = "RETROKMOD_")]
+[CCode (cname = "gint", cprefix = "RETROKMOD_")]
 public enum ModifierKey {
 	NONE,
 	
@@ -221,6 +221,7 @@ namespace Video {
 // Performance
 
 namespace Perf {
+	[Flags]
 	[CCode (cname = "uint64_t", cprefix = "RETRO_SIMD_")]
 	public enum SIMD {
 		SSE,
@@ -284,7 +285,7 @@ namespace Perf {
 }
 
 namespace Sensor {
-	[CCode (cname = "unsigned", cprefix = "RETRO_SENSOR_")]
+	[CCode (cname = "gint", cprefix = "RETRO_SENSOR_")]
 	public enum Action {
 		ACCELEROMETER_ENABLE,
 		ACCELEROMETER_DISABLE
@@ -300,7 +301,7 @@ namespace Sensor {
 }
 
 namespace Camera {
-	[CCode (cname = "unsigned")]
+	[CCode (cname = "gint")]
 	public enum Buffer {
 		OPENGL_TEXTURE,
 		RAW_FRAMEBUFFER
@@ -336,7 +337,7 @@ namespace Camera {
 }
 
 namespace Rumble {
-	[CCode (cname = "unsigned")]
+	[CCode (cname = "gint")]
 	public enum Effect {
 		STRONG,
 		WEAK
@@ -379,51 +380,6 @@ namespace FrameTime {
 	} 
 }
 
-[CCode (cname = "uintptr_t", simple_type = 1)]
-public struct uintptr_t {}
-
-namespace Hardware {
-	[CCode (cname = "RETRO_HW_FRAME_BUFFER_VALID")]
-	public const uintptr_t frame_buffer_valid;
-	
-	[CCode (cname = "retro_hw_context_reset_t")]
-	public delegate void ContextReset ();
-	
-	[CCode (cname = "retro_hw_get_current_framebuffer_t")]
-	public delegate uintptr_t GetCurrentFramebuffer ();
-	
-	[CCode (cname = "retro_proc_address_t")]
-	public delegate void ProcAdress ();
-	
-	[CCode (cname = "retro_hw_get_proc_address_t")]
-	public delegate ProcAdress GetProcAdress (string sym);
-	
-	[CCode (cname = "unsigned", cprefix = "RETRO_HW_CONTEXT_")]
-	public enum ContexType {
-		NONE,
-		OPENGL,
-		OPENGLES2,
-		OPENGL_CORE,
-		OPENGLES3
-	}
-	
-	[CCode (cname = "struct retro_hw_render_callback")]
-	public struct RenderCallback {
-		ContexType            context_type;
-		ContextReset          context_reset;
-		GetCurrentFramebuffer get_current_framebuffer;
-		GetProcAdress         get_proc_address;
-		bool                  depth;
-		bool                  stencil;
-		bool                  bottom_left_origin;
-		uint                  version_major;
-		uint                  version_minor;
-		bool                  cache_context;
-		ContextReset          context_destroy;
-		bool                  debug_context;
-	}
-}
-
 namespace Keyboard {
 	[CCode (cname = "retro_keyboard_event_t")]
 	public delegate void Event (bool down, Key keycode, uint32 character, ModifierKey key_modifiers);
@@ -432,46 +388,6 @@ namespace Keyboard {
 	public struct Callback {
 		Event callback;
 	}
-}
-
-namespace Disk {
-	[CCode (cname = "retro_set_eject_state_t")]
-	public delegate bool SetEjectState (bool ejected);
-	
-	[CCode (cname = "retro_get_eject_state_t")]
-	public delegate bool GetEjectState ();
-	
-	[CCode (cname = "retro_get_image_index_t")]
-	public delegate uint GetImageIndex ();
-	
-	[CCode (cname = "retro_set_image_index_t")]
-	public delegate bool SetImageIndex (uint index);
-	
-	[CCode (cname = "retro_get_num_images_t")]
-	public delegate uint GetNumImages ();
-	
-	[CCode (cname = "retro_replace_image_index_t")]
-	public delegate bool ReplaceImageIndex (uint index, GameInfo info);
-	
-	[CCode (cname = "retro_add_image_index_t")]
-	public delegate bool AddImageIndex ();
-	
-	[CCode (cname = "struct retro_disk_control_callback")]
-	public struct Callback {
-		SetEjectState     set_eject_state;
-		GetEjectState     get_eject_state;
-		GetImageIndex     get_image_index;
-		SetImageIndex     set_image_index;
-		GetNumImages      get_num_images;
-		ReplaceImageIndex replace_image_index;
-		AddImageIndex     add_image_index;
-	}
-}
-
-[CCode (cname = "struct retro_message")]
-public struct Message {
-   const string msg;
-   uint         frames;
 }
 
 }

@@ -60,7 +60,7 @@ public class Core : Object {
 	 * @param [height] [height of the frame]
 	 * @param [pitch] [length in bytes between two lines in buffer]
 	 */
-	public delegate void VideoRefresh (uint8[] data, uint width, uint height, size_t pitch);
+	public delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[] data, uint width, uint height, size_t pitch);
 	
 	/**
 	 * Renders a single audio frame.
@@ -85,7 +85,7 @@ public class Core : Object {
 	 * @param [data] [the audio sample batch]
 	 * @param [frames] [the number of frames in the batch]
 	 */
-	public delegate size_t AudioSampleBatch (int16[] data, size_t frames);
+	public delegate size_t AudioSampleBatch ([CCode (array_length_type = "gsize")] int16[] data, size_t frames);
 	
 	/**
 	 * Polls input.
@@ -142,9 +142,9 @@ public class Core : Object {
 	[CCode (has_target = false)]
 	private delegate size_t SerializeSize ();
 	[CCode (has_target = false)]
-	private delegate bool Serialize (uint8[] data);
+	private delegate bool Serialize ([CCode (array_length_type = "gsize")] uint8[] data);
 	[CCode (has_target = false)]
-	private delegate bool Unserialize (uint8[] data);
+	private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[] data);
 	
 	[CCode (has_target = false)]
 	private delegate void CheatReset ();
@@ -576,7 +576,7 @@ public class Core : Object {
 	 * @param [data] [the buffer where the data will be stored]
 	 * @return [false if the serialization failed, true otherwise]
 	 */
-	public bool serialize (out uint8[] data) {
+	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
 		set_global_self ();
 		return _serialize (data);
 	}
@@ -587,7 +587,7 @@ public class Core : Object {
 	 * @param [data] [the buffer where the data is stored]
 	 * @return [false if the unserialization failed, true otherwise]
 	 */
-	public bool unserialize (uint8[] data) {
+	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
 		set_global_self ();
 		return _unserialize (data);
 	}

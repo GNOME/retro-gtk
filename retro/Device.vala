@@ -1,4 +1,4 @@
-/* Device.vala  Input device description.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ public enum SensorId {
 
 public struct InputDescriptor {
    uint port;
-   Device.Type device;
+   Type device;
    uint index;
    uint id;
 	

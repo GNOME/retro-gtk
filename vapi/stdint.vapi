@@ -1,4 +1,4 @@
-/* Retro  GObject libretro wrapper.
+/* stdint
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro {
-
-public struct SystemInfo {
-	public string library_name;
-	public string library_version;
-	public string valid_extensions;
-
-	public bool   need_fullpath;
-	public bool   block_extract;
+[CCode (cheader_filename = "stdint.h", cname = "uintptr_t", simple_type = 1)]
+public struct uintptr_t {
+	[CCode (cname = "UINTPTR_MAX")]
+	public static const uintptr_t MAX;
 }
-
-}
-

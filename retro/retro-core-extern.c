@@ -1,4 +1,4 @@
-/* retro-core-extern.c  Functions helping to identify a Core.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@ typedef void RetroCore;
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
 typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
 typedef void (*RetroAudioSample) (gint16 left, gint16 right, void* user_data);
-typedef gsize (*RetroAudioSampleBatch) (gint16* data, int size, gsize frames, void* user_data);
+typedef gsize (*RetroAudioSampleBatch) (gint16* data, gsize size, gsize frames, void* user_data);
 typedef void (*RetroInputPoll) (void* user_data);
 typedef gint16 (*RetroInputState) (guint port, guint device, guint index, guint id, void* user_data);
 

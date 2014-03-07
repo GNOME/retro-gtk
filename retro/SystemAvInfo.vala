@@ -1,4 +1,4 @@
-/* SystemAvInfo.vala  Get AV informations from a Core.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify

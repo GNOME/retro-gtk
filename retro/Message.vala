@@ -18,13 +18,16 @@
 
 namespace Retro {
 
-public struct SystemInfo {
-	public string library_name;
-	public string library_version;
-	public string valid_extensions;
-
-	public bool   need_fullpath;
-	public bool   block_extract;
+public struct Message {
+	/**
+	 * Message to be displayed.
+	 */
+	public string msg;
+	
+	/**
+	 * Duration in frames of message.
+	 */
+	public uint frames;
 }
 
 }

@@ -12,18 +12,21 @@ DEMO = $(OUT_DIR)/demo
 RETRO_FILES= \
 	Core.vala \
 	Environment.vala \
-	Log.vala \
-	Variable.vala \
-	SystemInfo.vala \
-	SystemAvInfo.vala \
-	GameInfo.vala \
 	Device.vala \
-	AudioSamples.vala \
+	Disk.vala \
+	GameInfo.vala \
+	Hardware.vala \
+	Log.vala \
+	Message.vala \
+	SystemAvInfo.vala \
+	SystemInfo.vala \
+	Variable.vala \
 	retro-core-extern.c \
 	retro-environment-extern.c \
 	$(NULL)
 
 FLICKY_FILES= \
+	AudioSamples.vala \
 	Runnable.vala \
 	Runner.vala \
 	$(NULL)
@@ -41,6 +44,7 @@ DEMO_FILES= \
 
 RETRO_PKG= \
 	gmodule-2.0 \
+	stdint \
 	Retro \
 	$(NULL)
 

@@ -27,7 +27,7 @@ public struct GameInfo {
 	 * {@link [Retro.SystemInfo.need_fullpath]} guaranteed that this path is
 	 * valid.
 	 */
-	public string  path;
+	public string path;
 	
 	/**
 	 * Memory buffer of loaded game.
@@ -40,7 +40,7 @@ public struct GameInfo {
 	/**
 	 * String of implementation specific meta-data.
 	 */
-	public string  meta;
+	public string meta;
 	
 	public GameInfo (string filename) throws FileError {
 		path = filename;

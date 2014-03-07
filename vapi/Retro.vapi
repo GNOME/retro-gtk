@@ -2,15 +2,6 @@
 
 namespace Retro {
 
-[CCode (cname = "RETRO_API_VERSION")]
-public const uint api_version;
-
-[CCode (cname = "unsigned")]
-public enum Region {
-	NTSC,
-	PAL
-}
-
 [CCode (cname = "unsigned")]
 public enum Memory {
 	MASK,

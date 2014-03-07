@@ -21,6 +21,7 @@ RETRO_FILES= \
 	Keyboard.vala \
 	Log.vala \
 	Message.vala \
+	Region.vala \
 	Rumble.vala \
 	Sensor.vala \
 	SystemAvInfo.vala \

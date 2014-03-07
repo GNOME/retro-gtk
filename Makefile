@@ -27,6 +27,7 @@ RETRO_FILES= \
 
 FLICKY_FILES= \
 	AudioSamples.vala \
+	Options.vala \
 	Runnable.vala \
 	Runner.vala \
 	$(NULL)

@@ -20,6 +20,7 @@ namespace Retro {
 
 public struct GameInfo {
 	public string  path;
+	[CCode (array_length_type = "gsize")]
 	public uint8[] data;
 	public string  meta;
 	

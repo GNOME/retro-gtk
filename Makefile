@@ -47,9 +47,13 @@ PKG= \
 	Retro \
 	$(NULL)
 
+RETRO_LIBNAME=retro
+
 RETRO_SRC = $(RETRO_FILES:%=$(RETRO_DIR)/%)
 FLICKY_SRC = $(FLICKY_FILES:%=$(FLICKY_DIR)/%)
 DEMO_SRC = $(DEMO_FILES:%=$(DEMO_DIR)/%)
+
+RETRO_OUT=$(OUT_DIR)/lib$(RETRO_LIBNAME).so
 
 all: $(DEMO)
 
@@ -59,8 +63,22 @@ $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC)
 	valac -b $(RETRO_DIR) -d $(@D) \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
-		--Xcc="-g"
-		
+		-g -C
+	valac -b $(RETRO_DIR) -d $(@D) \
+		-o $(@F) $^ \
+		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
+		-g
+
+$(RETRO_OUT): $(RETRO_SRC)
+	mkdir -p $(@D)
+	valac -b $(<D) -d $(@D) \
+		--library=retro \
+		--vapi=retro-1.0.vapi \
+		--gir=Retro-1.0.gir \
+		-H $(@D)/retro.h \
+		-o $(@F) $^ \
+		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
+		-X -fPIC -X -shared
 
 clean:
 	rm -Rf $(OUT_DIR)

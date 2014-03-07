@@ -20,6 +20,7 @@ RETRO_FILES= \
 	Hardware.vala \
 	Keyboard.vala \
 	Log.vala \
+	Memory.vala \
 	Message.vala \
 	Region.vala \
 	Rumble.vala \

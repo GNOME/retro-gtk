@@ -162,9 +162,9 @@ public class Core : Object {
 	private delegate Region GetRegion ();
 	
 	[CCode (has_target = false)]
-	private delegate void *GetMemoryData (Memory id);
+	private delegate void *GetMemoryData (Memory.Type id);
 	[CCode (has_target = false)]
-	private delegate size_t GetMemorySize (Memory id);
+	private delegate size_t GetMemorySize (Memory.Type id);
 	
 	
 	
@@ -667,7 +667,7 @@ public class Core : Object {
 	 * @param [id] [the region of memory]
 	 * @return [the region of memory]
 	 */
-	public void *get_memory_data (Memory id) {
+	public void *get_memory_data (Memory.Type id) {
 		set_global_self ();
 		return _get_memory_data (id);
 	}
@@ -678,7 +678,7 @@ public class Core : Object {
 	 * @param [id] [the region of memory]
 	 * @return [the size of the region of memory]
 	 */
-	public size_t get_memory_size (Memory id) {
+	public size_t get_memory_size (Memory.Type id) {
 		set_global_self ();
 		return _get_memory_size (id);
 	}

@@ -3,21 +3,6 @@
 namespace Retro {
 
 [CCode (cname = "unsigned")]
-public enum Memory {
-	MASK,
-	SAVE_RAM,
-	RTC,
-	SYSTEM_RAM,
-	VIDEO_RAM,
-	SNES_BSX_RAM,
-	SNES_BSX_PRAM,
-	SNES_SUFAMI_TURBO_A_RAM,
-	SNES_SUFAMI_TURBO_B_RAM,
-	SNES_GAME_BOY_RAM,
-	SNES_GAME_BOY_RTC
-}
-
-[CCode (cname = "unsigned")]
 public enum GameType {
 	BSX,
 	BSX_SLOTTED,

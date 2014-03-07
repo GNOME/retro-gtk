@@ -1,4 +1,4 @@
-/* Core.vala  Wraps a libretro implementation in an easy to use object.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,9 @@
 
 namespace Retro {
 
+/**
+ * The version of libretro implemented by Retro.
+ */
 public static const uint API_VERSION = 1;
 
 /**

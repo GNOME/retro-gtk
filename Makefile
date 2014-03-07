@@ -18,6 +18,7 @@ RETRO_FILES= \
 	FrameTime.vala \
 	GameInfo.vala \
 	Hardware.vala \
+	Keyboard.vala \
 	Log.vala \
 	Message.vala \
 	Rumble.vala \

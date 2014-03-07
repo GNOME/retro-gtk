@@ -1,4 +1,4 @@
-/* GameInfo.vala  Informations to load and read a game.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,27 @@
 namespace Retro {
 
 public struct GameInfo {
+	/**
+	 * Path to game, UTF-8 encoded.
+	 * 
+	 * Usually used as a reference.
+	 * May be null if rom was loaded from stdin or similar.
+	 * {@link [Retro.SystemInfo.need_fullpath]} guaranteed that this path is
+	 * valid.
+	 */
 	public string  path;
+	
+	/**
+	 * Memory buffer of loaded game.
+	 * 
+	 * Will be null if {@link [Retro.SystemInfo.need_fullpath]} was set.
+	 */
 	[CCode (array_length_type = "gsize")]
 	public uint8[] data;
+	
+	/**
+	 * String of implementation specific meta-data.
+	 */
 	public string  meta;
 	
 	public GameInfo (string filename) throws FileError {

@@ -284,22 +284,6 @@ namespace Perf {
 	
 }
 
-namespace Sensor {
-	[CCode (cname = "gint", cprefix = "RETRO_SENSOR_")]
-	public enum Action {
-		ACCELEROMETER_ENABLE,
-		ACCELEROMETER_DISABLE
-	}
-	
-	[CCode (cname = "retro_set_sensor_state_t")]
-	public delegate bool SetState (uint port, Action action, uint rate);
-	
-	[CCode (cname = "struct retro_sensor_interface")]
-	public struct Interface {
-		SetState set_sensor_state;
-	}
-}
-
 namespace Audio {
 	[CCode (cname = "retro_audio_callback_t")]
 	public delegate void AudioCallback ();

@@ -21,6 +21,7 @@ RETRO_FILES= \
 	Log.vala \
 	Message.vala \
 	Rumble.vala \
+	Sensor.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \

@@ -30,7 +30,6 @@ class Engine : Core, Runnable {
 	private bool option_changed;
 	private OptionsHandler options;
 	
-	private SystemAvInfo av_info;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
@@ -52,11 +51,6 @@ class Engine : Core, Runnable {
 		audio_sample_batch_cb = on_audio_sample_batch_cb;
 		input_poll_cb         = on_input_poll_cb;
 		input_state_cb        = on_input_state_cb;
-		
-		av_info = get_system_av_info ();
-		
-		stdout.printf ("sample_rate: %lf\n", av_info.timing.sample_rate);
-		stdout.printf ("fps: %lf\n", av_info.timing.fps);
 		
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 	}
@@ -189,11 +183,13 @@ class Engine : Core, Runnable {
 	}
 	
 	private void on_audio_sample_cb (int16 left, int16 right) {
+		var av_info = get_system_av_info ();
 		var audio_samples = new AudioSamples.from_sample (left, right);
 		audio_refresh (audio_samples, av_info.timing.sample_rate);
 	}
 	
 	private size_t on_audio_sample_batch_cb (int16[] data, size_t frames) {
+		var av_info = get_system_av_info ();
 		var audio_samples = new AudioSamples (data);
 		audio_refresh (audio_samples, av_info.timing.sample_rate);
 		return 0;
@@ -240,6 +236,7 @@ class Engine : Core, Runnable {
 	}
 	
 	public double get_iterations_per_second () {
+		var av_info = get_system_av_info ();
 		return av_info.timing.fps;
 	}
 }

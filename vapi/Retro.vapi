@@ -2,14 +2,6 @@
 
 namespace Retro {
 
-[CCode (cname = "unsigned")]
-public enum GameType {
-	BSX,
-	BSX_SLOTTED,
-	SUFAMI_TURBO,
-	SUPER_GAME_BOY
-}
-
 // Video
 
 namespace Video {

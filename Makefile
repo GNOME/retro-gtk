@@ -17,6 +17,7 @@ RETRO_FILES= \
 	Environment.vala \
 	FrameTime.vala \
 	GameInfo.vala \
+	GameType.vala \
 	Hardware.vala \
 	Keyboard.vala \
 	Log.vala \

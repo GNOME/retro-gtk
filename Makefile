@@ -10,10 +10,11 @@ VAPI_DIR = vapi
 DEMO = $(OUT_DIR)/demo
 
 RETRO_FILES= \
+	Camera.vala \
 	Core.vala \
-	Environment.vala \
 	Device.vala \
 	Disk.vala \
+	Environment.vala \
 	FrameTime.vala \
 	GameInfo.vala \
 	Hardware.vala \

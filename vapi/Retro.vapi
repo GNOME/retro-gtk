@@ -300,42 +300,6 @@ namespace Sensor {
 	}
 }
 
-namespace Camera {
-	[CCode (cname = "gint")]
-	public enum Buffer {
-		OPENGL_TEXTURE,
-		RAW_FRAMEBUFFER
-	}
-	
-	[CCode (cname = "retro_camera_start_t")]
-	public delegate bool Start ();
-	
-	[CCode (cname = "retro_camera_stop_t")]
-	public delegate void Stop ();
-	
-	[CCode (cname = "retro_camera_lifetime_status_t")]
-	public delegate void LifetimeStatus ();
-	
-	[CCode (cname = "retro_camera_frame_raw_framebuffer_t")]
-	public delegate void FrameRawFramebuffer (uint32[] buffer, uint width, uint height, size_t pitch);
-	
-	[CCode (cname = "retro_camera_frame_opengl_texture_t")]
-	public delegate void FrameOpenglTexture (uint texture_id, uint texture_target, float[] affine);
-	
-	[CCode (cname = "struct retro_camera_callback")]
-	public struct Callback {
-		uint64              caps;
-		uint                width;
-		uint                height;
-		Start               start;
-		Stop                stop;
-		FrameRawFramebuffer frame_raw_framebuffer;
-		FrameOpenglTexture  frame_opengl_texture;
-		LifetimeStatus      initialized;
-		LifetimeStatus      deinitialized;
-	}
-}
-
 namespace Audio {
 	[CCode (cname = "retro_audio_callback_t")]
 	public delegate void AudioCallback ();

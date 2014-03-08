@@ -23,7 +23,7 @@ class Demo : Object {
 	public static int main (string[] argv) {
 		Gtk.init (ref argv);
 		
-		var w = new Retro.Window ();
+		var w = new Window ();
 		w.show ();
 		w.destroy.connect (()=>{
 			Gtk.main_quit();

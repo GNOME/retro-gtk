@@ -17,10 +17,9 @@
  */
 
 using Flicky;
+using Retro;
 
-namespace Retro {
-
-class Engine : Object, Runnable {
+public class Engine : Object, Runnable {
 	private Core core;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
@@ -277,4 +276,3 @@ class Engine : Object, Runnable {
 	}
 }
 
-}

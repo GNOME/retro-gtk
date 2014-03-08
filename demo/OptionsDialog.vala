@@ -16,11 +16,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+using Retro;
 using Flicky;
 
-namespace Retro {
-
-class OptionsDialog : Gtk.Dialog {
+public class OptionsDialog : Gtk.Dialog {
 	private OptionsHandler options;
 	private Gtk.Grid grid;
 	
@@ -85,7 +84,5 @@ class OptionsDialog : Gtk.Dialog {
 		grid.attach (new Gtk.Label (description), 0, row, 1, 1);
 		grid.attach (box, 1, row, 1, 1);
 	}
-}
-
 }
 

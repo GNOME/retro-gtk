@@ -16,13 +16,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+using Retro;
 using Flicky;
 
 using Gtk;
 
-namespace Retro {
-
-class Window : Gtk.Window {
+public class Window : Gtk.Window {
 	private Gtk.HeaderBar header;
 	private KeyboardBox kb_box;
 	private Gtk.Image game_screen;
@@ -159,7 +158,5 @@ class Window : Gtk.Window {
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
 	}
-}
-
 }
 

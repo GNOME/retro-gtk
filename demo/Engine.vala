@@ -27,12 +27,16 @@ public class Engine : Object, Runnable {
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
 	public Video.PixelFormat pixel_format { private set; get; default = Video.PixelFormat.ORGB1555; }
+	public uint? performance_level { private set; get; default = null; }
 	
 	private bool option_changed;
 	private OptionsHandler options;
 	
 	public SystemInfo info { private set; get; }
 	public SystemAvInfo? av_info { private set; get; default = null; }
+	
+	public signal void set_message (string message, uint frames);
+	public signal void shutdown ();
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
 	public signal void audio_refresh (AudioSamples samples);
@@ -74,22 +78,18 @@ public class Engine : Object, Runnable {
 				break;
 			case Retro.Environment.Command.SET_MESSAGE:
 				var message = Retro.Environment.get_message (data);
-				stdout.printf ("on_environment_cb: SET_MESSAGE\n");
-				// TODO
+				set_message (message.msg, message.frames);
 				break;
 			case Retro.Environment.Command.SHUTDOWN:
-				stdout.printf ("on_environment_cb: SHUTDOWN\n");
-				// TODO
+				shutdown ();
 				break;
 			case Retro.Environment.Command.SET_PERFORMANCE_LEVEL:
-				var performance_level = Retro.Environment.get_uint (data);
-				stdout.printf ("on_environment_cb: SET_PERFORMANCE_LEVEL\n");
-				// TODO
+				performance_level = Retro.Environment.get_uint (data);
 				break;
 			case Retro.Environment.Command.GET_SYSTEM_DIRECTORY:
 				Retro.Environment.set_string (data, "/home/kekun/nestopia");
 				stdout.printf ("on_environment_cb: GET_SYSTEM_DIRECTORY\n");
-				// TODO
+				// TODO set a proper system directory
 				break;
 			case Retro.Environment.Command.SET_PIXEL_FORMAT:
 				pixel_format = (Video.PixelFormat) Retro.Environment.get_uint (data);

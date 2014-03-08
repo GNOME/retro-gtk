@@ -254,6 +254,16 @@ class Engine : Object, Runnable {
 		return av_info.timing.fps;
 	}
 	
+	/**
+	 * Resets the current game.
+	 */
+	public void reset () {
+		core.reset ();
+	}
+	
+	/**
+	 * Runs the game for one video frame.
+	 */
 	public void run () {
 		av_info = core.get_system_av_info ();
 		core.run ();

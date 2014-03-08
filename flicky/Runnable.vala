@@ -18,7 +18,13 @@
 
 namespace Flicky {
 
+/**
+ * Represent an object that can be run.
+ * 
+ * Such an object could be run with a {@link Flicky.Runner}.
+ */
 public interface Runnable : Object {
+	public abstract void reset ();
 	public abstract void run ();
 	public abstract double get_iterations_per_second ();
 }

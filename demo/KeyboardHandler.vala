@@ -116,9 +116,9 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	private int16 get_joypad_state (Device.JoypadId id) {
 		switch (id) {
 			case Device.JoypadId.B:
-				return (int16) get_key_state (53); // X
+				return (int16) get_key_state (39); // QWERTY S
 			case Device.JoypadId.Y:
-				return (int16) get_key_state (39); // S
+				return (int16) get_key_state (38); // QWERTY A
 			case Device.JoypadId.SELECT:
 				return (int16) get_key_state (22); // Backspace
 			case Device.JoypadId.START:
@@ -132,21 +132,21 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 			case Device.JoypadId.RIGHT:
 				return (int16) get_key_state (114); // Right arrow
 			case Device.JoypadId.A:
-				return (int16) get_key_state (54); // C
+				return (int16) get_key_state (40); // QWERTY D
 			case Device.JoypadId.X:
-				return (int16) get_key_state (40); // D
+				return (int16) get_key_state (25); // QWERTY W
 			case Device.JoypadId.L:
-				return (int16) get_key_state (41); // F
+				return (int16) get_key_state (24); // QWERTY Q
 			case Device.JoypadId.R:
-				return (int16) get_key_state (55); // V
+				return (int16) get_key_state (26); // QWERTY E
 			case Device.JoypadId.L2:
-				return (int16) get_key_state (42); // G
+				return (int16) get_key_state (52); // QWERTY Z
 			case Device.JoypadId.R2:
-				return (int16) get_key_state (56); // B
+				return (int16) get_key_state (54); // QWERTY C
 			case Device.JoypadId.L3:
-				return (int16) get_key_state (43); // H
+				return (int16) get_key_state (10); // QWERTY 1
 			case Device.JoypadId.R3:
-				return (int16) get_key_state (57); // N
+				return (int16) get_key_state (12); // 3
 			default:
 				return 0;
 		}

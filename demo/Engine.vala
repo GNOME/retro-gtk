@@ -30,7 +30,7 @@ public class Engine : Object, Runnable {
 	public uint? performance_level { private set; get; default = null; }
 	
 	private bool option_changed;
-	private OptionsHandler options;
+	public OptionsHandler options { private set; get; default = null; }
 	
 	public SystemInfo info { private set; get; }
 	public SystemAvInfo? av_info { private set; get; default = null; }
@@ -223,10 +223,6 @@ public class Engine : Object, Runnable {
 		}
 		
 		return 0;
-	}
-	
-	public OptionsHandler get_options () {
-		return options;
 	}
 	
 	public void set_controller_device (uint port, ControllerDevice device) {

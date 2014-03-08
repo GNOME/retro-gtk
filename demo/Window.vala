@@ -123,7 +123,7 @@ public class Window : Gtk.Window {
 	}
 	
 	void on_properties_button_clicked (Gtk.Button button) {
-		var dialog = new OptionsDialog (engine.get_options ());
+		var dialog = new OptionsDialog (engine.options);
 		dialog.show_all ();
 	}
 	

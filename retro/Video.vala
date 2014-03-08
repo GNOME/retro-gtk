@@ -22,7 +22,8 @@ namespace Video {
 	public enum PixelFormat {
 		ORGB1555,
 		XRGB8888,
-		RGB565
+		RGB565,
+		UNKNOWN = -1;
 	}
 }
 

@@ -23,6 +23,7 @@ RETRO_FILES= \
 	Log.vala \
 	Memory.vala \
 	Message.vala \
+	Performance.vala \
 	Region.vala \
 	Rumble.vala \
 	Sensor.vala \

@@ -263,8 +263,8 @@ class Engine : Object, Runnable {
 		core.load_game (game);
 	}
 	
-	public SystemInfo get_system_info () {
-		return core.get_system_info ();
+	public string get_library_name () {
+		return core.get_system_info ().library_name;
 	}
 }
 

@@ -88,13 +88,7 @@ class Window : Gtk.Window {
 	}
 	
 	void set_titles () {
-		var si = engine.get_system_info ();
-		header.set_title (si.library_name);
-		
-		/*
-		if (state >= State.HAS_GAME) {
-			header.set_subtitle (si.library_name);
-		}*/
+		header.set_title (engine.get_library_name ());
 	}
 	
 	void on_open_core_button_clicked (Gtk.Button button) {

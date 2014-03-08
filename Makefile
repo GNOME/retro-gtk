@@ -38,6 +38,8 @@ RETRO_FILES= \
 
 FLICKY_FILES= \
 	AudioSamples.vala \
+	ControllerDevice.vala \
+	KeyboardBox.vala \
 	Options.vala \
 	Runnable.vala \
 	Runner.vala \
@@ -49,8 +51,6 @@ DEMO_FILES= \
 	Window.vala \
 	OptionsDialog.vala \
 	AudioDevice.vala \
-	ControllerDevice.vala \
-	KeyboardHandler.vala \
 	lol.c \
 	$(NULL)
 
@@ -60,12 +60,12 @@ RETRO_PKG= \
 	$(NULL)
 
 FLICKY_PKG= \
+	gtk+-3.0 \
 	$(NULL)
 
 PKG= \
 	$(RETRO_PKG) \
 	$(FLICKY_PKG) \
-	gtk+-3.0 \
 	libpulse \
 	libpulse-mainloop-glib \
 	$(NULL)

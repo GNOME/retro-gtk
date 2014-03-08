@@ -24,7 +24,7 @@ namespace Retro {
 
 class Window : Gtk.Window {
 	private Gtk.HeaderBar header;
-	private KeyboardHandler kb_handler;
+	private KeyboardBox kb_box;
 	private Gtk.Image game_screen;
 	
 	private Gtk.Button open_core_button;
@@ -43,7 +43,7 @@ class Window : Gtk.Window {
 		engine = null;
 		
 		header = new Gtk.HeaderBar ();
-		kb_handler = new KeyboardHandler ();
+		kb_box = new KeyboardBox ();
 		game_screen = new Gtk.Image ();
 		
 		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
@@ -54,8 +54,8 @@ class Window : Gtk.Window {
 		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
 		set_titlebar (header);
-		add (kb_handler);
-		kb_handler.add (game_screen);
+		add (kb_box);
+		kb_box.add (game_screen);
 		
 		header.pack_start (open_core_button);
 		header.pack_start (open_game_button);
@@ -76,7 +76,7 @@ class Window : Gtk.Window {
 		audio_dev = new AudioDevice ();
 		
 		header.show ();
-		kb_handler.show ();
+		kb_box.show ();
 		game_screen.show ();
 		
 		open_core_button.show ();
@@ -159,7 +159,7 @@ class Window : Gtk.Window {
 			// TODO add a way to set the sample rate of the audio device
 		});
 		
-		engine.set_controller_device (0, kb_handler);
+		engine.set_controller_device (0, kb_box);
 		
 		runner = new Runner (engine);
 		open_game_button.show ();

@@ -1,4 +1,4 @@
-/* KeyboardHandler.vala  Handle keyboard input.
+/* Flicky  Building blocks for a Retro frontend.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 using Gtk;
 using Gdk;
 
-namespace Retro {
+namespace Flicky {
 
-public class KeyboardHandler : EventBox, ControllerDevice {
+public class KeyboardBox : EventBox, ControllerDevice {
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
 	
@@ -58,22 +58,22 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 		// Set the default keys for the joypad.
 		
 		joypad_keys = new uint16[16];
-		set_joypad_key (Device.JoypadId.B,      39); // QWERTY S
-		set_joypad_key (Device.JoypadId.Y,      38); // QWERTY A
-		set_joypad_key (Device.JoypadId.SELECT, 22); // Backspace
-		set_joypad_key (Device.JoypadId.START,  36); // Enter
-		set_joypad_key (Device.JoypadId.UP,    111); // Up arrow
-		set_joypad_key (Device.JoypadId.DOWN,  116); // Down arrow
-		set_joypad_key (Device.JoypadId.LEFT,  113); // Left arrow
-		set_joypad_key (Device.JoypadId.RIGHT, 114); // Right arrow
-		set_joypad_key (Device.JoypadId.A,      40); // QWERTY D
-		set_joypad_key (Device.JoypadId.X,      25); // QWERTY W
-		set_joypad_key (Device.JoypadId.L,      24); // QWERTY Q
-		set_joypad_key (Device.JoypadId.R,      26); // QWERTY E
-		set_joypad_key (Device.JoypadId.L2,     52); // QWERTY Z
-		set_joypad_key (Device.JoypadId.R2,     54); // QWERTY C
-		set_joypad_key (Device.JoypadId.L3,     10); // QWERTY 1
-		set_joypad_key (Device.JoypadId.R3,     12); // QWERTY 3
+		set_joypad_key (Retro.Device.JoypadId.B,      39); // QWERTY S
+		set_joypad_key (Retro.Device.JoypadId.Y,      38); // QWERTY A
+		set_joypad_key (Retro.Device.JoypadId.SELECT, 22); // Backspace
+		set_joypad_key (Retro.Device.JoypadId.START,  36); // Enter
+		set_joypad_key (Retro.Device.JoypadId.UP,    111); // Up arrow
+		set_joypad_key (Retro.Device.JoypadId.DOWN,  116); // Down arrow
+		set_joypad_key (Retro.Device.JoypadId.LEFT,  113); // Left arrow
+		set_joypad_key (Retro.Device.JoypadId.RIGHT, 114); // Right arrow
+		set_joypad_key (Retro.Device.JoypadId.A,      40); // QWERTY D
+		set_joypad_key (Retro.Device.JoypadId.X,      25); // QWERTY W
+		set_joypad_key (Retro.Device.JoypadId.L,      24); // QWERTY Q
+		set_joypad_key (Retro.Device.JoypadId.R,      26); // QWERTY E
+		set_joypad_key (Retro.Device.JoypadId.L2,     52); // QWERTY Z
+		set_joypad_key (Retro.Device.JoypadId.R2,     54); // QWERTY C
+		set_joypad_key (Retro.Device.JoypadId.L3,     10); // QWERTY 1
+		set_joypad_key (Retro.Device.JoypadId.R3,     12); // QWERTY 3
 	}
 	
 	private bool on_key_press_event (Widget source, EventKey event) {
@@ -121,12 +121,12 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	
 	public void  poll () {}
 	
-	public int16 get_input_state (Device.Type device, uint index, uint id) {
+	public int16 get_input_state (Retro.Device.Type device, uint index, uint id) {
 		switch (device) {
-			case Device.Type.KEYBOARD:
+			case Retro.Device.Type.KEYBOARD:
 				return get_keyboard_state (index, id);
-			case Device.Type.JOYPAD:
-				return get_joypad_state ((Device.JoypadId) id);
+			case Retro.Device.Type.JOYPAD:
+				return get_joypad_state ((Retro.Device.JoypadId) id);
 			default:
 				return 0;
 		}
@@ -136,23 +136,23 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 		return 0;
 	}
 	
-	private int16 get_joypad_state (Device.JoypadId id) {
+	private int16 get_joypad_state (Retro.Device.JoypadId id) {
 		return get_key_state (get_joypad_key (id)) ? int16.MAX : 0;
 	}
 	
-	public Device.Type  get_device_type () {
-		return Device.Type.KEYBOARD;
+	public Retro.Device.Type  get_device_type () {
+		return Retro.Device.Type.KEYBOARD;
 	}
 	
-	public Device.Type[] get_device_capabilities () {
-		return { Device.Type.KEYBOARD, Device.Type.JOYPAD };
+	public Retro.Device.Type[] get_device_capabilities () {
+		return { Retro.Device.Type.KEYBOARD, Retro.Device.Type.JOYPAD };
 	}
 	
-	public void set_joypad_key (Device.JoypadId id, uint16 hardware_keycode) {
+	public void set_joypad_key (Retro.Device.JoypadId id, uint16 hardware_keycode) {
 		joypad_keys[id] = hardware_keycode;
 	}
 	
-	public uint16 get_joypad_key (Device.JoypadId id) {
+	public uint16 get_joypad_key (Retro.Device.JoypadId id) {
 		return joypad_keys[id];
 	}
 }

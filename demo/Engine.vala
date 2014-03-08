@@ -246,6 +246,7 @@ class Engine : Core, Runnable {
 	}
 	
 	public double get_iterations_per_second () {
+		if (av_info == null) av_info = get_system_av_info ();
 		return av_info.timing.fps;
 	}
 	

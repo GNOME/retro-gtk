@@ -57,7 +57,6 @@ DEMO_FILES= \
 RETRO_PKG= \
 	gmodule-2.0 \
 	stdint \
-	Retro \
 	$(NULL)
 
 FLICKY_PKG= \
@@ -85,14 +84,10 @@ all: $(DEMO)
 
 $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC)
 	mkdir -p $(OUT_DIR)
-	cp -f $(RETRO_DIR)/libretro.h $(OUT_DIR)/libretro.h
 	valac -b $(RETRO_DIR) -d $(@D) \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
-		-g -C
-	valac -b $(RETRO_DIR) -d $(@D) \
-		-o $(@F) $^ \
-		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
+		--save-temps \
 		-g
 
 $(RETRO_OUT): $(RETRO_SRC)
@@ -106,6 +101,7 @@ $(RETRO_OUT): $(RETRO_SRC)
 		-H $(@D)/$(RETRO_LIBNAME).h \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
+		--save-temps \
 		-X -fPIC -X -shared
 
 $(FLICKY_OUT): $(FLICKY_SRC)
@@ -119,6 +115,7 @@ $(FLICKY_OUT): $(FLICKY_SRC)
 		-H $(@D)/$(FLICKY_LIBNAME).h \
 		-o $(@F) $^ \
 		--vapidir=$(VAPI_DIR) $(FLICKY_PKG:%=--pkg=%) \
+		--save-temps \
 		-X -fPIC -X -shared
 
 clean:

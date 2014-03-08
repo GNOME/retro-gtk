@@ -19,12 +19,15 @@
 #ifndef __LOL_H__
 #define __LOL_H__
 
-#include <gtk/gtk.h>
-#include "libretro.h"
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
-guchar *xrgb1555_to_rgb888 (const uint16_t *data, unsigned width, unsigned height, size_t pitch);
-guchar *xrgb8888_to_rgb888 (const guchar *data, unsigned width, unsigned height, size_t pitch);
-guchar *rgb565_to_rgb888   (const uint16_t *data, unsigned width, unsigned height, size_t pitch);
+#define RETRO_PIXEL_FORMAT_0RGB1555 0
+#define RETRO_PIXEL_FORMAT_XRGB8888 1
+#define RETRO_PIXEL_FORMAT_RGB565   2
+
+guchar *xrgb1555_to_rgb888 (const guint16 *data, guint width, guint height, gsize pitch);
+guchar *xrgb8888_to_rgb888 (const guchar *data, guint width, guint height, gsize pitch);
+guchar *rgb565_to_rgb888   (const guint16 *data, guint width, guint height, gsize pitch);
 
 GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, gint video_format);
 

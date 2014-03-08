@@ -20,35 +20,35 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-guchar *xrgb1555_to_rgb888 (const uint16_t *data, unsigned width, unsigned height, size_t pitch) {
-	guchar get_r (uint16_t pixel) {
+guchar *xrgb1555_to_rgb888 (const guint16 *data, guint width, guint height, gsize pitch) {
+	guchar get_r (guint16 pixel) {
 		guchar color = ((pixel >> 10) << 3);
 		return color;
 	}
 	
-	guchar get_g (uint16_t pixel) {
+	guchar get_g (guint16 pixel) {
 		guchar color = ((pixel >> 5) << 3);
 		return color;
 	}
 	
-	guchar get_b (uint16_t pixel) {
+	guchar get_b (guint16 pixel) {
 		guchar color = (pixel << 3);
 		return color;
 	}
 	
-	size_t rgb_pitch = width*3;
+	gsize rgb_pitch = width*3;
 	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
 	
-	size_t i, j;
+	gsize i, j;
 	for (i = 0 ; i < height ; i++) {
-		size_t xrgb_row = i* (pitch / sizeof (uint16_t));
-		size_t rgb_row = i*rgb_pitch;
+		gsize xrgb_row = i* (pitch / sizeof (guint16));
+		gsize rgb_row = i*rgb_pitch;
 		
 		for (j = 0 ; j < width ; j++) {
-			size_t xrgb_col = j;
-			size_t rgb_col = j*3;
+			gsize xrgb_col = j;
+			gsize rgb_col = j*3;
 			
-			size_t rgb_pixel_i = rgb_row+rgb_col;
+			gsize rgb_pixel_i = rgb_row+rgb_col;
 			
 			// red
 			rgb[rgb_pixel_i]   = get_r (data[xrgb_row+xrgb_col]);
@@ -62,17 +62,17 @@ guchar *xrgb1555_to_rgb888 (const uint16_t *data, unsigned width, unsigned heigh
 	return rgb;
 }
 
-guchar *xrgb8888_to_rgb888 (const guchar *data, unsigned width, unsigned height, size_t pitch) {
-	size_t rgb_pitch = width*3;
+guchar *xrgb8888_to_rgb888 (const guchar *data, guint width, guint height, gsize pitch) {
+	gsize rgb_pitch = width*3;
 	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
 	
-	size_t i, j;
+	gsize i, j;
 	for (i = 0 ; i < height ; i++) {
-		size_t xrgb_row = i*pitch;
-		size_t rgb_row = i*rgb_pitch;
+		gsize xrgb_row = i*pitch;
+		gsize rgb_row = i*rgb_pitch;
 		for (j = 0 ; j < width ; j++) {
-			size_t xrgb_col = j*4;
-			size_t rgb_col = j*3;
+			gsize xrgb_col = j*4;
+			gsize rgb_col = j*3;
 			
 			rgb[rgb_row+rgb_col]   = data[xrgb_row+xrgb_col+2];
 			rgb[rgb_row+rgb_col+1] = data[xrgb_row+xrgb_col+1];
@@ -83,35 +83,35 @@ guchar *xrgb8888_to_rgb888 (const guchar *data, unsigned width, unsigned height,
 	return rgb;
 }
 
-guchar *rgb565_to_rgb888 (const uint16_t *data, unsigned width, unsigned height, size_t pitch) {
-	guchar get_r (uint16_t pixel) {
+guchar *rgb565_to_rgb888 (const guint16 *data, guint width, guint height, gsize pitch) {
+	guchar get_r (guint16 pixel) {
 		guchar color = ((pixel >> 11) << 3);
 		return color;
 	}
 	
-	guchar get_g (uint16_t pixel) {
+	guchar get_g (guint16 pixel) {
 		guchar color = ((pixel >> 5) << 2);
 		return color;
 	}
 	
-	guchar get_b (uint16_t pixel) {
+	guchar get_b (guint16 pixel) {
 		guchar color = (pixel << 3);
 		return color;
 	}
 	
-	size_t rgb_pitch = width*3;
+	gsize rgb_pitch = width*3;
 	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
 	
-	size_t i, j;
+	gsize i, j;
 	for (i = 0 ; i < height ; i++) {
-		size_t xrgb_row = i* (pitch / sizeof (uint16_t));
-		size_t rgb_row = i*rgb_pitch;
+		gsize xrgb_row = i* (pitch / sizeof (guint16));
+		gsize rgb_row = i*rgb_pitch;
 		
 		for (j = 0 ; j < width ; j++) {
-			size_t xrgb_col = j;
-			size_t rgb_col = j*3;
+			gsize xrgb_col = j;
+			gsize rgb_col = j*3;
 			
-			size_t rgb_pixel_i = rgb_row+rgb_col;
+			gsize rgb_pixel_i = rgb_row+rgb_col;
 			
 			// red
 			rgb[rgb_pixel_i]   = get_r (data[xrgb_row+xrgb_col]);
@@ -127,7 +127,7 @@ guchar *rgb565_to_rgb888 (const uint16_t *data, unsigned width, unsigned height,
 
 
 GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, gint pixel_format) {
-	uint8_t *vid = (uint8_t *) data;
+	guint8 *vid = (guint8 *) data;
 	
 	guchar *rgb = NULL;
 	
@@ -141,20 +141,17 @@ GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, 
 		case RETRO_PIXEL_FORMAT_RGB565:
 			rgb = rgb565_to_rgb888 (data, width, height, pitch);
 			break;
-		case RETRO_PIXEL_FORMAT_UNKNOWN:
-			rgb = rgb565_to_rgb888 (data, width, height, pitch);
-			break;
 		default:
-			g_assert_not_reached ();
+			rgb = xrgb1555_to_rgb888 (data, width, height, pitch);
 			break;
 	}
 	
-	size_t rgb_pitch = 3 * width;
+	gsize rgb_pitch = 3 * width;
 	
 	GdkColorspace colorspace = GDK_COLORSPACE_RGB;
-	gboolean has_alpha = false;
-	int bits_per_sample = 8;
-	int rowstride = rgb_pitch;
+	gboolean has_alpha = FALSE;
+	gint bits_per_sample = 8;
+	gint rowstride = rgb_pitch;
 	
 	void rgb_free (guchar *pixels, gpointer data) {
 		free (pixels);

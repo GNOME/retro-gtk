@@ -147,7 +147,6 @@ class Window : Gtk.Window {
 		}
 		
 		engine = new Engine(path);
-		engine.init ();
 		
 		engine.video_refresh.connect ((pb) => {
 			var pbx2 = pb.scale_simple (pb.get_width () * 2, pb.get_height () * 2, Gdk.InterpType.NEAREST);

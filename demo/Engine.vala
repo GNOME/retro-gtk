@@ -20,7 +20,9 @@ using Flicky;
 
 namespace Retro {
 
-class Engine : Core, Runnable {
+class Engine : Object, Runnable {
+	private Core core;
+	
 	public Gdk.PixbufRotation rotation { private set; get; default = Gdk.PixbufRotation.NONE; }
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
@@ -39,7 +41,7 @@ class Engine : Core, Runnable {
 	public signal void audio_refresh (AudioSamples samples);
 	
 	public Engine (string file_name) {
-		base (file_name);
+		core = new Core (file_name);
 		pixel_format = Video.PixelFormat.UNKNOWN;
 		
 		option_changed = false;
@@ -48,14 +50,16 @@ class Engine : Core, Runnable {
 			option_changed = true;
 		});
 		
-		environment_cb        = on_environment_cb;
-		video_refresh_cb      = on_video_refresh_cb;
-		audio_sample_cb       = on_audio_sample_cb;
-		audio_sample_batch_cb = on_audio_sample_batch_cb;
-		input_poll_cb         = on_input_poll_cb;
-		input_state_cb        = on_input_state_cb;
+		core.environment_cb        = on_environment_cb;
+		core.video_refresh_cb      = on_video_refresh_cb;
+		core.audio_sample_cb       = on_audio_sample_cb;
+		core.audio_sample_batch_cb = on_audio_sample_batch_cb;
+		core.input_poll_cb         = on_input_poll_cb;
+		core.input_state_cb        = on_input_state_cb;
 		
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
+		
+		core.init ();
 	}
 	
 	private bool on_environment_cb (Retro.Environment.Command cmd, void *data) {
@@ -234,7 +238,7 @@ class Engine : Core, Runnable {
 			controller_devices.insert (port, device);
 		}
 		
-		set_controller_port_device (port, Retro.Device.Type.JOYPAD);
+		core.set_controller_port_device (port, Retro.Device.Type.JOYPAD);
 	}
 	
 	public void remove_controller_device (uint port) {
@@ -242,17 +246,25 @@ class Engine : Core, Runnable {
 			controller_devices.remove (port);
 		}
 		
-		set_controller_port_device (port, Device.Type.NONE);
+		core.set_controller_port_device (port, Device.Type.NONE);
 	}
 	
 	public double get_iterations_per_second () {
-		if (av_info == null) av_info = get_system_av_info ();
+		if (av_info == null) av_info = core.get_system_av_info ();
 		return av_info.timing.fps;
 	}
 	
-	public new void run () {
-		av_info = get_system_av_info ();
-		base.run ();
+	public void run () {
+		av_info = core.get_system_av_info ();
+		core.run ();
+	}
+	
+	public void load_game (GameInfo game) {
+		core.load_game (game);
+	}
+	
+	public SystemInfo get_system_info () {
+		return core.get_system_info ();
 	}
 }
 

@@ -22,9 +22,10 @@ using Gdk;
 namespace Retro {
 
 public class KeyboardHandler : EventBox, ControllerDevice {
-	// TODO use hardware key values instead of key values
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
+	
+	private uint16[] joypad_keys;
 	
 	construct {
 		set_can_focus (true);
@@ -51,6 +52,26 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 		
 		keymap = Keymap.get_default ();
+		
+		// Set the default keys for the joypad.
+		
+		joypad_keys = new uint16[16];
+		set_joypad_key (Device.JoypadId.B,      39); // QWERTY S
+		set_joypad_key (Device.JoypadId.Y,      38); // QWERTY A
+		set_joypad_key (Device.JoypadId.SELECT, 22); // Backspace
+		set_joypad_key (Device.JoypadId.START,  36); // Enter
+		set_joypad_key (Device.JoypadId.UP,    111); // Up arrow
+		set_joypad_key (Device.JoypadId.DOWN,  116); // Down arrow
+		set_joypad_key (Device.JoypadId.LEFT,  113); // Left arrow
+		set_joypad_key (Device.JoypadId.RIGHT, 114); // Right arrow
+		set_joypad_key (Device.JoypadId.A,      40); // QWERTY D
+		set_joypad_key (Device.JoypadId.X,      25); // QWERTY W
+		set_joypad_key (Device.JoypadId.L,      24); // QWERTY Q
+		set_joypad_key (Device.JoypadId.R,      26); // QWERTY E
+		set_joypad_key (Device.JoypadId.L2,     52); // QWERTY Z
+		set_joypad_key (Device.JoypadId.R2,     54); // QWERTY C
+		set_joypad_key (Device.JoypadId.L3,     10); // QWERTY 1
+		set_joypad_key (Device.JoypadId.R3,     12); // QWERTY 3
 	}
 	
 	private bool on_key_press_event (Widget source, EventKey event) {
@@ -76,9 +97,9 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 		return false;
 	}
 	
-	private bool get_key_state (uint keyval) {
-		if (key_state.contains (keyval)) {
-			return key_state.lookup (keyval);
+	private bool get_key_state (uint16 hardware_keycode) {
+		if (key_state.contains (hardware_keycode)) {
+			return key_state.lookup ((uint) hardware_keycode);
 		}
 		
 		return false;
@@ -114,42 +135,7 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	}
 	
 	private int16 get_joypad_state (Device.JoypadId id) {
-		switch (id) {
-			case Device.JoypadId.B:
-				return (int16) get_key_state (39); // QWERTY S
-			case Device.JoypadId.Y:
-				return (int16) get_key_state (38); // QWERTY A
-			case Device.JoypadId.SELECT:
-				return (int16) get_key_state (22); // Backspace
-			case Device.JoypadId.START:
-				return (int16) get_key_state (36); // Enter
-			case Device.JoypadId.UP:
-				return (int16) get_key_state (111); // Up arrow
-			case Device.JoypadId.DOWN:
-				return (int16) get_key_state (116); // Down arrow
-			case Device.JoypadId.LEFT:
-				return (int16) get_key_state (113); // Left arrow
-			case Device.JoypadId.RIGHT:
-				return (int16) get_key_state (114); // Right arrow
-			case Device.JoypadId.A:
-				return (int16) get_key_state (40); // QWERTY D
-			case Device.JoypadId.X:
-				return (int16) get_key_state (25); // QWERTY W
-			case Device.JoypadId.L:
-				return (int16) get_key_state (24); // QWERTY Q
-			case Device.JoypadId.R:
-				return (int16) get_key_state (26); // QWERTY E
-			case Device.JoypadId.L2:
-				return (int16) get_key_state (52); // QWERTY Z
-			case Device.JoypadId.R2:
-				return (int16) get_key_state (54); // QWERTY C
-			case Device.JoypadId.L3:
-				return (int16) get_key_state (10); // QWERTY 1
-			case Device.JoypadId.R3:
-				return (int16) get_key_state (12); // 3
-			default:
-				return 0;
-		}
+		return get_key_state (get_joypad_key (id)) ? int16.MAX : 0;
 	}
 	
 	public Device.Type  get_device_type () {
@@ -158,6 +144,14 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	
 	public Device.Type[] get_device_capabilities () {
 		return { Device.Type.KEYBOARD, Device.Type.JOYPAD };
+	}
+	
+	public void set_joypad_key (Device.JoypadId id, uint16 hardware_keycode) {
+		joypad_keys[id] = hardware_keycode;
+	}
+	
+	public uint16 get_joypad_key (Device.JoypadId id) {
+		return joypad_keys[id];
 	}
 }
 

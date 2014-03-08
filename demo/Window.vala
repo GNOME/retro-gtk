@@ -88,7 +88,7 @@ class Window : Gtk.Window {
 	}
 	
 	void set_titles () {
-		header.set_title (engine.get_library_name ());
+		header.set_title (engine.info.library_name);
 	}
 	
 	void on_open_core_button_clicked (Gtk.Button button) {

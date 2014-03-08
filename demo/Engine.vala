@@ -22,20 +22,18 @@ namespace Retro {
 
 class Engine : Object, Runnable {
 	private Core core;
+	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public Gdk.PixbufRotation rotation { private set; get; default = Gdk.PixbufRotation.NONE; }
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
-	
-	public Video.PixelFormat pixel_format;
+	public Video.PixelFormat pixel_format { private set; get; default = Video.PixelFormat.ORGB1555; }
 	
 	private bool option_changed;
 	private OptionsHandler options;
 	
-	private HashTable<uint?, ControllerDevice> controller_devices;
-	
-	// Store the system's AV info. Updated every frame.
-	private SystemAvInfo? av_info;
+	public SystemInfo info { private set; get; }
+	public SystemAvInfo? av_info { private set; get; default = null; }
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
 	public signal void audio_refresh (AudioSamples samples);
@@ -60,6 +58,8 @@ class Engine : Object, Runnable {
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 		
 		core.init ();
+		
+		info = core.get_system_info ();
 	}
 	
 	private bool on_environment_cb (Retro.Environment.Command cmd, void *data) {
@@ -261,10 +261,6 @@ class Engine : Object, Runnable {
 	
 	public void load_game (GameInfo game) {
 		core.load_game (game);
-	}
-	
-	public string get_library_name () {
-		return core.get_system_info ().library_name;
 	}
 }
 

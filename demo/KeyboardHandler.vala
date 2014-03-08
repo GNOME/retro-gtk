@@ -27,6 +27,8 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	
 	private uint16[] joypad_keys;
 	
+	public bool verbose { set; get; default = false; }
+	
 	construct {
 		set_can_focus (true);
 		
@@ -75,7 +77,7 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	}
 	
 	private bool on_key_press_event (Widget source, EventKey event) {
-		print_event_key (event);
+		if (verbose) print_event_key (event);
 		
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, true);
@@ -88,7 +90,7 @@ public class KeyboardHandler : EventBox, ControllerDevice {
 	}
 	
 	private bool on_key_release_event (Widget source, EventKey event) {
-		print_event_key (event);
+		if (verbose) print_event_key (event);
 		
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, false);

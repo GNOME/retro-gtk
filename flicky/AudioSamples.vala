@@ -18,27 +18,42 @@
 
 namespace Flicky {
 
+/**
+ * Audio samples storage.
+ * 
+ * Stores a batch of audio samples so that they can be shared through signals.
+ * The samples are 16 bit, native endian, left-right interlaced PCM.
+ * 
+ * Their sample rate is also stored.
+ */
 public class AudioSamples : Object {
-	private int16[] data;
+	private int16[] samples;
+	private double sample_rate;
 	
-	public AudioSamples (int16[] data) {
-		this.data = data;
+	public AudioSamples (int16[] samples, double sample_rate = 44100) {
+		this.samples = samples;
+		this.sample_rate = sample_rate;
 	}
 	
-	public AudioSamples.from_sample (int16 left, int16 right) {
-		this.data = { left, right };
+	public AudioSamples.from_sample (int16 left, int16 right, double sample_rate = 44100) {
+		this.samples = { left, right };
+		this.sample_rate = sample_rate;
 	}
 	
 	public int16[] get_samples () {
-		return data;
+		return samples;
 	}
 	
 	public int get_size () {
-		return data.length;
+		return samples.length;
 	}
 	
 	public int get_frames () {
-		return data.length / 2;
+		return samples.length / 2;
+	}
+	
+	public double get_sample_rate () {
+		return sample_rate;
 	}
 }
 

@@ -154,8 +154,8 @@ class Window : Gtk.Window {
 			game_screen.set_from_pixbuf (pbx2);
 		});
 		
-		engine.audio_refresh.connect ((audio, rate) => {
-			audio_dev.play (audio.get_samples ());
+		engine.audio_refresh.connect ((audio_samples) => {
+			audio_dev.play (audio_samples.get_samples ());
 			// TODO add a way to set the sample rate of the audio device
 		});
 		

@@ -10,6 +10,7 @@ VAPI_DIR = vapi
 DEMO = $(OUT_DIR)/demo
 
 RETRO_FILES= \
+	Audio.vala \
 	Camera.vala \
 	Core.vala \
 	Device.vala \

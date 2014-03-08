@@ -47,15 +47,60 @@ namespace Retro.Environment {
 		GET_PERF_INTERFACE            = 28
 	}
 	
-	public static unowned Variable[] data_to_variable_array (void *data) {
+	public extern void set_bool (void *data, bool value);
+	public extern void set_uint64 (void *data, uint64 value);
+	public extern void set_string (void *data, string value);
+	public extern void set_variable_value (void *data, string value);
+	public extern void set_rumble_interface (void *data, Rumble.Interface value);
+	public extern void set_sensor_interface (void *data, Sensor.Interface value);
+	public extern void set_camera_interface (void *data, Camera.Callback value);
+	public extern void set_log_interface (void *data, Log.Callback value);
+	public extern void set_performanc_interface (void *data, Performance.Callback value);
+	
+	public static bool get_bool (void *data) {
+		return *((bool *) data);
+	}
+	
+	public static uint get_uint (void *data) {
+		return *((uint *) data);
+	}
+	
+	public static unowned Message get_message (void *data) {
+		return *((Message *) data);
+	}
+	
+	public extern unowned Device.InputDescriptor[] get_input_descriptors (void *data);
+	
+	public static unowned Keyboard.Callback get_keyboard_callback (void *data) {
+		return *((Keyboard.Callback *) data);
+	}
+	
+	public static unowned Disk.ControlCallback get_disk_control_callback (void *data) {
+		return *((Disk.ControlCallback *) data);
+	}
+	
+	public static unowned Hardware.RenderCallback get_hardware_render_callback (void *data) {
+		return *((Hardware.RenderCallback *) data);
+	}
+	
+	public extern unowned string get_variable_key (void *data);
+	
+	public static unowned Variable[] get_variables (void *data) {
 		unowned Variable[] array = (Variable[]) data;
 		
-		size_t i = 0;
+		int i;
 		for (i = 0 ; array[i].key != null && array[i].value != null ; i++);
 		
 		return array[0:i];
 	}
 	
-	extern void get_variable (void *data, string value);
+	public static unowned Audio.Callback get_audio_callback (void *data) {
+		return *((Audio.Callback *) data);
+	}
+	
+	public static unowned FrameTime.Callback get_frame_time_callback (void *data) {
+		return *((FrameTime.Callback *) data);
+	}
+	
 }
 

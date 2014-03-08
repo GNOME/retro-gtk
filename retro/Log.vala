@@ -17,7 +17,7 @@
  */
 
 namespace Retro.Log {
-	enum Level {
+	public enum Level {
 		DEBUG = 0,
 		INFO,
 		WARN,
@@ -25,13 +25,13 @@ namespace Retro.Log {
 	}
 	
 	[CCode (has_target = false)]
-	delegate bool Printf (Level level, string fmt, ...);
+	public delegate bool Printf (Level level, string fmt, ...);
 	
-	struct Callback {
+	public struct Callback {
 		Printf log;
 	}
 	
-	bool printf (Level level, string fmt, ...) {
+	public bool printf (Level level, string fmt, ...) {
 		var list = va_list();
 		stderr.printf ((string) level + ": " + fmt, list);
 		return true;

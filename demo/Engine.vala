@@ -58,18 +58,16 @@ class Engine : Core, Runnable {
 	private bool on_environment_cb (Retro.Environment.Command cmd, void *data) {
 		switch (cmd) {
 			case Retro.Environment.Command.SET_ROTATION:
-				rotation = *((Gdk.PixbufRotation *) data);
-				// TODO annoncer le changement d'une valeur
+				rotation = (Gdk.PixbufRotation) Retro.Environment.get_uint (data);
 				break;
 			case Retro.Environment.Command.GET_OVERSCAN:
-				*((bool *) data) = overscan;
+				Retro.Environment.set_bool (data, overscan);
 				break;
-			
 			case Retro.Environment.Command.GET_CAN_DUPE:
-				*((bool *) data) = can_dupe;
+				Retro.Environment.set_bool (data, can_dupe);
 				break;
-			
 			case Retro.Environment.Command.SET_MESSAGE:
+				var message = Retro.Environment.get_message (data);
 				stdout.printf ("on_environment_cb: SET_MESSAGE\n");
 				// TODO
 				break;
@@ -78,92 +76,99 @@ class Engine : Core, Runnable {
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_PERFORMANCE_LEVEL:
+				var performance_level = Retro.Environment.get_uint (data);
 				stdout.printf ("on_environment_cb: SET_PERFORMANCE_LEVEL\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_SYSTEM_DIRECTORY:
-				*((char **) data) = "/home/kekun/nestopia";
+				Retro.Environment.set_string (data, "/home/kekun/nestopia");
+				stdout.printf ("on_environment_cb: GET_SYSTEM_DIRECTORY\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_PIXEL_FORMAT:
-				pixel_format = *((Video.PixelFormat *) data);
-				// TODO annoncer le changement d'une valeur
+				pixel_format = (Video.PixelFormat) Retro.Environment.get_uint (data);
 				break;
 			case Retro.Environment.Command.SET_INPUT_DESCRIPTORS:
+				var input_descriptors = Retro.Environment.get_input_descriptors (data);
 				stdout.printf ("on_environment_cb: SET_INPUT_DESCRIPTORS\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_KEYBOARD_CALLBACK:
+				var keyboard_callback = Retro.Environment.get_keyboard_callback (data);
 				stdout.printf ("on_environment_cb: SET_KEYBOARD_CALLBACK\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_DISK_CONTROL_INTERFACE:
+				var disk_control_callback = Retro.Environment.get_disk_control_callback (data);
 				stdout.printf ("on_environment_cb: SET_DISK_CONTROL_INTERFACE\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_HW_RENDER:
+				var disk_control_callback = Retro.Environment.get_hardware_render_callback (data);
 				stdout.printf ("on_environment_cb: SET_HW_RENDER\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_VARIABLE:
-				/* data is an unowned Variable *
-				 * Its key is the key that the core want to get back.
-				 * Its value must be set to the one stored in the variable handler.
-				 */
-				unowned Variable *variable = (Variable *) data;
-				Retro.Environment.get_variable (data, options[variable->key]);
-				
+				var key = Retro.Environment.get_variable_key (data);
+				Retro.Environment.set_variable_value (data, options[key]);
 				break;
-			
 			case Retro.Environment.Command.SET_VARIABLES:
-				var variables = Retro.Environment.data_to_variable_array (data);
+				var variables = Retro.Environment.get_variables (data);
 				options.insert_multiple (variables);
 				break;
-			
 			case Retro.Environment.Command.GET_VARIABLE_UPDATE:
-				*((bool *) data) = option_changed;
+				Retro.Environment.set_bool (data, option_changed);
 				option_changed = false;
 				break;
-			
 			case Retro.Environment.Command.SET_SUPPORT_NO_GAME:
+				var support_no_game = Retro.Environment.get_bool (data);
 				stdout.printf ("on_environment_cb: SET_SUPPORT_NO_GAME\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_LIBRETRO_PATH:
+				Retro.Environment.set_string (data, "");
 				stdout.printf ("on_environment_cb: GET_LIBRETRO_PATH\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_AUDIO_CALLBACK:
+				var audio_callback = Retro.Environment.get_audio_callback (data);
 				stdout.printf ("on_environment_cb: SET_AUDIO_CALLBACK\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.SET_FRAME_TIME_CALLBACK:
+				var frame_time_callback = Retro.Environment.get_frame_time_callback (data);
 				stdout.printf ("on_environment_cb: SET_FRAME_TIME_CALLBACK\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_RUMBLE_INTERFACE:
+				//Retro.Environment.set_rumble_interface (data, value);
 				stdout.printf ("on_environment_cb: GET_RUMBLE_INTERFACE\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_INPUT_DEVICE_CAPABILITIES:
+				//Retro.Environment.set_uint64 (data, value);
 				stdout.printf ("on_environment_cb: GET_INPUT_DEVICE_CAPABILITIES\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_SENSOR_INTERFACE:
+				//Retro.Environment.set_sensor_interface (data, value);
 				stdout.printf ("on_environment_cb: GET_SENSOR_INTERFACE\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_CAMERA_INTERFACE:
+				//Retro.Environment.set_camera_interface (data, value);
 				stdout.printf ("on_environment_cb: GET_CAMERA_INTERFACE\n");
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_LOG_INTERFACE:
+				//Retro.Environment.set_log_interface (data, value);
 				stdout.printf ("on_environment_cb: GET_LOG_INTERFACE\n");
 				//((Log.Callback *) data)->log = (Log.Printf) Log.printf;
 				*((void **) data) = null;
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_PERF_INTERFACE:
+				//Retro.Environment.set_performance_interface (data, value);
 				stdout.printf ("on_environment_cb: GET_PERF_INTERFACE\n");
 				// TODO
 				break;

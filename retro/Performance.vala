@@ -18,7 +18,7 @@
 
 namespace Retro {
 
-namespace Perf {
+namespace Performance {
 	namespace SimdFlags {
 		public static const uint64 SSE    = (1 << 0);
 		public static const uint64 SSE2   = (1 << 1);

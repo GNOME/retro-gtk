@@ -18,15 +18,46 @@
 
 #include <glib.h>
 
-struct retro_variable {
-   const char *key;        // Variable to query in RETRO_ENVIRONMENT_GET_VARIABLE.
-                           // If NULL, obtains the complete environment string if more complex parsing is necessary.
-                           // The environment string is formatted as key-value pairs delimited by semicolons as so:
-                           // "key1=value1;key2=value2;..."
-   const char *value;      // Value to be obtained. If key does not exist, it is set to NULL.
+typedef struct _RetroDeviceInputDescriptor RetroDeviceInputDescriptor;
+struct _RetroDeviceInputDescriptor {
+	guint port;
+	guint device;
+	guint index;
+	guint id;
+	gchar* description;
 };
 
-void retro_environment_get_variable (void *data, const char *value) {
-	struct retro_variable *variable = (struct retro_variable *) data;
-	if (value) variable->value = g_strdup (value);
+typedef struct _RetroVariable RetroVariable;
+struct _RetroVariable {
+	gchar* key;
+	gchar* value;
+};
+
+void retro_environment_set_bool (gpointer data, gboolean value) {
+	*((gboolean *) data) = value;
 }
+
+void retro_environment_set_string (gpointer data, const gchar *value) {
+	*((const gchar **) data) = value;
+}
+
+void retro_environment_set_variable_value (gpointer data, const gchar *value) {
+	((RetroVariable *) data)->value = value ? g_strdup (value): NULL;
+}
+
+RetroDeviceInputDescriptor *retro_environment_get_input_descriptors (gpointer data, gint *result_length) {
+	RetroDeviceInputDescriptor *array = (RetroDeviceInputDescriptor *) data;
+	
+	if (result_length) {
+		gint i;
+		for (i = 0 ; array[i].description ; i++);
+		*result_length = i;
+	}
+	
+	return array;
+}
+
+gchar *retro_environment_get_variable_key (gpointer data) {
+	return ((RetroVariable *) data)->key;
+}
+

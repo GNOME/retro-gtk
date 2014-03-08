@@ -92,7 +92,6 @@ class Window : Gtk.Window {
 	}
 	
 	void on_open_core_button_clicked (Gtk.Button button) {
-		print ("on_open_core_button_clicked\n");
 		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
 		
 		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
@@ -103,7 +102,6 @@ class Window : Gtk.Window {
 	}
 	
 	void on_open_game_button_clicked (Gtk.Button button) {
-		print ("on_open_game_button_clicked\n");
 		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
 		
 		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
@@ -114,18 +112,15 @@ class Window : Gtk.Window {
 	}
 	
 	void on_start_button_clicked (Gtk.Button button) {
-		print ("on_start_button_clicked\n");
 		runner.start ();
 	}
 	
 	void on_pause_button_clicked (Gtk.Button button) {
-		print ("on_pause_button_clicked\n");
-		//runner.start ();
+		runner.stop ();
 	}
 	
 	void on_stop_button_clicked (Gtk.Button button) {
-		print ("on_stop_button_clicked\n");
-		runner.stop ();
+		runner.reset ();
 	}
 	
 	void on_properties_button_clicked (Gtk.Button button) {

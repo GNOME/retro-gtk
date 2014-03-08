@@ -24,9 +24,24 @@ namespace Flicky {
  * Such an object could be run with a {@link Flicky.Runner}.
  */
 public interface Runnable : Object {
+	/**
+	 * Resets.
+	 */
 	public abstract void reset ();
+	
+	/**
+	 * Run one frame.
+	 */
 	public abstract void run ();
-	public abstract double get_iterations_per_second ();
+	
+	/**
+	 * Gets the fps.
+	 * 
+	 * Gets the number of frames that should be run in a second.
+	 * 
+	 * @return [the number of frames per second]
+	 */
+	public abstract double get_frames_per_second ();
 }
 
 }

@@ -46,10 +46,16 @@ public class Runner : Object {
 	
 	public void start () {
 		if (loop == null && speed_rate > 0) {
-			var ips = runnable.get_iterations_per_second ();
-			// Set a sane default for if the IPS is 0.
-			ips = ips > 0 ? ips : 60;
-			loop = Timeout.add ((uint) (1000 / (ips * speed_rate)), run);
+			var fps = runnable.get_frames_per_second ();
+			// Set a sane default for if the fps is 0.
+			fps = fps > 0 ? fps : 60;
+			loop = Timeout.add ((uint) (1000 / (fps * speed_rate)), run);
+		}
+	}
+	
+	public void reset () {
+		if (runnable != null) {
+			runnable.reset ();
 		}
 	}
 	

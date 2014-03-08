@@ -249,11 +249,6 @@ class Engine : Object, Runnable {
 		core.set_controller_port_device (port, Device.Type.NONE);
 	}
 	
-	public double get_iterations_per_second () {
-		if (av_info == null) av_info = core.get_system_av_info ();
-		return av_info.timing.fps;
-	}
-	
 	/**
 	 * Resets the current game.
 	 */
@@ -267,6 +262,14 @@ class Engine : Object, Runnable {
 	public void run () {
 		av_info = core.get_system_av_info ();
 		core.run ();
+	}
+	
+	/**
+	 * Runs the game for one video frame.
+	 */
+	public double get_frames_per_second () {
+		if (av_info == null) av_info = core.get_system_av_info ();
+		return av_info.timing.fps;
 	}
 	
 	public void load_game (GameInfo game) {

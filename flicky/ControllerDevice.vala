@@ -24,10 +24,7 @@ public interface ControllerDevice : Object {
 	public abstract void  poll ();
 	public abstract int16 get_input_state (Device.Type device, uint index, uint id);
 	
-	public abstract Device.Type   get_device_type ();
-	// Should return a uint64 mask (see Retro.Environment.Command.GET_INPUT_DEVICE_CAPABILITIES)
-	// public abstract uint64 get_device_capabilities ();
-	public abstract Device.Type[] get_device_capabilities ();
+	public abstract uint64 get_device_capabilities ();
 }
 
 }

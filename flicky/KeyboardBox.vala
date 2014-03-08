@@ -140,12 +140,8 @@ public class KeyboardBox : EventBox, ControllerDevice {
 		return get_key_state (get_joypad_key (id)) ? int16.MAX : 0;
 	}
 	
-	public Retro.Device.Type  get_device_type () {
-		return Retro.Device.Type.KEYBOARD;
-	}
-	
-	public Retro.Device.Type[] get_device_capabilities () {
-		return { Retro.Device.Type.KEYBOARD, Retro.Device.Type.JOYPAD };
+	public uint64 get_device_capabilities () {
+		return (1 << Retro.Device.Type.KEYBOARD) | (1 << Retro.Device.Type.JOYPAD);
 	}
 	
 	public void set_joypad_key (Retro.Device.JoypadId id, uint16 hardware_keycode) {

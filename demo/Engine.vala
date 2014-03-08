@@ -229,7 +229,7 @@ class Engine : Core, Runnable {
 			controller_devices.insert (port, device);
 		}
 		
-		set_controller_port_device (port, device.get_device_type ());
+		set_controller_port_device (port, Retro.Device.Type.JOYPAD);
 	}
 	
 	public void remove_controller_device (uint port) {

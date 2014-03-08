@@ -18,24 +18,11 @@
 
 #include <glib.h>
 
-typedef struct _RetroDeviceInputDescriptor RetroDeviceInputDescriptor;
-struct _RetroDeviceInputDescriptor {
-	guint port;
-	guint device;
-	guint index;
-	guint id;
-	gchar* description;
-};
-
 typedef struct _RetroVariable RetroVariable;
 struct _RetroVariable {
 	gchar* key;
 	gchar* value;
 };
-
-void retro_environment_set_bool (gpointer data, gboolean value) {
-	*((gboolean *) data) = value;
-}
 
 void retro_environment_set_string (gpointer data, const gchar *value) {
 	*((const gchar **) data) = value;
@@ -43,18 +30,6 @@ void retro_environment_set_string (gpointer data, const gchar *value) {
 
 void retro_environment_set_variable_value (gpointer data, const gchar *value) {
 	((RetroVariable *) data)->value = value ? g_strdup (value): NULL;
-}
-
-RetroDeviceInputDescriptor *retro_environment_get_input_descriptors (gpointer data, gint *result_length) {
-	RetroDeviceInputDescriptor *array = (RetroDeviceInputDescriptor *) data;
-	
-	if (result_length) {
-		gint i;
-		for (i = 0 ; array[i].description ; i++);
-		*result_length = i;
-	}
-	
-	return array;
 }
 
 gchar *retro_environment_get_variable_key (gpointer data) {

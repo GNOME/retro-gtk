@@ -47,8 +47,14 @@ namespace Retro.Environment {
 		GET_PERF_INTERFACE            = 28
 	}
 	
-	public extern void set_bool (void *data, bool value);
-	public extern void set_uint64 (void *data, uint64 value);
+	public static void set_bool (void *data, bool value) {
+		*((bool *) data) = value;
+	}
+	
+	public static void set_uint64 (void *data, uint64 value) {
+		*((uint64 *) data) = value;
+	}
+	
 	public extern void set_string (void *data, string value);
 	public extern void set_variable_value (void *data, string value);
 	public extern void set_rumble_interface (void *data, Rumble.Interface value);
@@ -69,7 +75,14 @@ namespace Retro.Environment {
 		return *((Message *) data);
 	}
 	
-	public extern unowned Device.InputDescriptor[] get_input_descriptors (void *data);
+	public static unowned Device.InputDescriptor[] get_input_descriptors (void *data) {
+		unowned Device.InputDescriptor[] array = (Device.InputDescriptor[]) data;
+		
+		int i;
+		for (i = 0 ; array[i].description != null ; i++);
+		
+		return array[0:i];
+	}
 	
 	public static unowned Keyboard.Callback get_keyboard_callback (void *data) {
 		return *((Keyboard.Callback *) data);

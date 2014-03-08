@@ -146,9 +146,11 @@ class Engine : Core, Runnable {
 				// TODO
 				break;
 			case Retro.Environment.Command.GET_INPUT_DEVICE_CAPABILITIES:
-				//Retro.Environment.set_uint64 (data, value);
-				stdout.printf ("on_environment_cb: GET_INPUT_DEVICE_CAPABILITIES\n");
-				// TODO
+				uint64 capabilities = 0;
+				foreach (var device in controller_devices.get_values ()) {
+					capabilities |= device.get_device_capabilities ();
+				}
+				Retro.Environment.set_uint64 (data, capabilities);
 				break;
 			case Retro.Environment.Command.GET_SENSOR_INTERFACE:
 				//Retro.Environment.set_sensor_interface (data, value);
@@ -210,7 +212,9 @@ class Engine : Core, Runnable {
 		if (controller_devices.contains (port)) {
 			var controller_device = controller_devices.lookup (port);
 			if (controller_device != null) {
-				return controller_device.get_input_state (device, index, id);
+				var capabilities = controller_device.get_device_capabilities ();
+				bool is_capable = (capabilities & (1 << device)) != 0;
+				if (is_capable) return controller_device.get_input_state (device, index, id);
 			}
 		}
 		

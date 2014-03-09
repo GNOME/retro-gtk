@@ -18,21 +18,67 @@
 
 namespace Retro {
 
+/**
+ * Stores video geometry informations.
+ */
 public struct GameGeometry {
-	public uint  base_width;
-	public uint  base_height;
-	public uint  max_width;
-	public uint  max_height;
+	/**
+	 * Nominal video width of game.
+	 */
+	public uint base_width;
+	
+	/**
+	 * Nominal video height of game.
+	 */
+	public uint base_height;
+	
+	/**
+	 * Maximum possible width of game.
+	 */
+	public uint max_width;
+	
+	/**
+	 * Maximum possible height of game.
+	 */
+	public uint max_height;
+	
+	/**
+	 * Nominal aspect ratio of game.
+	 * 
+	 * If aspect_ratio is <= 0.0, an aspect ratio of base_width / base_height is assumed.
+	 * 
+	 * A frontend could override this setting if desired.
+	 */
 	public float aspect_ratio;
 }
 
+/**
+ * Stores video and audio timing informations.
+ */
 public struct SystemTiming {
+	/**
+	 * FPS of video content.
+	 */
 	public double fps;
+	
+	/**
+	 * Sampling rate of audio.
+	 */
 	public double sample_rate;
 }
 
+/**
+ * Stores video geometry and AV timing informations.
+ */
 public struct SystemAvInfo {
+	/**
+	 * Video geometry informations.
+	 */
 	public GameGeometry geometry;
+	
+	/**
+	 * Video and audio timing informations.
+	 */
 	public SystemTiming timing;
 }
 

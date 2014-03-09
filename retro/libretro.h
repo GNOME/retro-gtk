@@ -1,4 +1,4 @@
-/* Copyright (C) 2010-2013 The RetroArch team
+/* Copyright (C) 2010-2014 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this libretro API header (libretro.h).
@@ -27,11 +27,13 @@
 #include <stddef.h>
 #include <limits.h>
 
-// Hack applied for MSVC when compiling in C89 mode as it isn't C99 compliant.
 #ifdef __cplusplus
 extern "C" {
-#else
-#if defined(_MSC_VER) && !defined(SN_TARGET_PS3) && !defined(__cplusplus)
+#endif
+
+#ifndef __cplusplus
+#if defined(_MSC_VER) && !defined(SN_TARGET_PS3)
+/* Hack applied for MSVC when compiling in C89 mode as it isn't C99 compliant. */
 #define bool unsigned char
 #define true 1
 #define false 0
@@ -94,9 +96,6 @@ extern "C" {
 // Eventually _PRESSED will return false for an index. No further presses are registered at this point.
 #define RETRO_DEVICE_POINTER      6
 
-// FIXME: Document this.
-#define RETRO_DEVICE_SENSOR_ACCELEROMETER 7
-
 // These device types are specializations of the base types above.
 // They should only be used in retro_set_controller_type() to inform libretro implementations
 // about use of a very specific device type.
@@ -152,11 +151,6 @@ extern "C" {
 #define RETRO_DEVICE_ID_POINTER_X         0
 #define RETRO_DEVICE_ID_POINTER_Y         1
 #define RETRO_DEVICE_ID_POINTER_PRESSED   2
-
-// Id values for SENSOR types.
-#define RETRO_DEVICE_ID_SENSOR_ACCELEROMETER_X      0
-#define RETRO_DEVICE_ID_SENSOR_ACCELEROMETER_Y      1
-#define RETRO_DEVICE_ID_SENSOR_ACCELEROMETER_Z      2
 
 // Returned from retro_get_region().
 #define RETRO_REGION_NTSC  0
@@ -385,7 +379,7 @@ enum retro_mod
 // Environ 4, 5 are no longer supported (GET_VARIABLE / SET_VARIABLES), and reserved to avoid possible ABI clash.
 #define RETRO_ENVIRONMENT_SET_MESSAGE   6  // const struct retro_message * --
                                            // Sets a message to be displayed in implementation-specific manner for a certain amount of 'frames'.
-                                           // Should not be used for trivial messages, which should simply be logged to stderr.
+                                           // Should not be used for trivial messages, which should simply be logged via RETRO_ENVIRONMENT_GET_LOG_INTERFACE (or as a fallback, stderr).
 #define RETRO_ENVIRONMENT_SHUTDOWN      7  // N/A (NULL) --
                                            // Requests the frontend to shutdown.
                                            // Should only be used if game has a specific
@@ -420,6 +414,9 @@ enum retro_mod
                                            // The returned value can be NULL.
                                            // If so, no such directory is defined,
                                            // and it's up to the implementation to find a suitable directory.
+                                           //
+                                           // NOTE: Some cores used this folder also for "save" data such as memory cards, etc, for lack of a better place to put it.
+                                           // This is now discouraged, and if possible, cores should try to use the new GET_SAVE_DIRECTORY.
                                            //
 #define RETRO_ENVIRONMENT_SET_PIXEL_FORMAT 10
                                            // const enum retro_pixel_format * --
@@ -568,6 +565,48 @@ enum retro_mod
                                            // struct retro_perf_callback * --
                                            // Gets an interface for performance counters. This is useful for performance logging in a 
                                            // cross-platform way and for detecting architecture-specific features, such as SIMD support.
+#define RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE 29
+                                           // struct retro_location_callback * --
+                                           // Gets access to the location interface.
+                                           // The purpose of this interface is to be able to retrieve location-based information from the host device, 
+                                           // such as current latitude / longitude.
+                                           //
+#define RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY 30
+                                           // const char ** --
+                                           // Returns the "content" directory of the frontend.
+                                           // This directory can be used to store specific assets that the core relies upon, such as art assets,
+                                           // input data, etc etc.
+                                           // The returned value can be NULL.
+                                           // If so, no such directory is defined,
+                                           // and it's up to the implementation to find a suitable directory.
+                                           //
+#define RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY 31
+                                           // const char ** --
+                                           // Returns the "save" directory of the frontend.
+                                           // This directory can be used to store SRAM, memory cards, high scores, etc, if the libretro core
+                                           // cannot use the regular memory interface (retro_get_memory_data()).
+                                           //
+                                           // NOTE: libretro cores used to check GET_SYSTEM_DIRECTORY for similar things before.
+                                           // They should still check GET_SYSTEM_DIRECTORY if they want to be backwards compatible.
+                                           // The path here can be NULL. It should only be non-NULL if the frontend user has set a specific save path.
+                                           //
+#define RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO 32
+                                           // const struct retro_system_av_info * --
+                                           // Sets a new av_info structure. This can only be called from within retro_run().
+                                           // This should *only* be used if the core is completely altering the internal resolutions, aspect ratios, timings, sampling rate, etc.
+                                           // Calling this can require a full reinitialization of video/audio drivers in the frontend,
+                                           // so it is important to call it very sparingly, and usually only with the users explicit consent.
+                                           // An eventual driver reinit will happen so that video and audio callbacks
+                                           // happening after this call within the same retro_run() call will target the newly initialized driver.
+                                           //
+                                           // This callback makes it possible to support configurable resolutions in games, which can be useful to
+                                           // avoid setting the "worst case" in max_width/max_height.
+                                           //
+                                           // ***HIGHLY RECOMMENDED*** Do not call this callback every time resolution changes in an emulator core if it's
+                                           // expected to be a temporary change, for the reasons of possible driver reinit.
+                                           // This call is not a free pass for not trying to provide correct values in retro_get_system_av_info().
+                                           //
+                                           // If this returns false, the frontend does not acknowledge a changed av_info struct.
 
 enum retro_log_level
 {
@@ -598,6 +637,13 @@ struct retro_log_callback
 #define RETRO_SIMD_NEON     (1 << 5)
 #define RETRO_SIMD_SSE3     (1 << 6)
 #define RETRO_SIMD_SSSE3    (1 << 7)
+#define RETRO_SIMD_MMX      (1 << 8)
+#define RETRO_SIMD_MMXEXT   (1 << 9)
+#define RETRO_SIMD_SSE4     (1 << 10)
+#define RETRO_SIMD_SSE42    (1 << 11)
+#define RETRO_SIMD_AVX2     (1 << 12)
+#define RETRO_SIMD_VFPU     (1 << 13)
+#define RETRO_SIMD_PS       (1 << 14)
 
 typedef uint64_t retro_perf_tick_t;
 typedef int64_t retro_time_t;
@@ -683,10 +729,17 @@ enum retro_sensor_action
    RETRO_SENSOR_DUMMY = INT_MAX
 };
 
+// Id values for SENSOR types.
+#define RETRO_SENSOR_ACCELEROMETER_X 0
+#define RETRO_SENSOR_ACCELEROMETER_Y 1
+#define RETRO_SENSOR_ACCELEROMETER_Z 2
+
 typedef bool (*retro_set_sensor_state_t)(unsigned port, enum retro_sensor_action action, unsigned rate);
+typedef float (*retro_sensor_get_input_t)(unsigned port, unsigned id);
 struct retro_sensor_interface
 {
    retro_set_sensor_state_t set_sensor_state;
+   retro_sensor_get_input_t get_sensor_input;
 };
 ////
 
@@ -741,6 +794,41 @@ struct retro_camera_callback
    // Set by libretro core. Called right before camera driver is deinitialized.
    // Can be NULL, in which this callback is not called.
    retro_camera_lifetime_status_t deinitialized;
+};
+
+// Sets the interval of time and/or distance at which to update/poll location-based data.
+// To ensure compatibility with all location-based implementations, values for both 
+// interval_ms and interval_distance should be provided.
+// interval_ms is the interval expressed in milliseconds.
+// interval_distance is the distance interval expressed in meters.
+typedef void (*retro_location_set_interval_t)(unsigned interval_ms, unsigned interval_distance);
+
+// Start location services. The device will start listening for changes to the
+// current location at regular intervals (which are defined with retro_location_set_interval_t).
+typedef bool (*retro_location_start_t)(void);
+
+// Stop location services. The device will stop listening for changes to the current
+// location.
+typedef void (*retro_location_stop_t)(void);
+
+// Get the position of the current location. Will set parameters to 0 if no new
+// location update has happened since the last time.
+typedef bool (*retro_location_get_position_t)(double *lat, double *lon, double *horiz_accuracy,
+      double *vert_accuracy);
+
+// Callback which signals when the location driver is initialized and/or deinitialized.
+// retro_location_start_t can be called in initialized callback.
+typedef void (*retro_location_lifetime_status_t)(void);
+
+struct retro_location_callback
+{
+   retro_location_start_t         start;
+   retro_location_stop_t          stop;
+   retro_location_get_position_t  get_position;
+   retro_location_set_interval_t  set_interval; 
+
+   retro_location_lifetime_status_t initialized;
+   retro_location_lifetime_status_t deinitialized;
 };
 
 enum retro_rumble_effect

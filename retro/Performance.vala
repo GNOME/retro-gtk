@@ -28,6 +28,13 @@ namespace Performance {
 		public static const uint64 NEON   = (1 << 5);
 		public static const uint64 SSE3   = (1 << 6);
 		public static const uint64 SSSE3  = (1 << 7);
+		public static const uint64 MMX    = (1 << 8);
+		public static const uint64 MMXEXT = (1 << 9);
+		public static const uint64 SSE4   = (1 << 10);
+		public static const uint64 SSE42  = (1 << 11);
+		public static const uint64 AVX2   = (1 << 12);
+		public static const uint64 VFPU   = (1 << 13);
+		public static const uint64 PS     = (1 << 14);
 	}
 	
 	public struct Counter {

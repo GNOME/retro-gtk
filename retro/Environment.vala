@@ -44,7 +44,11 @@ namespace Retro.Environment {
 		GET_SENSOR_INTERFACE          = (25 | Command.EXPERIMENTAL_MASK),
 		GET_CAMERA_INTERFACE          = (26 | Command.EXPERIMENTAL_MASK),
 		GET_LOG_INTERFACE             = 27,
-		GET_PERF_INTERFACE            = 28
+		GET_PERF_INTERFACE            = 28,
+		GET_LOCATION_INTERFACE        = 29,
+		GET_CONTENT_DIRECTORY         = 30,
+		GET_SAVE_DIRECTORY            = 31,
+		SET_SYSTEM_AV_INFO            = 32
 	}
 	
 	public static void set_bool (void *data, bool value) {

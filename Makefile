@@ -164,5 +164,5 @@ $(FLICKY_DEPS):
 clean:
 	rm -Rf $(OUT_DIR) $(RETRO_DOC)
 
-.PHONY: all demo retro flicky clean
+.PHONY: all demo retro flicky doc clean
 

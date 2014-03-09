@@ -38,7 +38,7 @@ public class Core : Object {
 	 * 
 	 * Gives implementations a way of performing uncommon tasks. Extensible.
 	 * 
-	 * @return FIXME: not documented in libretro.h
+	 * @return true if the command have been executed, false otherwise
 	 * @param cmd the command to execute
 	 * @param data an obscure data pointer, its definition changes with the command
 	 */
@@ -81,7 +81,7 @@ public class Core : Object {
 	 * 
 	 * Only one of the audio callbacks must ever be used.
 	 * 
-	 * @return FIXME: not documented in libretro.h
+	 * @return the number of audio frames read
 	 * @param data the audio sample batch
 	 * @param frames the number of frames in the batch
 	 */
@@ -154,7 +154,7 @@ public class Core : Object {
 	[CCode (has_target = false)]
 	private delegate bool LoadGame (owned GameInfo game);
 	[CCode (has_target = false)]
-	private delegate bool LoadGameSpecial (GameType game_type, owned GameInfo info, size_t num_info);
+	private delegate bool LoadGameSpecial (GameType game_type, [CCode (array_length_type = "gsize")] owned GameInfo[] info);
 	[CCode (has_target = false)]
 	private delegate void UnloadGame ();
 	
@@ -623,20 +623,22 @@ public class Core : Object {
 	}
 	
 	/**
-	 * FIXME: not documented in libretro.h
+	 * Resets the cheats.
 	 */
+	[Deprecated (since = "1.0")]
 	public void cheat_reset () {
 		set_global_self ();
 		_cheat_reset ();
 	}
 	
 	/**
-	 * FIXME: not documented in libretro.h
+	 * Sets a new cheat.
 	 * 
-	 * @param index FIXME: not documented in libretro.h
-	 * @param enabled FIXME: not documented in libretro.h
-	 * @param code FIXME: not documented in libretro.h
+	 * @param index the index of the cheat
+	 * @param enabled whereas the cheat is enabled or not
+	 * @param code the cheat code
 	 */
+	[Deprecated (since = "1.0")]
 	public void cheat_set (uint index, bool enabled, string code) {
 		set_global_self ();
 		_cheat_set (index, enabled, code);
@@ -661,15 +663,14 @@ public class Core : Object {
 	 * cases.
 	 * 
 	 * @param game_type the type of game to load
-	 * @param info information to load the game
-	 * @param num_info FIXME: not documented in libretro.h
+	 * @param info the informations to load the game
 	 * @return false if the loading failed, true otherwise
 	 */
-	public bool load_game_special (GameType game_type, owned GameInfo info, size_t num_info) {
+	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] owned GameInfo[] info) {
 		if (game_loaded) unload_game ();
 		
 		set_global_self ();
-		game_loaded = _load_game_special (game_type, info, num_info);
+		game_loaded = _load_game_special (game_type, info);
 		return game_loaded;
 	}
 	

@@ -113,12 +113,6 @@ public enum Type {
 	POINTER,
 	
 	/**
-	 * FIXME.
-	 */
-	[Deprecated (since = "1.0")]
-	SENSOR_ACCELEROMETER,
-	
-	/**
 	 * A joypad multitap.
 	 * 
 	 * It is a specialization of the {@link Retro.Device.Type.JOYPAD}.
@@ -176,8 +170,7 @@ public enum Type {
 	 * @return the basic type of a device type
 	 */
 	public Type get_basic_type () {
-		var basic_type = this & TYPE_MASK;
-		return basic_type > Type.SENSOR_ACCELEROMETER ? Type.NONE : basic_type;
+		return this & TYPE_MASK;
 	}
 }
 
@@ -231,13 +224,6 @@ public enum PointerId {
 	X,
 	Y,
 	PRESSED
-}
-
-[Deprecated (since = "1.0")]
-public enum SensorId {
-	ACCELEROMETER_X,
-	ACCELEROMETER_Y,
-	ACCELEROMETER_Z
 }
 
 public struct InputDescriptor {

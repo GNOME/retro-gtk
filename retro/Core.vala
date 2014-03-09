@@ -38,9 +38,9 @@ public class Core : Object {
 	 * 
 	 * Gives implementations a way of performing uncommon tasks. Extensible.
 	 * 
-	 * @return [FIXME]
-	 * @param [cmd] [the command to execute]
-	 * @param [data] [an obscure data pointer, its definition changes with the command]
+	 * @return FIXME
+	 * @param cmd the command to execute
+	 * @param data an obscure data pointer, its definition changes with the command
 	 */
 	public delegate bool Environment (Retro.Environment.Command cmd, void *data);
 	
@@ -48,17 +48,17 @@ public class Core : Object {
 	 * Render a frame.
 	 * 
 	 * Pixel format is 15-bit 0RGB1555 native endian unless changed
-	 * (see {@link [Retro.Environment.SET_PIXEL_FORMAT]}).
+	 * (see {@link Retro.Environment.SET_PIXEL_FORMAT}).
 	 * 
 	 * For performance reasons, it is highly recommended to have a frame that is
 	 * packed in memory, i.e. pitch == width * byte_per_pixel.
 	 * Certain graphic APIs, such as OpenGL ES, do not like textures that are
 	 * not packed in memory.
 	 * 
-	 * @param [data] [the frame data]
-	 * @param [width] [width of the frame]
-	 * @param [height] [height of the frame]
-	 * @param [pitch] [length in bytes between two lines in buffer]
+	 * @param data the frame data
+	 * @param width width of the frame
+	 * @param height height of the frame
+	 * @param pitch length in bytes between two lines in buffer
 	 */
 	public delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[] data, uint width, uint height, size_t pitch);
 	
@@ -68,8 +68,8 @@ public class Core : Object {
 	 * Should only be used if implementation generates a single sample at a
 	 * time. Format is signed 16-bit native endian.
 	 * 
-	 * @param [left] [the left channel of the audio frame]
-	 * @param [right] [the right channel of the audio frame]
+	 * @param left the left channel of the audio frame
+	 * @param right the right channel of the audio frame
 	 */
 	public delegate void AudioSample (int16 left, int16 right);
 	
@@ -81,9 +81,9 @@ public class Core : Object {
 	 * 
 	 * Only one of the audio callbacks must ever be used.
 	 * 
-	 * @return [FIXME]
-	 * @param [data] [the audio sample batch]
-	 * @param [frames] [the number of frames in the batch]
+	 * @return FIXME
+	 * @param data the audio sample batch
+	 * @param frames the number of frames in the batch
 	 */
 	public delegate size_t AudioSampleBatch ([CCode (array_length_type = "gsize")] int16[] data, size_t frames);
 	
@@ -95,17 +95,17 @@ public class Core : Object {
 	/**
 	 * Queries for input for player 'port'.
 	 * 
-	 * Device will be masked with {@link [Retro.Device.TYPE_MASK]}.
+	 * Device will be masked with {@link Retro.Device.TYPE_MASK}.
 	 * Specialization of devices such as
-	 * {@link [Retro.Device.Type.JOYPAD_MULTITAP]} that have been set with
-	 * {@link [Retro.Core.set_controller_port_device()]} will still use the
-	 * higher level {@link [Retro.Device.Type.JOYPAD]} to request input.
+	 * {@link Retro.Device.Type.JOYPAD_MULTITAP} that have been set with
+	 * {@link Retro.Core.set_controller_port_device()} will still use the
+	 * higher level {@link Retro.Device.Type.JOYPAD} to request input.
 	 * 
-	 * @return [the state of the input]
-	 * @param [port] [the port number]
-	 * @param [device] [the type of device]
-	 * @param [index] [the index, its definition changes with the device]
-	 * @param [id] [the id, its definition changes with the device]
+	 * @return the state of the input
+	 * @param port the port number
+	 * @param device the type of device
+	 * @param index the index, its definition changes with the device
+	 * @param id the id, its definition changes with the device
 	 */
 	public delegate int16 InputState (uint port, Device.Type device, uint index, uint id);
 	
@@ -259,7 +259,7 @@ public class Core : Object {
 	/* 
 	 * The environment callback.
 	 * 
-	 * Must be set before {@link [Retro.Core.init]} is called.
+	 * Must be set before {@link Retro.Core.init} is called.
 	 */
 	public Environment environment_cb {
 		set {
@@ -278,7 +278,7 @@ public class Core : Object {
 	 * The video refresh callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link [Retro.Core.run]} is made.
+	 * {@link Retro.Core.run} is made.
 	 */
 	public VideoRefresh video_refresh_cb {
 		set {
@@ -297,7 +297,7 @@ public class Core : Object {
 	 * The audio sample callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link [Retro.Core.run]} is made.
+	 * {@link Retro.Core.run} is made.
 	 */
 	public AudioSample audio_sample_cb {
 		set {
@@ -316,7 +316,7 @@ public class Core : Object {
 	 * The audio sample batch callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link [Retro.Core.run]} is made.
+	 * {@link Retro.Core.run} is made.
 	 */
 	public AudioSampleBatch audio_sample_batch_cb {
 		set {
@@ -335,7 +335,7 @@ public class Core : Object {
 	 * The input poll callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link [Retro.Core.run]} is made.
+	 * {@link Retro.Core.run} is made.
 	 */
 	public InputPoll input_poll_cb {
 		set {
@@ -354,7 +354,7 @@ public class Core : Object {
 	 * The input state callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link [Retro.Core.run]} is made.
+	 * {@link Retro.Core.run} is made.
 	 */
 	public InputState input_state_cb {
 		set {
@@ -375,7 +375,7 @@ public class Core : Object {
 	/**
 	 * Create a Core from the file name of a libretro implementation.
 	 * 
-	 * @param [file_name] [the file name of the libretro implementation to load]
+	 * @param file_name the file name of the libretro implementation to load
 	 */
 	public Core (string file_name) {
 		Object (file_name: file_name);
@@ -469,10 +469,10 @@ public class Core : Object {
 	/**
 	 * The version of libretro used by the module.
 	 * 
-	 * Can be compared with {@link [Retro.API_VERSION]} to validate ABI
+	 * Can be compared with {@link Retro.API_VERSION} to validate ABI
 	 * compatibility.
 	 * 
-	 * @return [the libretro version of the module]
+	 * @return the libretro version of the module
 	 */
 	public uint api_version () {
 		set_global_self ();
@@ -482,9 +482,9 @@ public class Core : Object {
 	/**
 	 * Gets system information.
 	 * 
-	 * Can be called at any time, even before {@link [Retro.Core.init]}.
+	 * Can be called at any time, even before {@link Retro.Core.init}.
 	 * 
-	 * @return [information on the system implemented in the module]
+	 * @return information on the system implemented in the module
 	 */
 	public SystemInfo get_system_info () {
 		set_global_self ();
@@ -497,7 +497,7 @@ public class Core : Object {
 	/**
 	 * Gets information about system audio/video timings and geometry.
 	 * 
-	 * Can be called only after {@link [Retro.Core.load_game]} has successfully
+	 * Can be called only after {@link Retro.Core.load_game} has successfully
 	 * completed.
 	 * 
 	 * NOTE: The implementation of this function might not initialize every
@@ -505,7 +505,7 @@ public class Core : Object {
 	 * E.g. geometry.aspect_ratio might not be initialized if the core doesn't
 	 * desire a particular aspect ratio.
 	 * 
-	 * @return [information on the system audio/video timings and geometry]
+	 * @return information on the system audio/video timings and geometry
 	 */
 	public SystemAvInfo get_system_av_info () {
 		set_global_self ();
@@ -518,8 +518,8 @@ public class Core : Object {
 	/**
 	 * Sets device to be used for player 'port'.
 	 * 
-	 * @param [port] [the port on wich to connect a device]
-	 * @param [device] [the type of the device connected]
+	 * @param port the port on wich to connect a device
+	 * @param device the type of the device connected
 	 */
 	public void set_controller_port_device (uint port, Device.Type device) {
 		set_global_self ();
@@ -537,13 +537,13 @@ public class Core : Object {
 	/**
 	 * Runs the game for one video frame.
 	 * 
-	 * During {@link [Retro.Core.run]}, the input_poll callback will be called
+	 * During {@link Retro.Core.run}, the input_poll callback will be called
 	 * at least once.
 	 * 
 	 * If a frame is not rendered for reasons where a game "dropped" a frame,
-	 * this still counts as a frame, and {@link [Retro.Core.run]} will
+	 * this still counts as a frame, and {@link Retro.Core.run} will
 	 * explicitly dupe a frame if
-	 * {@link [Retro.Environment.Command.GET_CAN_DUPE]} returns true.
+	 * {@link Retro.Environment.Command.GET_CAN_DUPE} returns true.
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {
@@ -555,12 +555,12 @@ public class Core : Object {
 	 * Returns the amount of data the implementation requires to serialize the
 	 * internal state (save states).
 	 * 
-	 * Beetween calls to {@link [Retro.Core.load_game]} and
-	 * {@link [Retro.Core.unload_game]}, the returned size is never allowed to
+	 * Beetween calls to {@link Retro.Core.load_game} and
+	 * {@link Retro.Core.unload_game}, the returned size is never allowed to
 	 * be larger than a previous returned value, to ensure that the frontend can
 	 * allocate a save state buffer once.
 	 * 
-	 * @return [the size needed to serialize the internal state]
+	 * @return the size needed to serialize the internal state
 	 */
 	public size_t serialize_size () {
 		set_global_self ();
@@ -570,11 +570,11 @@ public class Core : Object {
 	/**
 	 * Serializes the internal state.
 	 * 
-	 * If failed, or size is lower than {@link [Retro.Core.serialize_size]}, it
+	 * If failed, or size is lower than {@link Retro.Core.serialize_size}, it
 	 * should return false, true otherwise.
 	 * 
-	 * @param [data] [the buffer where the data will be stored]
-	 * @return [false if the serialization failed, true otherwise]
+	 * @param data the buffer where the data will be stored
+	 * @return false if the serialization failed, true otherwise
 	 */
 	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
 		set_global_self ();
@@ -584,8 +584,8 @@ public class Core : Object {
 	/**
 	 * Unserializes the internal state.
 	 * 
-	 * @param [data] [the buffer where the data is stored]
-	 * @return [false if the unserialization failed, true otherwise]
+	 * @param data the buffer where the data is stored
+	 * @return false if the unserialization failed, true otherwise
 	 */
 	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
 		set_global_self ();
@@ -603,9 +603,9 @@ public class Core : Object {
 	/**
 	 * FIXME
 	 * 
-	 * @param [index] [FIXME]
-	 * @param [enabled] [FIXME]
-	 * @param [code] [FIXME]
+	 * @param index FIXME
+	 * @param enabled FIXME
+	 * @param code FIXME
 	 */
 	public void cheat_set (uint index, bool enabled, string code) {
 		set_global_self ();
@@ -615,8 +615,8 @@ public class Core : Object {
 	/**
 	 * Loads a game.
 	 * 
-	 * @param [game] [information to load the game]
-	 * @return [false if the loading failed, true otherwise]
+	 * @param game information to load the game
+	 * @return false if the loading failed, true otherwise
 	 */
 	public bool load_game (owned GameInfo game) {
 		if (game_loaded) unload_game ();
@@ -630,10 +630,10 @@ public class Core : Object {
 	 * Loads a "special" kind of game. Should not be used except in extreme
 	 * cases.
 	 * 
-	 * @param [game_type] [the type of game to load]
-	 * @param [game] [information to load the game]
-	 * @param [num_info] [FIXME]
-	 * @return [false if the loading failed, true otherwise]
+	 * @param game_type the type of game to load
+	 * @param game information to load the game
+	 * @param num_info FIXME
+	 * @return false if the loading failed, true otherwise
 	 */
 	public bool load_game_special (GameType game_type, owned GameInfo info, size_t num_info) {
 		if (game_loaded) unload_game ();
@@ -654,7 +654,7 @@ public class Core : Object {
 	/**
 	 * Gets region of the loaded game.
 	 * 
-	 * @return [the region of the game]
+	 * @return the region of the game
 	 */
 	public Region get_region () {
 		set_global_self ();
@@ -664,8 +664,8 @@ public class Core : Object {
 	/**
 	 * Gets a region of memory.
 	 * 
-	 * @param [id] [the region of memory]
-	 * @return [the region of memory]
+	 * @param id the region of memory
+	 * @return the region of memory
 	 */
 	public void *get_memory_data (Memory.Type id) {
 		set_global_self ();
@@ -675,8 +675,8 @@ public class Core : Object {
 	/**
 	 * Gets the size of a region of memory.
 	 * 
-	 * @param [id] [the region of memory]
-	 * @return [the size of the region of memory]
+	 * @param id the region of memory
+	 * @return the size of the region of memory
 	 */
 	public size_t get_memory_size (Memory.Type id) {
 		set_global_self ();

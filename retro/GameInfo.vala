@@ -24,7 +24,7 @@ public struct GameInfo {
 	 * 
 	 * Usually used as a reference.
 	 * May be null if rom was loaded from stdin or similar.
-	 * {@link [Retro.SystemInfo.need_fullpath]} guaranteed that this path is
+	 * {@link Retro.SystemInfo.need_fullpath} guaranteed that this path is
 	 * valid.
 	 */
 	public string path;
@@ -32,7 +32,7 @@ public struct GameInfo {
 	/**
 	 * Memory buffer of loaded game.
 	 * 
-	 * Will be null if {@link [Retro.SystemInfo.need_fullpath]} was set.
+	 * Will be null if {@link Retro.SystemInfo.need_fullpath} was set.
 	 */
 	[CCode (array_length_type = "gsize")]
 	public uint8[] data;

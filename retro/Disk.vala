@@ -24,8 +24,8 @@ namespace Disk {
 	 * 
 	 * When ejected, the disk image index can be set.
 	 * 
-	 * @param [ejected] [FIXME]
-	 * @return [FIXME]
+	 * @param ejected FIXME
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate bool SetEjectState (bool ejected);
@@ -35,7 +35,7 @@ namespace Disk {
 	 * 
 	 * The initial state is 'not ejected'.
 	 * 
-	 * @return [FIXME]
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate bool GetEjectState ();
@@ -46,7 +46,7 @@ namespace Disk {
 	 * First disk is index 0.
 	 * If return value is >= get_num_images(), no disk is currently inserted.
 	 * 
-	 * @return [FIXME]
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate uint GetImageIndex ();
@@ -58,8 +58,8 @@ namespace Disk {
 	 * The implementation supports setting "no disk" by using an index >=
 	 * get_num_images ().
 	 * 
-	 * @param [index] [FIXME]
-	 * @return [FIXME]
+	 * @param index FIXME
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate bool SetImageIndex (uint index);
@@ -67,7 +67,7 @@ namespace Disk {
 	/**
 	 * Gets total number of images which are available to use.
 	 * 
-	 * @return [FIXME]
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate uint GetNumImages ();
@@ -76,40 +76,40 @@ namespace Disk {
 	 * Replaces the disk image associated with index.
 	 * 
 	 * Arguments to pass in info have same requirements as
-	 * {@link [Retro.Core.load_game]}.
+	 * {@link Retro.Core.load_game}.
 	 * Virtual disk tray must be ejected when calling this.
 	 * Replacing a disk image with info = null will remove the disk image from
 	 * the internal list.
-	 * As a result, calls to {@link [Retro.Disk.GetImageIndex]} can change.
+	 * As a result, calls to {@link Retro.Disk.GetImageIndex} can change.
 	 *
-	 * E.g. {@link [Retro.Disk.ReplaceImageIndex]} (1, null), and previous
-	 * {@link [Retro.Disk.GetImageIndex]} returned 4 before.
+	 * E.g. {@link Retro.Disk.ReplaceImageIndex} (1, null), and previous
+	 * {@link Retro.Disk.GetImageIndex} returned 4 before.
 	 * Index 1 will be removed, and the new index is 3.
 	 * 
-	 * @param [index] [FIXME]
-	 * @param [info] [FIXME]
-	 * @return [FIXME]
+	 * @param index FIXME
+	 * @param info FIXME
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate bool ReplaceImageIndex (uint index, GameInfo info);
 	
 	/**
-	 * Adds a new valid index ({@link [Retro.Disk.GetNumImages]}) to the
+	 * Adds a new valid index ({@link Retro.Disk.GetNumImages}) to the
 	 * internal disk list.
 	 * 
 	 * This will increment subsequent return values from
-	 * {@link [Retro.Disk.GetNumImages]} by 1.
+	 * {@link Retro.Disk.GetNumImages} by 1.
 	 * This image index cannot be used until a disk image has been set with
-	 * {@link [Retro.Disk.ReplaceImageIndex]}.
+	 * {@link Retro.Disk.ReplaceImageIndex}.
 	 * 
-	 * @return [FIXME]
+	 * @return FIXME
 	 */
 	[CCode (has_target = false)]
 	public delegate bool AddImageIndex ();
 	
 	
 	/**
-	 * Callbacks for {@link [Retro.Environment.Command.SET_DISK_CONTROL_INTERFACE]}.
+	 * Callbacks for {@link Retro.Environment.Command.SET_DISK_CONTROL_INTERFACE}.
 	 * 
 	 * Should be set for implementations which can swap out multiple disk images
 	 * in runtime.

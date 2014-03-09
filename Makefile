@@ -74,8 +74,8 @@ FLICKY_PKG= \
 	$(NULL)
 
 PKG= \
-	$(RETRO_PKG) \
-	gtk+-3.0 \
+	$(RETRO_PKGNAME) \
+	$(FLICKY_PKGNAME) \
 	libpulse \
 	libpulse-mainloop-glib \
 	$(NULL)
@@ -107,17 +107,17 @@ demo: $(DEMO)
 retro: $(RETRO_OUT) $(RETRO_DEPS)
 flicky: $(FLICKY_OUT) $(FLICKY_DEPS)
 
-$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC)
+$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS)
 	mkdir -p $(OUT_DIR)
 	valac -b $(RETRO_DIR) -d $(@D) \
-		-o $(@F) $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) \
+		-o $(@F) $(DEMO_SRC) \
+		-X -I./$(OUT_DIR) -X $(OUT_DIR)/libflicky.so -X $(OUT_DIR)/libretro.so \
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(PKG:%=--pkg=%) \
 		--save-temps \
 		-g
 
 $(RETRO_OUT): %: $(RETRO_SRC)
 	mkdir -p $(@D)
-	echo $(RETRO_PKG) > $(@D)/$(RETRO_LIBNAME).deps
 	valac \
 		-b $(<D) -d $(@D) \
 		--library=$(RETRO_LIBNAME) \
@@ -141,7 +141,8 @@ $(FLICKY_OUT): %: $(FLICKY_SRC) $(RETRO_OUT) $(RETRO_DEPS)
 		--vapi=$(FLICKY_PKGNAME).vapi \
 		--gir=$(FLICKY_PKGNAME).gir \
 		-H $(@D)/$(FLICKY_LIBNAME).h \
-		-o $(@D)/lib$(FLICKY_LIBNAME).so $(FLICKY_SRC) \
+		-o lib$(FLICKY_LIBNAME).so $(FLICKY_SRC) \
+		-X -I./$(OUT_DIR) \
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(FLICKY_PKG:%=--pkg=%) \
 		--save-temps \
 		-X -fPIC -X -shared

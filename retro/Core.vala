@@ -152,9 +152,9 @@ public class Core : Object {
 	private delegate void CheatSet (uint index, bool enabled, string code);
 	
 	[CCode (has_target = false)]
-	private delegate bool LoadGame (owned GameInfo game);
+	private delegate bool LoadGame (GameInfo game);
 	[CCode (has_target = false)]
-	private delegate bool LoadGameSpecial (GameType game_type, [CCode (array_length_type = "gsize")] owned GameInfo[] info);
+	private delegate bool LoadGameSpecial (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info);
 	[CCode (has_target = false)]
 	private delegate void UnloadGame ();
 	
@@ -650,7 +650,7 @@ public class Core : Object {
 	 * @param game information to load the game
 	 * @return false if the loading failed, true otherwise
 	 */
-	public bool load_game (owned GameInfo game) {
+	public bool load_game (GameInfo game) {
 		if (game_loaded) unload_game ();
 		
 		set_global_self ();
@@ -666,7 +666,7 @@ public class Core : Object {
 	 * @param info the informations to load the game
 	 * @return false if the loading failed, true otherwise
 	 */
-	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] owned GameInfo[] info) {
+	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info) {
 		if (game_loaded) unload_game ();
 		
 		set_global_self ();

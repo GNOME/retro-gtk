@@ -137,6 +137,7 @@ $(RETRO_DEPS):
 	echo $(RETRO_PKG) | sed -e 's/\s\+/\n/g' > $@
 
 $(RETRO_DOC): %: $(RETRO_SRC)
+	rm -Rf $@
 	valadoc \
 		-b $(<D) -o $@ \
 		$^ \

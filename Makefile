@@ -16,6 +16,8 @@ FLICKY_VERSION=1.0
 RETRO_PKGNAME=$(RETRO_LIBNAME)-$(RETRO_VERSION)
 FLICKY_PKGNAME=$(FLICKY_LIBNAME)-$(FLICKY_VERSION)
 
+RETRO_DOC=$(RETRO_PKGNAME)-doc
+
 DEMO = $(OUT_DIR)/demo
 
 RETRO_FILES= \
@@ -104,7 +106,7 @@ FLICKY_DEPS=$(OUT_DIR)/$(FLICKY_PKGNAME).deps
 all: demo retro flicky
 
 demo: $(DEMO)
-retro: $(RETRO_OUT) $(RETRO_DEPS)
+retro: $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_DOC)
 flicky: $(FLICKY_OUT) $(FLICKY_DEPS)
 
 $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS)
@@ -133,6 +135,13 @@ $(RETRO_DEPS):
 	mkdir -p $(@D)
 	echo $(RETRO_PKG) | sed -e 's/\s\+/\n/g' > $@
 
+$(RETRO_DOC): %: $(RETRO_SRC)
+	valadoc \
+		-b $(<D) -o $@ \
+		$^ \
+		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
+		--package-name=$(RETRO_LIBNAME) --package-version=$(RETRO_VERSION)
+
 $(FLICKY_OUT): %: $(FLICKY_SRC) $(RETRO_OUT) $(RETRO_DEPS)
 	mkdir -p $(@D)
 	valac \
@@ -152,7 +161,7 @@ $(FLICKY_DEPS):
 	echo $(FLICKY_PKG) | sed -e 's/\s\+/\n/g' > $@
 
 clean:
-	rm -Rf $(OUT_DIR)
+	rm -Rf $(OUT_DIR) $(RETRO_DOC)
 
 .PHONY: all demo retro flicky clean
 

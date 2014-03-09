@@ -106,8 +106,9 @@ FLICKY_DEPS=$(OUT_DIR)/$(FLICKY_PKGNAME).deps
 all: demo retro flicky
 
 demo: $(DEMO)
-retro: $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_DOC)
+retro: $(RETRO_OUT) $(RETRO_DEPS)
 flicky: $(FLICKY_OUT) $(FLICKY_DEPS)
+doc: $(RETRO_DOC)
 
 $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS)
 	mkdir -p $(OUT_DIR)

@@ -16,15 +16,39 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro {
+namespace Retro.Video {
 
-namespace Video {
-	public enum PixelFormat {
-		ORGB1555,
-		XRGB8888,
-		RGB565,
-		UNKNOWN = -1;
-	}
+/**
+ * Pixel formats used by libretro.
+ */
+public enum PixelFormat {
+	/**
+	 * 0RGB1555, native endian.
+	 * 
+	 * 0 bit must be set to 0.
+	 * This pixel format is default for compatibility concerns only.
+	 * If a 15/16-bit pixel format is desired, consider using RGB565.
+	 */
+	ORGB1555,
+	
+	/**
+	 * XRGB8888, native endian. X bits are ignored.
+	 */
+	XRGB8888,
+	
+	/**
+	 * RGB565, native endian.
+	 * 
+	 * This pixel format is the recommended format to use if a 15/16-bit format is desired
+	 * as it is the pixel format that is typically available on a wide range of low-power devices.
+	 * It is also natively supported in APIs like OpenGL ES.
+	 */
+	RGB565,
+	
+	/**
+	 * Unknown format.
+	 */
+	UNKNOWN = -1;
 }
 
 }

@@ -32,6 +32,7 @@ RETRO_FILES= \
 	GameType.vala \
 	Hardware.vala \
 	Keyboard.vala \
+	Location.vala \
 	Log.vala \
 	Memory.vala \
 	Message.vala \

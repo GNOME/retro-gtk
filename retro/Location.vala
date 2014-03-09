@@ -20,7 +20,7 @@ namespace Retro {
 
 namespace Location {
 	[CCode (has_target = false)]
-	public delegate void SetInterval (unsigned interval_ms, unsigned interval_distance);
+	public delegate void SetInterval (uint interval_ms, uint interval_distance);
 	
 	[CCode (has_target = false)]
 	public delegate bool Start ();
@@ -29,7 +29,7 @@ namespace Location {
 	public delegate void Stop ();
 	
 	[CCode (has_target = false)]
-	public delegate bool GetPosition (double *lat, double *lon, double *horiz_accuracy, double *vert_accuracy);
+	public delegate bool GetPosition (out double lat, out double lon, out double horiz_accuracy, out double vert_accuracy);
 	
 	[CCode (has_target = false)]
 	public delegate void LifetimeStatus ();

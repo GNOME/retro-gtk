@@ -154,7 +154,7 @@ public class Window : Gtk.Window {
 	}
 	
 	public void set_game (string path) {
-		engine.load_game (GameInfo (path));
+		engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
 	}

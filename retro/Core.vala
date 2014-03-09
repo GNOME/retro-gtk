@@ -38,7 +38,7 @@ public class Core : Object {
 	 * 
 	 * Gives implementations a way of performing uncommon tasks. Extensible.
 	 * 
-	 * @return FIXME
+	 * @return FIXME: not documented in libretro.h
 	 * @param cmd the command to execute
 	 * @param data an obscure data pointer, its definition changes with the command
 	 */
@@ -81,7 +81,7 @@ public class Core : Object {
 	 * 
 	 * Only one of the audio callbacks must ever be used.
 	 * 
-	 * @return FIXME
+	 * @return FIXME: not documented in libretro.h
 	 * @param data the audio sample batch
 	 * @param frames the number of frames in the batch
 	 */
@@ -200,10 +200,25 @@ public class Core : Object {
 	
 	// Various members
 	
+	/**
+	 * The file name of the module.
+	 */
 	public string file_name { construct; get; }
+	
+	/**
+	 * The dynamically loaded libretro module.
+	 */
 	private Module module;
-	private bool is_init { set; get; default = false; }
-	private bool game_loaded { set; get; default = false; }
+	
+	/**
+	 * Whether or not the core have been initialized.
+	 */
+	public bool is_init { private set; get; default = false; }
+	
+	/**
+	 * Whether or not the a game is loaded.
+	 */
+	public bool game_loaded { private set; get; default = false; }
 	
 	
 	
@@ -256,7 +271,7 @@ public class Core : Object {
 	// Callback setters and getters
 	
 	private Environment _environment_cb;
-	/* 
+	/**
 	 * The environment callback.
 	 * 
 	 * Must be set before {@link Retro.Core.init} is called.
@@ -271,10 +286,11 @@ public class Core : Object {
 		get {
 			return _environment_cb;
 		}
+		default = null;
 	}
 	
 	private VideoRefresh _video_refresh_cb;
-	/* 
+	/**
 	 * The video refresh callback.
 	 * 
 	 * Must be set before the first call to
@@ -290,10 +306,11 @@ public class Core : Object {
 		get {
 			return _video_refresh_cb;
 		}
+		default = null;
 	}
 	
 	private AudioSample _audio_sample_cb;
-	/* 
+	/**
 	 * The audio sample callback.
 	 * 
 	 * Must be set before the first call to
@@ -309,10 +326,11 @@ public class Core : Object {
 		get {
 			return _audio_sample_cb;
 		}
+		default = null;
 	}
 	
 	private AudioSampleBatch _audio_sample_batch_cb;
-	/* 
+	/**
 	 * The audio sample batch callback.
 	 * 
 	 * Must be set before the first call to
@@ -328,10 +346,11 @@ public class Core : Object {
 		get {
 			return _audio_sample_batch_cb;
 		}
+		default = null;
 	}
 	
 	private InputPoll _input_poll_cb;
-	/* 
+	/**
 	 * The input poll callback.
 	 * 
 	 * Must be set before the first call to
@@ -347,10 +366,11 @@ public class Core : Object {
 		get {
 			return _input_poll_cb;
 		}
+		default = null;
 	}
 	
 	private InputState _input_state_cb;
-	/* 
+	/**
 	 * The input state callback.
 	 * 
 	 * Must be set before the first call to
@@ -366,6 +386,7 @@ public class Core : Object {
 		get {
 			return _input_state_cb;
 		}
+		default = null;
 	}
 	
 	
@@ -374,6 +395,9 @@ public class Core : Object {
 	
 	/**
 	 * Create a Core from the file name of a libretro implementation.
+	 * 
+	 * The file must be a dynamically loadable shared object implementing the
+	 * same version of the libretro API as Retro.
 	 * 
 	 * @param file_name the file name of the libretro implementation to load
 	 */
@@ -450,6 +474,9 @@ public class Core : Object {
 	
 	/**
 	 * Initialize the module.
+	 * 
+	 * {@link Retro.Core.environment_cb} must be set before the module is
+	 * initialized.
 	 */
 	public void init () {
 		set_global_self ();
@@ -537,6 +564,9 @@ public class Core : Object {
 	/**
 	 * Runs the game for one video frame.
 	 * 
+	 * The callbacks must be set and the core must be initialized before
+	 * running the core.
+	 * 
 	 * During {@link Retro.Core.run}, the input_poll callback will be called
 	 * at least once.
 	 * 
@@ -593,7 +623,7 @@ public class Core : Object {
 	}
 	
 	/**
-	 * FIXME
+	 * FIXME: not documented in libretro.h
 	 */
 	public void cheat_reset () {
 		set_global_self ();
@@ -601,11 +631,11 @@ public class Core : Object {
 	}
 	
 	/**
-	 * FIXME
+	 * FIXME: not documented in libretro.h
 	 * 
-	 * @param index FIXME
-	 * @param enabled FIXME
-	 * @param code FIXME
+	 * @param index FIXME: not documented in libretro.h
+	 * @param enabled FIXME: not documented in libretro.h
+	 * @param code FIXME: not documented in libretro.h
 	 */
 	public void cheat_set (uint index, bool enabled, string code) {
 		set_global_self ();
@@ -632,7 +662,7 @@ public class Core : Object {
 	 * 
 	 * @param game_type the type of game to load
 	 * @param info information to load the game
-	 * @param num_info FIXME
+	 * @param num_info FIXME: not documented in libretro.h
 	 * @return false if the loading failed, true otherwise
 	 */
 	public bool load_game_special (GameType game_type, owned GameInfo info, size_t num_info) {

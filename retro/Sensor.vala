@@ -16,21 +16,27 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro {
-
-namespace Sensor {
+namespace Retro.Sensor {
 	public enum Action {
 		ACCELEROMETER_ENABLE,
 		ACCELEROMETER_DISABLE
 	}
 	
+	public enum Accelerometer {
+		X,
+		Y,
+		Z
+	}
+	
 	[CCode (has_target = false)]
 	public delegate bool SetState (uint port, Action action, uint rate);
 	
+	[CCode (has_target = false)]
+	public delegate float GetInput (uint port, uint id);
+	
 	public struct Interface {
 		SetState set_sensor_state;
+		GetInput get_sensor_input;
 	}
-}
-
 }
 

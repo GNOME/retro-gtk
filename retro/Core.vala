@@ -48,7 +48,7 @@ public class Core : Object {
 	 * Render a frame.
 	 * 
 	 * Pixel format is 15-bit 0RGB1555 native endian unless changed
-	 * (see {@link Retro.Environment.SET_PIXEL_FORMAT}).
+	 * (see {@link Retro.Environment.Command.SET_PIXEL_FORMAT}).
 	 * 
 	 * For performance reasons, it is highly recommended to have a frame that is
 	 * packed in memory, i.e. pitch == width * byte_per_pixel.
@@ -98,7 +98,7 @@ public class Core : Object {
 	 * Device will be masked with {@link Retro.Device.TYPE_MASK}.
 	 * Specialization of devices such as
 	 * {@link Retro.Device.Type.JOYPAD_MULTITAP} that have been set with
-	 * {@link Retro.Core.set_controller_port_device()} will still use the
+	 * {@link Retro.Core.set_controller_port_device} will still use the
 	 * higher level {@link Retro.Device.Type.JOYPAD} to request input.
 	 * 
 	 * @return the state of the input
@@ -631,7 +631,7 @@ public class Core : Object {
 	 * cases.
 	 * 
 	 * @param game_type the type of game to load
-	 * @param game information to load the game
+	 * @param info information to load the game
 	 * @param num_info FIXME
 	 * @return false if the loading failed, true otherwise
 	 */

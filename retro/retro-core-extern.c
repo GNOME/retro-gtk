@@ -34,6 +34,14 @@ RetroAudioSampleBatch retro_core_get_audio_sample_batch_cb (RetroCore* self, gpo
 RetroInputPoll retro_core_get_input_poll_cb (RetroCore* self, gpointer* result_target);
 RetroInputState retro_core_get_input_state_cb (RetroCore* self, gpointer* result_target);
 
+gboolean retro_core_set_callback_interfaces (RetroCore *self, guint cmd, gpointer data);
+
+#define RETRO_ENVIRONMENT_GET_LOG_INTERFACE 27
+typedef struct {
+	gpointer log;
+} RetroLogCallback;
+gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
+
 static __thread void *global_self;
 
 void retro_core_set_global_self (RetroCore *self) {
@@ -43,6 +51,8 @@ void retro_core_set_global_self (RetroCore *self) {
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (guint cmd, gpointer data) {
 		if (global_self) {
+			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
+			
 			void *result;
 			RetroEnvironmentCallback cb = retro_core_get_environment_cb (global_self, &result);
 			return cb (cmd, data, result);
@@ -129,8 +139,23 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	
 	return real_cb;
 }
+
+gboolean retro_core_set_callback_interfaces (RetroCore *self, guint cmd, gpointer data) {
+	switch (cmd) {
+	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
+	default:
+		return FALSE;
+	}
+}
+
 /*
-void retro_core_set_log_callback (RetroCore *self, log_cb_structure cb) {
+ * need to add the internal header for this to work
+ */
+gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
+	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
 	gboolean real_log (guint level, const char *format, ...) {
 		if (global_self) {
 			(RetroLog *)
@@ -142,7 +167,7 @@ void retro_core_set_log_callback (RetroCore *self, log_cb_structure cb) {
 		return 0;
 	}
 	
-	log_cb_structure.log = real_log;
+	cb.log = real_log;
 	
 	// Continue with the other methods
 	// and then store them into a "callback" structure.
@@ -150,6 +175,6 @@ void retro_core_set_log_callback (RetroCore *self, log_cb_structure cb) {
 	// The core need to intercept the environment commands
 	// of type "get_foo_interface" and set the requiered
 	// callback structure with the functions set here.
-	
+	return TRUE;
 }
-*/
+

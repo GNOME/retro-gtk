@@ -46,6 +46,7 @@ RETRO_FILES= \
 	Video.vala \
 	retro-core-extern.c \
 	retro-core-global.c \
+	retro-core-interfaces.c \
 	retro-environment-extern.c \
 	$(NULL)
 

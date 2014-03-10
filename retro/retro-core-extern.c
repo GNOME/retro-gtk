@@ -16,9 +16,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "retro-internal.h"
-
 #include "retro-core-global.h"
+
+#include "retro-internal.h"
+#include "retro-core-interfaces.h"
 
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
 typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
@@ -26,14 +27,6 @@ typedef void (*RetroAudioSample) (gint16 left, gint16 right, void* user_data);
 typedef gsize (*RetroAudioSampleBatch) (gint16* data, gsize size, gsize frames, void* user_data);
 typedef void (*RetroInputPoll) (void* user_data);
 typedef gint16 (*RetroInputState) (guint port, guint device, guint index, guint id, void* user_data);
-
-gboolean retro_core_set_callback_interfaces (RetroCore *self, guint cmd, gpointer data);
-
-typedef struct {
-	gpointer log;
-} RetroLogCallback;
-
-gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
 
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
@@ -131,46 +124,5 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	}
 	
 	return real_cb;
-}
-
-gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCommand cmd, gpointer data) {
-	switch (cmd) {
-	case RETRO_ENVIRONMENT_COMMAND_GET_RUMBLE_INTERFACE:
-		return FALSE;
-	case RETRO_ENVIRONMENT_COMMAND_GET_SENSOR_INTERFACE:
-		return FALSE;
-	case RETRO_ENVIRONMENT_COMMAND_GET_CAMERA_INTERFACE:
-		return FALSE;
-	case RETRO_ENVIRONMENT_COMMAND_GET_LOG_INTERFACE:
-		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
-	case RETRO_ENVIRONMENT_COMMAND_GET_PERF_INTERFACE:
-		return FALSE;
-	case RETRO_ENVIRONMENT_COMMAND_GET_LOCATION_INTERFACE:
-		return FALSE;
-	default:
-		return FALSE;
-	}
-}
-
-gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
-	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);
-	if (!interface_exists) return FALSE;
-	
-	gboolean real_log (guint level, const char *format, ...) {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			RetroLog *interface = retro_core_get_log_interface (global_self);
-			// FIXME pass the variable arguments
-			return RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, format);
-		}
-		
-		g_assert_not_reached ();
-		return 0;
-	}
-	
-	cb->log = real_log;
-	
-	return TRUE;
 }
 

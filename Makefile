@@ -128,6 +128,7 @@ $(RETRO_OUT): %: $(RETRO_SRC)
 		--vapi=$(RETRO_PKGNAME).vapi \
 		--gir=$(RETRO_PKGNAME).gir \
 		-H $(@D)/$(RETRO_LIBNAME).h \
+		-h $(<D)/$(RETRO_LIBNAME)-internal.h \
 		-o lib$(RETRO_LIBNAME).so $^ \
 		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
 		--save-temps \
@@ -164,7 +165,7 @@ $(FLICKY_DEPS):
 	echo $(FLICKY_PKG) | sed -e 's/\s\+/\n/g' > $@
 
 clean:
-	rm -Rf $(OUT_DIR) $(RETRO_DOC)
+	rm -Rf $(OUT_DIR) $(RETRO_DOC) $(RETRO_DIR)/$(RETRO_LIBNAME)-internal.h
 
 .PHONY: all demo retro flicky doc clean
 

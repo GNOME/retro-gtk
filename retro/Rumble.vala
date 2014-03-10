@@ -18,18 +18,13 @@
 
 namespace Retro {
 
-namespace Rumble {
+public interface Rumble: Object {
 	public enum Effect {
 		STRONG,
 		WEAK
 	}
 	
-	[CCode (has_target = false)]
-	public delegate bool SetState (uint port, Effect effect, uint16 strength);
-	
-	public struct Interface {
-		SetState set_rumble_state;
-	}
+	public abstract bool set_rumble_state (uint port, Effect effect, uint16 strength);
 }
 
 }

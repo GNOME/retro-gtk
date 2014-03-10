@@ -23,7 +23,7 @@
 gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCommand cmd, gpointer data) {
 	switch (cmd) {
 	case RETRO_ENVIRONMENT_COMMAND_GET_RUMBLE_INTERFACE:
-		return FALSE;
+		return retro_core_set_rumble_callback (self, (RetroRumbleCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_SENSOR_INTERFACE:
 		return FALSE;
 	case RETRO_ENVIRONMENT_COMMAND_GET_CAMERA_INTERFACE:
@@ -37,6 +37,27 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 	default:
 		return FALSE;
 	}
+}
+
+gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
+	gboolean interface_exists = global_self && retro_core_get_rumble_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
+	gboolean real_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroRumble *interface = retro_core_get_rumble_interface (global_self);
+			return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	cb->set_rumble_state = real_set_rumble_state;
+	
+	return TRUE;
 }
 
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {

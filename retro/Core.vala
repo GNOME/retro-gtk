@@ -390,6 +390,14 @@ public class Core : Object {
 	}
 	
 	/**
+	 * The rumble interface.
+	 * 
+	 * Must be set before the first call to
+	 * {@link Retro.Core.run} is made.
+	 */
+	public Rumble rumble_interface { set; get; default = null; }
+	
+	/**
 	 * The logging interface.
 	 * 
 	 * Must be set before the first call to

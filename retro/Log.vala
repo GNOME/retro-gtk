@@ -16,7 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro.Log {
+namespace Retro {
+
+public interface Log: Object {
 	public enum Level {
 		DEBUG = 0,
 		INFO,
@@ -24,17 +26,8 @@ namespace Retro.Log {
 		ERROR
 	}
 	
-	[CCode (has_target = false)]
-	public delegate bool Printf (Level level, string fmt, ...);
-	
-	public struct Callback {
-		Printf log;
-	}
-	
-	public bool printf (Level level, string fmt, ...) {
-		var list = va_list();
-		stderr.printf ((string) level + ": " + fmt, list);
-		return true;
-	}
+	public abstract bool log (Level level, string fmt, ...);
+}
+
 }
 

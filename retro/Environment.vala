@@ -64,7 +64,7 @@ namespace Retro.Environment {
 	public extern void set_rumble_interface (void *data, Rumble.Interface value);
 	public extern void set_sensor_interface (void *data, Sensor.Interface value);
 	public extern void set_camera_interface (void *data, Camera.Callback value);
-	public extern void set_log_interface (void *data, Log.Callback value);
+	//public extern void set_log_interface (void *data, Log.Callback value);
 	public extern void set_performanc_interface (void *data, Performance.Callback value);
 	
 	public static bool get_bool (void *data) {

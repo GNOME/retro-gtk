@@ -129,4 +129,27 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	
 	return real_cb;
 }
-
+/*
+void retro_core_set_log_callback (RetroCore *self, log_cb_structure cb) {
+	gboolean real_log (guint level, const char *format, ...) {
+		if (global_self) {
+			(RetroLog *)
+			gpointer interface = retro_core_get_log_interface (global_self);
+			return RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, format, ...);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	log_cb_structure.log = real_log;
+	
+	// Continue with the other methods
+	// and then store them into a "callback" structure.
+	// 
+	// The core need to intercept the environment commands
+	// of type "get_foo_interface" and set the requiered
+	// callback structure with the functions set here.
+	
+}
+*/

@@ -18,30 +18,15 @@
 
 namespace Retro {
 
-namespace Location {
-	[CCode (has_target = false)]
-	public delegate void SetInterval (uint interval_ms, uint interval_distance);
+public interface Location: Object {
+	public abstract bool start ();
+	public abstract void stop ();
 	
-	[CCode (has_target = false)]
-	public delegate bool Start ();
+	public abstract bool get_position (out double lat, out double lon, out double horiz_accuracy, out double vert_accuracy);
+	public abstract void set_interval (uint interval_ms, uint interval_distance);
 	
-	[CCode (has_target = false)]
-	public delegate void Stop ();
-	
-	[CCode (has_target = false)]
-	public delegate bool GetPosition (out double lat, out double lon, out double horiz_accuracy, out double vert_accuracy);
-	
-	[CCode (has_target = false)]
-	public delegate void LifetimeStatus ();
-	
-	public struct Callback {
-		Start          start;
-		Stop           stop;
-		GetPosition    get_position;
-		SetInterval    set_interval;
-		LifetimeStatus initialized;
-		LifetimeStatus deinitialized;
-	}
+	public abstract void initialized ();
+	public abstract void deinitialized ();
 }
 
 }

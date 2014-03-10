@@ -429,6 +429,14 @@ public class Core : Object {
 	 */
 	public Performance performance_interface { set; get; default = null; }
 	
+	/**
+	 * The location interface.
+	 * 
+	 * Must be set before the first call to
+	 * {@link Retro.Core.run} is made.
+	 */
+	public Location location_interface { set; get; default = null; }
+	
 	
 	
 	

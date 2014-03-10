@@ -33,7 +33,7 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 	case RETRO_ENVIRONMENT_COMMAND_GET_PERF_INTERFACE:
 		return retro_core_set_performance_callback (self, (RetroPerformanceCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_LOCATION_INTERFACE:
-		return FALSE;
+		return retro_core_set_location_callback (self, (RetroLocationCallback *) data);
 	default:
 		return FALSE;
 	}
@@ -292,6 +292,89 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	cb->perf_start = real_perf_start;
 	cb->perf_stop = real_perf_stop;
 	cb->perf_log = real_perf_log;
+	
+	return TRUE;
+}
+
+gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
+	gboolean interface_exists = global_self && retro_core_get_location_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
+	gboolean real_start () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			return RETRO_LOCATION_GET_INTERFACE (interface)->start (interface);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	void real_stop () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RETRO_LOCATION_GET_INTERFACE (interface)->stop (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	gfloat real_get_position (gdouble *lat, gdouble *lon, gdouble *horiz_accuracy, gdouble *vert_accuracy) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RETRO_LOCATION_GET_INTERFACE (interface)->get_position (interface, lat, lon, horiz_accuracy, vert_accuracy);
+			return;
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	gfloat real_set_interval (guint interval_ms, guint interval_distance) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RETRO_LOCATION_GET_INTERFACE (interface)->set_interval (interface, interval_ms, interval_distance);
+			return;
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	void real_initialized () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RETRO_LOCATION_GET_INTERFACE (interface)->initialized (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	void real_deinitialized () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	cb->start = real_start;
+	cb->stop = real_stop;
+	cb->get_position = real_get_position;
+	cb->set_interval = real_set_interval;
+	cb->initialized = real_initialized;
+	cb->deinitialized = real_deinitialized;
 	
 	return TRUE;
 }

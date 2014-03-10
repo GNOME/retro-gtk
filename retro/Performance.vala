@@ -18,23 +18,24 @@
 
 namespace Retro {
 
-namespace Performance {
-	namespace SimdFlags {
-		public static const uint64 SSE    = (1 << 0);
-		public static const uint64 SSE2   = (1 << 1);
-		public static const uint64 VMX    = (1 << 2);
-		public static const uint64 VMX128 = (1 << 3);
-		public static const uint64 AVX    = (1 << 4);
-		public static const uint64 NEON   = (1 << 5);
-		public static const uint64 SSE3   = (1 << 6);
-		public static const uint64 SSSE3  = (1 << 7);
-		public static const uint64 MMX    = (1 << 8);
-		public static const uint64 MMXEXT = (1 << 9);
-		public static const uint64 SSE4   = (1 << 10);
-		public static const uint64 SSE42  = (1 << 11);
-		public static const uint64 AVX2   = (1 << 12);
-		public static const uint64 VFPU   = (1 << 13);
-		public static const uint64 PS     = (1 << 14);
+public interface Performance: Object {
+	[Flags]
+	public enum SimdFlags {
+		SSE    = (1 << 0),
+		SSE2   = (1 << 1),
+		VMX    = (1 << 2),
+		VMX128 = (1 << 3),
+		AVX    = (1 << 4),
+		NEON   = (1 << 5),
+		SSE3   = (1 << 6),
+		SSSE3  = (1 << 7),
+		MMX    = (1 << 8),
+		MMXEXT = (1 << 9),
+		SSE4   = (1 << 10),
+		SSE42  = (1 << 11),
+		AVX2   = (1 << 12),
+		VFPU   = (1 << 13),
+		PS     = (1 << 14)
 	}
 	
 	public struct Counter {
@@ -46,36 +47,14 @@ namespace Performance {
 		bool registered;
 	}
 	
-	[CCode (has_target = false)]
-	public delegate int64 GetTimeUsec ();
+	public abstract int64 get_time_usec ();
+	public abstract uint64 get_cpu_features ();
+	public abstract uint64 get_perf_counter ();
 	
-	[CCode (has_target = false)]
-	public delegate uint64 GetCounter ();
-	
-	[CCode (has_target = false)]
-	public delegate uint64 GetCpuFeatures ();
-	
-	[CCode (has_target = false)]
-	public delegate void Log ();
-	
-	[CCode (has_target = false)]
-	public delegate void Register (Counter counter);
-	
-	[CCode (has_target = false)]
-	public delegate void Start (Counter counter);
-	
-	[CCode (has_target = false)]
-	public delegate void Stop (Counter counter);
-	
-	public struct Callback {
-		GetTimeUsec    get_time_usec;
-		GetCpuFeatures get_cpu_features;
-		GetCounter     get_perf_counter;
-		Register       perf_register;
-		Start          perf_start;
-		Stop           perf_stop;
-		Log            perf_log;
-	}
+	public abstract void perf_register (Counter counter);
+	public abstract void perf_start (Counter counter);
+	public abstract void perf_stop (Counter counter);
+	public abstract void perf_log ();
 }
 
 }

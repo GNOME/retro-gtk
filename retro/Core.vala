@@ -421,6 +421,14 @@ public class Core : Object {
 	 */
 	public Log log_interface { set; get; default = null; }
 	
+	/**
+	 * The performance interface.
+	 * 
+	 * Must be set before the first call to
+	 * {@link Retro.Core.run} is made.
+	 */
+	public Performance performance_interface { set; get; default = null; }
+	
 	
 	
 	

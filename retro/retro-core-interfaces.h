@@ -46,10 +46,23 @@ typedef struct {
 	gpointer log;
 } RetroLogCallback;
 
+typedef struct {
+	gpointer get_time_usec;
+	gpointer get_cpu_features;
+	gpointer get_perf_counter;
+	gpointer perf_register;
+	gpointer perf_start;
+	gpointer perf_stop;
+	gpointer perf_log;
+} RetroPerformanceCallback;
+
 gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCommand cmd, gpointer data);
 
 gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb);
+gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb);
+gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb);
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
+gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb);
 
 #endif
 

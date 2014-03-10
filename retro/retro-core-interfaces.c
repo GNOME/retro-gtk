@@ -31,7 +31,7 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 	case RETRO_ENVIRONMENT_COMMAND_GET_LOG_INTERFACE:
 		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_PERF_INTERFACE:
-		return FALSE;
+		return retro_core_set_performance_callback (self, (RetroLogCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_LOCATION_INTERFACE:
 		return FALSE;
 	default:
@@ -199,6 +199,99 @@ gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	}
 	
 	cb->log = real_log;
+	
+	return TRUE;
+}
+
+gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
+	gboolean interface_exists = global_self && retro_core_get_performance_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
+	gint64 real_get_time_usec () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_time_usec (interface);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	guint64 real_get_cpu_features () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_cpu_features (interface);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	guint64 real_get_perf_counter () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_perf_counter (interface);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	void real_perf_register (RetroPerformanceCounter *counter) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_register (interface, counter);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	void real_perf_start (RetroPerformanceCounter *counter) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_start (interface, counter);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	void real_perf_stop (RetroPerformanceCounter *counter) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_stop (interface, counter);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	void real_perf_log () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_log (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	cb->get_time_usec = real_get_time_usec;
+	cb->get_cpu_features = real_get_cpu_features;
+	cb->get_perf_counter = real_get_perf_counter;
+	cb->perf_register = real_perf_register;
+	cb->perf_start = real_perf_start;
+	cb->perf_stop = real_perf_stop;
+	cb->perf_log = real_perf_log;
 	
 	return TRUE;
 }

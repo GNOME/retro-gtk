@@ -31,6 +31,18 @@ typedef struct {
 } RetroSensorCallback;
 
 typedef struct {
+	guint64  caps;
+	guint    width;
+	guint    height;
+	gpointer start;
+	gpointer stop;
+	gpointer frame_raw_framebuffer;
+	gpointer frame_opengl_texture;
+	gpointer initialized;
+	gpointer deinitialized;
+} RetroCameraCallback;
+
+typedef struct {
 	gpointer log;
 } RetroLogCallback;
 

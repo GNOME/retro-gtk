@@ -25,9 +25,9 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 	case RETRO_ENVIRONMENT_COMMAND_GET_RUMBLE_INTERFACE:
 		return retro_core_set_rumble_callback (self, (RetroRumbleCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_SENSOR_INTERFACE:
-		return FALSE;
+		return retro_core_set_sensor_callback (self, (RetroSensorCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_CAMERA_INTERFACE:
-		return FALSE;
+		return retro_core_set_camera_callback (self, (RetroCameraCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_LOG_INTERFACE:
 		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
 	case RETRO_ENVIRONMENT_COMMAND_GET_PERF_INTERFACE:
@@ -89,6 +89,94 @@ gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *c
 	
 	cb->set_sensor_state = real_set_sensor_state;
 	cb->get_sensor_input = real_get_sensor_input;
+	
+	return TRUE;
+}
+
+gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
+	gboolean interface_exists = global_self && retro_core_get_camera_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
+	gboolean real_start () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			return RETRO_CAMERA_GET_INTERFACE (interface)->start (interface);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	void real_stop () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RETRO_CAMERA_GET_INTERFACE (interface)->stop (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	gfloat real_frame_raw_framebuffer (guint32 *buffer, guint width, guint height, gsize pitch) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RETRO_CAMERA_GET_INTERFACE (interface)->frame_raw_framebuffer (interface, buffer, width, height, pitch);
+			return;
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	gfloat real_frame_opengl_texture (guint texture_id, guint texture_target, gfloat *affine) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RETRO_CAMERA_GET_INTERFACE (interface)->frame_opengl_texture (interface, texture_id, texture_target, affine);
+			return;
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	void real_initialized () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RETRO_CAMERA_GET_INTERFACE (interface)->initialized (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	void real_deinitialized () {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RETRO_CAMERA_GET_INTERFACE (interface)->deinitialized (interface);
+			return;
+		}
+		
+		g_assert_not_reached ();
+	}
+	
+	RetroCamera *interface = retro_core_get_camera_interface (global_self);
+	
+	cb->caps = RETRO_CAMERA_GET_INTERFACE (interface)->get_caps (interface);
+	cb->width = RETRO_CAMERA_GET_INTERFACE (interface)->get_width (interface);
+	cb->height = RETRO_CAMERA_GET_INTERFACE (interface)->get_height (interface);
+	cb->start = real_start;
+	cb->stop = real_stop;
+	cb->frame_raw_framebuffer = real_frame_raw_framebuffer;
+	cb->frame_opengl_texture = real_frame_opengl_texture;
+	cb->initialized = real_initialized;
+	cb->deinitialized = real_deinitialized;
 	
 	return TRUE;
 }

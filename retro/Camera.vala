@@ -18,38 +18,24 @@
 
 namespace Retro {
 
-namespace Camera {
+public interface Camera: Object {
 	public enum Buffer {
 		OPENGL_TEXTURE,
 		RAW_FRAMEBUFFER
 	}
 	
-	[CCode (has_target = false)]
-	public delegate bool Start ();
+	public abstract uint64 caps { set; get; }
+	public abstract uint width { set; get; }
+	public abstract uint height { set; get; }
 	
-	[CCode (has_target = false)]
-	public delegate void Stop ();
+	public abstract bool start ();
+	public abstract void stop ();
 	
-	[CCode (has_target = false)]
-	public delegate void LifetimeStatus ();
+	public abstract void frame_raw_framebuffer ([CCode (array_length = false)] uint32[] buffer, uint width, uint height, size_t pitch);
+	public abstract void frame_opengl_texture (uint texture_id, uint texture_target, [CCode (array_length = false)] float[] affine);
 	
-	[CCode (has_target = false)]
-	public delegate void FrameRawFramebuffer ([CCode (array_length = false)] uint32[] buffer, uint width, uint height, size_t pitch);
-	
-	[CCode (has_target = false)]
-	public delegate void FrameOpenglTexture (uint texture_id, uint texture_target, [CCode (array_length = false)] float[] affine);
-	
-	public struct Callback {
-		uint64              caps;
-		uint                width;
-		uint                height;
-		Start               start;
-		Stop                stop;
-		FrameRawFramebuffer frame_raw_framebuffer;
-		FrameOpenglTexture  frame_opengl_texture;
-		LifetimeStatus      initialized;
-		LifetimeStatus      deinitialized;
-	}
+	public abstract void initialized ();
+	public abstract void deinitialized ();
 }
 
 }

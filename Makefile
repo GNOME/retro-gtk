@@ -45,6 +45,7 @@ RETRO_FILES= \
 	Variable.vala \
 	Video.vala \
 	retro-core-extern.c \
+	retro-core-global.c \
 	retro-environment-extern.c \
 	$(NULL)
 

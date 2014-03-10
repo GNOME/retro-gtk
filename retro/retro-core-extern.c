@@ -16,8 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include <glib.h>
 #include "retro-internal.h"
+
+#include "retro-core-global.h"
 
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
 typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
@@ -34,14 +35,9 @@ typedef struct {
 
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
 
-static __thread void *global_self;
-
-void retro_core_set_global_self (RetroCore *self) {
-	global_self = (void *) self;
-}
-
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
 			
@@ -59,6 +55,7 @@ gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 	gboolean real_cb (guint8* data, guint width, guint height, gsize pitch) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
 			RetroVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
@@ -74,6 +71,7 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 	gboolean real_cb (gint16 left, gint16 right) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
 			RetroAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
@@ -89,6 +87,7 @@ gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 	gboolean real_cb (gint16* data, int frames) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
 			RetroAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
@@ -104,6 +103,7 @@ gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 	gboolean real_cb () {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
 			RetroInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
@@ -119,6 +119,7 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	gboolean real_cb (guint port, guint device, guint index, guint id) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
 			RetroInputState cb = retro_core_get_input_state_cb (global_self, &result);
@@ -152,10 +153,12 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 }
 
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
 	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_log (guint level, const char *format, ...) {
+		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			RetroLog *interface = retro_core_get_log_interface (global_self);
 			// FIXME pass the variable arguments

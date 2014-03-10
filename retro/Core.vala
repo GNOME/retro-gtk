@@ -95,11 +95,11 @@ public class Core : Object {
 	/**
 	 * Queries for input for player 'port'.
 	 * 
-	 * Device will be masked with {@link Retro.Device.TYPE_MASK}.
+	 * Device will be masked with {@link Device.TYPE_MASK}.
 	 * Specialization of devices such as
-	 * {@link Retro.Device.Type.JOYPAD_MULTITAP} that have been set with
-	 * {@link Retro.Core.set_controller_port_device} will still use the
-	 * higher level {@link Retro.Device.Type.JOYPAD} to request input.
+	 * {@link Device.Type.JOYPAD_MULTITAP} that have been set with
+	 * {@link set_controller_port_device} will still use the
+	 * higher level {@link Device.Type.JOYPAD} to request input.
 	 * 
 	 * @return the state of the input
 	 * @param port the port number
@@ -274,7 +274,7 @@ public class Core : Object {
 	/**
 	 * The environment callback.
 	 * 
-	 * Must be set before {@link Retro.Core.init} is called.
+	 * Must be set before {@link init} is called.
 	 */
 	public Environment environment_cb {
 		set {
@@ -294,7 +294,7 @@ public class Core : Object {
 	 * The video refresh callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * {@link run} is made.
 	 */
 	public VideoRefresh video_refresh_cb {
 		set {
@@ -314,7 +314,7 @@ public class Core : Object {
 	 * The audio sample callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * {@link run} is made.
 	 */
 	public AudioSample audio_sample_cb {
 		set {
@@ -334,7 +334,7 @@ public class Core : Object {
 	 * The audio sample batch callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * {@link run} is made.
 	 */
 	public AudioSampleBatch audio_sample_batch_cb {
 		set {
@@ -354,7 +354,7 @@ public class Core : Object {
 	 * The input poll callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * {@link run} is made.
 	 */
 	public InputPoll input_poll_cb {
 		set {
@@ -374,7 +374,7 @@ public class Core : Object {
 	 * The input state callback.
 	 * 
 	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * {@link run} is made.
 	 */
 	public InputState input_state_cb {
 		set {
@@ -392,48 +392,48 @@ public class Core : Object {
 	/**
 	 * The rumble interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Rumble rumble_interface { set; get; default = null; }
 	
 	/**
 	 * The sensor interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Sensor sensor_interface { set; get; default = null; }
 	
 	/**
 	 * The camera interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Camera camera_interface { set; get; default = null; }
 	
 	/**
 	 * The logging interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Log log_interface { set; get; default = null; }
 	
 	/**
 	 * The performance interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Performance performance_interface { set; get; default = null; }
 	
 	/**
 	 * The location interface.
 	 * 
-	 * Must be set before the first call to
-	 * {@link Retro.Core.run} is made.
+	 * Optional.
+	 * If set, it must be set before {@link environment_cb}.
 	 */
 	public Location location_interface { set; get; default = null; }
 	
@@ -523,7 +523,7 @@ public class Core : Object {
 	/**
 	 * Initialize the module.
 	 * 
-	 * {@link Retro.Core.environment_cb} must be set before the module is
+	 * {@link environment_cb} must be set before the module is
 	 * initialized.
 	 */
 	public void init () {
@@ -544,7 +544,7 @@ public class Core : Object {
 	/**
 	 * The version of libretro used by the module.
 	 * 
-	 * Can be compared with {@link Retro.API_VERSION} to validate ABI
+	 * Can be compared with {@link API_VERSION} to validate ABI
 	 * compatibility.
 	 * 
 	 * @return the libretro version of the module
@@ -557,7 +557,7 @@ public class Core : Object {
 	/**
 	 * Gets system information.
 	 * 
-	 * Can be called at any time, even before {@link Retro.Core.init}.
+	 * Can be called at any time, even before {@link init}.
 	 * 
 	 * @return information on the system implemented in the module
 	 */
@@ -572,7 +572,7 @@ public class Core : Object {
 	/**
 	 * Gets information about system audio/video timings and geometry.
 	 * 
-	 * Can be called only after {@link Retro.Core.load_game} has successfully
+	 * Can be called only after {@link load_game} has successfully
 	 * completed.
 	 * 
 	 * NOTE: The implementation of this function might not initialize every
@@ -615,11 +615,11 @@ public class Core : Object {
 	 * The callbacks must be set and the core must be initialized before
 	 * running the core.
 	 * 
-	 * During {@link Retro.Core.run}, the input_poll callback will be called
+	 * During {@link run}, the input_poll callback will be called
 	 * at least once.
 	 * 
 	 * If a frame is not rendered for reasons where a game "dropped" a frame,
-	 * this still counts as a frame, and {@link Retro.Core.run} will
+	 * this still counts as a frame, and {@link run} will
 	 * explicitly dupe a frame if
 	 * {@link Retro.Environment.Command.GET_CAN_DUPE} returns true.
 	 * In this case, the video callback can take a null argument for data.
@@ -633,8 +633,8 @@ public class Core : Object {
 	 * Returns the amount of data the implementation requires to serialize the
 	 * internal state (save states).
 	 * 
-	 * Beetween calls to {@link Retro.Core.load_game} and
-	 * {@link Retro.Core.unload_game}, the returned size is never allowed to
+	 * Beetween calls to {@link load_game} and
+	 * {@link unload_game}, the returned size is never allowed to
 	 * be larger than a previous returned value, to ensure that the frontend can
 	 * allocate a save state buffer once.
 	 * 
@@ -648,7 +648,7 @@ public class Core : Object {
 	/**
 	 * Serializes the internal state.
 	 * 
-	 * If failed, or size is lower than {@link Retro.Core.serialize_size}, it
+	 * If failed, or size is lower than {@link serialize_size}, it
 	 * should return false, true otherwise.
 	 * 
 	 * @param data the buffer where the data will be stored

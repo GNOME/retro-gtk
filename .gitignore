@@ -1,4 +1,5 @@
 out
+*-internal.h
 
 # Object files
 *.o

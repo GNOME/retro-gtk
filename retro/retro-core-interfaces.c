@@ -60,6 +60,39 @@ gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *c
 	return TRUE;
 }
 
+gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
+	RetroCore *global_self = retro_core_get_global_self ();
+	gboolean interface_exists = global_self && retro_core_get_sensor_interface (global_self);
+	if (!interface_exists) return FALSE;
+	
+	gboolean real_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroSensor *interface = retro_core_get_sensor_interface (global_self);
+			return RETRO_SENSOR_GET_INTERFACE (interface)->set_sensor_state (interface, port, action, rate);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	gfloat real_get_sensor_input (guint port, guint id) {
+		RetroCore *global_self = retro_core_get_global_self ();
+		if (global_self) {
+			RetroSensor *interface = retro_core_get_sensor_interface (global_self);
+			return RETRO_SENSOR_GET_INTERFACE (interface)->get_sensor_input (interface, port, id);
+		}
+		
+		g_assert_not_reached ();
+		return 0;
+	}
+	
+	cb->set_sensor_state = real_set_sensor_state;
+	cb->get_sensor_input = real_get_sensor_input;
+	
+	return TRUE;
+}
+
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
 	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);

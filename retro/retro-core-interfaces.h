@@ -26,6 +26,11 @@ typedef struct {
 } RetroRumbleCallback;
 
 typedef struct {
+	gpointer set_sensor_state;
+	gpointer get_sensor_input;
+} RetroSensorCallback;
+
+typedef struct {
 	gpointer log;
 } RetroLogCallback;
 

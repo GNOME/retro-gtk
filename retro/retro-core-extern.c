@@ -17,8 +17,7 @@
  */
 
 #include <glib.h>
-
-typedef void RetroCore;
+#include "retro-internal.h"
 
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
 typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
@@ -27,19 +26,12 @@ typedef gsize (*RetroAudioSampleBatch) (gint16* data, gsize size, gsize frames, 
 typedef void (*RetroInputPoll) (void* user_data);
 typedef gint16 (*RetroInputState) (guint port, guint device, guint index, guint id, void* user_data);
 
-RetroEnvironmentCallback retro_core_get_environment_cb (RetroCore* self, gpointer* result_target);
-RetroVideoRefresh retro_core_get_video_refresh_cb (RetroCore* self, gpointer* result_target);
-RetroAudioSample retro_core_get_audio_sample_cb (RetroCore* self, gpointer* result_target);
-RetroAudioSampleBatch retro_core_get_audio_sample_batch_cb (RetroCore* self, gpointer* result_target);
-RetroInputPoll retro_core_get_input_poll_cb (RetroCore* self, gpointer* result_target);
-RetroInputState retro_core_get_input_state_cb (RetroCore* self, gpointer* result_target);
-
 gboolean retro_core_set_callback_interfaces (RetroCore *self, guint cmd, gpointer data);
 
-#define RETRO_ENVIRONMENT_GET_LOG_INTERFACE 27
 typedef struct {
 	gpointer log;
 } RetroLogCallback;
+
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
 
 static __thread void *global_self;
@@ -49,7 +41,7 @@ void retro_core_set_global_self (RetroCore *self) {
 }
 
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
-	gboolean real_cb (guint cmd, gpointer data) {
+	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
 		if (global_self) {
 			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
 			
@@ -140,41 +132,42 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gboolean retro_core_set_callback_interfaces (RetroCore *self, guint cmd, gpointer data) {
+gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCommand cmd, gpointer data) {
 	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+	case RETRO_ENVIRONMENT_COMMAND_GET_RUMBLE_INTERFACE:
+		return FALSE;
+	case RETRO_ENVIRONMENT_COMMAND_GET_SENSOR_INTERFACE:
+		return FALSE;
+	case RETRO_ENVIRONMENT_COMMAND_GET_CAMERA_INTERFACE:
+		return FALSE;
+	case RETRO_ENVIRONMENT_COMMAND_GET_LOG_INTERFACE:
 		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
+	case RETRO_ENVIRONMENT_COMMAND_GET_PERF_INTERFACE:
+		return FALSE;
+	case RETRO_ENVIRONMENT_COMMAND_GET_LOCATION_INTERFACE:
+		return FALSE;
 	default:
 		return FALSE;
 	}
 }
 
-/*
- * need to add the internal header for this to work
- */
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_log (guint level, const char *format, ...) {
 		if (global_self) {
-			(RetroLog *)
-			gpointer interface = retro_core_get_log_interface (global_self);
-			return RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, format, ...);
+			RetroLog *interface = retro_core_get_log_interface (global_self);
+			// FIXME pass the variable arguments
+			return RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, format);
 		}
 		
 		g_assert_not_reached ();
 		return 0;
 	}
 	
-	cb.log = real_log;
+	cb->log = real_log;
 	
-	// Continue with the other methods
-	// and then store them into a "callback" structure.
-	// 
-	// The core need to intercept the environment commands
-	// of type "get_foo_interface" and set the requiered
-	// callback structure with the functions set here.
 	return TRUE;
 }
 

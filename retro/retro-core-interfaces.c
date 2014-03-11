@@ -194,6 +194,7 @@ gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 			// Get the arguments, set up the formatted message,
 			// pass it to the logging method and free it.
 			va_list args;
+			va_start (args, format);
 			char *message = g_strdup_vprintf (format, args);
 			gboolean result = RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, message);
 			g_free (message);

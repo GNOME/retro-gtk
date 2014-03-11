@@ -70,95 +70,94 @@ public class Engine : Object, Runnable {
 		switch (cmd) {
 			case Retro.Environment.Command.SET_ROTATION:
 				rotation = (Gdk.PixbufRotation) Retro.Environment.get_uint (data);
-				break;
+				return true;
 			case Retro.Environment.Command.GET_OVERSCAN:
 				Retro.Environment.set_bool (data, overscan);
-				break;
+				return true;
 			case Retro.Environment.Command.GET_CAN_DUPE:
 				Retro.Environment.set_bool (data, can_dupe);
-				break;
+				return true;
 			case Retro.Environment.Command.SET_MESSAGE:
 				var message = Retro.Environment.get_message (data);
 				set_message (message.msg, message.frames);
-				break;
+				return true;
 			case Retro.Environment.Command.SHUTDOWN:
 				shutdown ();
-				break;
+				return true;
 			case Retro.Environment.Command.SET_PERFORMANCE_LEVEL:
 				performance_level = Retro.Environment.get_uint (data);
-				break;
+				return true;
 			case Retro.Environment.Command.GET_SYSTEM_DIRECTORY:
-				Retro.Environment.set_string (data, "/home/kekun/nestopia");
+				Retro.Environment.set_string (data, ".");
 				stdout.printf ("on_environment_cb: GET_SYSTEM_DIRECTORY\n");
 				// TODO set a proper system directory
-				break;
+				return true;
 			case Retro.Environment.Command.SET_PIXEL_FORMAT:
 				pixel_format = (Video.PixelFormat) Retro.Environment.get_uint (data);
-				break;
+				return true;
 			case Retro.Environment.Command.SET_INPUT_DESCRIPTORS:
 				var input_descriptors = Retro.Environment.get_input_descriptors (data);
 				stdout.printf ("on_environment_cb: SET_INPUT_DESCRIPTORS\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.SET_KEYBOARD_CALLBACK:
 				var keyboard_callback = Retro.Environment.get_keyboard_callback (data);
 				stdout.printf ("on_environment_cb: SET_KEYBOARD_CALLBACK\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.SET_DISK_CONTROL_INTERFACE:
 				var disk_control_callback = Retro.Environment.get_disk_control_callback (data);
 				stdout.printf ("on_environment_cb: SET_DISK_CONTROL_INTERFACE\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.SET_HW_RENDER:
 				var disk_control_callback = Retro.Environment.get_hardware_render_callback (data);
 				stdout.printf ("on_environment_cb: SET_HW_RENDER\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.GET_VARIABLE:
 				var key = Retro.Environment.get_variable_key (data);
 				Retro.Environment.set_variable_value (data, options[key]);
-				break;
+				return true;
 			case Retro.Environment.Command.SET_VARIABLES:
 				var variables = Retro.Environment.get_variables (data);
 				options.insert_multiple (variables);
-				break;
+				return true;
 			case Retro.Environment.Command.GET_VARIABLE_UPDATE:
 				Retro.Environment.set_bool (data, option_changed);
 				option_changed = false;
-				break;
+				return true;
 			case Retro.Environment.Command.SET_SUPPORT_NO_GAME:
 				var support_no_game = Retro.Environment.get_bool (data);
 				stdout.printf ("on_environment_cb: SET_SUPPORT_NO_GAME\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.GET_LIBRETRO_PATH:
 				Retro.Environment.set_string (data, "");
 				stdout.printf ("on_environment_cb: GET_LIBRETRO_PATH\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.SET_AUDIO_CALLBACK:
 				var audio_callback = Retro.Environment.get_audio_callback (data);
 				stdout.printf ("on_environment_cb: SET_AUDIO_CALLBACK\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.SET_FRAME_TIME_CALLBACK:
 				var frame_time_callback = Retro.Environment.get_frame_time_callback (data);
 				stdout.printf ("on_environment_cb: SET_FRAME_TIME_CALLBACK\n");
 				// TODO
-				break;
+				return false;
 			case Retro.Environment.Command.GET_INPUT_DEVICE_CAPABILITIES:
 				uint64 capabilities = 0;
 				foreach (var device in controller_devices.get_values ()) {
 					capabilities |= device.get_device_capabilities ();
 				}
 				Retro.Environment.set_uint64 (data, capabilities);
-				break;
+				return true;
 			default:
 				stdout.printf ("on_environment_cb: unknown command: %d\n", cmd);
-				break;
+				return false;
 		}
-		return true;
 	}
 	
 	[CCode (cname = "video_to_pixbuf", cheader_filename="video_converter.h")]

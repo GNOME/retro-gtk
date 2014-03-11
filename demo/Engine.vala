@@ -147,39 +147,12 @@ public class Engine : Object, Runnable {
 				stdout.printf ("on_environment_cb: SET_FRAME_TIME_CALLBACK\n");
 				// TODO
 				break;
-			case Retro.Environment.Command.GET_RUMBLE_INTERFACE:
-				//Retro.Environment.set_rumble_interface (data, value);
-				stdout.printf ("on_environment_cb: GET_RUMBLE_INTERFACE\n");
-				// TODO
-				break;
 			case Retro.Environment.Command.GET_INPUT_DEVICE_CAPABILITIES:
 				uint64 capabilities = 0;
 				foreach (var device in controller_devices.get_values ()) {
 					capabilities |= device.get_device_capabilities ();
 				}
 				Retro.Environment.set_uint64 (data, capabilities);
-				break;
-			case Retro.Environment.Command.GET_SENSOR_INTERFACE:
-				//Retro.Environment.set_sensor_interface (data, value);
-				stdout.printf ("on_environment_cb: GET_SENSOR_INTERFACE\n");
-				// TODO
-				break;
-			case Retro.Environment.Command.GET_CAMERA_INTERFACE:
-				//Retro.Environment.set_camera_interface (data, value);
-				stdout.printf ("on_environment_cb: GET_CAMERA_INTERFACE\n");
-				// TODO
-				break;
-			case Retro.Environment.Command.GET_LOG_INTERFACE:
-				//Retro.Environment.set_log_interface (data, value);
-				stdout.printf ("on_environment_cb: GET_LOG_INTERFACE\n");
-				//((Log.Callback *) data)->log = (Log.Printf) Log.printf;
-				*((void **) data) = null;
-				// TODO
-				break;
-			case Retro.Environment.Command.GET_PERF_INTERFACE:
-				//Retro.Environment.set_performance_interface (data, value);
-				stdout.printf ("on_environment_cb: GET_PERF_INTERFACE\n");
-				// TODO
 				break;
 			default:
 				stdout.printf ("on_environment_cb: unknown command: %d\n", cmd);

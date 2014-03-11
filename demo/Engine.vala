@@ -51,6 +51,7 @@ public class Engine : Object, Runnable {
 			option_changed = true;
 		});
 		
+		core.log_interface         = new Logger ();
 		core.environment_cb        = on_environment_cb;
 		core.video_refresh_cb      = on_video_refresh_cb;
 		core.audio_sample_cb       = on_audio_sample_cb;

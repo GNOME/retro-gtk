@@ -26,7 +26,7 @@ public interface Log: Object {
 		ERROR
 	}
 	
-	public abstract bool log (Level level, string fmt, ...);
+	public abstract bool log (Level level, string message);
 }
 
 }

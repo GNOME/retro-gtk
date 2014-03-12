@@ -51,10 +51,11 @@ public class Engine : Object, Runnable {
 			option_changed = true;
 		});
 		
-		core.log_interface         = new Logger ();
+		core.log_interface         = new FileStreamLogger ();
 		core.environment_cb        = on_environment_cb;
 		core.video_refresh_cb      = on_video_refresh_cb;
-		core.audio_sample_cb       = on_audio_sample_cb;
+		core.audio_sample_cb     
+		  = on_audio_sample_cb;
 		core.audio_sample_batch_cb = on_audio_sample_batch_cb;
 		core.input_poll_cb         = on_input_poll_cb;
 		core.input_state_cb        = on_input_state_cb;

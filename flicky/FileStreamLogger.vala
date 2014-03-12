@@ -20,11 +20,17 @@ using Retro;
 
 namespace Flicky {
 
-public class Logger: Object, Retro.Log {
+public class FileStreamLogger: Object, Retro.Log {
 	private static const string default_color = "\033[39m";
 	
+	public unowned FileStream stream { set; get; }
+	
+	public FileStreamLogger (FileStream stream = GLib.stderr) {
+		Object (stream: stream);
+	}
+	
 	public bool log (Retro.Log.Level level, string message) {
-		stderr.printf ("%s%s%s", get_color (level), message, default_color);
+		stream.printf ("%s%s%s", get_color (level), message, default_color);
 		return true;
 	}
 	

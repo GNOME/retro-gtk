@@ -53,8 +53,8 @@ RETRO_FILES= \
 FLICKY_FILES= \
 	AudioSamples.vala \
 	ControllerDevice.vala \
+	FileStreamLogger.vala \
 	KeyboardBox.vala \
-	Logger.vala \
 	Options.vala \
 	Runnable.vala \
 	Runner.vala \

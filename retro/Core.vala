@@ -299,8 +299,8 @@ public class Core : Object {
 	 * {@link run} is made.
 	 */
 	public VideoRefresh video_refresh_cb {
-		set {
-			_video_refresh_cb = value;
+		owned set {
+			_video_refresh_cb = (owned) value;
 			
 			set_global_self ();
 			_set_video_refresh (get_module_video_refresh_cb ());
@@ -319,8 +319,8 @@ public class Core : Object {
 	 * {@link run} is made.
 	 */
 	public AudioSample audio_sample_cb {
-		set {
-			_audio_sample_cb = value;
+		owned set {
+			_audio_sample_cb = (owned) value;
 			
 			set_global_self ();
 			_set_audio_sample (get_module_audio_sample_cb ());
@@ -339,8 +339,8 @@ public class Core : Object {
 	 * {@link run} is made.
 	 */
 	public AudioSampleBatch audio_sample_batch_cb {
-		set {
-			_audio_sample_batch_cb = value;
+		owned set {
+			_audio_sample_batch_cb = (owned) value;
 			
 			set_global_self ();
 			_set_audio_sample_batch (get_module_audio_sample_batch_cb ());
@@ -359,8 +359,8 @@ public class Core : Object {
 	 * {@link run} is made.
 	 */
 	public InputPoll input_poll_cb {
-		set {
-			_input_poll_cb = value;
+		owned set {
+			_input_poll_cb = (owned) value;
 			
 			set_global_self ();
 			_set_input_poll (get_module_input_poll_cb ());
@@ -379,8 +379,8 @@ public class Core : Object {
 	 * {@link run} is made.
 	 */
 	public InputState input_state_cb {
-		set {
-			_input_state_cb = value;
+		owned set {
+			_input_state_cb = (owned) value;
 			
 			set_global_self ();
 			_set_input_state (get_module_input_state_cb ());

@@ -123,6 +123,7 @@ $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLI
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(PKG:%=--pkg=%) \
 		--save-temps \
 		-g
+	@touch $@
 
 $(RETRO_OUT): %: $(RETRO_SRC)
 	mkdir -p $(@D)
@@ -137,6 +138,7 @@ $(RETRO_OUT): %: $(RETRO_SRC)
 		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
 		--save-temps \
 		-X -fPIC -X -shared
+	@touch $@
 
 $(RETRO_DEPS):
 	mkdir -p $(@D)
@@ -163,6 +165,7 @@ $(FLICKY_OUT): %: $(FLICKY_SRC) $(RETRO_OUT) $(RETRO_DEPS)
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(FLICKY_PKG:%=--pkg=%) \
 		--save-temps \
 		-X -fPIC -X -shared
+	@touch $@
 
 $(FLICKY_DEPS):
 	mkdir -p $(@D)

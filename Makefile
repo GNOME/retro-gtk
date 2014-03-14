@@ -48,7 +48,6 @@ RETRO_FILES= \
 	retro-core-extern.c \
 	retro-core-global.c \
 	retro-core-interfaces.c \
-	retro-environment-extern.c \
 	$(NULL)
 
 FLICKY_FILES= \

@@ -45,7 +45,7 @@ public class Engine : Object, Retro.Environment, Runnable {
 	public Rotation rotation { set; get; }
 	public bool support_no_game { set; get; }
 	public Performance.Level performance_level { set; get; }
-	public Video.PixelFormat pixel_format { set; get; }
+	public PixelFormat pixel_format { set; get; }
 	public Device.InputDescriptor[] input_descriptors { set; get; }
 	public SystemAvInfo? system_av_info { set; get; }
 	
@@ -101,7 +101,7 @@ public class Engine : Object, Retro.Environment, Runnable {
 	}
 	
 	[CCode (cname = "video_to_pixbuf", cheader_filename="video_converter.h")]
-	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Video.PixelFormat pixel_format);
+	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format);
 	
 	private void on_video_refresh_cb (uint8[] data, uint width, uint height, size_t pitch) {
 		var pixbuf = video_to_pixbuf (data, width, height,  pitch, pixel_format);

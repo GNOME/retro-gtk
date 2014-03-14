@@ -37,6 +37,7 @@ RETRO_FILES= \
 	Memory.vala \
 	Message.vala \
 	Performance.vala \
+	PixelFormat.vala \
 	Region.vala \
 	Rotation.vala \
 	Rumble.vala \
@@ -44,7 +45,6 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
-	Video.vala \
 	retro-core-extern.c \
 	retro-core-global.c \
 	retro-core-interfaces.c \

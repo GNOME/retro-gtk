@@ -171,7 +171,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_PIXEL_FORMAT:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_pixel_format (interface, *((RetroVideoPixelFormat *) data));
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_pixel_format (interface, *((RetroPixelFormat *) data));
 			return TRUE;
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS: {

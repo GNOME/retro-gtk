@@ -71,7 +71,7 @@ public interface Environment: Object {
 	public abstract Rotation rotation { set; get; default = Rotation.NONE; }
 	public abstract bool support_no_game { set; get; default = false; }
 	public abstract Performance.Level performance_level { set; get; }
-	public abstract Video.PixelFormat pixel_format { set; get; default = Video.PixelFormat.ORGB1555; }
+	public abstract PixelFormat pixel_format { set; get; default = PixelFormat.ORGB1555; }
 	public abstract Device.InputDescriptor[] input_descriptors { set; get; }
 	public abstract SystemAvInfo? system_av_info { set; get; default = null; }
 	

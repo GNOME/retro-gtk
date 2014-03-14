@@ -21,6 +21,8 @@
 #include "retro-internal.h"
 #include "retro-core-interfaces.h"
 
+gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
+
 typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
 typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
 typedef void (*RetroAudioSample) (gint16 left, gint16 right, void* user_data);
@@ -31,12 +33,12 @@ typedef gint16 (*RetroInputState) (guint port, guint device, guint index, guint 
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
 		RetroCore *global_self = retro_core_get_global_self ();
+		
 		if (global_self) {
 			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
 			
-			void *result;
-			RetroEnvironmentCallback cb = retro_core_get_environment_cb (global_self, &result);
-			return cb (cmd, data, result);
+			RetroEnvironment *interface = retro_core_get_environment_cb (global_self);
+			return retro_core_dispatch_environment_command (global_self, interface, cmd, data);
 		}
 	
 		g_assert_not_reached ();
@@ -126,3 +128,137 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	return real_cb;
 }
 
+gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data) {
+	if (!self || !interface || !data) return FALSE;
+	
+	switch (cmd) {
+		case RETRO_ENVIRONMENT_COMMAND_SET_ROTATION:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_rotation (interface, *((RetroRotation *) data));
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_OVERSCAN: {
+			gboolean *overscan = (gboolean *) data;
+			*(overscan) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_overscan (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_CAN_DUPE: {
+			gboolean *can_dupe = (gboolean *) data;
+			*(can_dupe) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_can_dupe (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_MESSAGE: {
+			gboolean result = FALSE;
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "set_message", (RetroMessage *) data, &result);
+			return result;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SHUTDOWN: {
+			gboolean result = FALSE;
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "shutdown", &result);
+			return result;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_PERFORMANCE_LEVEL:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_performance_level (interface, *((RetroPerformanceLevel *) data));
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_SYSTEM_DIRECTORY: {
+			gchar **directory = (gchar **) data;
+			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_system_directory (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_PIXEL_FORMAT:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_pixel_format (interface, *((RetroVideoPixelFormat *) data));
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS: {
+			RetroDeviceInputDescriptor *array = (RetroDeviceInputDescriptor *) data;
+			
+			int length;
+			for (length = 0 ; array[length].description ; length++);
+			
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_input_descriptors (interface, array, length);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_KEYBOARD_CALLBACK:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_keyboard_callback (interface, (RetroKeyboardCallback *) data);
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_DISK_CONTROL_INTERFACE:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_disk_control_interface (interface, (RetroDiskControlCallback *) data);
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_HW_RENDER:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_hw_render (interface, (RetroHardwareRenderCallback *) data);
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
+			RetroVariable *variable = (RetroVariable *) data;
+			variable->value = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_variable (interface, variable->key);
+			return variable->value;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES: {
+			RetroVariable *array = (RetroVariable *) data;
+			
+			int length;
+			for (length = 0 ; array[length].key && array[length].value ; length++);
+			
+			return RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_variables (interface, array, length);
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE_UPDATE: {
+			gboolean *variable_update = (gboolean *) data;
+			*(variable_update) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_variable_update (interface);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_variable_update (interface, FALSE);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_SUPPORT_NO_GAME:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_support_no_game (interface, *((gboolean *) data));
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_LIBRETRO_PATH: {
+			gchar **directory = (gchar **) data;
+			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_libretro_path (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_AUDIO_CALLBACK:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_audio_callback (interface, (RetroAudioCallback *) data);
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_FRAME_TIME_CALLBACK:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_frame_time_callback (interface, (RetroFrameTimeCallback *) data);
+			return TRUE;
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_INPUT_DEVICE_CAPABILITIES: {
+			guint64 *input_device_capabilities = (guint64 *) data;
+			*(input_device_capabilities) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_input_device_capabilities (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_CONTENT_DIRECTORY: {
+			gchar **directory = (gchar **) data;
+			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_content_directory (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_GET_SAVE_DIRECTORY: {
+			gchar **directory = (gchar **) data;
+			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_save_directory (interface);
+			return TRUE;
+		}
+		
+		case RETRO_ENVIRONMENT_COMMAND_SET_SYSTEM_AV_INFO:
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_system_av_info (interface, (RetroSystemAvInfo *) data);
+			return TRUE;
+		
+		default:
+			return FALSE;
+	}
+}

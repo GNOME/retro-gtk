@@ -53,101 +53,33 @@ public interface Environment: Object {
 		SET_SYSTEM_AV_INFO            = 32
 	}
 	
-	public static void set_bool (void *data, bool value) {
-		*((bool *) data) = value;
-	}
+	public signal bool shutdown ();
+	public signal bool set_message (Message message);
 	
-	public static void set_uint64 (void *data, uint64 value) {
-		*((uint64 *) data) = value;
-	}
+	public abstract bool overscan { set; get; default = true; }
+	public abstract bool can_dupe { set; get; default = false; }
+	public abstract uint64 input_device_capabilities { get; }
+	public abstract string system_directory { set; get; default = "."; }
+	public abstract string libretro_path { set; get; default = "."; }
+	public abstract string content_directory { set; get; default = "."; }
+	public abstract string save_directory { set; get; default = "."; }
 	
-	public static extern void set_string (void *data, string value);
-	public static extern void set_variable_value (void *data, string value);
-	//public static extern void set_rumble_interface (void *data, Rumble.Interface value);
-	//public static extern void set_sensor_interface (void *data, Sensor.Interface value);
-	//public static extern void set_camera_interface (void *data, Camera.Callback value);
-	//public static extern void set_log_interface (void *data, Log.Callback value);
-	//public static extern void set_performanc_interface (void *data, Performance.Callback value);
-	
-	public static bool get_bool (void *data) {
-		return *((bool *) data);
-	}
-	
-	public static uint get_uint (void *data) {
-		return *((uint *) data);
-	}
-	
-	public static unowned Message get_message (void *data) {
-		return *((Message *) data);
-	}
-	
-	public static unowned Device.InputDescriptor[] get_input_descriptors (void *data) {
-		unowned Device.InputDescriptor[] array = (Device.InputDescriptor[]) data;
-		
-		int i;
-		for (i = 0 ; array[i].description != null ; i++);
-		
-		return array[0:i];
-	}
-	
-	public static unowned Keyboard.Callback get_keyboard_callback (void *data) {
-		return *((Keyboard.Callback *) data);
-	}
-	
-	public static unowned Disk.ControlCallback get_disk_control_callback (void *data) {
-		return *((Disk.ControlCallback *) data);
-	}
-	
-	public static unowned Hardware.RenderCallback get_hardware_render_callback (void *data) {
-		return *((Hardware.RenderCallback *) data);
-	}
-	
-	public static extern unowned string get_variable_key (void *data);
-	
-	public static unowned Variable[] get_variables (void *data) {
-		unowned Variable[] array = (Variable[]) data;
-		
-		int i;
-		for (i = 0 ; array[i].key != null && array[i].value != null ; i++);
-		
-		return array[0:i];
-	}
-	
-	public static unowned Audio.Callback get_audio_callback (void *data) {
-		return *((Audio.Callback *) data);
-	}
-	
-	public static unowned FrameTime.Callback get_frame_time_callback (void *data) {
-		return *((FrameTime.Callback *) data);
-	}
-	
-	public abstract bool shutdown ();
-	
-	public abstract bool get_overscan (out bool overscan);
-	public abstract bool get_can_dupe (out bool can_dupe);
-	public abstract bool get_input_device_capabilities (out uint64 input_device_capabilities);
-	public abstract bool get_system_directory (out string system_directory);
-	public abstract bool get_libretro_path (out string libretro_path);
-	public abstract bool get_content_directory (out string content_directory);
-	public abstract bool get_save_directory (out string save_directory);
-	
-	public abstract bool get_variable (ref Variable variable);
-	public abstract bool get_variable_update (out bool variable_update);
+	public abstract string? get_variable (string key);
+	public abstract bool variable_update { set; get; default = false; }
 	public abstract bool set_variables (Variable[] variables);
 	
-	public abstract bool set_rotation (Rotation rotation);
-	public abstract bool set_message (Message message);
-	public abstract bool set_support_no_game (bool support_no_game);
-	public abstract bool set_performance_level (Performance.Level performance_level);
-	public abstract bool set_pixel_format (Video.PixelFormat pixel_format);
-	public abstract bool set_input_descriptors (Device.InputDescriptor[] input_descriptors);
-	public abstract bool set_system_av_info (SystemAvInfo av_info);
+	public abstract Rotation rotation { set; get; default = Rotation.NONE; }
+	public abstract bool support_no_game { set; get; default = false; }
+	public abstract Performance.Level performance_level { set; get; }
+	public abstract Video.PixelFormat pixel_format { set; get; default = Video.PixelFormat.ORGB1555; }
+	public abstract Device.InputDescriptor[] input_descriptors { set; get; }
+	public abstract SystemAvInfo? system_av_info { set; get; default = null; }
 	
-	public abstract bool set_keyboard_callback (Keyboard.Callback keyboard_callback);
-	public abstract bool set_disk_control_interface (Disk.ControlCallback disk_control_interface);
-	public abstract bool set_hw_render (Hardware.RenderCallback hw_render);
-	public abstract bool set_audio_callback (Audio.Callback audio_callback);
-	public abstract bool set_frame_time_callback (FrameTime.Callback frame_time_callback);
+	public abstract Keyboard.Callback? keyboard_callback { set; get; default = null; }
+	public abstract Disk.ControlCallback? disk_control_interface { set; get; default = null; }
+	public abstract Hardware.RenderCallback? hw_render { set; get; default = null; }
+	public abstract Audio.Callback? audio_callback { set; get; default = null; }
+	public abstract FrameTime.Callback? frame_time_callback { set; get; default = null; }
 }
 
 }

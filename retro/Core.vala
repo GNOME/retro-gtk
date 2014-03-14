@@ -42,7 +42,7 @@ public class Core : Object {
 	 * @param cmd the command to execute
 	 * @param data an obscure data pointer, its definition changes with the command
 	 */
-	public delegate bool Environment (Retro.Environment.Command cmd, void *data);
+	//public delegate bool Environment (Retro.Environment.Command cmd, void *data);
 	
 	/**
 	 * Render a frame.
@@ -280,8 +280,10 @@ public class Core : Object {
 		set {
 			_environment_cb = value;
 			
-			set_global_self ();
-			_set_environment (get_module_environment_cb ());
+			if (value != null) {
+				set_global_self ();
+				_set_environment (get_module_environment_cb ());
+			}
 		}
 		get {
 			return _environment_cb;

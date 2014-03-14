@@ -16,7 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro.Environment {
+namespace Retro {
+
+public interface Environment: Object {
 	public enum Command {
 		EXPERIMENTAL_MASK             = 0x10000,
 		PRIVATE_MASK                  = 0x20000,
@@ -59,13 +61,13 @@ namespace Retro.Environment {
 		*((uint64 *) data) = value;
 	}
 	
-	public extern void set_string (void *data, string value);
-	public extern void set_variable_value (void *data, string value);
-	//public extern void set_rumble_interface (void *data, Rumble.Interface value);
-	//public extern void set_sensor_interface (void *data, Sensor.Interface value);
-	//public extern void set_camera_interface (void *data, Camera.Callback value);
-	//public extern void set_log_interface (void *data, Log.Callback value);
-	//public extern void set_performanc_interface (void *data, Performance.Callback value);
+	public static extern void set_string (void *data, string value);
+	public static extern void set_variable_value (void *data, string value);
+	//public static extern void set_rumble_interface (void *data, Rumble.Interface value);
+	//public static extern void set_sensor_interface (void *data, Sensor.Interface value);
+	//public static extern void set_camera_interface (void *data, Camera.Callback value);
+	//public static extern void set_log_interface (void *data, Log.Callback value);
+	//public static extern void set_performanc_interface (void *data, Performance.Callback value);
 	
 	public static bool get_bool (void *data) {
 		return *((bool *) data);
@@ -100,7 +102,7 @@ namespace Retro.Environment {
 		return *((Hardware.RenderCallback *) data);
 	}
 	
-	public extern unowned string get_variable_key (void *data);
+	public static extern unowned string get_variable_key (void *data);
 	
 	public static unowned Variable[] get_variables (void *data) {
 		unowned Variable[] array = (Variable[]) data;
@@ -119,5 +121,34 @@ namespace Retro.Environment {
 		return *((FrameTime.Callback *) data);
 	}
 	
+	public abstract bool shutdown ();
+	
+	public abstract bool get_overscan (out bool overscan);
+	public abstract bool get_can_dupe (out bool can_dupe);
+	public abstract bool get_input_device_capabilities (out uint64 input_device_capabilities);
+	public abstract bool get_system_directory (out string system_directory);
+	public abstract bool get_libretro_path (out string libretro_path);
+	public abstract bool get_content_directory (out string content_directory);
+	public abstract bool get_save_directory (out string save_directory);
+	
+	public abstract bool get_variable (ref Variable variable);
+	public abstract bool get_variable_update (out bool variable_update);
+	public abstract bool set_variables (Variable[] variables);
+	
+	public abstract bool set_rotation (Rotation rotation);
+	public abstract bool set_message (Message message);
+	public abstract bool set_support_no_game (bool support_no_game);
+	public abstract bool set_performance_level (Performance.Level performance_level);
+	public abstract bool set_pixel_format (Video.PixelFormat pixel_format);
+	public abstract bool set_input_descriptors (Device.InputDescriptor[] input_descriptors);
+	public abstract bool set_system_av_info (SystemAvInfo av_info);
+	
+	public abstract bool set_keyboard_callback (Keyboard.Callback keyboard_callback);
+	public abstract bool set_disk_control_interface (Disk.ControlCallback disk_control_interface);
+	public abstract bool set_hw_render (Hardware.RenderCallback hw_render);
+	public abstract bool set_audio_callback (Audio.Callback audio_callback);
+	public abstract bool set_frame_time_callback (FrameTime.Callback frame_time_callback);
+}
+
 }
 

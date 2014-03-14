@@ -38,6 +38,7 @@ RETRO_FILES= \
 	Message.vala \
 	Performance.vala \
 	Region.vala \
+	Rotation.vala \
 	Rumble.vala \
 	Sensor.vala \
 	SystemAvInfo.vala \

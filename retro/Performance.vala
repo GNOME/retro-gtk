@@ -38,6 +38,14 @@ public interface Performance: Object {
 		PS     = (1 << 14)
 	}
 	
+	public enum Level {
+		EMBEDED,
+		MOBILE,
+		LOW_END,
+		MID_END,
+		HIGH_END
+	}
+	
 	public struct Counter {
 		string ident;
 		uint64 start_tick;

@@ -20,6 +20,7 @@
 
 #include "retro-internal.h"
 #include "retro-core-interfaces.h"
+#include "retro-environment-command.h"
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
 

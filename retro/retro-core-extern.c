@@ -23,13 +23,6 @@
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
 
-typedef gboolean (*RetroEnvironmentCallback) (guint cmd, void* data, void* user_data);
-typedef void (*RetroVideoRefresh) (guint8* data, gsize data_size, guint width, guint height, gsize pitch, void* user_data);
-typedef void (*RetroAudioSample) (gint16 left, gint16 right, void* user_data);
-typedef gsize (*RetroAudioSampleBatch) (gint16* data, gsize size, gsize frames, void* user_data);
-typedef void (*RetroInputPoll) (void* user_data);
-typedef gint16 (*RetroInputState) (guint port, guint device, guint index, guint id, void* user_data);
-
 gpointer retro_core_get_module_environment_cb (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
 		RetroCore *global_self = retro_core_get_global_self ();
@@ -53,7 +46,7 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
+			RetroCoreVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
 			cb (data, pitch * height, width, height, pitch, result);
 			return;
 		}
@@ -69,7 +62,7 @@ gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
+			RetroCoreAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
 			cb(left, right, result);
 			return;
 		}
@@ -85,7 +78,7 @@ gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
+			RetroCoreAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
 			return cb (data, frames * 2, frames, result);
 		}
 	
@@ -101,7 +94,7 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
+			RetroCoreInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
 			cb (result);
 			return;
 		}
@@ -117,7 +110,7 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroInputState cb = retro_core_get_input_state_cb (global_self, &result);
+			RetroCoreInputState cb = retro_core_get_input_state_cb (global_self, &result);
 			return cb (port, device, index, id, result);
 		}
 	
@@ -165,7 +158,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_SYSTEM_DIRECTORY: {
-			gchar **directory = (gchar **) data;
+			const gchar **directory = (const gchar **) data;
 			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_system_directory (interface);
 			return TRUE;
 		}
@@ -199,7 +192,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
 			RetroVariable *variable = (RetroVariable *) data;
 			variable->value = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_variable (interface, variable->key);
-			return variable->value;
+			return (gboolean) variable->value;
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES: {
@@ -223,7 +216,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_LIBRETRO_PATH: {
-			gchar **directory = (gchar **) data;
+			const gchar **directory = (const gchar **) data;
 			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_libretro_path (interface);
 			return TRUE;
 		}
@@ -243,13 +236,13 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_CONTENT_DIRECTORY: {
-			gchar **directory = (gchar **) data;
+			const gchar **directory = (const gchar **) data;
 			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_content_directory (interface);
 			return TRUE;
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_SAVE_DIRECTORY: {
-			gchar **directory = (gchar **) data;
+			const gchar **directory = (const gchar **) data;
 			*(directory) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_save_directory (interface);
 			return TRUE;
 		}

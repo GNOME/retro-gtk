@@ -142,7 +142,7 @@ public class Core : Object {
 	[CCode (has_target = false)]
 	private delegate size_t SerializeSize ();
 	[CCode (has_target = false)]
-	private delegate bool Serialize ([CCode (array_length_type = "gsize")] uint8[] data);
+	private delegate bool Serialize ([CCode (array_length_type = "gsize")] out uint8[] data);
 	[CCode (has_target = false)]
 	private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[] data);
 	
@@ -658,7 +658,7 @@ public class Core : Object {
 	 */
 	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
 		set_global_self ();
-		return _serialize (data);
+		return _serialize (out data);
 	}
 	
 	/**

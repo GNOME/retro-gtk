@@ -228,9 +228,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 		
-		case RETRO_ENVIRONMENT_COMMAND_SET_FRAME_TIME_CALLBACK:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_frame_time_callback (interface, (RetroFrameTimeCallback *) data);
+		case RETRO_ENVIRONMENT_COMMAND_SET_FRAME_TIME_CALLBACK: {
+			RetroCoreFrameTime* callback = retro_core_frame_time_new ((RetroCoreFrameTimeCallback *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_frame_time_callback (interface, RETRO_FRAME_TIME (callback));
 			return TRUE;
+		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_INPUT_DEVICE_CAPABILITIES: {
 			guint64 *input_device_capabilities = (guint64 *) data;

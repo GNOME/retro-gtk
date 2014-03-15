@@ -45,7 +45,7 @@ public interface Environment: Object {
 	public abstract Disk.ControlCallback? disk_control_interface { set; get; default = null; }
 	public abstract Hardware.RenderCallback? hw_render { set; get; default = null; }
 	public abstract Audio? audio_callback { set; get; default = null; }
-	public abstract FrameTime.Callback? frame_time_callback { set; get; default = null; }
+	public abstract FrameTime? frame_time_callback { set; get; default = null; }
 }
 
 }

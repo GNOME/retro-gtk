@@ -32,18 +32,6 @@ public static const uint API_VERSION = 1;
  */
 public class Core : Object {
 	// Callbacks for the libretro module
-	
-	/**
-	 * Environment callback. 
-	 * 
-	 * Gives implementations a way of performing uncommon tasks. Extensible.
-	 * 
-	 * @return true if the command have been executed, false otherwise
-	 * @param cmd the command to execute
-	 * @param data an obscure data pointer, its definition changes with the command
-	 */
-	//public delegate bool Environment (Retro.Environment.Command cmd, void *data);
-	
 	/**
 	 * Render a frame.
 	 * 
@@ -272,7 +260,9 @@ public class Core : Object {
 	
 	private Environment _environment_cb;
 	/**
-	 * The environment callback.
+	 * The environment interface.
+	 * 
+	 * Gives the core a way of performing uncommon tasks.
 	 * 
 	 * Must be set before {@link init} is called.
 	 */

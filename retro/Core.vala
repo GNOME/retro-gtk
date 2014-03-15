@@ -48,7 +48,7 @@ public class Core : Object {
 	 * Render a frame.
 	 * 
 	 * Pixel format is 15-bit 0RGB1555 native endian unless changed
-	 * (see {@link Retro.Environment.Command.SET_PIXEL_FORMAT}).
+	 * (see {@link Environment.pixel_format}).
 	 * 
 	 * For performance reasons, it is highly recommended to have a frame that is
 	 * packed in memory, i.e. pitch == width * byte_per_pixel.
@@ -621,9 +621,8 @@ public class Core : Object {
 	 * at least once.
 	 * 
 	 * If a frame is not rendered for reasons where a game "dropped" a frame,
-	 * this still counts as a frame, and {@link run} will
-	 * explicitly dupe a frame if
-	 * {@link Retro.Environment.Command.GET_CAN_DUPE} returns true.
+	 * this still counts as a frame, and {@link run} will explicitly dupe a
+	 * frame if the can_dupe property of {@link environment_cb} is set to true.
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {

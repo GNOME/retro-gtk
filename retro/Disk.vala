@@ -109,7 +109,7 @@ namespace Disk {
 	
 	
 	/**
-	 * Callbacks for {@link Retro.Environment.Command.SET_DISK_CONTROL_INTERFACE}.
+	 * Callbacks for {@link Environment.disk_control_interface}.
 	 * 
 	 * Should be set for implementations which can swap out multiple disk images
 	 * in runtime.

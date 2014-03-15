@@ -24,14 +24,14 @@
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
 
-gpointer retro_core_get_module_environment_cb (RetroCore *self) {
+gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		
 		if (global_self) {
 			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
 			
-			RetroEnvironment *interface = retro_core_get_environment_cb (global_self);
+			RetroEnvironment *interface = retro_core_get_environment_interface (global_self);
 			return retro_core_dispatch_environment_command (global_self, interface, cmd, data);
 		}
 	

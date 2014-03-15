@@ -175,7 +175,7 @@ public class Core : Object {
 	 * 
 	 * These callbacks act like wrappers around the real callbacks.
 	 */
-	private extern void *get_module_environment_cb ();
+	private extern void *get_module_environment_interface ();
 	private extern void *get_module_video_refresh_cb ();
 	private extern void *get_module_audio_sample_cb ();
 	private extern void *get_module_audio_sample_batch_cb ();
@@ -258,7 +258,7 @@ public class Core : Object {
 	
 	// Callback setters and getters
 	
-	private Environment _environment_cb;
+	private Environment _environment_interface;
 	/**
 	 * The environment interface.
 	 * 
@@ -266,17 +266,17 @@ public class Core : Object {
 	 * 
 	 * Must be set before {@link init} is called.
 	 */
-	public Environment environment_cb {
+	public Environment environment_interface {
 		set {
-			_environment_cb = value;
+			_environment_interface = value;
 			
 			if (value != null) {
 				set_global_self ();
-				_set_environment (get_module_environment_cb ());
+				_set_environment (get_module_environment_interface ());
 			}
 		}
 		get {
-			return _environment_cb;
+			return _environment_interface;
 		}
 		default = null;
 	}
@@ -385,7 +385,7 @@ public class Core : Object {
 	 * The rumble interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Rumble rumble_interface { set; get; default = null; }
 	
@@ -393,7 +393,7 @@ public class Core : Object {
 	 * The sensor interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Sensor sensor_interface { set; get; default = null; }
 	
@@ -401,7 +401,7 @@ public class Core : Object {
 	 * The camera interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Camera camera_interface { set; get; default = null; }
 	
@@ -409,7 +409,7 @@ public class Core : Object {
 	 * The logging interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Log log_interface { set; get; default = null; }
 	
@@ -417,7 +417,7 @@ public class Core : Object {
 	 * The performance interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Performance performance_interface { set; get; default = null; }
 	
@@ -425,7 +425,7 @@ public class Core : Object {
 	 * The location interface.
 	 * 
 	 * Optional.
-	 * If set, it must be set before {@link environment_cb}.
+	 * If set, it must be set before {@link environment_interface}.
 	 */
 	public Location location_interface { set; get; default = null; }
 	
@@ -515,7 +515,7 @@ public class Core : Object {
 	/**
 	 * Initialize the module.
 	 * 
-	 * {@link environment_cb} must be set before the module is
+	 * {@link environment_interface} must be set before the module is
 	 * initialized.
 	 */
 	public void init () {
@@ -612,7 +612,7 @@ public class Core : Object {
 	 * 
 	 * If a frame is not rendered for reasons where a game "dropped" a frame,
 	 * this still counts as a frame, and {@link run} will explicitly dupe a
-	 * frame if the can_dupe property of {@link environment_cb} is set to true.
+	 * frame if the can_dupe property of {@link environment_interface} is set to true.
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {

@@ -71,7 +71,7 @@ public class Engine : Object, Retro.Environment, Runnable {
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 		
 		core.log_interface         = new FileStreamLogger ();
-		core.environment_cb        = this;
+		core.environment_interface = this;
 		core.video_refresh_cb      = on_video_refresh_cb;
 		core.audio_sample_cb       = on_audio_sample_cb;
 		core.audio_sample_batch_cb = on_audio_sample_batch_cb;

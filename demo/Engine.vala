@@ -50,7 +50,7 @@ public class Engine : Object, Retro.Environment, Runnable {
 	public SystemAvInfo? system_av_info { set; get; }
 	
 	public Keyboard.Callback? keyboard_callback { set; get; }
-	public Disk.ControlCallback? disk_control_interface { set; get; }
+	public Disk? disk_control_interface { set; get; }
 	public Hardware.RenderCallback? hw_render { set; get; }
 	public Audio? audio_callback { set; get; }
 	public FrameTime? frame_time_callback { set; get; }

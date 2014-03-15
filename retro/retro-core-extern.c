@@ -182,9 +182,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_keyboard_callback (interface, (RetroKeyboardCallback *) data);
 			return TRUE;
 		
-		case RETRO_ENVIRONMENT_COMMAND_SET_DISK_CONTROL_INTERFACE:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_disk_control_interface (interface, (RetroDiskControlCallback *) data);
+		case RETRO_ENVIRONMENT_COMMAND_SET_DISK_CONTROL_INTERFACE: {
+			RetroCoreDisk* callback = retro_core_disk_new ((RetroCoreDiskCallback *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_disk_control_interface (interface, RETRO_DISK (callback));
 			return TRUE;
+		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_HW_RENDER:
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_hw_render (interface, (RetroHardwareRenderCallback *) data);

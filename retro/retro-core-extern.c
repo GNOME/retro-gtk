@@ -222,9 +222,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 		
-		case RETRO_ENVIRONMENT_COMMAND_SET_AUDIO_CALLBACK:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_audio_callback (interface, (RetroAudioCallback *) data);
+		case RETRO_ENVIRONMENT_COMMAND_SET_AUDIO_CALLBACK: {
+			RetroCoreAudio* callback = retro_core_audio_new ((RetroCoreAudioCallback *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_audio_callback (interface, RETRO_AUDIO (callback));
 			return TRUE;
+		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_FRAME_TIME_CALLBACK:
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_frame_time_callback (interface, (RetroFrameTimeCallback *) data);

@@ -30,7 +30,7 @@ RETRO_FILES= \
 	FrameTime.vala \
 	GameInfo.vala \
 	GameType.vala \
-	Hardware.vala \
+	HardwareRender.vala \
 	Keyboard.vala \
 	Location.vala \
 	Log.vala \

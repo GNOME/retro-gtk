@@ -47,7 +47,7 @@ public interface Environment: Object {
 	 * If set, the {@link Core} can swap out multiple disk images in runtime.
 	 */
 	public abstract Disk? disk_control_interface { set; get; default = null; }
-	public abstract Hardware.RenderCallback? hw_render { set; get; default = null; }
+	public abstract HardwareRender? hw_render { set; get; default = null; }
 	public abstract Audio? audio_callback { set; get; default = null; }
 	public abstract FrameTime? frame_time_callback { set; get; default = null; }
 }

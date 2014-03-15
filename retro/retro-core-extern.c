@@ -188,9 +188,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 		
-		case RETRO_ENVIRONMENT_COMMAND_SET_HW_RENDER:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_hw_render (interface, (RetroHardwareRenderCallback *) data);
+		case RETRO_ENVIRONMENT_COMMAND_SET_HW_RENDER: {
+			RetroCoreHardwareRender* callback = retro_core_hardware_render_new ((RetroCoreHardwareRenderCallback *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_hw_render (interface, RETRO_HARDWARE_RENDER (callback));
 			return TRUE;
+		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
 			RetroVariable *variable = (RetroVariable *) data;

@@ -116,7 +116,7 @@ doc: $(RETRO_DOC)
 
 $(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS)
 	mkdir -p $(OUT_DIR)
-	valac -b $(RETRO_DIR) -d $(@D) \
+	valac -b $(<D) -d $(@D) \
 		-o $(@F) $(DEMO_SRC) \
 		-X -I./$(OUT_DIR) -X $(OUT_DIR)/libflicky.so -X $(OUT_DIR)/libretro.so \
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(PKG:%=--pkg=%) \

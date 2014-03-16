@@ -91,7 +91,12 @@ public class Window : Gtk.Window {
 	}
 	
 	void on_open_core_button_clicked (Gtk.Button button) {
-		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
+		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, "_Cancel", ResponseType.CANCEL, "_Open", ResponseType.ACCEPT);
+		
+		var filter = new FileFilter ();
+		filter.set_filter_name ("Cores");
+		filter.add_pattern ("*_libretro.so");
+		dialog.add_filter (filter);
 		
 		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
 			set_engine (dialog.get_filename ());
@@ -101,7 +106,21 @@ public class Window : Gtk.Window {
 	}
 	
 	void on_open_game_button_clicked (Gtk.Button button) {
-		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, Stock.CANCEL, ResponseType.CANCEL, Stock.OPEN, ResponseType.ACCEPT);
+		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, "_Cancel", ResponseType.CANCEL, "_Open", ResponseType.ACCEPT);
+		
+		var filter = new FileFilter ();
+		filter.set_filter_name (engine.info.library_name + " games");
+		foreach (var ext in engine.info.valid_extensions.split ("|")) {
+			filter.add_pattern ("*." + ext);
+		}
+		dialog.add_filter (filter);
+		
+		foreach (var ext in engine.info.valid_extensions.split ("|")) {
+			filter = new FileFilter ();
+			filter.set_filter_name ("*." + ext);
+			filter.add_pattern ("*." + ext);
+			dialog.add_filter (filter);
+		}
 		
 		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
 			set_game (dialog.get_filename ());

@@ -22,14 +22,22 @@ using Flicky;
 using Gtk;
 
 public class Window : Gtk.Window {
+	private enum UiState {
+		EMPTY,
+		HAS_CORE,
+		HAS_GAME
+	}
+	
 	private Gtk.HeaderBar header;
 	private KeyboardBox kb_box;
 	private Gtk.Image game_screen;
 	
+	private Gtk.Image play_image;
+	private Gtk.Image pause_image;
+	
 	private Gtk.Button open_core_button;
 	private Gtk.Button open_game_button;
 	private Gtk.Button start_button;
-	private Gtk.Button pause_button;
 	private Gtk.Button stop_button;
 	private Gtk.Button properties_button;
 	
@@ -37,6 +45,7 @@ public class Window : Gtk.Window {
 	
 	private Engine engine;
 	private Runner runner;
+	private bool running { set; get; default = false; }
 	
 	public Window () {
 		engine = null;
@@ -47,9 +56,8 @@ public class Window : Gtk.Window {
 		
 		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-		start_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-		pause_button = new Gtk.Button.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-		stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		start_button = new Gtk.Button ();
+		stop_button = new Gtk.Button.from_icon_name ("media-skip-backward-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
 		set_titlebar (header);
@@ -59,7 +67,6 @@ public class Window : Gtk.Window {
 		header.pack_start (open_core_button);
 		header.pack_start (open_game_button);
 		header.pack_start (start_button);
-		header.pack_start (pause_button);
 		header.pack_start (stop_button);
 		header.pack_end (properties_button);
 		
@@ -68,7 +75,6 @@ public class Window : Gtk.Window {
 		open_core_button.clicked.connect (on_open_core_button_clicked);
 		open_game_button.clicked.connect (on_open_game_button_clicked);
 		start_button.clicked.connect (on_start_button_clicked);
-		pause_button.clicked.connect (on_pause_button_clicked);
 		stop_button.clicked.connect (on_stop_button_clicked);
 		properties_button.clicked.connect (on_properties_button_clicked);
 		
@@ -81,9 +87,15 @@ public class Window : Gtk.Window {
 		open_core_button.show ();
 		open_game_button.show ();
 		start_button.show ();
-		pause_button.show ();
 		stop_button.show ();
 		properties_button.show ();
+		
+		set_ui_state (UiState.EMPTY);
+		
+		play_image = new Image.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		pause_image = new Image.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		
+		start_button.set_image (running ? pause_image : play_image);
 	}
 	
 	void set_titles () {
@@ -130,11 +142,16 @@ public class Window : Gtk.Window {
 	}
 	
 	void on_start_button_clicked (Gtk.Button button) {
-		runner.start ();
-	}
-	
-	void on_pause_button_clicked (Gtk.Button button) {
-		runner.stop ();
+		if (running) {
+			runner.stop ();
+			running = false;
+			start_button.set_image (play_image);
+		}
+		else {
+			runner.start ();
+			running = true;
+			start_button.set_image (pause_image);
+		}
 	}
 	
 	void on_stop_button_clicked (Gtk.Button button) {
@@ -170,12 +187,42 @@ public class Window : Gtk.Window {
 		runner = new Runner (engine);
 		open_game_button.show ();
 		set_titles ();
+		
+		set_ui_state (UiState.HAS_CORE);
 	}
 	
 	public void set_game (string path) {
 		engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
+		
+		set_ui_state (UiState.HAS_GAME);
+	}
+	
+	private void set_ui_state (UiState ui_state) {
+		switch (ui_state) {
+			case UiState.EMPTY:
+				open_core_button.sensitive = true;
+				open_game_button.sensitive = false;
+				start_button.hide ();
+				stop_button.hide ();
+				properties_button.hide ();
+				break;
+			case UiState.HAS_CORE:
+				open_core_button.sensitive = true;
+				open_game_button.sensitive = true;
+				start_button.hide ();
+				stop_button.hide ();
+				properties_button.show ();
+				break;
+			case UiState.HAS_GAME:
+				open_core_button.sensitive = true;
+				open_game_button.sensitive = true;
+				start_button.show ();
+				stop_button.show ();
+				properties_button.show ();
+				break;
+		}
 	}
 }
 

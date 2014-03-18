@@ -53,6 +53,7 @@ RETRO_FILES= \
 FLICKY_FILES= \
 	AudioSamples.vala \
 	ControllerDevice.vala \
+	Display.vala \
 	FileStreamLogger.vala \
 	KeyboardBox.vala \
 	Options.vala \
@@ -76,6 +77,7 @@ RETRO_PKG= \
 
 FLICKY_PKG= \
 	gtk+-3.0 \
+	clutter-gtk-1.0 \
 	$(RETRO_PKGNAME) \
 	$(NULL)
 

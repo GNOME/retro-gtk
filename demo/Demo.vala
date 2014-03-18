@@ -22,6 +22,7 @@ using Gtk;
 class Demo : Object {
 	public static int main (string[] argv) {
 		Gtk.init (ref argv);
+		Clutter.init (ref argv);
 		
 		var w = new Window ();
 		w.show ();

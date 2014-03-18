@@ -30,7 +30,7 @@ public class Window : Gtk.Window {
 	
 	private Gtk.HeaderBar header;
 	private KeyboardBox kb_box;
-	private Gtk.Image game_screen;
+	private Display game_screen;
 	
 	private Gtk.Image play_image;
 	private Gtk.Image pause_image;
@@ -52,7 +52,7 @@ public class Window : Gtk.Window {
 		
 		header = new Gtk.HeaderBar ();
 		kb_box = new KeyboardBox ();
-		game_screen = new Gtk.Image ();
+		game_screen = new Display ();
 		
 		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
@@ -173,8 +173,7 @@ public class Window : Gtk.Window {
 		engine = new Engine(path);
 		
 		engine.video_refresh.connect ((pb) => {
-			var pbx2 = pb.scale_simple (pb.get_width () * 2, pb.get_height () * 2, Gdk.InterpType.NEAREST);
-			game_screen.set_from_pixbuf (pbx2);
+			game_screen.render (pb);
 		});
 		
 		engine.audio_refresh.connect ((audio_samples) => {

@@ -20,7 +20,7 @@ namespace Retro {
 
 public interface Environment: Object {
 	public signal bool shutdown ();
-	public signal bool set_message (Message message);
+	public signal bool message (Message message);
 	
 	public abstract bool overscan { set; get; default = true; }
 	public abstract bool can_dupe { set; get; default = false; }
@@ -34,22 +34,22 @@ public interface Environment: Object {
 	public abstract bool variable_update { set; get; default = false; }
 	public abstract bool set_variables (Variable[] variables);
 	
-	public abstract Rotation rotation { set; get; default = Rotation.NONE; }
-	public abstract bool support_no_game { set; get; default = false; }
-	public abstract Performance.Level performance_level { set; get; }
-	public abstract PixelFormat pixel_format { set; get; default = PixelFormat.ORGB1555; }
-	public abstract Device.InputDescriptor[] input_descriptors { set; get; }
-	public abstract SystemAvInfo? system_av_info { set; get; default = null; }
+	public abstract Rotation rotation { protected set; get; default = Rotation.NONE; }
+	public abstract bool support_no_game { protected set; get; default = false; }
+	public abstract Performance.Level performance_level { protected set; get; }
+	public abstract PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
+	public abstract Device.InputDescriptor[] input_descriptors { protected set; get; }
+	public abstract SystemAvInfo? system_av_info { protected set; get; default = null; }
 	
-	public abstract Keyboard.Callback? keyboard_callback { set; get; default = null; }
+	public abstract Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
 	
 	/**
 	 * If set, the {@link Core} can swap out multiple disk images in runtime.
 	 */
-	public abstract Disk? disk_control_interface { set; get; default = null; }
-	public abstract HardwareRender? hw_render { set; get; default = null; }
-	public abstract Audio? audio_callback { set; get; default = null; }
-	public abstract FrameTime? frame_time_callback { set; get; default = null; }
+	public abstract Disk? disk_control_interface { protected set; get; default = null; }
+	public abstract HardwareRender? hw_render { protected set; get; default = null; }
+	public abstract Audio? audio_callback { protected set; get; default = null; }
+	public abstract FrameTime? frame_time_callback { protected set; get; default = null; }
 }
 
 }

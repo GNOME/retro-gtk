@@ -153,7 +153,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_PERFORMANCE_LEVEL:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_performance_level (interface, *((RetroPerformanceLevel *) data));
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_performance_level (interface, *((RetroPerfLevel *) data));
 			return TRUE;
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_SYSTEM_DIRECTORY: {

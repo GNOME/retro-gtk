@@ -248,7 +248,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 		return 0;
 	}
 	
-	void real_perf_register (RetroPerformanceCounter *counter) {
+	void real_perf_register (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
@@ -259,7 +259,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 		g_assert_not_reached ();
 	}
 	
-	void real_perf_start (RetroPerformanceCounter *counter) {
+	void real_perf_start (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
@@ -270,7 +270,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 		g_assert_not_reached ();
 	}
 	
-	void real_perf_stop (RetroPerformanceCounter *counter) {
+	void real_perf_stop (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			RetroPerformance *interface = retro_core_get_performance_interface (global_self);

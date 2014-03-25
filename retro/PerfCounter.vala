@@ -18,15 +18,13 @@
 
 namespace Retro {
 
-public interface Performance: Object {
-	public abstract int64 get_time_usec ();
-	public abstract uint64 get_cpu_features ();
-	public abstract uint64 get_perf_counter ();
-	
-	public abstract void perf_register (PerfCounter counter);
-	public abstract void perf_start (PerfCounter counter);
-	public abstract void perf_stop (PerfCounter counter);
-	public abstract void perf_log ();
+public struct PerfCounter {
+	string ident;
+	uint64 start_tick;
+	uint64 total_tick;
+	uint64 call_cnt_tick;
+
+	bool registered;
 }
 
 }

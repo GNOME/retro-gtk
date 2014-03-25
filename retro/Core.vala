@@ -43,7 +43,7 @@ public class Core : Object, Environment {
 	
 	public Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public bool support_no_game { protected set; get; default = false; }
-	public Performance.Level performance_level { protected set; get; }
+	public PerfLevel performance_level { protected set; get; }
 	public PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
 	public Device.InputDescriptor[] input_descriptors { protected set; get; }
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }

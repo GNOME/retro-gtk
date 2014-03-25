@@ -18,15 +18,23 @@
 
 namespace Retro {
 
-public interface Performance: Object {
-	public abstract int64 get_time_usec ();
-	public abstract uint64 get_cpu_features ();
-	public abstract uint64 get_perf_counter ();
-	
-	public abstract void perf_register (PerfCounter counter);
-	public abstract void perf_start (PerfCounter counter);
-	public abstract void perf_stop (PerfCounter counter);
-	public abstract void perf_log ();
+[Flags]
+public enum SimdFlags {
+	SSE    = (1 << 0),
+	SSE2   = (1 << 1),
+	VMX    = (1 << 2),
+	VMX128 = (1 << 3),
+	AVX    = (1 << 4),
+	NEON   = (1 << 5),
+	SSE3   = (1 << 6),
+	SSSE3  = (1 << 7),
+	MMX    = (1 << 8),
+	MMXEXT = (1 << 9),
+	SSE4   = (1 << 10),
+	SSE42  = (1 << 11),
+	AVX2   = (1 << 12),
+	VFPU   = (1 << 13),
+	PS     = (1 << 14)
 }
 
 }

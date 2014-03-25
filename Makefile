@@ -40,6 +40,8 @@ RETRO_FILES= \
 	LogLevel.vala \
 	MemoryType.vala \
 	Message.vala \
+	PerfCounter.vala \
+	PerfLevel.vala \
 	Performance.vala \
 	PixelFormat.vala \
 	Region.vala \
@@ -49,6 +51,7 @@ RETRO_FILES= \
 	Sensor.vala \
 	SensorAction.vala \
 	SensorAccelerometer.vala \
+	SimdFlags.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \

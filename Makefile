@@ -27,6 +27,7 @@ RETRO_FILES= \
 	Device.vala \
 	Disk.vala \
 	Environment.vala \
+	EnvironmentCommand.vala \
 	FrameTime.vala \
 	GameInfo.vala \
 	GameType.vala \

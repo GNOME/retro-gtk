@@ -631,20 +631,11 @@ public class Core : Object, Environment {
 	 * @param id the region of memory
 	 * @return the region of memory
 	 */
-	public void *get_memory_data (MemoryType id) {
+	public uint8[] get_memory (MemoryType id) {
 		set_global_self ();
-		return _get_memory_data (id);
-	}
-	
-	/**
-	 * Gets the size of a region of memory.
-	 * 
-	 * @param id the region of memory
-	 * @return the size of the region of memory
-	 */
-	public size_t get_memory_size (MemoryType id) {
-		set_global_self ();
-		return _get_memory_size (id);
+		var data = (uint8[]) _get_memory_data (id);
+		data.length = (int) _get_memory_size (id);
+		return data;
 	}
 }
 

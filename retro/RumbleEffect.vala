@@ -18,8 +18,9 @@
 
 namespace Retro {
 
-public interface Rumble: Object {
-	public abstract bool set_rumble_state (uint port, RumbleEffect effect, uint16 strength);
+public enum RumbleEffect {
+	STRONG,
+	WEAK
 }
 
 }

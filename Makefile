@@ -43,6 +43,7 @@ RETRO_FILES= \
 	Region.vala \
 	Rotation.vala \
 	Rumble.vala \
+	RumbleEffect.vala \
 	Sensor.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \

@@ -23,6 +23,7 @@ DEMO = $(OUT_DIR)/demo
 RETRO_FILES= \
 	Audio.vala \
 	Camera.vala \
+	CameraBuffer.vala \
 	Core.vala \
 	CoreDelegates.vala \
 	Device.vala \

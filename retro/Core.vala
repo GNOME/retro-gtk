@@ -30,7 +30,48 @@ public static const uint API_VERSION = 1;
  * In contrary to what the libretro API allows, multiple Cores can live in
  * the same process.
  */
-public class Core : Object {
+public class Core : Object, Environment {
+	public bool overscan { set; get; default = true; }
+	public bool can_dupe { set; get; default = false; }
+	public uint64 input_device_capabilities {
+		get {
+			return 0; // TODO
+		}
+	}
+	public string system_directory { set; get; default = "."; }
+	public string libretro_path { set; get; default = "."; }
+	public string content_directory { set; get; default = "."; }
+	public string save_directory { set; get; default = "."; }
+	
+	public string? get_variable (string key) {
+		return null; // TODO
+	}
+	public bool variable_update { set; get; default = false; }
+	public bool set_variables (Variable[] variables) {
+		return false; // TODO
+	}
+	
+	public Rotation rotation { protected set; get; default = Rotation.NONE; }
+	public bool support_no_game { protected set; get; default = false; }
+	public Performance.Level performance_level { protected set; get; }
+	public PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
+	public Device.InputDescriptor[] input_descriptors { protected set; get; }
+	public SystemAvInfo? system_av_info { protected set; get; default = null; }
+	
+	public Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
+	
+	/**
+	 * If set, the {@link Core} can swap out multiple disk images in runtime.
+	 */
+	public Disk? disk_control_interface { protected set; get; default = null; }
+	public HardwareRender? hw_render { protected set; get; default = null; }
+	public Audio? audio_callback { protected set; get; default = null; }
+	public FrameTime? frame_time_callback { protected set; get; default = null; }
+	
+	
+	
+	
+	
 	// Helper C methods
 	
 	/**

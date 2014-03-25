@@ -45,6 +45,8 @@ RETRO_FILES= \
 	Rumble.vala \
 	RumbleEffect.vala \
 	Sensor.vala \
+	SensorAction.vala \
+	SensorAccelerometer.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \

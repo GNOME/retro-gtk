@@ -18,9 +18,9 @@
 
 namespace Retro {
 
-public interface Sensor: Object {
-	public abstract bool set_sensor_state (uint port, SensorAction action, uint rate);
-	public abstract float get_sensor_input (uint port, SensorAccelerometer id);
+public enum SensorAction {
+	ACCELEROMETER_ENABLE,
+	ACCELEROMETER_DISABLE
 }
 
 }

@@ -36,7 +36,7 @@ RETRO_FILES= \
 	Keyboard.vala \
 	Location.vala \
 	Log.vala \
-	Memory.vala \
+	MemoryType.vala \
 	Message.vala \
 	Performance.vala \
 	PixelFormat.vala \

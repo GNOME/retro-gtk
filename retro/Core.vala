@@ -162,29 +162,6 @@ public class Core : Object, Environment {
 	
 	// Callback setters and getters
 	
-	//private Environment _environment_interface;
-	/**
-	 * The environment interface.
-	 * 
-	 * Gives the core a way of performing uncommon tasks.
-	 * 
-	 * Must be set before {@link init} is called.
-	 */
-	//public Environment environment_interface {
-	//	set {
-	//		_environment_interface = value;
-	//		
-	//		if (value != null) {
-	//			set_global_self ();
-	//			_set_environment (get_module_environment_interface ());
-	//		}
-	//	}
-	//	get {
-	//		return _environment_interface;
-	//	}
-	//	default = null;
-	//}
-	
 	private VideoRefresh _video_refresh_cb;
 	/**
 	 * The video refresh callback.
@@ -654,7 +631,7 @@ public class Core : Object, Environment {
 	 * @param id the region of memory
 	 * @return the region of memory
 	 */
-	public void *get_memory_data (Memory.Type id) {
+	public void *get_memory_data (MemoryType id) {
 		set_global_self ();
 		return _get_memory_data (id);
 	}
@@ -665,7 +642,7 @@ public class Core : Object, Environment {
 	 * @param id the region of memory
 	 * @return the size of the region of memory
 	 */
-	public size_t get_memory_size (Memory.Type id) {
+	public size_t get_memory_size (MemoryType id) {
 		set_global_self ();
 		return _get_memory_size (id);
 	}

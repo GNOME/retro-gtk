@@ -132,8 +132,8 @@ private delegate void UnloadGame ();
 private delegate Region GetRegion ();
 
 [CCode (has_target = false)]
-private delegate void *GetMemoryData (Memory.Type id);
+private delegate void *GetMemoryData (MemoryType id);
 [CCode (has_target = false)]
-private delegate size_t GetMemorySize (Memory.Type id);
+private delegate size_t GetMemorySize (MemoryType id);
 
 }

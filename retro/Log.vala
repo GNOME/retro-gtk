@@ -23,23 +23,13 @@ namespace Retro {
  */
 public interface Log: Object {
 	/**
-	 * The level of importance of a message.
-	 */
-	public enum Level {
-		DEBUG = 0,
-		INFO,
-		WARN,
-		ERROR
-	}
-	
-	/**
 	 * Logs a message.
 	 * 
 	 * @param level the importance of the message
 	 * @param message the message to log
 	 * @return true if the message have been logged, false otherwise
 	 */
-	public abstract bool log (Level level, string message);
+	public abstract bool log (LogLevel level, string message);
 }
 
 }

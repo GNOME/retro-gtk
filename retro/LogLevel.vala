@@ -1,4 +1,4 @@
-/* Flicky  Building blocks for a Retro frontend.
+/* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -16,39 +16,16 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-using Retro;
+namespace Retro {
 
-namespace Flicky {
-
-public class FileStreamLogger: Object, Retro.Log {
-	private static const string default_color = "\033[39m";
-	
-	public unowned FileStream stream { set; get; }
-	
-	public FileStreamLogger (FileStream stream = GLib.stderr) {
-		Object (stream: stream);
-	}
-	
-	public bool log (LogLevel level, string message) {
-		stream.printf ("%s%s%s", get_color (level), message, default_color);
-		return true;
-	}
-	
-	private string get_color (LogLevel level) {
-		switch (level) {
-			case LogLevel.DEBUG:
-				// Green
-				return "\033[32m";
-			case LogLevel.WARN:
-				// Yellow
-				return "\033[33m";
-			case LogLevel.ERROR:
-				// Red
-				return "\033[31m";
-			default:
-				return default_color;
-		}
-	}
+/**
+ * The level of importance of a message.
+ */
+public enum LogLevel {
+	DEBUG = 0,
+	INFO,
+	WARN,
+	ERROR
 }
 
 }

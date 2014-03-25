@@ -24,6 +24,7 @@ RETRO_FILES= \
 	Audio.vala \
 	Camera.vala \
 	Core.vala \
+	CoreDelegates.vala \
 	Device.vala \
 	Disk.vala \
 	Environment.vala \

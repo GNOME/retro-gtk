@@ -46,7 +46,7 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroCoreVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
+			RetroVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
 			cb (data, pitch * height, width, height, pitch, result);
 			return;
 		}
@@ -62,7 +62,7 @@ gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroCoreAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
+			RetroAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
 			cb(left, right, result);
 			return;
 		}
@@ -78,7 +78,7 @@ gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroCoreAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
+			RetroAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
 			return cb (data, frames * 2, frames, result);
 		}
 	
@@ -94,7 +94,7 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroCoreInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
+			RetroInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
 			cb (result);
 			return;
 		}
@@ -110,7 +110,7 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
 			void *result;
-			RetroCoreInputState cb = retro_core_get_input_state_cb (global_self, &result);
+			RetroInputState cb = retro_core_get_input_state_cb (global_self, &result);
 			return cb (port, device, index, id, result);
 		}
 	

@@ -31,6 +31,7 @@ public static const uint API_VERSION = 1;
  * the same process.
  */
 public class Core : Object, Environment {
+	// Implementation of environment properties
 	
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
@@ -49,14 +50,17 @@ public class Core : Object, Environment {
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 	
 	public Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
-	
-	/**
-	 * If set, the {@link Core} can swap out multiple disk images in runtime.
-	 */
 	public Disk? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }
 	public Audio? audio_callback { protected set; get; default = null; }
 	public FrameTime? frame_time_callback { protected set; get; default = null; }
+	
+	public Rumble rumble_interface { set; get; default = null; }
+	public Sensor sensor_interface { set; get; default = null; }
+	public Camera camera_interface { set; get; default = null; }
+	public Log log_interface { set; get; default = null; }
+	public Performance performance_interface { set; get; default = null; }
+	public Location location_interface { set; get; default = null; }
 	
 	
 	
@@ -261,54 +265,6 @@ public class Core : Object, Environment {
 		}
 		default = null;
 	}
-	
-	/**
-	 * The rumble interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Rumble rumble_interface { set; get; default = null; }
-	
-	/**
-	 * The sensor interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Sensor sensor_interface { set; get; default = null; }
-	
-	/**
-	 * The camera interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Camera camera_interface { set; get; default = null; }
-	
-	/**
-	 * The logging interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Log log_interface { set; get; default = null; }
-	
-	/**
-	 * The performance interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Performance performance_interface { set; get; default = null; }
-	
-	/**
-	 * The location interface.
-	 * 
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Location location_interface { set; get; default = null; }
 	
 	
 	

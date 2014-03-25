@@ -41,13 +41,13 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCo
 
 gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_rumble_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_rumble_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroRumble *interface = retro_core_get_rumble_interface (global_self);
+			RetroRumble *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_rumble_interface (global_self);
 			return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
 		}
 		
@@ -62,13 +62,13 @@ gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *c
 
 gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_sensor_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_sensor_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroSensor *interface = retro_core_get_sensor_interface (global_self);
+			RetroSensor *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_sensor_interface (global_self);
 			return RETRO_SENSOR_GET_INTERFACE (interface)->set_sensor_state (interface, port, action, rate);
 		}
 		
@@ -79,7 +79,7 @@ gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *c
 	gfloat real_get_sensor_input (guint port, guint id) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroSensor *interface = retro_core_get_sensor_interface (global_self);
+			RetroSensor *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_sensor_interface (global_self);
 			return RETRO_SENSOR_GET_INTERFACE (interface)->get_sensor_input (interface, port, id);
 		}
 		
@@ -95,13 +95,13 @@ gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *c
 
 gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_camera_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_start () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			return RETRO_CAMERA_GET_INTERFACE (interface)->start (interface);
 		}
 		
@@ -112,7 +112,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	void real_stop () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			RETRO_CAMERA_GET_INTERFACE (interface)->stop (interface);
 			return;
 		}
@@ -123,7 +123,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	gfloat real_frame_raw_framebuffer (guint32 *buffer, guint width, guint height, gsize pitch) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			RETRO_CAMERA_GET_INTERFACE (interface)->frame_raw_framebuffer (interface, buffer, width, height, pitch);
 			return;
 		}
@@ -135,7 +135,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	gfloat real_frame_opengl_texture (guint texture_id, guint texture_target, gfloat *affine) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			RETRO_CAMERA_GET_INTERFACE (interface)->frame_opengl_texture (interface, texture_id, texture_target, affine);
 			return;
 		}
@@ -147,7 +147,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	void real_initialized () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			RETRO_CAMERA_GET_INTERFACE (interface)->initialized (interface);
 			return;
 		}
@@ -158,7 +158,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	void real_deinitialized () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroCamera *interface = retro_core_get_camera_interface (global_self);
+			RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 			RETRO_CAMERA_GET_INTERFACE (interface)->deinitialized (interface);
 			return;
 		}
@@ -166,7 +166,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 		g_assert_not_reached ();
 	}
 	
-	RetroCamera *interface = retro_core_get_camera_interface (global_self);
+	RetroCamera *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_camera_interface (global_self);
 	
 	cb->caps = RETRO_CAMERA_GET_INTERFACE (interface)->get_caps (interface);
 	cb->width = RETRO_CAMERA_GET_INTERFACE (interface)->get_width (interface);
@@ -183,13 +183,13 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 
 gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_log_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_log_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_log (guint level, const char *format, ...) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLog *interface = retro_core_get_log_interface (global_self);
+			RetroLog *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_log_interface (global_self);
 			
 			// Get the arguments, set up the formatted message,
 			// pass it to the logging method and free it.
@@ -212,13 +212,13 @@ gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 
 gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_performance_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gint64 real_get_time_usec () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_time_usec (interface);
 		}
 		
@@ -229,7 +229,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	guint64 real_get_cpu_features () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_cpu_features (interface);
 		}
 		
@@ -240,7 +240,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	guint64 real_get_perf_counter () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_perf_counter (interface);
 		}
 		
@@ -251,7 +251,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	void real_perf_register (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_register (interface, counter);
 			return;
 		}
@@ -262,7 +262,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	void real_perf_start (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_start (interface, counter);
 			return;
 		}
@@ -273,7 +273,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	void real_perf_stop (RetroPerfCounter *counter) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_stop (interface, counter);
 			return;
 		}
@@ -284,7 +284,7 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	void real_perf_log () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroPerformance *interface = retro_core_get_performance_interface (global_self);
+			RetroPerformance *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_performance_interface (global_self);
 			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_log (interface);
 			return;
 		}
@@ -305,13 +305,13 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 
 gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb) {
 	RetroCore *global_self = retro_core_get_global_self ();
-	gboolean interface_exists = global_self && retro_core_get_location_interface (global_self);
+	gboolean interface_exists = global_self && RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 	if (!interface_exists) return FALSE;
 	
 	gboolean real_start () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			return RETRO_LOCATION_GET_INTERFACE (interface)->start (interface);
 		}
 		
@@ -322,7 +322,7 @@ gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallbac
 	void real_stop () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			RETRO_LOCATION_GET_INTERFACE (interface)->stop (interface);
 			return;
 		}
@@ -333,7 +333,7 @@ gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallbac
 	gfloat real_get_position (gdouble *lat, gdouble *lon, gdouble *horiz_accuracy, gdouble *vert_accuracy) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			RETRO_LOCATION_GET_INTERFACE (interface)->get_position (interface, lat, lon, horiz_accuracy, vert_accuracy);
 			return;
 		}
@@ -345,7 +345,7 @@ gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallbac
 	gfloat real_set_interval (guint interval_ms, guint interval_distance) {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			RETRO_LOCATION_GET_INTERFACE (interface)->set_interval (interface, interval_ms, interval_distance);
 			return;
 		}
@@ -357,7 +357,7 @@ gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallbac
 	void real_initialized () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			RETRO_LOCATION_GET_INTERFACE (interface)->initialized (interface);
 			return;
 		}
@@ -368,7 +368,7 @@ gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallbac
 	void real_deinitialized () {
 		RetroCore *global_self = retro_core_get_global_self ();
 		if (global_self) {
-			RetroLocation *interface = retro_core_get_location_interface (global_self);
+			RetroLocation *interface = RETRO_ENVIRONMENT_GET_INTERFACE (global_self)->get_location_interface (global_self);
 			RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
 			return;
 		}

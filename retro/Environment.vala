@@ -50,6 +50,54 @@ public interface Environment: Object {
 	public abstract HardwareRender? hw_render { protected set; get; default = null; }
 	public abstract Audio? audio_callback { protected set; get; default = null; }
 	public abstract FrameTime? frame_time_callback { protected set; get; default = null; }
+	
+	/**
+	 * The rumble interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Rumble rumble_interface { set; get; default = null; }
+	
+	/**
+	 * The sensor interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Sensor sensor_interface { set; get; default = null; }
+	
+	/**
+	 * The camera interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Camera camera_interface { set; get; default = null; }
+	
+	/**
+	 * The logging interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Log log_interface { set; get; default = null; }
+	
+	/**
+	 * The performance interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Performance performance_interface { set; get; default = null; }
+	
+	/**
+	 * The location interface.
+	 * 
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
+	public abstract Location location_interface { set; get; default = null; }
 }
 
 }

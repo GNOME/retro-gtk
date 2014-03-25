@@ -30,8 +30,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		if (global_self) {
 			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
 			
-			RetroEnvironment *interface = retro_core_get_environment_interface (global_self);
-			return retro_core_dispatch_environment_command (global_self, interface, cmd, data);
+			return retro_core_dispatch_environment_command (global_self, global_self, cmd, data);
 		}
 	
 		g_assert_not_reached ();
@@ -143,7 +142,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_MESSAGE: {
 			gboolean result = FALSE;
-			g_signal_emit_by_name ((RetroEnvironment*) interface, "set_message", (RetroMessage *) data, &result);
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "set-message", (RetroMessage *) data, &result);
 			return result;
 		}
 		
@@ -195,8 +194,12 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
 			RetroVariable *variable = (RetroVariable *) data;
-			variable->value = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_variable (interface, variable->key);
-			return (gboolean) variable->value;
+			
+			const gchar *result;
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "get-variable", variable->key, &result);
+			variable->value = result ? result : "";
+			
+			return (gboolean) result;
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES: {
@@ -205,7 +208,10 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			int length;
 			for (length = 0 ; array[length].key && array[length].value ; length++);
 			
-			return RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_variables (interface, array, length);
+			gboolean result = FALSE;
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "set-variables", array, length, &result);
+			
+			return result;
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE_UPDATE: {
@@ -239,8 +245,9 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_INPUT_DEVICE_CAPABILITIES: {
 			guint64 *input_device_capabilities = (guint64 *) data;
-			*(input_device_capabilities) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_input_device_capabilities (interface);
-			return TRUE;
+			g_signal_emit_by_name ((RetroEnvironment*) interface, "get-input-device-capabilities", input_device_capabilities);
+			
+			return *input_device_capabilities != 0;
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_GET_CONTENT_DIRECTORY: {

@@ -19,41 +19,23 @@
 using Flicky;
 using Retro;
 
-public class Engine : Object, Retro.Environment, Runnable {
+public class Engine : Object, Runnable {
 	private Core core;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
-	public bool overscan { set; get; default = true; }
-	public bool can_dupe { set; get; default = false; }
-	public uint64 input_device_capabilities {
-		get {
-			var input_device_capabilities = 0;
-			foreach (var device in controller_devices.get_values ()) {
-				input_device_capabilities |= device.get_device_capabilities ();
-			}
-			return input_device_capabilities;
-		}
-	}
-	public string system_directory { set; get; default = "."; }
-	public string libretro_path { set; get; default = "."; }
-	public string content_directory { set; get; default = "."; }
-	public string save_directory { set; get; default = "."; }
-	
-	public bool variable_update { set; get; }
 	public OptionsHandler options { private set; get; default = null; }
 	
-	public Rotation rotation { set; get; }
-	public bool support_no_game { set; get; }
-	public Performance.Level performance_level { set; get; }
-	public PixelFormat pixel_format { set; get; }
-	public Device.InputDescriptor[] input_descriptors { set; get; }
-	public SystemAvInfo? system_av_info { set; get; }
+	public PixelFormat pixel_format {
+		get {
+			return core.pixel_format;
+		}
+	}
 	
-	public Keyboard.Callback? keyboard_callback { set; get; }
-	public Disk? disk_control_interface { set; get; }
-	public HardwareRender? hw_render { set; get; }
-	public Audio? audio_callback { set; get; }
-	public FrameTime? frame_time_callback { set; get; }
+	public SystemAvInfo? system_av_info {
+		get {
+			return core.system_av_info;
+		}
+	}
 	
 	public SystemInfo info { private set; get; }
 	
@@ -62,16 +44,20 @@ public class Engine : Object, Retro.Environment, Runnable {
 	
 	public Engine (string file_name) {
 		core = new Core (file_name);
+		core.get_variable.connect ((key) => { return options[key]; });
+		core.set_variables.connect ((variables) => {
+			options.insert_multiple (variables);
+			return true;
+		});
 		
 		options = new OptionsHandler ();
 		options.value_changed.connect (() => {
-			variable_update = true;
+			core.variable_update = true;
 		});
 		
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 		
 		core.log_interface         = new FileStreamLogger ();
-		core.environment_interface = this;
 		core.video_refresh_cb      = on_video_refresh_cb;
 		core.audio_sample_cb       = on_audio_sample_cb;
 		core.audio_sample_batch_cb = on_audio_sample_batch_cb;
@@ -81,23 +67,6 @@ public class Engine : Object, Retro.Environment, Runnable {
 		core.init ();
 		
 		info = core.get_system_info ();
-	}
-	
-	public string? get_variable (string key) {
-		return options[key];
-	}
-	
-	public bool set_variables (Variable[] variables) {
-		options.insert_multiple (variables);
-		return true;
-	}
-	
-	public bool set_message (Message message) {
-		return false;
-	}
-	
-	public bool set_input_descriptors (Device.InputDescriptor[] input_descriptors) {
-		return false;
 	}
 	
 	[CCode (cname = "video_to_pixbuf", cheader_filename="video_converter.h")]
@@ -168,7 +137,6 @@ public class Engine : Object, Retro.Environment, Runnable {
 	 * Runs the game for one video frame.
 	 */
 	public void run () {
-		system_av_info = core.get_system_av_info ();
 		core.run ();
 	}
 	
@@ -176,7 +144,6 @@ public class Engine : Object, Retro.Environment, Runnable {
 	 * Runs the game for one video frame.
 	 */
 	public double get_frames_per_second () {
-		if (system_av_info == null) system_av_info = core.get_system_av_info ();
 		return system_av_info.timing.fps;
 	}
 	

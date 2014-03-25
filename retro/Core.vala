@@ -31,25 +31,15 @@ public static const uint API_VERSION = 1;
  * the same process.
  */
 public class Core : Object, Environment {
+	
 	public bool overscan { set; get; default = true; }
 	public bool can_dupe { set; get; default = false; }
-	public uint64 input_device_capabilities {
-		get {
-			return 0; // TODO
-		}
-	}
 	public string system_directory { set; get; default = "."; }
 	public string libretro_path { set; get; default = "."; }
 	public string content_directory { set; get; default = "."; }
 	public string save_directory { set; get; default = "."; }
 	
-	public string? get_variable (string key) {
-		return null; // TODO
-	}
 	public bool variable_update { set; get; default = false; }
-	public bool set_variables (Variable[] variables) {
-		return false; // TODO
-	}
 	
 	public Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public bool support_no_game { protected set; get; default = false; }
@@ -172,7 +162,7 @@ public class Core : Object, Environment {
 	
 	// Callback setters and getters
 	
-	private Environment _environment_interface;
+	//private Environment _environment_interface;
 	/**
 	 * The environment interface.
 	 * 
@@ -180,20 +170,20 @@ public class Core : Object, Environment {
 	 * 
 	 * Must be set before {@link init} is called.
 	 */
-	public Environment environment_interface {
-		set {
-			_environment_interface = value;
-			
-			if (value != null) {
-				set_global_self ();
-				_set_environment (get_module_environment_interface ());
-			}
-		}
-		get {
-			return _environment_interface;
-		}
-		default = null;
-	}
+	//public Environment environment_interface {
+	//	set {
+	//		_environment_interface = value;
+	//		
+	//		if (value != null) {
+	//			set_global_self ();
+	//			_set_environment (get_module_environment_interface ());
+	//		}
+	//	}
+	//	get {
+	//		return _environment_interface;
+	//	}
+	//	default = null;
+	//}
 	
 	private VideoRefresh _video_refresh_cb;
 	/**
@@ -434,6 +424,7 @@ public class Core : Object, Environment {
 	 */
 	public void init () {
 		set_global_self ();
+		_set_environment (get_module_environment_interface ());
 		_init ();
 		is_init = true;
 	}
@@ -486,14 +477,20 @@ public class Core : Object, Environment {
 	 * E.g. geometry.aspect_ratio might not be initialized if the core doesn't
 	 * desire a particular aspect ratio.
 	 * 
+	 * @param valid whether the av_info is valid or not
 	 * @return information on the system audio/video timings and geometry
 	 */
-	public SystemAvInfo get_system_av_info () {
+	private void set_system_av_info (bool valid) {
 		set_global_self ();
-		
-		SystemAvInfo info;
-		_get_system_av_info (out info);
-		return info;
+		if (valid) {
+			SystemAvInfo info;
+			_get_system_av_info (out info);
+			system_av_info = info;
+			
+		}
+		else {
+			system_av_info = null;
+		}
 	}
 	
 	/**
@@ -608,6 +605,9 @@ public class Core : Object, Environment {
 		
 		set_global_self ();
 		game_loaded = _load_game (game);
+		
+		set_system_av_info (game_loaded);
+		
 		return game_loaded;
 	}
 	
@@ -624,6 +624,9 @@ public class Core : Object, Environment {
 		
 		set_global_self ();
 		game_loaded = _load_game_special (game_type, info);
+		
+		set_system_av_info (game_loaded);
+		
 		return game_loaded;
 	}
 	

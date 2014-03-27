@@ -18,12 +18,12 @@
 
 namespace Retro {
 
-public interface Audio: Object {
+public interface AudioInput: Object {
 	public abstract bool state { set; get; default = false; }
 	public abstract void callback ();
 }
 
-private class CoreAudio: Object, Audio {
+private class CoreAudioInput: Object, AudioInput {
 	[CCode (has_target = false)]
 	internal delegate void AudioCallback ();
 	
@@ -38,7 +38,7 @@ private class CoreAudio: Object, Audio {
 	public Callback callback_struct { construct; private get; }
 	public bool state { set; get; }
 	
-	internal CoreAudio (Callback callback_struct) {
+	internal CoreAudioInput (Callback callback_struct) {
 		Object (callback_struct: callback_struct);
 	}
 	

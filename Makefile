@@ -21,7 +21,7 @@ RETRO_DOC=$(RETRO_PKGNAME)-doc
 DEMO = $(OUT_DIR)/demo
 
 RETRO_FILES= \
-	Audio.vala \
+	AudioInput.vala \
 	Camera.vala \
 	CameraBuffer.vala \
 	Core.vala \

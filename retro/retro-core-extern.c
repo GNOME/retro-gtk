@@ -232,8 +232,8 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_AUDIO_CALLBACK: {
-			RetroCoreAudio* callback = retro_core_audio_new ((RetroCoreAudioCallback *) data);
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_audio_callback (interface, RETRO_AUDIO (callback));
+			RetroCoreAudioInput* callback = retro_core_audio_input_new ((RetroCoreAudioInputCallback *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_audio_input_callback (interface, RETRO_AUDIO_INPUT (callback));
 			return TRUE;
 		}
 		

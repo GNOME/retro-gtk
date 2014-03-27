@@ -48,7 +48,7 @@ public interface Environment: Object {
 	 */
 	public abstract DiskController? disk_control_interface { protected set; get; default = null; }
 	public abstract HardwareRender? hw_render { protected set; get; default = null; }
-	public abstract Audio? audio_callback { protected set; get; default = null; }
+	public abstract AudioInput? audio_input_callback { protected set; get; default = null; }
 	public abstract FrameTime? frame_time_callback { protected set; get; default = null; }
 	
 	/**

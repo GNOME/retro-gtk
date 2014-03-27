@@ -27,7 +27,7 @@ RETRO_FILES= \
 	Core.vala \
 	CoreDelegates.vala \
 	Device.vala \
-	Disk.vala \
+	DiskController.vala \
 	Environment.vala \
 	EnvironmentCommand.vala \
 	FrameTime.vala \

@@ -50,7 +50,7 @@ public class Core : Object, Environment {
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 	
 	public Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
-	public Disk? disk_control_interface { protected set; get; default = null; }
+	public DiskController? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }
 	public Audio? audio_callback { protected set; get; default = null; }
 	public FrameTime? frame_time_callback { protected set; get; default = null; }

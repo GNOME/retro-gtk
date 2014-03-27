@@ -31,7 +31,7 @@ namespace Retro {
  * Set the {@link image_index} to the one you want to use.
  * Insert the disk again by setting {@link eject_state} to false.
  */
-public interface Disk: Object {
+public interface DiskController: Object {
 	/**
 	 * The current eject state.
 	 * 
@@ -105,7 +105,7 @@ public interface Disk: Object {
 	public abstract bool add_image_index ();
 }
 
-private class CoreDisk: Object, Disk {
+private class CoreDiskController: Object, DiskController {
 	[CCode (has_target = false)]
 	internal delegate bool SetEjectState (bool ejected);
 	
@@ -167,7 +167,7 @@ private class CoreDisk: Object, Disk {
 		}
 	}
 	
-	internal CoreDisk (Callback callback_struct) {
+	internal CoreDiskController (Callback callback_struct) {
 		Object (callback_struct: callback_struct);
 	}
 	

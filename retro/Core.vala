@@ -46,7 +46,7 @@ public class Core : Object, Environment {
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
 	public PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
-	public Device.InputDescriptor[] input_descriptors { protected set; get; }
+	public InputDescriptor[] input_descriptors { protected set; get; }
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 	
 	public Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
@@ -432,7 +432,7 @@ public class Core : Object, Environment {
 	 * @param port the port on wich to connect a device
 	 * @param device the type of the device connected
 	 */
-	public void set_controller_port_device (uint port, Device.Type device) {
+	public void set_controller_port_device (uint port, DeviceType device) {
 		set_global_self ();
 		_set_controller_port_device (port, device);
 	}

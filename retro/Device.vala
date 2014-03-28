@@ -16,15 +16,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Retro.Device {
+namespace Retro {
 
-public static const uint TYPE_MASK = 0xff;
-
-public enum Type {
+public enum DeviceType {
+	TYPE_MASK = 0xff,
+	
 	/**
 	 * No device type.
 	 */
-	NONE,
+	NONE = 0,
 	
 	/**
 	 * A classic joypad.
@@ -34,7 +34,7 @@ public enum Type {
 	 * It is essentially a Super Nintendo controller,
 	 * but with additional L2/R2/L3/R3 buttons, similar to a PlayStation DualShock.
 	 */
-	JOYPAD,
+	JOYPAD = 1,
 	
 	/**
 	 * A simple mouse.
@@ -47,7 +47,7 @@ public enum Type {
 	 * 
 	 * The frontend must make sure not to interfere with its own hardware mouse pointer.
 	 */
-	MOUSE,
+	MOUSE = 2,
 	
 	/**
 	 * A keyboard.
@@ -56,14 +56,14 @@ public enum Type {
 	 * 
 	 * It is poll based, so input callback will return with the current pressed state.
 	 */
-	KEYBOARD,
+	KEYBOARD = 3,
 	
 	/**
 	 * A lightgun.
 	 * 
 	 * X/Y coordinates are reported relatively to last poll, similar to mouse.
 	 */
-	LIGHTGUN,
+	LIGHTGUN = 4,
 	
 	/**
 	 * An analog joypad.
@@ -76,7 +76,7 @@ public enum Type {
 	 * of [-0x8000, 0x7fff]. Positive X axis is right. Positive Y axis is down.
 	 * Only use the analog type when polling for analog values of the axes.
 	 */
-	ANALOG,
+	ANALOG = 5,
 	
 	/**
 	 * An abstract pointing mecanism (e.g. touch).
@@ -110,7 +110,7 @@ public enum Type {
 	 * Eventually {@link Retro.Device.PointerId.PRESSED} will return 0 for an index. No further
 	 * presses are registered at this point.
 	 */
-	POINTER,
+	POINTER = 6,
 	
 	/**
 	 * A joypad multitap.
@@ -122,7 +122,7 @@ public enum Type {
 	 * 
 	 * In input state callback, however, the device will be {@link Retro.Device.Type.JOYPAD}.
 	 */
-	JOYPAD_MULTITAP      = (1 << 8) | Type.JOYPAD,
+	JOYPAD_MULTITAP = (1 << 8) | DeviceType.JOYPAD,
 	
 	/**
 	 * A Super Nintendo Super Scope.
@@ -134,7 +134,7 @@ public enum Type {
 	 * 
 	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
 	 */
-	LIGHTGUN_SUPER_SCOPE = (1 << 8) | Type.LIGHTGUN,
+	LIGHTGUN_SUPER_SCOPE = (1 << 8) | DeviceType.LIGHTGUN,
 	
 	/**
 	 * A Konami Justifier.
@@ -146,7 +146,7 @@ public enum Type {
 	 * 
 	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
 	 */
-	LIGHTGUN_JUSTIFIER   = (2 << 8) | Type.LIGHTGUN,
+	LIGHTGUN_JUSTIFIER = (2 << 8) | DeviceType.LIGHTGUN,
 	
 	/**
 	 * Konami Justifiers.
@@ -158,7 +158,7 @@ public enum Type {
 	 * 
 	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
 	 */
-	LIGHTGUN_JUSTIFIERS  = (3 << 8) | Type.LIGHTGUN;
+	LIGHTGUN_JUSTIFIERS = (3 << 8) | DeviceType.LIGHTGUN;
 	
 	/**
 	 * Gets the basic type of a device type.
@@ -169,8 +169,8 @@ public enum Type {
 	 * 
 	 * @return the basic type of a device type
 	 */
-	public Type get_basic_type () {
-		return this & TYPE_MASK;
+	public DeviceType get_basic_type () {
+		return this & DeviceType.TYPE_MASK;
 	}
 }
 
@@ -228,7 +228,7 @@ public enum PointerId {
 
 public struct InputDescriptor {
    uint port;
-   Type device;
+   DeviceType device;
    uint index;
    uint id;
 	

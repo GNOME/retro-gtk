@@ -38,7 +38,7 @@ public interface Environment: Object {
 	public abstract bool support_no_game { protected set; get; default = false; }
 	public abstract PerfLevel performance_level { protected set; get; }
 	public abstract PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
-	public abstract Device.InputDescriptor[] input_descriptors { protected set; get; }
+	public abstract InputDescriptor[] input_descriptors { protected set; get; }
 	public abstract SystemAvInfo? system_av_info { protected set; get; default = null; }
 	
 	public abstract Keyboard.Callback? keyboard_callback { protected set; get; default = null; }

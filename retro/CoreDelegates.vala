@@ -69,11 +69,11 @@ public delegate void InputPoll ();
 /**
  * Queries for input for player 'port'.
  * 
- * Device will be masked with {@link Device.TYPE_MASK}.
+ * Device will be masked with {@link DeviceType.TYPE_MASK}.
  * Specialization of devices such as
- * {@link Device.Type.JOYPAD_MULTITAP} that have been set with
+ * {@link DeviceType.JOYPAD_MULTITAP} that have been set with
  * {@link set_controller_port_device} will still use the
- * higher level {@link Device.Type.JOYPAD} to request input.
+ * higher level {@link DeviceType.JOYPAD} to request input.
  * 
  * @return the state of the input
  * @param port the port number
@@ -81,7 +81,7 @@ public delegate void InputPoll ();
  * @param index the index, its definition changes with the device
  * @param id the id, its definition changes with the device
  */
-public delegate int16 InputState (uint port, Device.Type device, uint index, uint id);
+public delegate int16 InputState (uint port, DeviceType device, uint index, uint id);
 
 // Types of the module's functions
 
@@ -102,7 +102,7 @@ private delegate void GetSystemInfo (out unowned SystemInfo info);
 private delegate void GetSystemAvInfo (out unowned SystemAvInfo info);
 
 [CCode (has_target = false)]
-private delegate void SetControllerPortDevice (uint port, Device.Type device);
+private delegate void SetControllerPortDevice (uint port, DeviceType device);
 
 [CCode (has_target = false)]
 private delegate void Reset ();

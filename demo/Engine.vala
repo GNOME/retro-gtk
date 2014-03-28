@@ -94,7 +94,7 @@ public class Engine : Object, Runnable {
 		}
 	}
 	
-	private int16 on_input_state_cb (uint port, Device.Type device, uint index, uint id) {
+	private int16 on_input_state_cb (uint port, DeviceType device, uint index, uint id) {
 		if (controller_devices.contains (port)) {
 			var controller_device = controller_devices.lookup (port);
 			if (controller_device != null) {
@@ -115,7 +115,7 @@ public class Engine : Object, Runnable {
 			controller_devices.insert (port, device);
 		}
 		
-		core.set_controller_port_device (port, Retro.Device.Type.JOYPAD);
+		core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
 	}
 	
 	public void remove_controller_device (uint port) {
@@ -123,7 +123,7 @@ public class Engine : Object, Runnable {
 			controller_devices.remove (port);
 		}
 		
-		core.set_controller_port_device (port, Device.Type.NONE);
+		core.set_controller_port_device (port, DeviceType.NONE);
 	}
 	
 	/**

@@ -167,7 +167,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		
 		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS: {
-			RetroDeviceInputDescriptor *array = (RetroDeviceInputDescriptor *) data;
+			RetroInputDescriptor *array = (RetroInputDescriptor *) data;
 			
 			int length;
 			for (length = 0 ; array[length].description ; length++);

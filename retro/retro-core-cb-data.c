@@ -18,7 +18,7 @@
 
 #include "retro-core-cb-data.h"
 
-static __thread void *cb_data;
+static _Thread_local void *cb_data;
 
 void retro_core_set_cb_data (void *self) {
 	cb_data = (void *) self;

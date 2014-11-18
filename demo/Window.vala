@@ -101,6 +101,8 @@ public class Window : Gtk.Window {
 		start_button.set_image (running ? pause_image : play_image);
 		
 		properties_button.set_popover (popover);
+		
+		set_size_request (800, 600);
 	}
 	
 	void set_titles () {

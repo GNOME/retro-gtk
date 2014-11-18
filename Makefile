@@ -81,7 +81,7 @@ DEMO_FILES= \
 	Demo.vala \
 	Engine.vala \
 	Window.vala \
-	OptionsDialog.vala \
+	OptionsGrid.vala \
 	AudioDevice.vala \
 	lol.c \
 	$(NULL)

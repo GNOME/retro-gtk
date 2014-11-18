@@ -19,28 +19,24 @@
 using Retro;
 using Flicky;
 
-public class OptionsDialog : Gtk.Dialog {
+public class OptionsGrid : Gtk.Grid {
 	private OptionsHandler options;
-	private Gtk.Grid grid;
 	
-	public OptionsDialog (OptionsHandler options) {
+	public OptionsGrid (OptionsHandler options) {
 		this.options = options;
 		
-		grid = new Gtk.Grid ();
-		grid.margin_left = 12;
-		grid.margin_right = 12;
-		grid.margin_top = 6;
-		grid.margin_bottom = 6;
-		grid.column_spacing = 12;
-		grid.row_spacing = 6;
+		margin_start = 12;
+		margin_end = 12;
+		margin_top = 6;
+		margin_bottom = 6;
+		column_spacing = 12;
+		row_spacing = 6;
 		
 		int i = 0;
 		foreach (var key in options.get_keys ()) {
 			add_option (key, i);
 			i++;
 		}
-		
-		get_content_area ().pack_start (grid);
 	}
 	
 	private void add_option (string key, int row) {
@@ -81,8 +77,8 @@ public class OptionsDialog : Gtk.Dialog {
 		});
 		
 		
-		grid.attach (new Gtk.Label (description), 0, row, 1, 1);
-		grid.attach (box, 1, row, 1, 1);
+		attach (new Gtk.Label (description), 0, row, 1, 1);
+		attach (box, 1, row, 1, 1);
 	}
 }
 

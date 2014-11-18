@@ -39,7 +39,9 @@ public class Window : Gtk.Window {
 	private Gtk.Button open_game_button;
 	private Gtk.Button start_button;
 	private Gtk.Button stop_button;
-	private Gtk.Button properties_button;
+	private Gtk.MenuButton properties_button;
+	private Gtk.Popover popover;
+	private Gtk.Widget grid;
 	
 	private AudioDevice audio_dev;
 	
@@ -58,7 +60,8 @@ public class Window : Gtk.Window {
 		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		start_button = new Gtk.Button ();
 		stop_button = new Gtk.Button.from_icon_name ("media-skip-backward-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-		properties_button = new Gtk.Button.from_icon_name ("emblem-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		properties_button = new Gtk.MenuButton ();
+		popover = new Gtk.Popover (properties_button);
 		
 		set_titlebar (header);
 		add (kb_box);
@@ -96,6 +99,8 @@ public class Window : Gtk.Window {
 		pause_image = new Image.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		
 		start_button.set_image (running ? pause_image : play_image);
+		
+		properties_button.set_popover (popover);
 	}
 	
 	void set_titles () {
@@ -159,8 +164,12 @@ public class Window : Gtk.Window {
 	}
 	
 	void on_properties_button_clicked (Gtk.Button button) {
-		var dialog = new OptionsDialog (engine.options);
-		dialog.show_all ();
+		if (grid != null) popover.remove (grid);
+		
+		grid = new OptionsGrid (engine.options);
+		grid.show_all ();
+		
+		popover.add (grid);
 	}
 	
 	public void set_engine (string path) {

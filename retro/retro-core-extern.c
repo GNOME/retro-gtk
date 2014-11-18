@@ -16,7 +16,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "retro-core-global.h"
+#include "retro-core-cb-data.h"
 
 #include "retro-internal.h"
 #include "retro-core-interfaces.h"

@@ -18,7 +18,7 @@
 
 #include "retro-core-interfaces.h"
 
-#include "retro-core-global.h"
+#include "retro-core-cb-data.h"
 
 gboolean retro_core_set_callback_interfaces (RetroCore *self, RetroEnvironmentCommand cmd, gpointer data) {
 	switch (cmd) {

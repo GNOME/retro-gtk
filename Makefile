@@ -57,8 +57,8 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
+	retro-core-cb-data.c \
 	retro-core-extern.c \
-	retro-core-global.c \
 	retro-core-interfaces.c \
 	$(NULL)
 

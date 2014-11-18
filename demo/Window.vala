@@ -207,6 +207,8 @@ public class Window : Gtk.Window {
 		header.set_subtitle (File.new_for_path (path).get_basename ());
 		
 		set_ui_state (UiState.HAS_GAME);
+		
+		start_button.clicked ();
 	}
 	
 	private void set_ui_state (UiState ui_state) {

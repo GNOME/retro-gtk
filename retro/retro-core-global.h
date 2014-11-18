@@ -19,10 +19,8 @@
 #ifndef __RETRO_CORE_GLOBAL_H__
 #define __RETRO_CORE_GLOBAL_H__
 
-#include "retro-internal.h"
-
-void retro_core_set_global_self (RetroCore *self);
-RetroCore *retro_core_get_global_self ();
+void retro_core_set_cb_data (void *data);
+void *retro_core_get_cb_data ();
 
 #endif
 

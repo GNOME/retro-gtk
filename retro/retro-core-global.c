@@ -18,13 +18,13 @@
 
 #include "retro-core-global.h"
 
-static __thread void *global_self;
+static __thread void *cb_data;
 
-void retro_core_set_global_self (RetroCore *self) {
-	global_self = (void *) self;
+void retro_core_set_cb_data (void *self) {
+	cb_data = (void *) self;
 }
 
-RetroCore *retro_core_get_global_self () {
-	return global_self;
+void *retro_core_get_cb_data () {
+	return cb_data;
 }
 

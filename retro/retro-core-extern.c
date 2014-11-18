@@ -25,12 +25,12 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 
 gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	gboolean real_cb (RetroEnvironmentCommand cmd, gpointer data) {
-		RetroCore *global_self = retro_core_get_global_self ();
+		RetroCore *cb_data = retro_core_get_cb_data ();
 		
-		if (global_self) {
-			if (retro_core_set_callback_interfaces (global_self, cmd, data)) return TRUE;
+		if (cb_data) {
+			if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
 			
-			return retro_core_dispatch_environment_command (global_self, global_self, cmd, data);
+			return retro_core_dispatch_environment_command (cb_data, cb_data, cmd, data);
 		}
 	
 		g_assert_not_reached ();
@@ -40,13 +40,16 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	return real_cb;
 }
 
+
+
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 	gboolean real_cb (guint8* data, guint width, guint height, gsize pitch) {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			void *result;
-			RetroVideoRefresh cb = retro_core_get_video_refresh_cb (global_self, &result);
-			cb (data, pitch * height, width, height, pitch, result);
+		RetroCore *cb_data = retro_core_get_cb_data ();
+		if (cb_data) {
+			retro_core_callback_handler_video_refresh_cb (
+				retro_core_get_cb_handler (cb_data),
+				data, pitch * height, width, height, pitch
+			);
 			return;
 		}
 	
@@ -58,11 +61,12 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 	gboolean real_cb (gint16 left, gint16 right) {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			void *result;
-			RetroAudioSample cb = retro_core_get_audio_sample_cb (global_self, &result);
-			cb(left, right, result);
+		RetroCore *cb_data = retro_core_get_cb_data ();
+		if (cb_data) {
+			retro_core_callback_handler_audio_sample_cb (
+				retro_core_get_cb_handler (cb_data),
+				left, right
+			);
 			return;
 		}
 	
@@ -74,11 +78,12 @@ gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 	gboolean real_cb (gint16* data, int frames) {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			void *result;
-			RetroAudioSampleBatch cb = retro_core_get_audio_sample_batch_cb (global_self, &result);
-			return cb (data, frames * 2, frames, result);
+		RetroCore *cb_data = retro_core_get_cb_data ();
+		if (cb_data) {
+			return retro_core_callback_handler_audio_sample_batch_cb (
+				retro_core_get_cb_handler (cb_data),
+				data, frames * 2, frames
+			);
 		}
 	
 		g_assert_not_reached ();
@@ -90,11 +95,11 @@ gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 	gboolean real_cb () {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			void *result;
-			RetroInputPoll cb = retro_core_get_input_poll_cb (global_self, &result);
-			cb (result);
+		RetroCore *cb_data = retro_core_get_cb_data ();
+		if (cb_data) {
+			retro_core_callback_handler_input_poll_cb (
+				retro_core_get_cb_handler (cb_data)
+			);
 			return;
 		}
 	
@@ -106,11 +111,12 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 
 gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	gboolean real_cb (guint port, guint device, guint index, guint id) {
-		RetroCore *global_self = retro_core_get_global_self ();
-		if (global_self) {
-			void *result;
-			RetroInputState cb = retro_core_get_input_state_cb (global_self, &result);
-			return cb (port, device, index, id, result);
+		RetroCore *cb_data = retro_core_get_cb_data ();
+		if (cb_data) {
+			return retro_core_callback_handler_input_state_cb (
+				retro_core_get_cb_handler (cb_data),
+				port, device, index, id
+			);
 		}
 	
 		g_assert_not_reached ();

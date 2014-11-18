@@ -25,6 +25,7 @@ RETRO_FILES= \
 	Camera.vala \
 	CameraBuffer.vala \
 	Core.vala \
+	CoreCallbackHandler.vala \
 	CoreDelegates.vala \
 	Device.vala \
 	DiskController.vala \

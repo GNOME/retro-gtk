@@ -76,7 +76,7 @@ public class Core : Object, Environment {
 	 * 
 	 * Must be called before any call to a function from the module.
 	 */
-	private extern void set_global_self ();
+	private extern void set_cb_data ();
 	
 	/*
 	 * Get a callback that can be passed to the module.
@@ -107,120 +107,11 @@ public class Core : Object, Environment {
 	private Module module;
 	
 	/**
-	 * Whether or not the core have been initialized.
-	 */
-	public bool is_init { private set; get; default = false; }
-	
-	/**
 	 * Whether or not the a game is loaded.
 	 */
 	public bool game_loaded { private set; get; default = false; }
 	
-	
-	
-	
-	
-	// Callback setters and getters
-	
-	private VideoRefresh _video_refresh_cb;
-	/**
-	 * The video refresh callback.
-	 * 
-	 * Must be set before the first call to
-	 * {@link run} is made.
-	 */
-	public VideoRefresh video_refresh_cb {
-		owned set {
-			_video_refresh_cb = (owned) value;
-			
-			set_global_self ();
-			module.set_video_refresh (get_module_video_refresh_cb ());
-		}
-		get {
-			return _video_refresh_cb;
-		}
-		default = null;
-	}
-	
-	private AudioSample _audio_sample_cb;
-	/**
-	 * The audio sample callback.
-	 * 
-	 * Must be set before the first call to
-	 * {@link run} is made.
-	 */
-	public AudioSample audio_sample_cb {
-		owned set {
-			_audio_sample_cb = (owned) value;
-			
-			set_global_self ();
-			module.set_audio_sample (get_module_audio_sample_cb ());
-		}
-		get {
-			return _audio_sample_cb;
-		}
-		default = null;
-	}
-	
-	private AudioSampleBatch _audio_sample_batch_cb;
-	/**
-	 * The audio sample batch callback.
-	 * 
-	 * Must be set before the first call to
-	 * {@link run} is made.
-	 */
-	public AudioSampleBatch audio_sample_batch_cb {
-		owned set {
-			_audio_sample_batch_cb = (owned) value;
-			
-			set_global_self ();
-			module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
-		}
-		get {
-			return _audio_sample_batch_cb;
-		}
-		default = null;
-	}
-	
-	private InputPoll _input_poll_cb;
-	/**
-	 * The input poll callback.
-	 * 
-	 * Must be set before the first call to
-	 * {@link run} is made.
-	 */
-	public InputPoll input_poll_cb {
-		owned set {
-			_input_poll_cb = (owned) value;
-			
-			set_global_self ();
-			module.set_input_poll (get_module_input_poll_cb ());
-		}
-		get {
-			return _input_poll_cb;
-		}
-		default = null;
-	}
-	
-	private InputState _input_state_cb;
-	/**
-	 * The input state callback.
-	 * 
-	 * Must be set before the first call to
-	 * {@link run} is made.
-	 */
-	public InputState input_state_cb {
-		owned set {
-			_input_state_cb = (owned) value;
-			
-			set_global_self ();
-			module.set_input_state (get_module_input_state_cb ());
-		}
-		get {
-			return _input_state_cb;
-		}
-		default = null;
-	}
+	public CoreCallbackHandler cb_handler { get; construct; }
 	
 	
 	
@@ -234,17 +125,26 @@ public class Core : Object, Environment {
 	 * 
 	 * @param file_name the file name of the libretro implementation to load
 	 */
-	public Core (string file_name) {
-		Object (file_name: file_name);
+	public Core (string file_name, CoreCallbackHandler cb_handler) {
+		Object (file_name: file_name, cb_handler: cb_handler);
 	}
 	
 	construct {
 		module = new Module (file_name);
+		
+		set_cb_data ();
+		module.set_video_refresh (get_module_video_refresh_cb ());
+		module.set_audio_sample (get_module_audio_sample_cb ());
+		module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
+		module.set_input_poll (get_module_input_poll_cb ());
+		module.set_input_state (get_module_input_state_cb ());
+		
+		init ();
 	}
 	
 	~Core () {
 		if (game_loaded) unload_game ();
-		if (is_init) deinit ();
+		deinit ();
 	}
 	
 	/**
@@ -254,19 +154,17 @@ public class Core : Object, Environment {
 	 * initialized.
 	 */
 	public void init () {
-		set_global_self ();
+		set_cb_data ();
 		module.set_environment (get_module_environment_interface ());
 		module.init ();
-		is_init = true;
 	}
 	
 	/**
 	 * Deinitialize the module.
 	 */
 	private void deinit () {
-		set_global_self ();
+		set_cb_data ();
 		module.deinit ();
-		is_init = false;
 	}
 	
 	/**
@@ -278,7 +176,7 @@ public class Core : Object, Environment {
 	 * @return the libretro version of the module
 	 */
 	public uint api_version () {
-		set_global_self ();
+		set_cb_data ();
 		return module.api_version ();
 	}
 	
@@ -290,7 +188,7 @@ public class Core : Object, Environment {
 	 * @return information on the system implemented in the module
 	 */
 	public SystemInfo get_system_info () {
-		set_global_self ();
+		set_cb_data ();
 		
 		SystemInfo info;
 		module.get_system_info (out info);
@@ -312,7 +210,7 @@ public class Core : Object, Environment {
 	 * @return information on the system audio/video timings and geometry
 	 */
 	private void set_system_av_info (bool valid) {
-		set_global_self ();
+		set_cb_data ();
 		if (valid) {
 			SystemAvInfo info;
 			module.get_system_av_info (out info);
@@ -331,7 +229,7 @@ public class Core : Object, Environment {
 	 * @param device the type of the device connected
 	 */
 	public void set_controller_port_device (uint port, DeviceType device) {
-		set_global_self ();
+		set_cb_data ();
 		module.set_controller_port_device (port, device);
 	}
 	
@@ -339,7 +237,7 @@ public class Core : Object, Environment {
 	 * Resets the current game.
 	 */
 	public void reset () {
-		set_global_self ();
+		set_cb_data ();
 		module.reset ();
 	}
 	
@@ -358,7 +256,7 @@ public class Core : Object, Environment {
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {
-		set_global_self ();
+		set_cb_data ();
 		module.run ();
 	}
 	
@@ -374,7 +272,7 @@ public class Core : Object, Environment {
 	 * @return the size needed to serialize the internal state
 	 */
 	public size_t serialize_size () {
-		set_global_self ();
+		set_cb_data ();
 		return module.serialize_size ();
 	}
 	
@@ -388,7 +286,7 @@ public class Core : Object, Environment {
 	 * @return false if the serialization failed, true otherwise
 	 */
 	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
-		set_global_self ();
+		set_cb_data ();
 		return module.serialize (out data);
 	}
 	
@@ -399,7 +297,7 @@ public class Core : Object, Environment {
 	 * @return false if the unserialization failed, true otherwise
 	 */
 	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
-		set_global_self ();
+		set_cb_data ();
 		return module.unserialize (data);
 	}
 	
@@ -408,7 +306,7 @@ public class Core : Object, Environment {
 	 */
 	[Deprecated (since = "1.0")]
 	public void cheat_reset () {
-		set_global_self ();
+		set_cb_data ();
 		module.cheat_reset ();
 	}
 	
@@ -421,7 +319,7 @@ public class Core : Object, Environment {
 	 */
 	[Deprecated (since = "1.0")]
 	public void cheat_set (uint index, bool enabled, string code) {
-		set_global_self ();
+		set_cb_data ();
 		module.cheat_set (index, enabled, code);
 	}
 	
@@ -434,7 +332,7 @@ public class Core : Object, Environment {
 	public bool load_game (GameInfo game) {
 		if (game_loaded) unload_game ();
 		
-		set_global_self ();
+		set_cb_data ();
 		game_loaded = module.load_game (game);
 		
 		set_system_av_info (game_loaded);
@@ -453,7 +351,7 @@ public class Core : Object, Environment {
 	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info) {
 		if (game_loaded) unload_game ();
 		
-		set_global_self ();
+		set_cb_data ();
 		game_loaded = module.load_game_special (game_type, info);
 		
 		set_system_av_info (game_loaded);
@@ -465,7 +363,7 @@ public class Core : Object, Environment {
 	 * Unloads a currently loaded game.
 	 */
 	private void unload_game () {
-		set_global_self ();
+		set_cb_data ();
 		module.unload_game ();
 	}
 	
@@ -475,7 +373,7 @@ public class Core : Object, Environment {
 	 * @return the region of the game
 	 */
 	public Region get_region () {
-		set_global_self ();
+		set_cb_data ();
 		return module.get_region ();
 	}
 	
@@ -486,7 +384,7 @@ public class Core : Object, Environment {
 	 * @return the region of memory
 	 */
 	public uint8[] get_memory (MemoryType id) {
-		set_global_self ();
+		set_cb_data ();
 		var data = (uint8[]) module.get_memory_data (id);
 		data.length = (int) module.get_memory_size (id);
 		return data;

@@ -86,7 +86,7 @@ public delegate int16 InputState (uint port, DeviceType device, uint index, uint
 // Types of the module's functions
 
 [CCode (has_target = false)]
-private delegate void SetCallback (void *cb);
+private delegate void CallbackSetter (void *cb);
 
 [CCode (has_target = false)]
 private delegate void Init ();

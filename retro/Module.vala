@@ -32,12 +32,12 @@ private class Module : Object {
 	 */
 	private GLib.Module module;
 
-	public SetCallback set_environment { get; private set; }
-	public SetCallback set_video_refresh { get; private set; }
-	public SetCallback set_audio_sample { get; private set; }
-	public SetCallback set_audio_sample_batch { get; private set; }
-	public SetCallback set_input_poll { get; private set; }
-	public SetCallback set_input_state { get; private set; }
+	public CallbackSetter set_environment { get; private set; }
+	public CallbackSetter set_video_refresh { get; private set; }
+	public CallbackSetter set_audio_sample { get; private set; }
+	public CallbackSetter set_audio_sample_batch { get; private set; }
+	public CallbackSetter set_input_poll { get; private set; }
+	public CallbackSetter set_input_state { get; private set; }
 
 	public Init init { get; private set; }
 	public Deinit deinit { get; private set; }
@@ -87,17 +87,17 @@ private class Module : Object {
 		// Get the callback setters from the module
 
 		module.symbol ("retro_set_environment", out function);
-		set_environment = (SetCallback) function;
+		set_environment = (CallbackSetter) function;
 		module.symbol ("retro_set_video_refresh", out function);
-		set_video_refresh = (SetCallback) function;
+		set_video_refresh = (CallbackSetter) function;
 		module.symbol ("retro_set_audio_sample", out function);
-		set_audio_sample = (SetCallback) function;
+		set_audio_sample = (CallbackSetter) function;
 		module.symbol ("retro_set_audio_sample_batch", out function);
-		set_audio_sample_batch = (SetCallback) function;
+		set_audio_sample_batch = (CallbackSetter) function;
 		module.symbol ("retro_set_input_poll", out function);
-		set_input_poll = (SetCallback) function;
+		set_input_poll = (CallbackSetter) function;
 		module.symbol ("retro_set_input_state", out function);
-		set_input_state = (SetCallback) function;
+		set_input_state = (CallbackSetter) function;
 
 		// Get the other functions from the module
 

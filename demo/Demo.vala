@@ -24,6 +24,8 @@ class Demo : Object {
 		Gtk.init (ref argv);
 		Clutter.init (ref argv);
 		
+		Gtk.Settings.get_default().set("gtk-application-prefer-dark-theme", true);
+		
 		var w = new Window ();
 		w.show ();
 		w.destroy.connect (()=>{

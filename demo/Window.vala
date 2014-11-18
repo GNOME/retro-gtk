@@ -153,11 +153,13 @@ public class Window : Gtk.Window {
 			runner.stop ();
 			running = false;
 			start_button.set_image (play_image);
+			game_screen.hide_texture ();
 		}
 		else {
 			runner.start ();
 			running = true;
 			start_button.set_image (pause_image);
+			game_screen.show_texture ();
 		}
 	}
 	

@@ -29,18 +29,18 @@ public class Display : GtkClutter.Embed {
 		stage.set_background_color (Color.get_static (StaticColor.BLACK));
 		
 		texture = new Texture ();
-		show_texture ();
+		hide_texture ();
 		stage.add_actor (texture);
 		
 		size_allocate.connect (on_size_allocate);
 	}
 	
-	private void show_texture () {
-		texture.set_opacity (0xff);
+	public void show_texture () {
+		texture.visible = true;
 	}
 	
-	private void hide_texture () {
-		texture.set_opacity (0x00);
+	public void hide_texture () {
+		texture.visible = false;
 	}
 	
 	public void render (Gdk.Pixbuf picture) {

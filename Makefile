@@ -1,5 +1,7 @@
 NULL=
 
+PREFIX=/usr
+
 RETRO_DIR = retro
 FLICKY_DIR = flicky
 DEMO_DIR = demo
@@ -73,6 +75,8 @@ FLICKY_FILES= \
 	Runner.vala \
 	$(NULL)
 
+DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
+
 DEMO_FILES= \
 	Demo.vala \
 	Engine.vala \
@@ -81,6 +85,7 @@ DEMO_FILES= \
 	AudioDevice.vala \
 	lol.c \
 	$(NULL)
+
 
 RETRO_PKG= \
 	gmodule-2.0 \
@@ -128,15 +133,18 @@ retro: $(RETRO_OUT) $(RETRO_DEPS)
 flicky: $(FLICKY_OUT) $(FLICKY_DEPS)
 doc: $(RETRO_DOC)
 
-$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS)
+$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS) $(DEMO_CONFIG_FILE)
 	mkdir -p $(OUT_DIR)
 	valac -b $(<D) -d $(@D) \
-		-o $(@F) $(DEMO_SRC) \
+		-o $(@F) $(DEMO_SRC) $(DEMO_CONFIG_FILE) \
 		-X -I./$(OUT_DIR) -X $(OUT_DIR)/libflicky.so -X $(OUT_DIR)/libretro.so \
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(PKG:%=--pkg=%) \
 		--save-temps \
 		-g
 	@touch $@
+
+$(DEMO_CONFIG_FILE):
+	echo "const string PREFIX = \""$(PREFIX)\"";" > $@
 
 $(RETRO_OUT): %: $(RETRO_SRC)
 	mkdir -p $(@D)
@@ -187,5 +195,5 @@ $(FLICKY_DEPS):
 clean:
 	rm -Rf $(OUT_DIR) $(RETRO_DOC) $(RETRO_DIR)/$(RETRO_LIBNAME)-internal.h
 
-.PHONY: all demo retro flicky doc clean
+.PHONY: all demo retro flicky doc clean $(DEMO_CONFIG_FILE)
 

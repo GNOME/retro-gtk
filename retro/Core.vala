@@ -32,6 +32,19 @@ public static const uint API_VERSION = 1;
  */
 public class Core : Object, Environment {
 	/**
+	 * The version of libretro used by the module
+	 *
+	 * Can be compared with {@link API_VERSION} to validate ABI
+	 * compatibility.
+	 */
+	public uint api_version {
+		get {
+			set_cb_data ();
+			return module.api_version ();
+		}
+	}
+
+	/**
 	 * Gets system information.
 	 */
 	public SystemInfo system_info {
@@ -187,19 +200,6 @@ public class Core : Object, Environment {
 	private void deinit () {
 		set_cb_data ();
 		module.deinit ();
-	}
-	
-	/**
-	 * The version of libretro used by the module.
-	 * 
-	 * Can be compared with {@link API_VERSION} to validate ABI
-	 * compatibility.
-	 * 
-	 * @return the libretro version of the module
-	 */
-	public uint api_version () {
-		set_cb_data ();
-		return module.api_version ();
 	}
 	
 	/**

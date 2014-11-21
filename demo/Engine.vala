@@ -57,7 +57,7 @@ public class Engine : Object, CoreCallbackHandler, Runnable {
 		
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 		
-		info = core.get_system_info ();
+		info = core.system_info;
 	}
 	
 	[CCode (cname = "video_to_pixbuf", cheader_filename="video_converter.h")]

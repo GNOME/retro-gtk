@@ -32,6 +32,18 @@ public static const uint API_VERSION = 1;
  */
 public class Core : Object, Environment {
 	/**
+	 * Gets system information.
+	 */
+	public SystemInfo system_info {
+		get {
+			set_cb_data ();
+			unowned SystemInfo info;
+			module.get_system_info (out info);
+			return info;
+		}
+	}
+
+	/**
 	 * Gets region of the loaded game.
 	 */
 	public Region region {
@@ -188,21 +200,6 @@ public class Core : Object, Environment {
 	public uint api_version () {
 		set_cb_data ();
 		return module.api_version ();
-	}
-	
-	/**
-	 * Gets system information.
-	 * 
-	 * Can be called at any time, even before {@link init}.
-	 * 
-	 * @return information on the system implemented in the module
-	 */
-	public SystemInfo get_system_info () {
-		set_cb_data ();
-		
-		SystemInfo info;
-		module.get_system_info (out info);
-		return info;
 	}
 	
 	/**

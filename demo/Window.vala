@@ -22,6 +22,8 @@ using Flicky;
 using Gtk;
 
 public class Window : Gtk.Window {
+	private HashTable<string, string> module_for_ext;
+
 	private enum UiState {
 		EMPTY,
 		HAS_CORE,
@@ -35,7 +37,6 @@ public class Window : Gtk.Window {
 	private Gtk.Image play_image;
 	private Gtk.Image pause_image;
 	
-	private Gtk.Button open_core_button;
 	private Gtk.Button open_game_button;
 	private Gtk.Button start_button;
 	private Gtk.Button stop_button;
@@ -49,14 +50,21 @@ public class Window : Gtk.Window {
 	private Runner runner;
 	private bool running { set; get; default = false; }
 	
-	public Window () {
+	public Window (string[] modules) {
+		module_for_ext = new HashTable<string, string> (str_hash, str_equal);
+
+		foreach (var module in modules) {
+			var core = new Engine (module);
+			var exts = core.info.valid_extensions.split ("|");
+			foreach (var ext in exts) module_for_ext[ext] = module;
+		}
+
 		engine = null;
 		
 		header = new Gtk.HeaderBar ();
 		kb_box = new KeyboardBox ();
 		game_screen = new Display ();
 		
-		open_core_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		start_button = new Gtk.Button ();
 		stop_button = new Gtk.Button.from_icon_name ("media-skip-backward-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
@@ -67,7 +75,6 @@ public class Window : Gtk.Window {
 		add (kb_box);
 		kb_box.add (game_screen);
 		
-		header.pack_start (open_core_button);
 		header.pack_start (open_game_button);
 		header.pack_start (start_button);
 		header.pack_start (stop_button);
@@ -75,7 +82,6 @@ public class Window : Gtk.Window {
 		
 		header.set_show_close_button (true);
 		
-		open_core_button.clicked.connect (on_open_core_button_clicked);
 		open_game_button.clicked.connect (on_open_game_button_clicked);
 		start_button.clicked.connect (on_start_button_clicked);
 		stop_button.clicked.connect (on_stop_button_clicked);
@@ -87,7 +93,6 @@ public class Window : Gtk.Window {
 		kb_box.show ();
 		game_screen.show ();
 		
-		open_core_button.show ();
 		open_game_button.show ();
 		start_button.show ();
 		stop_button.show ();
@@ -109,37 +114,15 @@ public class Window : Gtk.Window {
 		header.set_title (engine.info.library_name);
 	}
 	
-	void on_open_core_button_clicked (Gtk.Button button) {
-		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, "_Cancel", ResponseType.CANCEL, "_Open", ResponseType.ACCEPT);
-		
-		var filter = new FileFilter ();
-		filter.set_filter_name ("Cores");
-		filter.add_pattern ("*_libretro.so");
-		dialog.add_filter (filter);
-		
-		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
-			set_engine (dialog.get_filename ());
-		}
-		
-		dialog.destroy ();
-	}
-	
 	void on_open_game_button_clicked (Gtk.Button button) {
 		var dialog = new Gtk.FileChooserDialog ("Open core", this, Gtk.FileChooserAction.OPEN, "_Cancel", ResponseType.CANCEL, "_Open", ResponseType.ACCEPT);
 		
 		var filter = new FileFilter ();
-		filter.set_filter_name (engine.info.library_name + " games");
-		foreach (var ext in engine.info.valid_extensions.split ("|")) {
+		filter.set_filter_name ("Valid games");
+		foreach (var ext in module_for_ext.get_keys ()) {
 			filter.add_pattern ("*." + ext);
 		}
 		dialog.add_filter (filter);
-		
-		foreach (var ext in engine.info.valid_extensions.split ("|")) {
-			filter = new FileFilter ();
-			filter.set_filter_name ("*." + ext);
-			filter.add_pattern ("*." + ext);
-			dialog.add_filter (filter);
-		}
 		
 		if (dialog.run () == Gtk.ResponseType.ACCEPT) {
 			set_game (dialog.get_filename ());
@@ -176,8 +159,7 @@ public class Window : Gtk.Window {
 		popover.add (grid);
 	}
 	
-	public void set_engine (string path) {
-		stdout.printf ("set_engine (%s)\n", path);
+	private void set_engine (string path) {
 		if (runner != null) {
 			runner.stop ();
 			runner = null;
@@ -203,7 +185,14 @@ public class Window : Gtk.Window {
 		set_ui_state (UiState.HAS_CORE);
 	}
 	
-	public void set_game (string path) {
+	private void set_game (string path) {
+		var split = path.split(".");
+		var ext = split[split.length -1];
+
+		if (! module_for_ext.contains (ext)) return;
+
+		set_engine (module_for_ext.lookup (ext));
+
 		engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
 		
 		header.set_subtitle (File.new_for_path (path).get_basename ());
@@ -216,22 +205,16 @@ public class Window : Gtk.Window {
 	private void set_ui_state (UiState ui_state) {
 		switch (ui_state) {
 			case UiState.EMPTY:
-				open_core_button.sensitive = true;
-				open_game_button.sensitive = false;
 				start_button.hide ();
 				stop_button.hide ();
 				properties_button.hide ();
 				break;
 			case UiState.HAS_CORE:
-				open_core_button.sensitive = true;
-				open_game_button.sensitive = true;
 				start_button.hide ();
 				stop_button.hide ();
-				properties_button.show ();
+				properties_button.hide ();
 				break;
 			case UiState.HAS_GAME:
-				open_core_button.sensitive = true;
-				open_game_button.sensitive = true;
 				start_button.show ();
 				stop_button.show ();
 				properties_button.show ();

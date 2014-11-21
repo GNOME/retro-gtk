@@ -20,22 +20,43 @@ using Retro;
 using Gtk;
 
 class Demo : Object {
+	private Window window;
+
+	construct {
+		Gtk.Settings.get_default().set("gtk-application-prefer-dark-theme", true);
+
+		window = new Window (get_libretro_modules ());
+		window.show ();
+		window.destroy.connect (() => { Gtk.main_quit(); } );
+	}
+
+	private string[] get_libretro_modules () {
+		string[] modules = {};
+
+		try {
+			var dirpath = @"$PREFIX/lib/libretro";
+			var directory = File.new_for_path (dirpath);
+			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
+
+			FileInfo file_info;
+			while ((file_info = enumerator.next_file ()) != null) {
+				var name = file_info.get_name ();
+				if (/libretro-.+\.so/.match (name))
+					modules += @"$dirpath/$name";
+			}
+
+		} catch (Error e) {
+			stderr.printf ("Error: %s\n", e.message);
+		}
+
+		return modules;
+	}
+
 	public static int main (string[] argv) {
 		Gtk.init (ref argv);
 		Clutter.init (ref argv);
 		
-		Gtk.Settings.get_default().set("gtk-application-prefer-dark-theme", true);
-		
-		var w = new Window ();
-		w.show ();
-		w.destroy.connect (()=>{
-			Gtk.main_quit();
-		});
-		
-		
-		if (argv.length >= 2) w.set_engine (argv[1]);
-		
-		if (argv.length >= 3) w.set_game (argv[2]);
+		var d = new Demo ();
 		
 		Gtk.main ();
 		

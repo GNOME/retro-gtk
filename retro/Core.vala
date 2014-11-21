@@ -31,6 +31,16 @@ public static const uint API_VERSION = 1;
  * the same process.
  */
 public class Core : Object, Environment {
+	/**
+	 * Gets region of the loaded game.
+	 */
+	public Region region {
+		get {
+			set_cb_data ();
+			return game_loaded ? module.get_region () : Region.UNKNOWN;
+		}
+	}
+	
 	// Implementation of environment properties
 	
 	public bool overscan { set; get; default = true; }
@@ -365,16 +375,6 @@ public class Core : Object, Environment {
 	private void unload_game () {
 		set_cb_data ();
 		module.unload_game ();
-	}
-	
-	/**
-	 * Gets region of the loaded game.
-	 * 
-	 * @return the region of the game
-	 */
-	public Region get_region () {
-		set_cb_data ();
-		return module.get_region ();
 	}
 	
 	/**

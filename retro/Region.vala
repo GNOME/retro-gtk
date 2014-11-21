@@ -20,7 +20,8 @@ namespace Retro {
 
 public enum Region {
 	NTSC,
-	PAL
+	PAL,
+	UNKNOWN
 }
 
 }

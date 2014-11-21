@@ -40,6 +40,7 @@ RETRO_FILES= \
 	LogLevel.vala \
 	MemoryType.vala \
 	Message.vala \
+	Module.vala \
 	PerfCounter.vala \
 	PerfLevel.vala \
 	Performance.vala \

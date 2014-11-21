@@ -120,50 +120,6 @@ public class Core : Object, Environment {
 	
 	
 	
-	// Module's functions
-	
-	/*
-	 * Store the functions taken from the module.
-	 */
-	private SetCallback _set_environment;
-	private SetCallback _set_video_refresh;
-	private SetCallback _set_audio_sample;
-	private SetCallback _set_audio_sample_batch;
-	private SetCallback _set_input_poll;
-	private SetCallback _set_input_state;
-	
-	private Init _init;
-	private Deinit _deinit;
-	private ApiVersion _api_version;
-	
-	private GetSystemInfo _get_system_info;
-	private GetSystemAvInfo _get_system_av_info;
-	
-	private SetControllerPortDevice _set_controller_port_device;
-	
-	private Reset _reset;
-	private Run _run;
-	
-	private SerializeSize _serialize_size;
-	private Serialize _serialize;
-	private Unserialize _unserialize;
-	
-	private CheatReset _cheat_reset;
-	private CheatSet _cheat_set;
-	
-	private LoadGame _load_game;
-	private LoadGameSpecial _load_game_special;
-	private UnloadGame _unload_game;
-	
-	private GetRegion _get_region;
-	
-	private GetMemoryData _get_memory_data;
-	private GetMemorySize _get_memory_size;
-	
-	
-	
-	
-	
 	// Callback setters and getters
 	
 	private VideoRefresh _video_refresh_cb;
@@ -178,7 +134,7 @@ public class Core : Object, Environment {
 			_video_refresh_cb = (owned) value;
 			
 			set_global_self ();
-			_set_video_refresh (get_module_video_refresh_cb ());
+			module.set_video_refresh (get_module_video_refresh_cb ());
 		}
 		get {
 			return _video_refresh_cb;
@@ -198,7 +154,7 @@ public class Core : Object, Environment {
 			_audio_sample_cb = (owned) value;
 			
 			set_global_self ();
-			_set_audio_sample (get_module_audio_sample_cb ());
+			module.set_audio_sample (get_module_audio_sample_cb ());
 		}
 		get {
 			return _audio_sample_cb;
@@ -218,7 +174,7 @@ public class Core : Object, Environment {
 			_audio_sample_batch_cb = (owned) value;
 			
 			set_global_self ();
-			_set_audio_sample_batch (get_module_audio_sample_batch_cb ());
+			module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
 		}
 		get {
 			return _audio_sample_batch_cb;
@@ -238,7 +194,7 @@ public class Core : Object, Environment {
 			_input_poll_cb = (owned) value;
 			
 			set_global_self ();
-			_set_input_poll (get_module_input_poll_cb ());
+			module.set_input_poll (get_module_input_poll_cb ());
 		}
 		get {
 			return _input_poll_cb;
@@ -258,7 +214,7 @@ public class Core : Object, Environment {
 			_input_state_cb = (owned) value;
 			
 			set_global_self ();
-			_set_input_state (get_module_input_state_cb ());
+			module.set_input_state (get_module_input_state_cb ());
 		}
 		get {
 			return _input_state_cb;
@@ -283,65 +239,7 @@ public class Core : Object, Environment {
 	}
 	
 	construct {
-		module = Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
-		
-		void *function;
-		
-		// Get the callback setters from the module
-		
-		module.symbol ("retro_set_environment", out function);
-		_set_environment = (SetCallback) function;
-		module.symbol ("retro_set_video_refresh", out function);
-		_set_video_refresh = (SetCallback) function;
-		module.symbol ("retro_set_audio_sample", out function);
-		_set_audio_sample = (SetCallback) function;
-		module.symbol ("retro_set_audio_sample_batch", out function);
-		_set_audio_sample_batch = (SetCallback) function;
-		module.symbol ("retro_set_input_poll", out function);
-		_set_input_poll = (SetCallback) function;
-		module.symbol ("retro_set_input_state", out function);
-		_set_input_state = (SetCallback) function;
-		
-		// Get the other functions from the module
-		
-		module.symbol ("retro_init", out function);
-		_init = (Init) function;
-		module.symbol ("retro_deinit", out function);
-		_deinit = (Deinit) function;
-		module.symbol ("retro_api_version", out function);
-		_api_version = (ApiVersion) function;
-		module.symbol ("retro_get_system_info", out function);
-		_get_system_info = (GetSystemInfo) function;
-		module.symbol ("retro_get_system_av_info", out function);
-		_get_system_av_info = (GetSystemAvInfo) function;
-		module.symbol ("retro_set_controller_port_device", out function);
-		_set_controller_port_device = (SetControllerPortDevice) function;
-		module.symbol ("retro_reset", out function);
-		_reset = (Reset) function;
-		module.symbol ("retro_run", out function);
-		_run = (Run) function;
-		module.symbol ("retro_serialize_size", out function);
-		_serialize_size = (SerializeSize) function;
-		module.symbol ("retro_serialize", out function);
-		_serialize = (Serialize) function;
-		module.symbol ("retro_unserialize", out function);
-		_unserialize = (Unserialize) function;
-		module.symbol ("retro_cheat_reset", out function);
-		_cheat_reset = (CheatReset) function;
-		module.symbol ("retro_cheat_set", out function);
-		_cheat_set = (CheatSet) function;
-		module.symbol ("retro_load_game", out function);
-		_load_game = (LoadGame) function;
-		module.symbol ("retro_load_game_special", out function);
-		_load_game_special = (LoadGameSpecial) function;
-		module.symbol ("retro_unload_game", out function);
-		_unload_game = (UnloadGame) function;
-		module.symbol ("retro_get_region", out function);
-		_get_region = (GetRegion) function;
-		module.symbol ("retro_get_memory_data", out function);
-		_get_memory_data = (GetMemoryData) function;
-		module.symbol ("retro_get_memory_size", out function);
-		_get_memory_size = (GetMemorySize) function;
+		module = new Module (file_name);
 	}
 	
 	~Core () {
@@ -357,8 +255,8 @@ public class Core : Object, Environment {
 	 */
 	public void init () {
 		set_global_self ();
-		_set_environment (get_module_environment_interface ());
-		_init ();
+		module.set_environment (get_module_environment_interface ());
+		module.init ();
 		is_init = true;
 	}
 	
@@ -367,7 +265,7 @@ public class Core : Object, Environment {
 	 */
 	private void deinit () {
 		set_global_self ();
-		_deinit ();
+		module.deinit ();
 		is_init = false;
 	}
 	
@@ -381,7 +279,7 @@ public class Core : Object, Environment {
 	 */
 	public uint api_version () {
 		set_global_self ();
-		return _api_version ();
+		return module.api_version ();
 	}
 	
 	/**
@@ -395,7 +293,7 @@ public class Core : Object, Environment {
 		set_global_self ();
 		
 		SystemInfo info;
-		_get_system_info (out info);
+		module.get_system_info (out info);
 		return info;
 	}
 	
@@ -417,7 +315,7 @@ public class Core : Object, Environment {
 		set_global_self ();
 		if (valid) {
 			SystemAvInfo info;
-			_get_system_av_info (out info);
+			module.get_system_av_info (out info);
 			system_av_info = info;
 			
 		}
@@ -434,7 +332,7 @@ public class Core : Object, Environment {
 	 */
 	public void set_controller_port_device (uint port, DeviceType device) {
 		set_global_self ();
-		_set_controller_port_device (port, device);
+		module.set_controller_port_device (port, device);
 	}
 	
 	/**
@@ -442,7 +340,7 @@ public class Core : Object, Environment {
 	 */
 	public void reset () {
 		set_global_self ();
-		_reset ();
+		module.reset ();
 	}
 	
 	/**
@@ -461,7 +359,7 @@ public class Core : Object, Environment {
 	 */
 	public void run () {
 		set_global_self ();
-		_run ();
+		module.run ();
 	}
 	
 	/**
@@ -477,7 +375,7 @@ public class Core : Object, Environment {
 	 */
 	public size_t serialize_size () {
 		set_global_self ();
-		return _serialize_size ();
+		return module.serialize_size ();
 	}
 	
 	/**
@@ -491,7 +389,7 @@ public class Core : Object, Environment {
 	 */
 	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
 		set_global_self ();
-		return _serialize (out data);
+		return module.serialize (out data);
 	}
 	
 	/**
@@ -502,7 +400,7 @@ public class Core : Object, Environment {
 	 */
 	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
 		set_global_self ();
-		return _unserialize (data);
+		return module.unserialize (data);
 	}
 	
 	/**
@@ -511,7 +409,7 @@ public class Core : Object, Environment {
 	[Deprecated (since = "1.0")]
 	public void cheat_reset () {
 		set_global_self ();
-		_cheat_reset ();
+		module.cheat_reset ();
 	}
 	
 	/**
@@ -524,7 +422,7 @@ public class Core : Object, Environment {
 	[Deprecated (since = "1.0")]
 	public void cheat_set (uint index, bool enabled, string code) {
 		set_global_self ();
-		_cheat_set (index, enabled, code);
+		module.cheat_set (index, enabled, code);
 	}
 	
 	/**
@@ -537,7 +435,7 @@ public class Core : Object, Environment {
 		if (game_loaded) unload_game ();
 		
 		set_global_self ();
-		game_loaded = _load_game (game);
+		game_loaded = module.load_game (game);
 		
 		set_system_av_info (game_loaded);
 		
@@ -556,7 +454,7 @@ public class Core : Object, Environment {
 		if (game_loaded) unload_game ();
 		
 		set_global_self ();
-		game_loaded = _load_game_special (game_type, info);
+		game_loaded = module.load_game_special (game_type, info);
 		
 		set_system_av_info (game_loaded);
 		
@@ -568,7 +466,7 @@ public class Core : Object, Environment {
 	 */
 	private void unload_game () {
 		set_global_self ();
-		_unload_game ();
+		module.unload_game ();
 	}
 	
 	/**
@@ -578,7 +476,7 @@ public class Core : Object, Environment {
 	 */
 	public Region get_region () {
 		set_global_self ();
-		return _get_region ();
+		return module.get_region ();
 	}
 	
 	/**
@@ -589,8 +487,8 @@ public class Core : Object, Environment {
 	 */
 	public uint8[] get_memory (MemoryType id) {
 		set_global_self ();
-		var data = (uint8[]) _get_memory_data (id);
-		data.length = (int) _get_memory_size (id);
+		var data = (uint8[]) module.get_memory_data (id);
+		data.length = (int) module.get_memory_size (id);
 		return data;
 	}
 }

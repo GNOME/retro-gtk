@@ -43,8 +43,10 @@ public class Engine : Object, Runnable {
 		controller_handler = new ControllerHandler ();
 
 		core = new Core (file_name);
+		core.log_interface = new FileStreamLogger ();
 		core.audio_handler = audio_dev;
 		core.input_handler = controller_handler;
+
 		core.get_variable.connect ((key) => { return options[key]; });
 		core.set_variables.connect ((variables) => {
 			options.insert_multiple (variables);
@@ -61,6 +63,8 @@ public class Engine : Object, Runnable {
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 
 		info = core.system_info;
+
+		core.init ();
 	}
 
 	/**

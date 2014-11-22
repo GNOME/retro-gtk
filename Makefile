@@ -73,6 +73,7 @@ RETRO_GTK_FILES= \
 	ControllerHandler.vala \
 	Display.vala \
 	FileStreamLogger.vala \
+	GamepadView.vala \
 	KeyboardBox.vala \
 	KeyboardBoxJoypadAdapter.vala \
 	Options.vala \
@@ -86,6 +87,7 @@ DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
 DEMO_FILES= \
 	Demo.vala \
 	Engine.vala \
+	GamepadViewWindow.vala \
 	Window.vala \
 	OptionsGrid.vala \
 	$(NULL)
@@ -98,6 +100,7 @@ RETRO_PKG= \
 
 RETRO_GTK_PKG= \
 	gtk+-3.0 \
+	cairo \
 	clutter-gtk-1.0 \
 	libpulse \
 	libpulse-mainloop-glib \

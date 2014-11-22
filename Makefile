@@ -24,10 +24,10 @@ DEMO = $(OUT_DIR)/demo
 
 RETRO_FILES= \
 	AudioInput.vala \
+	AudioHandler.vala \
 	Camera.vala \
 	CameraBuffer.vala \
 	Core.vala \
-	CoreCallbackHandler.vala \
 	CoreDelegates.vala \
 	Device.vala \
 	DiskController.vala \
@@ -37,6 +37,7 @@ RETRO_FILES= \
 	GameInfo.vala \
 	GameType.vala \
 	HardwareRender.vala \
+	InputHandler.vala \
 	Keyboard.vala \
 	Location.vala \
 	Log.vala \
@@ -60,6 +61,7 @@ RETRO_FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
+	VideoHandler.vala \
 	retro-core-cb-data.c \
 	retro-core-extern.c \
 	retro-core-interfaces.c \

@@ -19,7 +19,7 @@
 using Flicky;
 using Retro;
 
-public class Engine : Object, CoreCallbackHandler, Runnable {
+public class Engine : Object, VideoHandler, AudioHandler, InputHandler, Runnable {
 	private Core core;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
@@ -43,7 +43,7 @@ public class Engine : Object, CoreCallbackHandler, Runnable {
 	public signal void audio_refresh (AudioSamples samples);
 	
 	public Engine (string file_name) {
-		core = new Core (file_name, this);
+		core = new Core (file_name, this, this, this);
 		core.get_variable.connect ((key) => { return options[key]; });
 		core.set_variables.connect ((variables) => {
 			options.insert_multiple (variables);

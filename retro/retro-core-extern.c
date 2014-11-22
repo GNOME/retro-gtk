@@ -45,84 +45,80 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 	gboolean real_cb (guint8* data, guint width, guint height, gsize pitch) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			retro_core_callback_handler_video_refresh_cb (
-				retro_core_get_cb_handler (cb_data),
-				data, pitch * height, width, height, pitch
-			);
-			return;
-		}
-	
-		g_assert_not_reached ();
+
+		if (!cb_data) g_return_if_reached ();
+
+		RetroVideoHandler *handler = retro_core_get_video_handler (cb_data);
+
+		if (!handler) g_return_if_reached ();
+
+		retro_video_handler_video_refresh_cb (handler, data, pitch * height, width, height, pitch);
 	}
-	
+
 	return real_cb;
 }
 
 gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 	gboolean real_cb (gint16 left, gint16 right) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			retro_core_callback_handler_audio_sample_cb (
-				retro_core_get_cb_handler (cb_data),
-				left, right
-			);
-			return;
-		}
-	
-		g_assert_not_reached ();
+
+		if (!cb_data) g_return_if_reached ();
+
+		RetroAudioHandler *handler = retro_core_get_audio_handler (cb_data);
+
+		if (!handler) g_return_if_reached ();
+
+		retro_audio_handler_audio_sample_cb (handler, left, right);
 	}
-	
+
 	return real_cb;
 }
 
 gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 	gboolean real_cb (gint16* data, int frames) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			return retro_core_callback_handler_audio_sample_batch_cb (
-				retro_core_get_cb_handler (cb_data),
-				data, frames * 2, frames
-			);
-		}
-	
-		g_assert_not_reached ();
-		return 0;
+
+		if (!cb_data) g_return_val_if_reached (0);
+
+		RetroAudioHandler *handler = retro_core_get_audio_handler (cb_data);
+
+		if (!handler) g_return_val_if_reached (0);
+
+		return retro_audio_handler_audio_sample_batch_cb (handler, data, frames * 2, frames);
 	}
-	
+
 	return real_cb;
 }
 
 gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 	gboolean real_cb () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			retro_core_callback_handler_input_poll_cb (
-				retro_core_get_cb_handler (cb_data)
-			);
-			return;
-		}
-	
-		g_assert_not_reached ();
+
+		if (!cb_data) g_return_if_reached ();
+
+		RetroInputHandler *handler = retro_core_get_audio_handler (cb_data);
+
+		if (!handler) g_return_if_reached ();
+
+		retro_input_handler_input_poll_cb (handler);
 	}
-	
+
 	return real_cb;
 }
 
 gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	gboolean real_cb (guint port, guint device, guint index, guint id) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			return retro_core_callback_handler_input_state_cb (
-				retro_core_get_cb_handler (cb_data),
-				port, device, index, id
-			);
-		}
-	
-		g_assert_not_reached ();
-		return 0;
+
+		if (!cb_data) g_return_val_if_reached (0);
+
+		RetroInputHandler *handler = retro_core_get_audio_handler (cb_data);
+
+		if (!handler) g_return_val_if_reached (0);
+
+		return retro_input_handler_input_state_cb (handler, port, device, index, id);
 	}
-	
+
 	return real_cb;
 }
 

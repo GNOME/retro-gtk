@@ -82,6 +82,7 @@ FLICKY_FILES= \
 DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
 
 DEMO_FILES= \
+	ControllerHandler.vala \
 	Demo.vala \
 	Engine.vala \
 	Window.vala \

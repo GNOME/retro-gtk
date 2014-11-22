@@ -96,7 +96,7 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_if_reached ();
 
-		RetroInputHandler *handler = retro_core_get_audio_handler (cb_data);
+		RetroInputHandler *handler = retro_core_get_input_handler (cb_data);
 
 		if (!handler) g_return_if_reached ();
 
@@ -112,7 +112,7 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_val_if_reached (0);
 
-		RetroInputHandler *handler = retro_core_get_audio_handler (cb_data);
+		RetroInputHandler *handler = retro_core_get_input_handler (cb_data);
 
 		if (!handler) g_return_val_if_reached (0);
 

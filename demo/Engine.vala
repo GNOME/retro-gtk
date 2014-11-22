@@ -19,11 +19,12 @@
 using Flicky;
 using Retro;
 
-public class Engine : Object, VideoHandler, AudioHandler, InputHandler, Runnable {
+public class Engine : Object, VideoHandler, AudioHandler, Runnable {
 	private Core core;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public OptionsHandler options { private set; get; default = null; }
+	public ControllerHandler controller_handler { private set; get; }
 	
 	public PixelFormat pixel_format {
 		get {
@@ -43,13 +44,17 @@ public class Engine : Object, VideoHandler, AudioHandler, InputHandler, Runnable
 	public signal void audio_refresh (AudioSamples samples);
 	
 	public Engine (string file_name) {
-		core = new Core (file_name, this, this, this);
+		controller_handler = new ControllerHandler ();
+
+		core = new Core (file_name, this, this, controller_handler);
 		core.get_variable.connect ((key) => { return options[key]; });
 		core.set_variables.connect ((variables) => {
 			options.insert_multiple (variables);
 			return true;
 		});
-		
+
+		controller_handler.core = core;
+
 		options = new OptionsHandler ();
 		options.value_changed.connect (() => {
 			core.variable_update = true;
@@ -79,44 +84,6 @@ public class Engine : Object, VideoHandler, AudioHandler, InputHandler, Runnable
 		return 0;
 	}
 	
-	private void input_poll_cb () {
-		foreach (var device in controller_devices.get_values ()) {
-			if (device != null) device.poll ();
-		}
-	}
-	
-	private int16 input_state_cb (uint port, DeviceType device, uint index, uint id) {
-		if (controller_devices.contains (port)) {
-			var controller_device = controller_devices.lookup (port);
-			if (controller_device != null) {
-				var capabilities = controller_device.get_device_capabilities ();
-				bool is_capable = (capabilities & (1 << device)) != 0;
-				if (is_capable) return controller_device.get_input_state (device, index, id);
-			}
-		}
-		
-		return 0;
-	}
-	
-	public void set_controller_device (uint port, ControllerDevice device) {
-		if (controller_devices.contains (port)) {
-			controller_devices.replace (port, device);
-		}
-		else {
-			controller_devices.insert (port, device);
-		}
-		
-		core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
-	}
-	
-	public void remove_controller_device (uint port) {
-		if (controller_devices.contains (port)) {
-			controller_devices.remove (port);
-		}
-		
-		core.set_controller_port_device (port, DeviceType.NONE);
-	}
-	
 	/**
 	 * Resets the current game.
 	 */
@@ -135,7 +102,14 @@ public class Engine : Object, VideoHandler, AudioHandler, InputHandler, Runnable
 	 * Runs the game for one video frame.
 	 */
 	public double get_frames_per_second () {
-		return system_av_info.timing.fps;
+		var info = system_av_info;
+		
+		if (info == null) {
+			stderr.printf ("Error: system_av_info null");
+			return 60;
+		}
+		
+		return info.timing.fps;
 	}
 	
 	public void load_game (GameInfo game) {

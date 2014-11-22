@@ -16,8 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-using RetroGtk;
 using Retro;
+
+namespace RetroGtk {
 
 public class ControllerHandler : Object, Retro.InputHandler {
 	public weak Core core { set; get; }
@@ -63,5 +64,7 @@ public class ControllerHandler : Object, Retro.InputHandler {
 
 		core.set_controller_port_device (port, DeviceType.NONE);
 	}
+}
+
 }
 

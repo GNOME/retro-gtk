@@ -1,4 +1,4 @@
-#Flicky/Retro
+#RetroGtk/Retro
 
 ![RetroGtk/Retro](https://github.com/Kekun/retro-gobject/blob/master/screenshot.png?raw=true)
 

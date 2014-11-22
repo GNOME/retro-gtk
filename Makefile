@@ -68,7 +68,6 @@ RETRO_FILES= \
 	$(NULL)
 
 FLICKY_FILES= \
-	AudioSamples.vala \
 	ControllerDevice.vala \
 	Display.vala \
 	FileStreamLogger.vala \

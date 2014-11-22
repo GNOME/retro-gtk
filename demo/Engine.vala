@@ -19,11 +19,12 @@
 using Flicky;
 using Retro;
 
-public class Engine : Object, VideoHandler, AudioHandler, Runnable {
+public class Engine : Object, VideoHandler, Runnable {
 	private Core core;
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public OptionsHandler options { private set; get; default = null; }
+	private AudioDevice audio_dev;
 	public ControllerHandler controller_handler { private set; get; }
 	
 	public PixelFormat pixel_format {
@@ -41,14 +42,14 @@ public class Engine : Object, VideoHandler, AudioHandler, Runnable {
 	public SystemInfo info { private set; get; }
 	
 	public signal void video_refresh (Gdk.Pixbuf pixbuf);
-	public signal void audio_refresh (AudioSamples samples);
 	
 	public Engine (string file_name) {
+		audio_dev = new AudioDevice ();
 		controller_handler = new ControllerHandler ();
 
 		core = new Core (file_name);
 		core.video_handler = this;
-		core.audio_handler = this;
+		core.audio_handler = audio_dev;
 		core.input_handler = controller_handler;
 		core.get_variable.connect ((key) => { return options[key]; });
 		core.set_variables.connect ((variables) => {
@@ -74,17 +75,6 @@ public class Engine : Object, VideoHandler, AudioHandler, Runnable {
 	private void video_refresh_cb (uint8[] data, uint width, uint height, size_t pitch) {
 		var pixbuf = video_to_pixbuf (data, width, height,  pitch, pixel_format);
 		video_refresh (pixbuf);
-	}
-	
-	private void audio_sample_cb (int16 left, int16 right) {
-		var audio_samples = new AudioSamples.from_sample (left, right, system_av_info.timing.sample_rate);
-		audio_refresh (audio_samples);
-	}
-	
-	private size_t audio_sample_batch_cb (int16[] data, size_t frames) {
-		var audio_samples = new AudioSamples (data, system_av_info.timing.sample_rate);
-		audio_refresh (audio_samples);
-		return 0;
 	}
 	
 	/**
@@ -117,6 +107,9 @@ public class Engine : Object, VideoHandler, AudioHandler, Runnable {
 	
 	public void load_game (GameInfo game) {
 		core.load_game (game);
+
+		audio_dev = new AudioDevice ((uint32) system_av_info.timing.sample_rate);
+		core.audio_handler = audio_dev;
 	}
 }
 

@@ -44,8 +44,6 @@ public class Window : Gtk.Window {
 	private Gtk.Popover popover;
 	private Gtk.Widget grid;
 	
-	private AudioDevice audio_dev;
-	
 	private Engine engine;
 	private Runner runner;
 	private bool running { set; get; default = false; }
@@ -88,8 +86,6 @@ public class Window : Gtk.Window {
 		start_button.clicked.connect (on_start_button_clicked);
 		stop_button.clicked.connect (on_stop_button_clicked);
 		properties_button.clicked.connect (on_properties_button_clicked);
-		
-		audio_dev = new AudioDevice ();
 		
 		header.show ();
 		kb_box.show ();
@@ -171,11 +167,6 @@ public class Window : Gtk.Window {
 		
 		engine.video_refresh.connect ((pb) => {
 			game_screen.render (pb);
-		});
-		
-		engine.audio_refresh.connect ((audio_samples) => {
-			audio_dev.play (audio_samples.get_samples ());
-			// TODO add a way to set the sample rate of the audio device
 		});
 		
 		engine.controller_handler.set_controller_device (0, new KeyboardBoxJoypadAdapter (kb_box));

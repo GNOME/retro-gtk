@@ -76,6 +76,7 @@ FLICKY_FILES= \
 	Options.vala \
 	Runnable.vala \
 	Runner.vala \
+	video-converter.c \
 	$(NULL)
 
 DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
@@ -87,7 +88,6 @@ DEMO_FILES= \
 	Window.vala \
 	OptionsGrid.vala \
 	AudioDevice.vala \
-	lol.c \
 	$(NULL)
 
 

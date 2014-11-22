@@ -164,10 +164,8 @@ public class Window : Gtk.Window {
 		}
 		
 		engine = new Engine(path);
-		
-		engine.video_refresh.connect ((pb) => {
-			game_screen.render (pb);
-		});
+		game_screen.core = engine.core;
+		engine.video_handler = game_screen;
 		
 		engine.controller_handler.set_controller_device (0, new KeyboardBoxJoypadAdapter (kb_box));
 		

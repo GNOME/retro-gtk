@@ -19,19 +19,16 @@
 using Flicky;
 using Retro;
 
-public class Engine : Object, VideoHandler, Runnable {
-	private Core core;
+public class Engine : Object, Runnable {
+	public Core core { get; private set; }
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	
 	public OptionsHandler options { private set; get; default = null; }
+	public VideoHandler video_handler {
+		set { core.video_handler = value; }
+	}
 	private AudioDevice audio_dev;
 	public ControllerHandler controller_handler { private set; get; }
-	
-	public PixelFormat pixel_format {
-		get {
-			return core.pixel_format;
-		}
-	}
 	
 	public SystemAvInfo? system_av_info {
 		get {
@@ -41,14 +38,11 @@ public class Engine : Object, VideoHandler, Runnable {
 	
 	public SystemInfo info { private set; get; }
 	
-	public signal void video_refresh (Gdk.Pixbuf pixbuf);
-	
 	public Engine (string file_name) {
 		audio_dev = new AudioDevice ();
 		controller_handler = new ControllerHandler ();
 
 		core = new Core (file_name);
-		core.video_handler = this;
 		core.audio_handler = audio_dev;
 		core.input_handler = controller_handler;
 		core.get_variable.connect ((key) => { return options[key]; });
@@ -67,14 +61,6 @@ public class Engine : Object, VideoHandler, Runnable {
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 		
 		info = core.system_info;
-	}
-	
-	[CCode (cname = "video_to_pixbuf", cheader_filename="video_converter.h")]
-	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format);
-	
-	private void video_refresh_cb (uint8[] data, uint width, uint height, size_t pitch) {
-		var pixbuf = video_to_pixbuf (data, width, height,  pitch, pixel_format);
-		video_refresh (pixbuf);
 	}
 	
 	/**

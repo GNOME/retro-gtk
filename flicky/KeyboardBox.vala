@@ -21,11 +21,9 @@ using Gdk;
 
 namespace Flicky {
 
-public class KeyboardBox : EventBox, ControllerDevice {
+public class KeyboardBox : EventBox {
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
-	
-	private uint16[] joypad_keys;
 	
 	public bool verbose { set; get; default = false; }
 	
@@ -54,26 +52,6 @@ public class KeyboardBox : EventBox, ControllerDevice {
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 		
 		keymap = Keymap.get_default ();
-		
-		// Set the default keys for the joypad.
-		
-		joypad_keys = new uint16[16];
-		set_joypad_key (Retro.JoypadId.B,      39); // QWERTY S
-		set_joypad_key (Retro.JoypadId.Y,      38); // QWERTY A
-		set_joypad_key (Retro.JoypadId.SELECT, 22); // Backspace
-		set_joypad_key (Retro.JoypadId.START,  36); // Enter
-		set_joypad_key (Retro.JoypadId.UP,    111); // Up arrow
-		set_joypad_key (Retro.JoypadId.DOWN,  116); // Down arrow
-		set_joypad_key (Retro.JoypadId.LEFT,  113); // Left arrow
-		set_joypad_key (Retro.JoypadId.RIGHT, 114); // Right arrow
-		set_joypad_key (Retro.JoypadId.A,      40); // QWERTY D
-		set_joypad_key (Retro.JoypadId.X,      25); // QWERTY W
-		set_joypad_key (Retro.JoypadId.L,      24); // QWERTY Q
-		set_joypad_key (Retro.JoypadId.R,      26); // QWERTY E
-		set_joypad_key (Retro.JoypadId.L2,     52); // QWERTY Z
-		set_joypad_key (Retro.JoypadId.R2,     54); // QWERTY C
-		set_joypad_key (Retro.JoypadId.L3,     10); // QWERTY 1
-		set_joypad_key (Retro.JoypadId.R3,     12); // QWERTY 3
 	}
 	
 	private bool on_key_press_event (Widget source, EventKey event) {
@@ -99,7 +77,7 @@ public class KeyboardBox : EventBox, ControllerDevice {
 		return false;
 	}
 	
-	private bool get_key_state (uint16 hardware_keycode) {
+	public bool get_key_state (uint16 hardware_keycode) {
 		if (key_state.contains (hardware_keycode)) {
 			return key_state.lookup ((uint) hardware_keycode);
 		}
@@ -109,47 +87,6 @@ public class KeyboardBox : EventBox, ControllerDevice {
 	
 	private static void print_event_key (EventKey event) {
 		stdout.printf ("str: %s, send event: %d, time: %u, state: %d, keyval: %u, length: %d, hw keycode: %u, group: %u, is mod: %u\n", event.str, event.send_event, event.time, (int) event.state, event.keyval, event.length, event.hardware_keycode, event.group, event.is_modifier );
-	}
-	
-	private string hardware_keycode_to_string (uint hardware_keycode) {
-		KeymapKey[] keys;
-		uint[] keyvals;
-		keymap.get_entries_for_keycode (hardware_keycode, out keys, out keyvals);
-		
-		return (keyvals.length > 0) ? keyval_name (keyvals[0]) : "";
-	}
-	
-	public void  poll () {}
-	
-	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
-		switch (device) {
-			case Retro.DeviceType.KEYBOARD:
-				return get_keyboard_state (index, id);
-			case Retro.DeviceType.JOYPAD:
-				return get_joypad_state ((Retro.JoypadId) id);
-			default:
-				return 0;
-		}
-	}
-	
-	private int16 get_keyboard_state (uint index, uint id) {
-		return 0;
-	}
-	
-	private int16 get_joypad_state (Retro.JoypadId id) {
-		return get_key_state (get_joypad_key (id)) ? int16.MAX : 0;
-	}
-	
-	public uint64 get_device_capabilities () {
-		return (1 << Retro.DeviceType.KEYBOARD) | (1 << Retro.DeviceType.JOYPAD);
-	}
-	
-	public void set_joypad_key (Retro.JoypadId id, uint16 hardware_keycode) {
-		joypad_keys[id] = hardware_keycode;
-	}
-	
-	public uint16 get_joypad_key (Retro.JoypadId id) {
-		return joypad_keys[id];
 	}
 }
 

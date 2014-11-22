@@ -71,6 +71,7 @@ FLICKY_FILES= \
 	Display.vala \
 	FileStreamLogger.vala \
 	KeyboardBox.vala \
+	KeyboardBoxJoypadAdapter.vala \
 	Options.vala \
 	Runnable.vala \
 	Runner.vala \

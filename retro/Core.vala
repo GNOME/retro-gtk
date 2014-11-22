@@ -146,9 +146,9 @@ public class Core : Object, Environment {
 	 */
 	public bool game_loaded { private set; get; default = false; }
 	
-	public VideoHandler video_handler { get; construct; }
-	public AudioHandler audio_handler { get; construct; }
-	public InputHandler input_handler { get; construct; }
+	public VideoHandler video_handler { get; construct set; }
+	public AudioHandler audio_handler { get; construct set; }
+	public InputHandler input_handler { get; construct set; }
 	
 	
 	
@@ -162,8 +162,8 @@ public class Core : Object, Environment {
 	 * 
 	 * @param file_name the file name of the libretro implementation to load
 	 */
-	public Core (string file_name, VideoHandler video_handler, AudioHandler audio_handler, InputHandler input_handler) {
-		Object (file_name: file_name, video_handler: video_handler, audio_handler: audio_handler, input_handler: input_handler);
+	public Core (string file_name) {
+		Object (file_name: file_name);
 	}
 	
 	construct {

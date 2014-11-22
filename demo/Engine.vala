@@ -46,7 +46,10 @@ public class Engine : Object, VideoHandler, AudioHandler, Runnable {
 	public Engine (string file_name) {
 		controller_handler = new ControllerHandler ();
 
-		core = new Core (file_name, this, this, controller_handler);
+		core = new Core (file_name);
+		core.video_handler = this;
+		core.audio_handler = this;
+		core.input_handler = controller_handler;
 		core.get_variable.connect ((key) => { return options[key]; });
 		core.set_variables.connect ((variables) => {
 			options.insert_multiple (variables);

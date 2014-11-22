@@ -68,7 +68,7 @@ gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
 
 		if (!handler) g_return_if_reached ();
 
-		retro_audio_handler_audio_sample_cb (handler, left, right);
+		retro_audio_handler_play_sample (handler, left, right);
 	}
 
 	return real_cb;
@@ -84,7 +84,7 @@ gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
 
 		if (!handler) g_return_val_if_reached (0);
 
-		return retro_audio_handler_audio_sample_batch_cb (handler, data, frames * 2, frames);
+		return retro_audio_handler_play_batch (handler, data, frames * 2, frames);
 	}
 
 	return real_cb;

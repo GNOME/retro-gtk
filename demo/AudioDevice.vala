@@ -44,12 +44,12 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 		started = false;
 	}
 
-	private void audio_sample_cb (int16 left, int16 right) {
+	private void play_sample (int16 left, int16 right) {
 //		var audio_samples = new AudioSamples.from_sample (left, right, system_av_info.timing.sample_rate);
 		play ({ left, right });
 	}
 	
-	private size_t audio_sample_batch_cb (int16[] data, size_t frames) {
+	private size_t play_batch (int16[] data, size_t frames) {
 //		var audio_samples = new AudioSamples (data, system_av_info.timing.sample_rate);
 		play (data);
 		return 0;

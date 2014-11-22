@@ -1,8 +1,8 @@
 namespace Retro {
 
 public interface InputHandler : Object {
-	public abstract void input_poll_cb ();
-	public abstract int16 input_state_cb (uint port, DeviceType device, uint index, uint id);
+	public abstract void poll ();
+	public abstract int16 get_state (uint port, DeviceType device, uint index, uint id);
 }
 
 }

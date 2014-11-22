@@ -27,12 +27,12 @@ public class ControllerHandler : Object, Retro.InputHandler {
 		controller_devices = new HashTable<int?, ControllerDevice> (int_hash, int_equal);
 	}
 
-	private void input_poll_cb () {
+	private void poll () {
 		foreach (var device in controller_devices.get_values ())
 			if (device != null) device.poll ();
 	}
 
-	private int16 input_state_cb (uint port, DeviceType device, uint index, uint id) {
+	private int16 get_state (uint port, DeviceType device, uint index, uint id) {
 		if (controller_devices.contains (port)) {
 			var controller_device = controller_devices.lookup (port);
 			if (controller_device != null) {

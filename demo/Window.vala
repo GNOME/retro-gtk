@@ -64,6 +64,7 @@ public class Window : Gtk.Window {
 		header = new Gtk.HeaderBar ();
 		kb_box = new KeyboardBox ();
 		game_screen = new Display ();
+		game_screen.set_size_request (640, 480);
 
 		open_game_button = new Gtk.Button.from_icon_name ("document-open-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 		start_button = new Gtk.Button ();
@@ -104,8 +105,6 @@ public class Window : Gtk.Window {
 		start_button.set_image (running ? pause_image : play_image);
 
 		properties_button.set_popover (popover);
-
-		set_size_request (800, 600);
 	}
 
 	void set_titles () {

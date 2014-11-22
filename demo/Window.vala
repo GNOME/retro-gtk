@@ -54,8 +54,10 @@ public class Window : Gtk.Window {
 		module_for_ext = new HashTable<string, string> (str_hash, str_equal);
 
 		foreach (var module in modules) {
-			var core = new Engine (module);
-			var exts = core.info.valid_extensions.split ("|");
+			var info = Retro.get_system_info (module);
+			if (info == null) continue;
+
+			var exts = info.valid_extensions.split ("|");
 			foreach (var ext in exts) module_for_ext[ext] = module;
 		}
 

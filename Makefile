@@ -49,6 +49,7 @@ RETRO_FILES= \
 	Performance.vala \
 	PixelFormat.vala \
 	Region.vala \
+	Retro.vala \
 	Rotation.vala \
 	Rumble.vala \
 	RumbleEffect.vala \

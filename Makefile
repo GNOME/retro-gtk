@@ -3,20 +3,20 @@ NULL=
 PREFIX=/usr
 
 RETRO_DIR = retro
-FLICKY_DIR = flicky
+RETRO_GTK_DIR = retro-gtk
 DEMO_DIR = demo
 
 OUT_DIR = out
 VAPI_DIR = vapi
 
 RETRO_LIBNAME=retro
-FLICKY_LIBNAME=flicky
+RETRO_GTK_LIBNAME=retro-gtk
 
 RETRO_VERSION=1.0
-FLICKY_VERSION=1.0
+RETRO_GTK_VERSION=1.0
 
 RETRO_PKGNAME=$(RETRO_LIBNAME)-$(RETRO_VERSION)
-FLICKY_PKGNAME=$(FLICKY_LIBNAME)-$(FLICKY_VERSION)
+RETRO_GTK_PKGNAME=$(RETRO_GTK_LIBNAME)-$(RETRO_GTK_VERSION)
 
 RETRO_DOC=$(RETRO_PKGNAME)-doc
 
@@ -67,7 +67,7 @@ RETRO_FILES= \
 	retro-core-interfaces.c \
 	$(NULL)
 
-FLICKY_FILES= \
+RETRO_GTK_FILES= \
 	ControllerDevice.vala \
 	Display.vala \
 	FileStreamLogger.vala \
@@ -96,7 +96,7 @@ RETRO_PKG= \
 	stdint \
 	$(NULL)
 
-FLICKY_PKG= \
+RETRO_GTK_PKG= \
 	gtk+-3.0 \
 	clutter-gtk-1.0 \
 	$(RETRO_PKGNAME) \
@@ -104,13 +104,13 @@ FLICKY_PKG= \
 
 PKG= \
 	$(RETRO_PKGNAME) \
-	$(FLICKY_PKGNAME) \
+	$(RETRO_GTK_PKGNAME) \
 	libpulse \
 	libpulse-mainloop-glib \
 	$(NULL)
 
 RETRO_SRC = $(RETRO_FILES:%=$(RETRO_DIR)/%)
-FLICKY_SRC = $(FLICKY_FILES:%=$(FLICKY_DIR)/%)
+RETRO_GTK_SRC = $(RETRO_GTK_FILES:%=$(RETRO_GTK_DIR)/%)
 DEMO_SRC = $(DEMO_FILES:%=$(DEMO_DIR)/%)
 
 RETRO_OUT= \
@@ -120,28 +120,28 @@ RETRO_OUT= \
 	$(OUT_DIR)/$(RETRO_LIBNAME).h \
 	$(NULL)
 
-FLICKY_OUT= \
-	$(OUT_DIR)/lib$(FLICKY_LIBNAME).so \
-	$(OUT_DIR)/$(FLICKY_PKGNAME).vapi \
-	$(OUT_DIR)/$(FLICKY_PKGNAME).gir \
-	$(OUT_DIR)/$(FLICKY_LIBNAME).h \
+RETRO_GTK_OUT= \
+	$(OUT_DIR)/lib$(RETRO_GTK_LIBNAME).so \
+	$(OUT_DIR)/$(RETRO_GTK_PKGNAME).vapi \
+	$(OUT_DIR)/$(RETRO_GTK_PKGNAME).gir \
+	$(OUT_DIR)/$(RETRO_GTK_LIBNAME).h \
 	$(NULL)
 
 RETRO_DEPS=$(OUT_DIR)/$(RETRO_PKGNAME).deps
-FLICKY_DEPS=$(OUT_DIR)/$(FLICKY_PKGNAME).deps
+RETRO_GTK_DEPS=$(OUT_DIR)/$(RETRO_GTK_PKGNAME).deps
 
-all: demo retro flicky
+all: demo retro retro-gtk
 
 demo: $(DEMO)
 retro: $(RETRO_OUT) $(RETRO_DEPS)
-flicky: $(FLICKY_OUT) $(FLICKY_DEPS)
+retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS)
 doc: $(RETRO_DOC)
 
-$(DEMO): $(RETRO_SRC) $(FLICKY_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(FLICKY_OUT) $(FLICKY_DEPS) $(DEMO_CONFIG_FILE)
+$(DEMO): $(RETRO_SRC) $(RETRO_GTK_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(DEMO_CONFIG_FILE)
 	mkdir -p $(OUT_DIR)
 	valac -b $(<D) -d $(@D) \
 		-o $(@F) $(DEMO_SRC) $(DEMO_CONFIG_FILE) \
-		-X -I./$(OUT_DIR) -X $(OUT_DIR)/libflicky.so -X $(OUT_DIR)/libretro.so \
+		-X -I./$(OUT_DIR) -X $(OUT_DIR)/libretro-gtk.so -X $(OUT_DIR)/libretro.so \
 		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(PKG:%=--pkg=%) \
 		--save-temps \
 		-g
@@ -177,27 +177,27 @@ $(RETRO_DOC): %: $(RETRO_SRC)
 		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
 		--package-name=$(RETRO_LIBNAME) --package-version=$(RETRO_VERSION)
 
-$(FLICKY_OUT): %: $(FLICKY_SRC) $(RETRO_OUT) $(RETRO_DEPS)
+$(RETRO_GTK_OUT): %: $(RETRO_GTK_SRC) $(RETRO_OUT) $(RETRO_DEPS)
 	mkdir -p $(@D)
 	valac \
 		-b $(<D) -d $(@D) \
-		--library=$(FLICKY_LIBNAME) \
-		--vapi=$(FLICKY_PKGNAME).vapi \
-		--gir=$(FLICKY_PKGNAME).gir \
-		-H $(@D)/$(FLICKY_LIBNAME).h \
-		-o lib$(FLICKY_LIBNAME).so $(FLICKY_SRC) \
+		--library=$(RETRO_GTK_LIBNAME) \
+		--vapi=$(RETRO_GTK_PKGNAME).vapi \
+		--gir=$(RETRO_GTK_PKGNAME).gir \
+		-H $(@D)/$(RETRO_GTK_LIBNAME).h \
+		-o lib$(RETRO_GTK_LIBNAME).so $(RETRO_GTK_SRC) \
 		-X -I./$(OUT_DIR) \
-		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(FLICKY_PKG:%=--pkg=%) \
+		--vapidir=$(VAPI_DIR) --vapidir=$(OUT_DIR) $(RETRO_GTK_PKG:%=--pkg=%) \
 		--save-temps \
 		-X -fPIC -X -shared
 	@touch $@
 
-$(FLICKY_DEPS):
+$(RETRO_GTK_DEPS):
 	mkdir -p $(@D)
-	echo $(FLICKY_PKG) | sed -e 's/\s\+/\n/g' > $@
+	echo $(RETRO_GTK_PKG) | sed -e 's/\s\+/\n/g' > $@
 
 clean:
 	rm -Rf $(OUT_DIR) $(RETRO_DOC) $(RETRO_DIR)/$(RETRO_LIBNAME)-internal.h
 
-.PHONY: all demo retro flicky doc clean $(DEMO_CONFIG_FILE)
+.PHONY: all demo retro retro-gtk doc clean $(DEMO_CONFIG_FILE)
 

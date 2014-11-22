@@ -18,6 +18,8 @@
 
 using PulseAudio;
 
+namespace RetroGtk {
+
 public class AudioDevice : GLib.Object, Retro.AudioHandler {
 	private GLibMainLoop      loop;
 	private Context           context;
@@ -138,5 +140,7 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 			stream.write (buffer, bytes);
 		}
 	}
+}
+
 }
 

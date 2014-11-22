@@ -68,6 +68,7 @@ RETRO_FILES= \
 	$(NULL)
 
 RETRO_GTK_FILES= \
+	AudioDevice.vala \
 	ControllerDevice.vala \
 	Display.vala \
 	FileStreamLogger.vala \
@@ -87,7 +88,6 @@ DEMO_FILES= \
 	Engine.vala \
 	Window.vala \
 	OptionsGrid.vala \
-	AudioDevice.vala \
 	$(NULL)
 
 
@@ -99,14 +99,14 @@ RETRO_PKG= \
 RETRO_GTK_PKG= \
 	gtk+-3.0 \
 	clutter-gtk-1.0 \
+	libpulse \
+	libpulse-mainloop-glib \
 	$(RETRO_PKGNAME) \
 	$(NULL)
 
 PKG= \
 	$(RETRO_PKGNAME) \
 	$(RETRO_GTK_PKGNAME) \
-	libpulse \
-	libpulse-mainloop-glib \
 	$(NULL)
 
 RETRO_SRC = $(RETRO_FILES:%=$(RETRO_DIR)/%)

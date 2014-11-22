@@ -46,20 +46,9 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 	[CCode (cname = "video_to_pixbuf", cheader_filename="video-converter.h")]
 	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
 	
-	private void video_refresh_cb (uint8[] data, uint width, uint height, size_t pitch) {
-		var pixbuf = video_to_pixbuf (data, width, height,  pitch, pixel_format);
-		render (pixbuf);
-	}
-	
-	public void show_texture () {
-		texture.visible = true;
-	}
-	
-	public void hide_texture () {
-		texture.visible = false;
-	}
-	
-	public void render (Gdk.Pixbuf picture) {
+	public void render (uint8[] data, uint width, uint height, size_t pitch) {
+		var picture = video_to_pixbuf (data, width, height,  pitch, pixel_format);
+		
 		Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;
 		
 		Cogl.PixelFormat format = Cogl.PixelFormat.RGB_888;
@@ -109,6 +98,14 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 		y = (allocation.height - h) / 2;
 		
 		texture.set_position (x, y);
+	}
+	
+	public void show_texture () {
+		texture.visible = true;
+	}
+	
+	public void hide_texture () {
+		texture.visible = false;
 	}
 }
 

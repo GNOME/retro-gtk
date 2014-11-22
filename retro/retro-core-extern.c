@@ -52,7 +52,7 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 		if (!handler) g_return_if_reached ();
 
-		retro_video_handler_video_refresh_cb (handler, data, pitch * height, width, height, pitch);
+		retro_video_handler_render (handler, data, pitch * height, width, height, pitch);
 	}
 
 	return real_cb;

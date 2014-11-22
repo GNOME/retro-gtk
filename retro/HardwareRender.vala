@@ -1,16 +1,16 @@
 /* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
@@ -20,10 +20,10 @@ namespace Retro {
 
 public interface HardwareRender: Object {
 	public static const uintptr_t FRAME_BUFFER_VALID = uintptr_t.MAX;
-	
+
 	[CCode (has_target = false)]
 	public delegate void ProcAdress ();
-	
+
 	public enum ContexType {
 		NONE = 0,
 		OPENGL,
@@ -31,7 +31,7 @@ public interface HardwareRender: Object {
 		OPENGL_CORE,
 		OPENGLES3
 	}
-	
+
 	public abstract ContexType context_type { set; get; default = ContexType.NONE; }
 	public abstract bool depth { set; get; default = false; }
 	public abstract bool stencil { set; get; default = false; }
@@ -40,7 +40,7 @@ public interface HardwareRender: Object {
 	public abstract uint version_minor { set; get; default = 0; }
 	public abstract bool cache_context { set; get; default = false; }
 	public abstract bool debug_context { set; get; default = false; }
-	
+
 	public abstract void context_reset ();
 	public abstract uintptr_t get_current_framebuffer ();
 	public abstract ProcAdress get_proc_address (string sym);
@@ -54,7 +54,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 	internal delegate uintptr_t GetCurrentFramebuffer ();
 	[CCode (has_target = false)]
 	internal delegate HardwareRender.ProcAdress GetProcAdress (string sym);
-	
+
 	internal struct Callback {
 		public HardwareRender.ContexType context_type;
 		public ContextReset              context_reset;
@@ -69,11 +69,11 @@ private class CoreHardwareRender: Object, HardwareRender {
 		public ContextReset              context_destroy;
 		public bool                      debug_context;
 	}
-	
+
 	internal CoreHardwareRender (Callback callback_struct) {
 		Object (callback_struct: callback_struct);
 	}
-	
+
 	public Callback callback_struct { construct; private get; }
 	public HardwareRender.ContexType context_type {
 		set {
@@ -83,7 +83,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.context_type;
 		}
 	}
-	
+
 	public bool depth {
 		set {
 			callback_struct.depth = value;
@@ -92,7 +92,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.depth;
 		}
 	}
-	
+
 	public bool stencil {
 		set {
 			callback_struct.stencil = value;
@@ -101,7 +101,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.stencil;
 		}
 	}
-	
+
 	public bool bottom_left_origin {
 		set {
 			callback_struct.bottom_left_origin = value;
@@ -110,7 +110,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.bottom_left_origin;
 		}
 	}
-	
+
 	public uint version_major {
 		set {
 			callback_struct.version_major = value;
@@ -119,7 +119,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.version_major;
 		}
 	}
-	
+
 	public uint version_minor {
 		set {
 			callback_struct.version_minor = value;
@@ -128,7 +128,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.version_minor;
 		}
 	}
-	
+
 	public bool cache_context {
 		set {
 			callback_struct.cache_context = value;
@@ -137,7 +137,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.cache_context;
 		}
 	}
-	
+
 	public bool debug_context {
 		set {
 			callback_struct.debug_context = value;
@@ -146,33 +146,33 @@ private class CoreHardwareRender: Object, HardwareRender {
 			return callback_struct.debug_context;
 		}
 	}
-	
+
 	public void context_reset () {
 		if (callback_struct.context_reset != null) {
 			callback_struct.context_reset ();
 		}
 	}
-	
+
 	public uintptr_t get_current_framebuffer () {
 		if (callback_struct.get_current_framebuffer != null) {
 			return callback_struct.get_current_framebuffer ();
 		}
 		return (uintptr_t) 0;
 	}
-	
+
 	public HardwareRender.ProcAdress get_proc_address (string sym) {
 		if (callback_struct.get_proc_address != null) {
 			return callback_struct.get_proc_address (sym);
 		}
 		return (HardwareRender.ProcAdress) null;
 	}
-	
+
 	public void context_destroy () {
 		if (callback_struct.context_destroy != null) {
 			callback_struct.context_destroy ();
 		}
 	}
-	
+
 }
 
 }

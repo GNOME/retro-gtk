@@ -1,16 +1,16 @@
 /* Retro  GObject libretro wrapper.
  * Copyright (C) 2014  Adrien Plazas
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
@@ -20,15 +20,15 @@ namespace Retro {
 
 /**
  * Render a frame.
- * 
+ *
  * Pixel format is 15-bit 0RGB1555 native endian unless changed
  * (see {@link Environment.pixel_format}).
- * 
+ *
  * For performance reasons, it is highly recommended to have a frame that is
  * packed in memory, i.e. pitch == width * byte_per_pixel.
  * Certain graphic APIs, such as OpenGL ES, do not like textures that are
  * not packed in memory.
- * 
+ *
  * @param data the frame data
  * @param width width of the frame
  * @param height height of the frame
@@ -38,10 +38,10 @@ public delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[]
 
 /**
  * Renders a single audio frame.
- * 
+ *
  * Should only be used if implementation generates a single sample at a
  * time. Format is signed 16-bit native endian.
- * 
+ *
  * @param left the left channel of the audio frame
  * @param right the right channel of the audio frame
  */
@@ -49,12 +49,12 @@ public delegate void AudioSample (int16 left, int16 right);
 
 /**
  * Renders multiple audio frames in one go.
- * 
+ *
  * One frame is defined as a sample of left and right channels, interleaved.
  * I.e. int16[] buf = { l, r, l, r }; would be 2 frames.
- * 
+ *
  * Only one of the audio callbacks must ever be used.
- * 
+ *
  * @return the number of audio frames read
  * @param data the audio sample batch
  * @param frames the number of frames in the batch
@@ -68,13 +68,13 @@ public delegate void InputPoll ();
 
 /**
  * Queries for input for player 'port'.
- * 
+ *
  * Device will be masked with {@link DeviceType.TYPE_MASK}.
  * Specialization of devices such as
  * {@link DeviceType.JOYPAD_MULTITAP} that have been set with
  * {@link set_controller_port_device} will still use the
  * higher level {@link DeviceType.JOYPAD} to request input.
- * 
+ *
  * @return the state of the input
  * @param port the port number
  * @param device the type of device

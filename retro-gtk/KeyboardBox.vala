@@ -1,4 +1,4 @@
-/* Flicky  Building blocks for a Retro frontend.
+/* RetroGtk  Building blocks for a Retro frontend.
  * Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 using Gtk;
 using Gdk;
 
-namespace Flicky {
+namespace RetroGtk {
 
 public class KeyboardBox : EventBox {
 	private HashTable<uint?, bool?> key_state;

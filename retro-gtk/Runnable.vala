@@ -1,4 +1,4 @@
-/* Flicky  Building blocks for a Retro frontend.
+/* RetroGtk  Building blocks for a Retro frontend.
  * Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,12 +16,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Flicky {
+namespace RetroGtk {
 
 /**
  * Represent an object that can be run.
  *
- * Such an object could be run with a {@link Flicky.Runner}.
+ * Such an object could be run with a {@link RetroGtk.Runner}.
  */
 public interface Runnable : Object {
 	/**

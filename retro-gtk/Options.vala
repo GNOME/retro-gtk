@@ -1,4 +1,4 @@
-/* Flicky  Building blocks for a Retro frontend.
+/* RetroGtk  Building blocks for a Retro frontend.
  * Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 using Retro;
 
-namespace Flicky {
+namespace RetroGtk {
 
 public class Option : Object {
 	public string key;

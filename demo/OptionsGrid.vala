@@ -17,7 +17,7 @@
  */
 
 using Retro;
-using Flicky;
+using RetroGtk;
 
 public class OptionsGrid : Gtk.Grid {
 	private OptionsHandler options;

@@ -1,4 +1,4 @@
-/* Flicky  Building blocks for a Retro frontend.
+/* RetroGtk  Building blocks for a Retro frontend.
  * Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace Flicky {
+namespace RetroGtk {
 
 public class KeyboardBoxJoypadAdapter : Object, ControllerDevice {
 	public KeyboardBox keyboard { private get; construct; }

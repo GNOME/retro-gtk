@@ -17,7 +17,7 @@
  */
 
 using Retro;
-using Flicky;
+using RetroGtk;
 
 using Gtk;
 

@@ -22,45 +22,26 @@ using Cairo;
 namespace RetroGtk {
 
 public enum GamepadButtonType {
+	ACTION_DOWN,
+	ACTION_LEFT,
+	SELECT,
+	START,
 	DIRECTION_UP,
 	DIRECTION_DOWN,
 	DIRECTION_LEFT,
 	DIRECTION_RIGHT,
-	ACTION_UP,
-	ACTION_DOWN,
-	ACTION_LEFT,
 	ACTION_RIGHT,
-	START,
-	SELECT,
-	HOME,
+	ACTION_UP,
 	SHOULDER_L,
 	SHOULDER_R,
 	SHOULDER_L2,
 	SHOULDER_R2,
 	STICK_L,
-	STICK_R;
+	STICK_R,
+	HOME;
 
 	public static GamepadButtonType from_joypad_id (Retro.JoypadId id) {
-		const GamepadButtonType[] converter = {
-			GamepadButtonType.ACTION_DOWN,
-			GamepadButtonType.ACTION_LEFT,
-			GamepadButtonType.SELECT,
-			GamepadButtonType.START,
-			GamepadButtonType.DIRECTION_UP,
-			GamepadButtonType.DIRECTION_DOWN,
-			GamepadButtonType.DIRECTION_LEFT,
-			GamepadButtonType.DIRECTION_RIGHT,
-			GamepadButtonType.ACTION_RIGHT,
-			GamepadButtonType.ACTION_UP,
-			GamepadButtonType.SHOULDER_L,
-			GamepadButtonType.SHOULDER_R,
-			GamepadButtonType.SHOULDER_L2,
-			GamepadButtonType.SHOULDER_R2,
-			GamepadButtonType.STICK_L,
-			GamepadButtonType.STICK_R
-		};
-
-		return converter[id];
+		return (GamepadButtonType) id;
 	}
 
 	public static size_t size () {

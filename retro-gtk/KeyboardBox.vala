@@ -27,6 +27,8 @@ public class KeyboardBox : EventBox {
 
 	public bool verbose { set; get; default = false; }
 
+	public signal void key_state_changed ();
+
 	construct {
 		set_can_focus (true);
 
@@ -37,6 +39,12 @@ public class KeyboardBox : EventBox {
 
 		focus_out_event.connect (() => {
 			has_focus = false;
+
+			foreach (var key in key_state.get_keys ())
+				key_state[key] = false;
+
+			key_state_changed ();
+
 			return false;
 		});
 
@@ -64,6 +72,8 @@ public class KeyboardBox : EventBox {
 			key_state.insert ((uint) event.hardware_keycode, true);
 		}
 
+		key_state_changed ();
+
 		return false;
 	}
 
@@ -73,6 +83,8 @@ public class KeyboardBox : EventBox {
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, false);
 		}
+
+		key_state_changed ();
 
 		return false;
 	}

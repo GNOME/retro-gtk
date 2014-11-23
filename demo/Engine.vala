@@ -95,11 +95,13 @@ public class Engine : Object, Runnable {
 		return info.timing.fps;
 	}
 
-	public void load_game (GameInfo game) {
-		core.load_game (game);
+	public bool load_game (GameInfo game) {
+		if (!core.load_game (game)) return false;
 
 		audio_dev = new AudioDevice ((uint32) system_av_info.timing.sample_rate);
 		core.audio_handler = audio_dev;
+
+		return true;
 	}
 }
 

@@ -22,7 +22,7 @@ using RetroGtk;
 using Gtk;
 
 public class Window : Gtk.Window {
-	private HashTable<string, string> module_for_ext;
+	private HashTable<string, Array<string>> module_for_ext;
 
 	private enum UiState {
 		EMPTY,
@@ -49,14 +49,17 @@ public class Window : Gtk.Window {
 	private bool running { set; get; default = false; }
 
 	public Window (string[] modules) {
-		module_for_ext = new HashTable<string, string> (str_hash, str_equal);
+		module_for_ext = new HashTable<string, Array<string>> (str_hash, str_equal);
 
 		foreach (var module in modules) {
 			var info = Retro.get_system_info (module);
 			if (info == null) continue;
 
 			var exts = info.valid_extensions.split ("|");
-			foreach (var ext in exts) module_for_ext[ext] = module;
+			foreach (var ext in exts) {
+				if (module_for_ext[ext] == null) module_for_ext[ext] = new Array<string> ();
+				module_for_ext[ext].append_val (module);
+			}
 		}
 
 		engine = null;
@@ -181,9 +184,17 @@ public class Window : Gtk.Window {
 
 		if (! module_for_ext.contains (ext)) return;
 
-		set_engine (module_for_ext.lookup (ext));
+		var loaded = false;
+		foreach (var module in module_for_ext[ext].data) {
+			set_engine (module);
+			loaded = engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
 
-		engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
+			stdout.printf ("module %s loaded %s\n", module, loaded.to_string ());
+
+			if (loaded) break;
+		}
+
+		if (!loaded) return; // TODO warn
 
 		header.set_subtitle (File.new_for_path (path).get_basename ());
 

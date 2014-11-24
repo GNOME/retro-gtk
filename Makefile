@@ -68,14 +68,14 @@ RETRO_FILES= \
 	$(NULL)
 
 RETRO_GTK_FILES= \
+	input/ControllerDevice.vala \
+	input/ControllerHandler.vala \
+	input/GamepadView.vala \
+	input/KeyboardBox.vala \
+	input/KeyboardBoxJoypadAdapter.vala \
 	AudioDevice.vala \
-	ControllerDevice.vala \
-	ControllerHandler.vala \
 	Display.vala \
 	FileStreamLogger.vala \
-	GamepadView.vala \
-	KeyboardBox.vala \
-	KeyboardBoxJoypadAdapter.vala \
 	Options.vala \
 	Runnable.vala \
 	Runner.vala \

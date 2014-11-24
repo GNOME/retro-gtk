@@ -156,8 +156,8 @@ RETRO_GTK_DEPS=$(OUT_DIR)/$(RETRO_GTK_PKGNAME).deps
 all: demo retro retro-gtk
 
 demo: $(DEMO)
-retro: $(RETRO_OUT) $(RETRO_DEPS)
-retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS)
+retro: $(RETRO_OUT) $(RETRO_DEPS) $(OUT_DIR)/$(RETRO_TYPELIB)
+retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(OUT_DIR)/$(RETRO_GTK_TYPELIB)
 doc: $(RETRO_DOC)
 
 $(DEMO): $(RETRO_SRC) $(RETRO_GTK_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(DEMO_CONFIG_FILE)
@@ -191,6 +191,12 @@ $(RETRO_OUT): %: $(RETRO_SRC)
 $(RETRO_DEPS):
 	mkdir -p $(@D)
 	echo $(RETRO_PKG) | sed -e 's/\s\+/\n/g' > $@
+
+$(OUT_DIR)/$(RETRO_TYPELIB):
+	g-ir-compiler --shared-library $(RETRO_LIBNAME) --output $@ $(@D)/$(RETRO_GIRNAME)
+
+$(OUT_DIR)/$(RETRO_GTK_TYPELIB):
+	g-ir-compiler --shared-library $(RETRO_GTK_LIBNAME) --output $@ $(@D)/$(RETRO_GTK_GIRNAME)
 
 $(RETRO_DOC): %: $(RETRO_SRC)
 	rm -Rf $@

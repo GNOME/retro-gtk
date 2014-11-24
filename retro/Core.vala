@@ -84,7 +84,7 @@ public class Core : Object, Environment {
 	public InputDescriptor[] input_descriptors { protected set; get; }
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 
-	public Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
+	public KeyboardCallback? keyboard_callback { protected set; get; default = null; }
 	public DiskController? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }
 	public AudioInput? audio_input_callback { protected set; get; default = null; }

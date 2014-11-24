@@ -41,7 +41,7 @@ public interface Environment: Object {
 	public abstract InputDescriptor[] input_descriptors { protected set; get; }
 	public abstract SystemAvInfo? system_av_info { protected set; get; default = null; }
 
-	public abstract Keyboard.Callback? keyboard_callback { protected set; get; default = null; }
+	public abstract KeyboardCallback? keyboard_callback { protected set; get; default = null; }
 
 	/**
 	 * If set, the {@link Core} can swap out multiple disk images in runtime.

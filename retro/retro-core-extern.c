@@ -18,7 +18,7 @@
 
 #include "retro-core-cb-data.h"
 
-#include "retro-internal.h"
+#include "retro-gobject-internal.h"
 #include "retro-core-interfaces.h"
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);

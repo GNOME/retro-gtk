@@ -19,7 +19,7 @@
 #ifndef __RETRO_CORE_INTERFACES_H__
 #define __RETRO_CORE_INTERFACES_H__
 
-#include "retro-internal.h"
+#include "retro-gobject-internal.h"
 
 typedef struct {
 	gpointer set_rumble_state;

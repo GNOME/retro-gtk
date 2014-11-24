@@ -15,7 +15,7 @@ DEMO_DIR = demo
 OUT_DIR = out
 VAPI_DIR = vapi
 
-RETRO_LIBNAME=retro
+RETRO_LIBNAME=retro-gobject
 RETRO_GTK_LIBNAME=retro-gtk
 
 RETRO_VERSION=1.0
@@ -138,14 +138,14 @@ RETRO_GTK_SRC = $(RETRO_GTK_FILES:%=$(RETRO_GTK_DIR)/%)
 DEMO_SRC = $(DEMO_FILES:%=$(DEMO_DIR)/%)
 
 RETRO_OUT= \
-	$(OUT_DIR)/lib$(RETRO_LIBNAME).so \
+	$(OUT_DIR)/$(RETRO_SONAME) \
 	$(OUT_DIR)/$(RETRO_PKGNAME).vapi \
 	$(OUT_DIR)/$(RETRO_GIRNAME) \
 	$(OUT_DIR)/$(RETRO_HNAME) \
 	$(NULL)
 
 RETRO_GTK_OUT= \
-	$(OUT_DIR)/lib$(RETRO_GTK_LIBNAME).so \
+	$(OUT_DIR)/$(RETRO_GTK_SONAME) \
 	$(OUT_DIR)/$(RETRO_GTK_PKGNAME).vapi \
 	$(OUT_DIR)/$(RETRO_GTK_GIRNAME) \
 	$(OUT_DIR)/$(RETRO_GTK_HNAME) \
@@ -183,7 +183,7 @@ $(RETRO_OUT): %: $(RETRO_SRC)
 		--gir=$(RETRO_GIRNAME) \
 		-H $(@D)/$(RETRO_HNAME) \
 		-h $(<D)/$(RETRO_LIBNAME)-internal.h \
-		-o lib$(RETRO_LIBNAME).so $^ \
+		-o $(RETRO_SONAME) $^ \
 		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
 		--save-temps \
 		-X -fPIC -X -shared

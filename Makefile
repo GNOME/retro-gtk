@@ -116,7 +116,6 @@ DEMO_FILES= \
 
 RETRO_PKG= \
 	gmodule-2.0 \
-	stdint \
 	$(NULL)
 
 RETRO_GTK_PKG= \

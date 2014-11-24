@@ -19,7 +19,7 @@
 namespace Retro {
 
 public interface HardwareRender: Object {
-	public static const uintptr_t FRAME_BUFFER_VALID = uintptr_t.MAX;
+	public static const ulong FRAME_BUFFER_VALID = ulong.MAX;
 
 	[CCode (has_target = false)]
 	public delegate void ProcAdress ();
@@ -42,7 +42,7 @@ public interface HardwareRender: Object {
 	public abstract bool debug_context { set; get; default = false; }
 
 	public abstract void context_reset ();
-	public abstract uintptr_t get_current_framebuffer ();
+	public abstract ulong get_current_framebuffer ();
 	public abstract ProcAdress get_proc_address (string sym);
 	public abstract void context_destroy ();
 }
@@ -51,7 +51,7 @@ private class CoreHardwareRender: Object, HardwareRender {
 	[CCode (has_target = false)]
 	internal delegate void ContextReset ();
 	[CCode (has_target = false)]
-	internal delegate uintptr_t GetCurrentFramebuffer ();
+	internal delegate ulong GetCurrentFramebuffer ();
 	[CCode (has_target = false)]
 	internal delegate HardwareRender.ProcAdress GetProcAdress (string sym);
 
@@ -153,11 +153,11 @@ private class CoreHardwareRender: Object, HardwareRender {
 		}
 	}
 
-	public uintptr_t get_current_framebuffer () {
+	public ulong get_current_framebuffer () {
 		if (callback_struct.get_current_framebuffer != null) {
 			return callback_struct.get_current_framebuffer ();
 		}
-		return (uintptr_t) 0;
+		return (ulong) 0;
 	}
 
 	public HardwareRender.ProcAdress get_proc_address (string sym) {

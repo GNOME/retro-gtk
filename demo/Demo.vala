@@ -22,7 +22,7 @@ using Gtk;
 class Demo : Object {
 	private Window window;
 
-	construct {
+	public void run () {
 		Gtk.Settings.get_default().set("gtk-application-prefer-dark-theme", true);
 
 		window = new Window (get_libretro_modules ());
@@ -64,6 +64,7 @@ class Demo : Object {
 		}
 
 		var d = new Demo ();
+		d.run ();
 
 		Gtk.main ();
 

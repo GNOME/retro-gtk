@@ -30,7 +30,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		if (cb_data) {
 			if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
 
-			return retro_core_dispatch_environment_command (cb_data, cb_data, cmd, data);
+			return retro_core_dispatch_environment_command (cb_data, RETRO_ENVIRONMENT (cb_data), cmd, data);
 		}
 
 		g_assert_not_reached ();
@@ -197,11 +197,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
 			RetroVariable *variable = (RetroVariable *) data;
 
-			const gchar *result;
+			gchar *result;
 			g_signal_emit_by_name ((RetroEnvironment*) interface, "get-variable", variable->key, &result);
 			variable->value = result ? result : "";
 
-			return (gboolean) result;
+			return result ? TRUE : FALSE;
 		}
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES: {

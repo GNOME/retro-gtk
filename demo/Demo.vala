@@ -57,7 +57,11 @@ class Demo : Object {
 
 	public static int main (string[] argv) {
 		Gtk.init (ref argv);
-		Clutter.init (ref argv);
+		var clutter_error = Clutter.init (ref argv);
+		if (clutter_error != Clutter.InitError.SUCCESS) {
+			stderr.printf ("Clutter init error: %s\n", clutter_error.to_string ());
+			return clutter_error;
+		}
 
 		var d = new Demo ();
 

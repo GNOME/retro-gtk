@@ -76,6 +76,7 @@ RETRO_GTK_FILES= \
 	input/KeyboardBox.vala \
 	input/KeyboardGamepadAdapter.vala \
 	input/KeyboardGamepadConfiguration.vala \
+	input/KeyboardGamepadConfigurationDialog.vala \
 	AudioDevice.vala \
 	Display.vala \
 	FileStreamLogger.vala \
@@ -90,7 +91,6 @@ DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
 DEMO_FILES= \
 	Demo.vala \
 	Engine.vala \
-	GamepadViewWindow.vala \
 	Window.vala \
 	OptionsGrid.vala \
 	$(NULL)

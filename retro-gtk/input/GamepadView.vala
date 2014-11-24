@@ -40,6 +40,12 @@ public class GamepadView : DrawingArea {
 		queue_draw ();
 	}
 
+	public void reset () {
+		var size = GamepadButtonType.size ();
+		for (uint button = 0 ; button < size  ; button++)
+			highlight_button ((GamepadButtonType) button, false);
+	}
+
 	private void render (GamepadButtonType button) {
 		var state = button_lightning[button] ? HIGHLIGHT_STATE : DEFAULT_STATE;
 		var color = get_style_context ().get_color (state);

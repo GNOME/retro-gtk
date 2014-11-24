@@ -28,9 +28,6 @@ class Demo : Object {
 		window = new Window (get_libretro_modules ());
 		window.show ();
 		window.destroy.connect (() => { Gtk.main_quit(); } );
-
-		var gamepad_window = new GamepadViewWindow ();
-		gamepad_window.show ();
 	}
 
 	private string[] get_libretro_modules () {

@@ -44,6 +44,8 @@ public class Window : Gtk.Window {
 	private Gtk.Popover popover;
 	private Gtk.Widget grid;
 
+	private KeyboardGamepadAdapter gamepad;
+
 	private Engine engine;
 	private Runner runner;
 	private bool running { set; get; default = false; }
@@ -108,6 +110,21 @@ public class Window : Gtk.Window {
 		start_button.set_image (running ? pause_image : play_image);
 
 		properties_button.set_popover (popover);
+
+		gamepad = new KeyboardGamepadAdapter (kb_box);
+
+		var gamepad_button = new Button.from_icon_name ("applications-games-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+		header.pack_end (gamepad_button);
+		gamepad_button.show ();
+
+		gamepad_button.clicked.connect (() => {
+			var gamepad_dialog = new KeyboardGamepadConfigurationDialog ();
+			gamepad_dialog.set_transient_for (this);
+			if (gamepad_dialog.run () == ResponseType.APPLY) {
+				gamepad.configuration = gamepad_dialog.configuration;
+			}
+			gamepad_dialog.close ();
+		});
 	}
 
 	void set_titles () {
@@ -169,7 +186,7 @@ public class Window : Gtk.Window {
 		game_screen.core = engine.core;
 		engine.video_handler = game_screen;
 
-		engine.controller_handler.set_controller_device (0, new KeyboardGamepadAdapter (kb_box));
+		engine.controller_handler.set_controller_device (0, gamepad);
 
 		runner = new Runner (engine);
 		open_game_button.show ();

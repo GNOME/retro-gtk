@@ -1,9 +1,10 @@
 NULL=
 
 PREFIX=/usr
-SHARE=/usr/share
+EXEC_PREFIX=$(PREFIX)
 LIB_DIR = $(PREFIX)/lib
 INCLUDE_DIR = $(PREFIX)/include
+SHARE=/usr/share
 GIR_DIR = $(SHARE)/gir-1.0
 TYPELIB_DIR = $(LIB_DIR)/girepository-1.0
 DEPS_DIR = $(SHARE)/vala/vapi
@@ -15,6 +16,12 @@ DEMO_DIR = demo
 OUT_DIR = out
 VAPI_DIR = vapi
 
+RETRO_NAME=Retro
+RETRO_GTK_NAME=RetroGtk
+
+RETRO_DESC=GObject based libretro wrapper
+RETRO_GTK_DESC=Library for integrating Retro into GTK+
+	
 RETRO_LIBNAME=retro-gobject
 RETRO_GTK_LIBNAME=retro-gtk
 
@@ -35,6 +42,9 @@ RETRO_GTK_GIRNAME=RetroGtk-$(RETRO_GTK_VERSION).gir
 
 RETRO_TYPELIB=Retro-$(RETRO_VERSION).typelib
 RETRO_GTK_TYPELIB=RetroGtk-$(RETRO_GTK_VERSION).typelib
+
+RETRO_PKGCONF=$(RETRO_PKGNAME).pc
+RETRO_GTK_PKGCONF=$(RETRO_GTK_PKGNAME).pc
 
 RETRO_DOC=$(RETRO_PKGNAME)-doc
 
@@ -156,8 +166,8 @@ RETRO_GTK_DEPS=$(OUT_DIR)/$(RETRO_GTK_PKGNAME).deps
 all: demo retro retro-gtk
 
 demo: $(DEMO)
-retro: $(RETRO_OUT) $(RETRO_DEPS) $(OUT_DIR)/$(RETRO_TYPELIB)
-retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(OUT_DIR)/$(RETRO_GTK_TYPELIB)
+retro: $(RETRO_OUT) $(RETRO_DEPS) $(OUT_DIR)/$(RETRO_TYPELIB) $(OUT_DIR)/$(RETRO_PKGCONF)
+retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(OUT_DIR)/$(RETRO_GTK_TYPELIB) $(OUT_DIR)/$(RETRO_GTK_PKGCONF)
 doc: $(RETRO_DOC)
 
 $(DEMO): $(RETRO_SRC) $(RETRO_GTK_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(DEMO_CONFIG_FILE)
@@ -195,8 +205,18 @@ $(RETRO_DEPS):
 $(OUT_DIR)/$(RETRO_TYPELIB):
 	g-ir-compiler --shared-library $(RETRO_LIBNAME) --output $@ $(@D)/$(RETRO_GIRNAME)
 
-$(OUT_DIR)/$(RETRO_GTK_TYPELIB):
-	g-ir-compiler --shared-library $(RETRO_GTK_LIBNAME) --output $@ $(@D)/$(RETRO_GTK_GIRNAME)
+$(OUT_DIR)/$(RETRO_PKGCONF):
+	echo "prefix="$(PREFIX) > $@
+	echo "exec_prefix="$(EXEC_PREFIX) >> $@
+	echo "libdir="$(LIB_DIR) >> $@
+	echo "includedir="$(INCLUDE_DIR) >> $@
+	echo >> $@
+	echo "Name: "$(RETRO_NAME) >> $@
+	echo "Description: "$(RETRO_DESC) >> $@
+	echo "Version: "$(RETRO_VERSION) >> $@
+	echo "Requires: "$(RETRO_PKG) >> $@
+	#echo "Libs: -L$$""{libdir}" >> $@
+	echo "Cflags: -I$$""{includedir}" >> $@
 
 $(RETRO_DOC): %: $(RETRO_SRC)
 	rm -Rf $@
@@ -224,6 +244,22 @@ $(RETRO_GTK_OUT): %: $(RETRO_GTK_SRC) $(RETRO_OUT) $(RETRO_DEPS)
 $(RETRO_GTK_DEPS):
 	mkdir -p $(@D)
 	echo $(RETRO_GTK_PKG) | sed -e 's/\s\+/\n/g' > $@
+
+$(OUT_DIR)/$(RETRO_GTK_TYPELIB):
+	g-ir-compiler --shared-library $(RETRO_GTK_LIBNAME) --output $@ $(@D)/$(RETRO_GTK_GIRNAME)
+
+$(OUT_DIR)/$(RETRO_GTK_PKGCONF):
+	echo "prefix="$(PREFIX) > $@
+	echo "exec_prefix="$(EXEC_PREFIX) >> $@
+	echo "libdir="$(LIB_DIR) >> $@
+	echo "includedir="$(INCLUDE_DIR) >> $@
+	echo >> $@
+	echo "Name: "$(RETRO_GTK_NAME) >> $@
+	echo "Description: "$(RETRO_GTK_DESC) >> $@
+	echo "Version: "$(RETRO_GTK_VERSION) >> $@
+	echo "Requires: "$(RETRO_GTK_PKG) >> $@
+	#echo "Libs: -L$$""{libdir}" >> $@
+	echo "Cflags: -I$$""{includedir}" >> $@
 
 clean:
 	rm -Rf $(OUT_DIR) $(RETRO_DOC) $(RETRO_DIR)/$(RETRO_LIBNAME)-internal.h

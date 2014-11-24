@@ -40,10 +40,6 @@ public enum GamepadButtonType {
 	STICK_R,
 	HOME;
 
-	public static GamepadButtonType from_joypad_id (Retro.JoypadId id) {
-		return (GamepadButtonType) id;
-	}
-
 	public static size_t size () {
 		return 17;
 	}

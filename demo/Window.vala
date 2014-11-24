@@ -185,9 +185,17 @@ public class Window : Gtk.Window {
 		if (! module_for_ext.contains (ext)) return;
 
 		var loaded = false;
-		foreach (var module in module_for_ext[ext].data) {
+		var modules = module_for_ext[ext];
+		// Using foreach on modules.data display warnings
+		for (uint i = 0 ; i < modules.length ; i ++) {
+			var module = modules.index (i);
 			set_engine (module);
-			loaded = engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
+			try {
+				loaded = engine.load_game (engine.info.need_fullpath ? GameInfo (path) : GameInfo.with_data (path));
+			}
+			catch (GLib.FileError e) {
+				stderr.printf ("Error: %s\n", e.message);
+			}
 
 			stdout.printf ("module %s loaded %s\n", module, loaded.to_string ());
 

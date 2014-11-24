@@ -1,4 +1,4 @@
-/* Window.vala  A simple display.
+/* Engine.vala  A simple frontend for libretro.
  * Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,37 +16,34 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-using Retro;
-using RetroGtk;
-
 using Gtk;
+using Cairo;
 
-public class GamepadViewWindow : Gtk.Window {
-	private GamepadView view;
-	private KeyboardGamepadAdapter joypad;
+namespace RetroGtk {
 
-	construct {
-		view = new RetroGtk.GamepadView ();
-		view.set_size_request (320, 240);
-		view.show ();
+public enum GamepadButtonType {
+	ACTION_DOWN,
+	ACTION_LEFT,
+	SELECT,
+	START,
+	DIRECTION_UP,
+	DIRECTION_DOWN,
+	DIRECTION_LEFT,
+	DIRECTION_RIGHT,
+	ACTION_RIGHT,
+	ACTION_UP,
+	SHOULDER_L,
+	SHOULDER_R,
+	SHOULDER_L2,
+	SHOULDER_R2,
+	STICK_L,
+	STICK_R,
+	HOME;
 
-		var kb = new KeyboardBox ();
-		kb.key_state_changed.connect (() => { update (); });
-		kb.show ();
-
-		joypad = new KeyboardGamepadAdapter (kb);
-
-		kb.add (view);
-		add (kb);
+	public static size_t size () {
+		return 1 + (size_t) GamepadButtonType.HOME;
 	}
+}
 
-	private void update () {
-		var size = GamepadButtonType.size ();
-		for (uint button = 0 ; button < size  ; button++)
-			view.highlight_button (
-				(GamepadButtonType) button,
-				joypad.get_button_pressed ((GamepadButtonType) button)
-			);
-	}
 }
 

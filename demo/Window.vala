@@ -169,7 +169,7 @@ public class Window : Gtk.Window {
 		game_screen.core = engine.core;
 		engine.video_handler = game_screen;
 
-		engine.controller_handler.set_controller_device (0, new KeyboardBoxJoypadAdapter (kb_box));
+		engine.controller_handler.set_controller_device (0, new KeyboardGamepadAdapter (kb_box));
 
 		runner = new Runner (engine);
 		open_game_button.show ();

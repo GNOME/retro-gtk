@@ -70,10 +70,12 @@ RETRO_FILES= \
 RETRO_GTK_FILES= \
 	input/ControllerDevice.vala \
 	input/ControllerHandler.vala \
+	input/GamepadButtonType.vala \
 	input/GamepadView.vala \
 	input/Keyboard.vala \
 	input/KeyboardBox.vala \
-	input/KeyboardBoxJoypadAdapter.vala \
+	input/KeyboardGamepadAdapter.vala \
+	input/KeyboardGamepadConfiguration.vala \
 	AudioDevice.vala \
 	Display.vala \
 	FileStreamLogger.vala \

@@ -18,11 +18,11 @@
 
 namespace RetroGtk {
 
-public class KeyboardJoypadConfiguration : Object {
-	private uint16[] joypad_keys;
+public class KeyboardGamepadConfiguration : Object {
+	private uint16[] gamepad_keys;
 
 	construct {
-		joypad_keys = new uint16[17];
+		gamepad_keys = new uint16[17];
 	}
 
 	public void set_to_default () {
@@ -46,42 +46,11 @@ public class KeyboardJoypadConfiguration : Object {
 	}
 
 	public void set_button_key (GamepadButtonType button, uint16 key) {
-		joypad_keys[button] = key;
+		gamepad_keys[button] = key;
 	}
 
 	public uint16 get_button_key (GamepadButtonType button) {
-		return joypad_keys[button];
-	}
-}
-
-public class KeyboardBoxJoypadAdapter : Object, ControllerDevice {
-	public KeyboardBox keyboard { private get; construct; }
-
-	private KeyboardJoypadConfiguration configuration;
-
-	public KeyboardBoxJoypadAdapter (KeyboardBox keyboard) {
-		Object (keyboard: keyboard);
-	}
-
-	construct {
-		configuration = new KeyboardJoypadConfiguration ();
-		configuration.set_to_default ();
-	}
-
-	public void poll () {}
-
-	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
-		if ((Retro.DeviceType) device != Retro.DeviceType.JOYPAD) return 0;
-
-		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
-	}
-
-	public uint64 get_device_capabilities () {
-		return 1 << Retro.DeviceType.JOYPAD;
-	}
-
-	public bool get_button_pressed (GamepadButtonType button) {
-		return keyboard.get_key_state (configuration.get_button_key (button));
+		return gamepad_keys[button];
 	}
 }
 

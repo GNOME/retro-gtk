@@ -41,31 +41,12 @@ public class GamepadViewWindow : Gtk.Window {
 	}
 
 	private void update () {
-		const JoypadId[] ids = {
-			JoypadId.B,
-			JoypadId.Y,
-			JoypadId.SELECT,
-			JoypadId.START,
-			JoypadId.UP,
-			JoypadId.DOWN,
-			JoypadId.LEFT,
-			JoypadId.RIGHT,
-			JoypadId.A,
-			JoypadId.X,
-			JoypadId.L,
-			JoypadId.R,
-			JoypadId.L2,
-			JoypadId.R2,
-			JoypadId.L3,
-			JoypadId.R3
-		};
-
-		foreach (var id in ids) {
+		var size = GamepadButtonType.size ();
+		for (uint button = 0 ; button < size  ; button++)
 			view.highlight_button (
-				GamepadButtonType.from_joypad_id (id),
-				joypad.get_input_state (DeviceType.JOYPAD, 0, id) != 0
+				(GamepadButtonType) button,
+				joypad.get_button_pressed ((GamepadButtonType) button)
 			);
-		}
 	}
 }
 

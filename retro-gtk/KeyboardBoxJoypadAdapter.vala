@@ -18,54 +18,70 @@
 
 namespace RetroGtk {
 
+public class KeyboardJoypadConfiguration : Object {
+	private uint16[] joypad_keys;
+
+	construct {
+		joypad_keys = new uint16[17];
+	}
+
+	public void set_to_default () {
+		set_button_key (GamepadButtonType.ACTION_DOWN,      39); // QWERTY S
+		set_button_key (GamepadButtonType.ACTION_LEFT,      38); // QWERTY A
+		set_button_key (GamepadButtonType.SELECT,           22); // Backspace
+		set_button_key (GamepadButtonType.START,            36); // Enter
+		set_button_key (GamepadButtonType.DIRECTION_UP,    111); // Up arrow
+		set_button_key (GamepadButtonType.DIRECTION_DOWN,  116); // Down arrow
+		set_button_key (GamepadButtonType.DIRECTION_LEFT,  113); // Left arrow
+		set_button_key (GamepadButtonType.DIRECTION_RIGHT, 114); // Right arrow
+		set_button_key (GamepadButtonType.ACTION_RIGHT,     40); // QWERTY D
+		set_button_key (GamepadButtonType.ACTION_UP,        25); // QWERTY W
+		set_button_key (GamepadButtonType.SHOULDER_L,       24); // QWERTY Q
+		set_button_key (GamepadButtonType.SHOULDER_R,       26); // QWERTY E
+		set_button_key (GamepadButtonType.SHOULDER_L2,      52); // QWERTY Z
+		set_button_key (GamepadButtonType.SHOULDER_R2,      54); // QWERTY C
+		set_button_key (GamepadButtonType.STICK_L,          10); // QWERTY 1
+		set_button_key (GamepadButtonType.STICK_R,          12); // QWERTY 3
+		set_button_key (GamepadButtonType.HOME,            110); // Home
+	}
+
+	public void set_button_key (GamepadButtonType button, uint16 key) {
+		joypad_keys[button] = key;
+	}
+
+	public uint16 get_button_key (GamepadButtonType button) {
+		return joypad_keys[button];
+	}
+}
+
 public class KeyboardBoxJoypadAdapter : Object, ControllerDevice {
 	public KeyboardBox keyboard { private get; construct; }
 
-	private uint16[] joypad_keys;
+	private KeyboardJoypadConfiguration configuration;
 
 	public KeyboardBoxJoypadAdapter (KeyboardBox keyboard) {
 		Object (keyboard: keyboard);
 	}
 
 	construct {
-		// Set the default keys for the joypad
-		joypad_keys = new uint16[16];
-		set_joypad_key (Retro.JoypadId.B,      39); // QWERTY S
-		set_joypad_key (Retro.JoypadId.Y,      38); // QWERTY A
-		set_joypad_key (Retro.JoypadId.SELECT, 22); // Backspace
-		set_joypad_key (Retro.JoypadId.START,  36); // Enter
-		set_joypad_key (Retro.JoypadId.UP,    111); // Up arrow
-		set_joypad_key (Retro.JoypadId.DOWN,  116); // Down arrow
-		set_joypad_key (Retro.JoypadId.LEFT,  113); // Left arrow
-		set_joypad_key (Retro.JoypadId.RIGHT, 114); // Right arrow
-		set_joypad_key (Retro.JoypadId.A,      40); // QWERTY D
-		set_joypad_key (Retro.JoypadId.X,      25); // QWERTY W
-		set_joypad_key (Retro.JoypadId.L,      24); // QWERTY Q
-		set_joypad_key (Retro.JoypadId.R,      26); // QWERTY E
-		set_joypad_key (Retro.JoypadId.L2,     52); // QWERTY Z
-		set_joypad_key (Retro.JoypadId.R2,     54); // QWERTY C
-		set_joypad_key (Retro.JoypadId.L3,     10); // QWERTY 1
-		set_joypad_key (Retro.JoypadId.R3,     12); // QWERTY 3
+		configuration = new KeyboardJoypadConfiguration ();
+		configuration.set_to_default ();
 	}
 
-	public void  poll () {}
+	public void poll () {}
 
 	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
 		if ((Retro.DeviceType) device != Retro.DeviceType.JOYPAD) return 0;
 
-		return keyboard.get_key_state (get_joypad_key ((Retro.JoypadId) id)) ? int16.MAX : 0;
+		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
 	}
 
 	public uint64 get_device_capabilities () {
 		return 1 << Retro.DeviceType.JOYPAD;
 	}
 
-	private void set_joypad_key (Retro.JoypadId id, uint16 hardware_keycode) {
-		joypad_keys[id] = hardware_keycode;
-	}
-
-	private uint16 get_joypad_key (Retro.JoypadId id) {
-		return joypad_keys[id];
+	public bool get_button_pressed (GamepadButtonType button) {
+		return keyboard.get_key_state (configuration.get_button_key (button));
 	}
 }
 

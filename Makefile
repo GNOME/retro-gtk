@@ -71,6 +71,7 @@ RETRO_GTK_FILES= \
 	input/ControllerDevice.vala \
 	input/ControllerHandler.vala \
 	input/GamepadView.vala \
+	input/Keyboard.vala \
 	input/KeyboardBox.vala \
 	input/KeyboardBoxJoypadAdapter.vala \
 	AudioDevice.vala \

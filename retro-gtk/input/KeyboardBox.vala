@@ -21,13 +21,11 @@ using Gdk;
 
 namespace RetroGtk {
 
-public class KeyboardBox : EventBox {
+public class KeyboardBox : EventBox, Keyboard {
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
 
 	public bool verbose { set; get; default = false; }
-
-	public signal void key_state_changed ();
 
 	construct {
 		set_can_focus (true);

@@ -34,7 +34,7 @@ namespace Retro {
  * @param height height of the frame
  * @param pitch length in bytes between two lines in buffer
  */
-public delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[] data, uint width, uint height, size_t pitch);
+private delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[] data, uint width, uint height, size_t pitch);
 
 /**
  * Renders a single audio frame.
@@ -45,7 +45,7 @@ public delegate void VideoRefresh ([CCode (array_length_type = "gsize")] uint8[]
  * @param left the left channel of the audio frame
  * @param right the right channel of the audio frame
  */
-public delegate void AudioSample (int16 left, int16 right);
+private delegate void AudioSample (int16 left, int16 right);
 
 /**
  * Renders multiple audio frames in one go.
@@ -59,12 +59,12 @@ public delegate void AudioSample (int16 left, int16 right);
  * @param data the audio sample batch
  * @param frames the number of frames in the batch
  */
-public delegate size_t AudioSampleBatch ([CCode (array_length_type = "gsize")] int16[] data, size_t frames);
+private delegate size_t AudioSampleBatch ([CCode (array_length_type = "gsize")] int16[] data, size_t frames);
 
 /**
  * Polls input.
  */
-public delegate void InputPoll ();
+private delegate void InputPoll ();
 
 /**
  * Queries for input for player 'port'.
@@ -81,7 +81,7 @@ public delegate void InputPoll ();
  * @param index the index, its definition changes with the device
  * @param id the id, its definition changes with the device
  */
-public delegate int16 InputState (uint port, DeviceType device, uint index, uint id);
+private delegate int16 InputState (uint port, DeviceType device, uint index, uint id);
 
 // Types of the module's functions
 

@@ -43,7 +43,6 @@ FILES= \
 	Display.vala \
 	FileStreamLogger.vala \
 	Options.vala \
-	Runnable.vala \
 	Runner.vala \
 	video-converter.c \
 	$(NULL)

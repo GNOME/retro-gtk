@@ -16,16 +16,21 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+using Retro;
+
 namespace RetroGtk {
 
 public class Runner : Object {
-	private Runnable runnable;
+	public Core core { get; construct; }
 	private uint? loop;
 
 	public double speed_rate { construct set; get; default = 1; }
 
-	public Runner (Runnable runnable) {
-		this.runnable = runnable;
+	public Runner (Core core) {
+		Object (core: core);
+	}
+
+	construct {
 		loop = null;
 
 		notify.connect ((src, param) => {
@@ -45,17 +50,16 @@ public class Runner : Object {
 	}
 
 	public void start () {
+		var info = core.system_av_info;
+		var fps = info == null ? info.timing.fps : 60.0;
 		if (loop == null && speed_rate > 0) {
-			var fps = runnable.get_frames_per_second ();
-			// Set a sane default for if the fps is 0.
-			fps = fps > 0 ? fps : 60;
 			loop = Timeout.add ((uint) (1000 / (fps * speed_rate)), run);
 		}
 	}
 
 	public void reset () {
-		if (runnable != null) {
-			runnable.reset ();
+		if (core != null) {
+			core.reset ();
 		}
 	}
 
@@ -67,8 +71,8 @@ public class Runner : Object {
 	}
 
 	private bool run () {
-		if (runnable != null && loop != null) {
-			runnable.run ();
+		if (core != null && loop != null) {
+			core.run ();
 
 			return true;
 		}

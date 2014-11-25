@@ -10,48 +10,26 @@ PKG_DIR = $(SHARE)/pkgconfig
 TYPELIB_DIR = $(LIB_DIR)/girepository-1.0
 DEPS_DIR = $(SHARE)/vala/vapi
 
-RETRO_DIR = retro
-RETRO_GTK_DIR = retro-gtk
-DEMO_DIR = demo
+SRC_DIR = retro
 
 OUT_DIR = out
 VAPI_DIR = vapi
 
-RETRO_NAME=Retro
-RETRO_GTK_NAME=RetroGtk
+NAME=Retro
+DESC=GObject based libretro wrapper
+LIBNAME=retro-gobject
+VERSION=1.0
+PKGNAME=$(LIBNAME)-$(VERSION)
 
-RETRO_DESC=GObject based libretro wrapper
-RETRO_GTK_DESC=Library for integrating Retro into GTK+
-	
-RETRO_LIBNAME=retro-gobject
-RETRO_GTK_LIBNAME=retro-gtk
+SO=      lib$(LIBNAME).so
+H=       $(LIBNAME).h
+VAPI=    $(PKGNAME).vapi
+DEPS=    $(PKGNAME).deps
+GIR=     Retro-$(VERSION).gir
+TYPELIB= Retro-$(VERSION).typelib
+PKGCONF= $(PKGNAME).pc
 
-RETRO_VERSION=1.0
-RETRO_GTK_VERSION=1.0
-
-RETRO_PKGNAME=$(RETRO_LIBNAME)-$(RETRO_VERSION)
-RETRO_GTK_PKGNAME=$(RETRO_GTK_LIBNAME)-$(RETRO_GTK_VERSION)
-
-RETRO_SONAME=lib$(RETRO_LIBNAME).so
-RETRO_GTK_SONAME=lib$(RETRO_GTK_LIBNAME).so
-
-RETRO_HNAME=$(RETRO_LIBNAME).h
-RETRO_GTK_HNAME=$(RETRO_GTK_LIBNAME).h
-
-RETRO_GIRNAME=Retro-$(RETRO_VERSION).gir
-RETRO_GTK_GIRNAME=RetroGtk-$(RETRO_GTK_VERSION).gir
-
-RETRO_TYPELIB=Retro-$(RETRO_VERSION).typelib
-RETRO_GTK_TYPELIB=RetroGtk-$(RETRO_GTK_VERSION).typelib
-
-RETRO_PKGCONF=$(RETRO_PKGNAME).pc
-RETRO_GTK_PKGCONF=$(RETRO_GTK_PKGNAME).pc
-
-RETRO_DOC=$(RETRO_PKGNAME)-doc
-
-DEMO = $(OUT_DIR)/demo
-
-RETRO_FILES= \
+FILES= \
 	AudioInput.vala \
 	AudioHandler.vala \
 	Camera.vala \
@@ -96,192 +74,71 @@ RETRO_FILES= \
 	retro-core-interfaces.c \
 	$(NULL)
 
-RETRO_GTK_FILES= \
-	input/ControllerDevice.vala \
-	input/ControllerHandler.vala \
-	input/GamepadButtonType.vala \
-	input/GamepadView.vala \
-	input/Keyboard.vala \
-	input/KeyboardBox.vala \
-	input/KeyboardGamepadAdapter.vala \
-	input/KeyboardGamepadConfiguration.vala \
-	input/KeyboardGamepadConfigurationDialog.vala \
-	AudioDevice.vala \
-	Display.vala \
-	FileStreamLogger.vala \
-	Options.vala \
-	Runnable.vala \
-	Runner.vala \
-	video-converter.c \
-	$(NULL)
-
-DEMO_CONFIG_FILE=$(DEMO_DIR)/config.vala
-
-DEMO_FILES= \
-	Demo.vala \
-	Engine.vala \
-	Window.vala \
-	OptionsGrid.vala \
-	$(NULL)
-
-
-RETRO_PKG= \
+PKG= \
 	gmodule-2.0 \
 	$(NULL)
 
-RETRO_GTK_PKG= \
-	gtk+-3.0 \
-	cairo \
-	clutter-gtk-1.0 \
-	libpulse \
-	libpulse-mainloop-glib \
-	$(RETRO_PKGNAME) \
+SRC = $(FILES:%=$(SRC_DIR)/%)
+
+OUT= \
+	$(OUT_DIR)/$(SO) \
+	$(OUT_DIR)/$(VAPI) \
+	$(OUT_DIR)/$(GIR) \
+	$(OUT_DIR)/$H \
 	$(NULL)
 
-PKG= \
-	$(RETRO_PKGNAME) \
-	$(RETRO_GTK_PKGNAME) \
-	$(NULL)
+VALAC_OPTIONS= --save-temps
 
-RETRO_SRC = $(RETRO_FILES:%=$(RETRO_DIR)/%)
-RETRO_GTK_SRC = $(RETRO_GTK_FILES:%=$(RETRO_GTK_DIR)/%)
-DEMO_SRC = $(DEMO_FILES:%=$(DEMO_DIR)/%)
+all: $(OUT) $(OUT_DIR)/$(DEPS) $(OUT_DIR)/$(TYPELIB) $(OUT_DIR)/$(PKGCONF)
 
-RETRO_OUT= \
-	$(OUT_DIR)/$(RETRO_SONAME) \
-	$(OUT_DIR)/$(RETRO_PKGNAME).vapi \
-	$(OUT_DIR)/$(RETRO_GIRNAME) \
-	$(OUT_DIR)/$(RETRO_HNAME) \
-	$(NULL)
-
-RETRO_GTK_OUT= \
-	$(OUT_DIR)/$(RETRO_GTK_SONAME) \
-	$(OUT_DIR)/$(RETRO_GTK_PKGNAME).vapi \
-	$(OUT_DIR)/$(RETRO_GTK_GIRNAME) \
-	$(OUT_DIR)/$(RETRO_GTK_HNAME) \
-	$(NULL)
-
-RETRO_DEPS=$(OUT_DIR)/$(RETRO_PKGNAME).deps
-RETRO_GTK_DEPS=$(OUT_DIR)/$(RETRO_GTK_PKGNAME).deps
-
-all: demo retro retro-gtk
-
-demo: $(DEMO)
-retro: $(RETRO_OUT) $(RETRO_DEPS) $(OUT_DIR)/$(RETRO_TYPELIB) $(OUT_DIR)/$(RETRO_PKGCONF)
-retro-gtk: $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(OUT_DIR)/$(RETRO_GTK_TYPELIB) $(OUT_DIR)/$(RETRO_GTK_PKGCONF)
-doc: $(RETRO_DOC)
-
-$(DEMO): $(RETRO_SRC) $(RETRO_GTK_SRC) $(DEMO_SRC) $(RETRO_OUT) $(RETRO_DEPS) $(RETRO_GTK_OUT) $(RETRO_GTK_DEPS) $(DEMO_CONFIG_FILE)
-	mkdir -p $(OUT_DIR)
-	valac -b $(<D) -d $(@D) \
-		-o $(@F) $(DEMO_SRC) $(DEMO_CONFIG_FILE) \
-		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
-		--save-temps \
-		-g
-	@touch $@
-
-$(DEMO_CONFIG_FILE):
-	echo "const string PREFIX = \""$(PREFIX)\"";" > $@
-
-$(RETRO_OUT): %: $(RETRO_SRC)
+$(OUT): %: $(SRC)
 	mkdir -p $(@D)
 	valac \
 		-b $(<D) -d $(@D) \
-		--library=$(RETRO_LIBNAME) \
-		--vapi=$(RETRO_PKGNAME).vapi \
-		--gir=$(RETRO_GIRNAME) \
-		-H $(@D)/$(RETRO_HNAME) \
-		-h $(<D)/$(RETRO_LIBNAME)-internal.h \
-		-o $(RETRO_SONAME) $^ \
-		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
-		--save-temps \
-		-X -fPIC -X -shared
+		--library=$(LIBNAME) \
+		--vapi=$(VAPI) \
+		--gir=$(GIR) \
+		-H $(@D)/$H \
+		-h $(<D)/$(LIBNAME)-internal.h \
+		-o $(SO) $^ \
+		$(PKG:%=--pkg=%) \
+		-X -fPIC -X -shared \
+		$(VALAC_OPTIONS) \
+		$(NULL)
 	@touch $@
 
-$(RETRO_DEPS):
+$(OUT_DIR)/$(DEPS):
 	mkdir -p $(@D)
-	echo $(RETRO_PKG) | sed -e 's/\s\+/\n/g' > $@
+	# Split deps into lines
+	echo $(PKG) | sed -e 's/\s\+/\n/g' > $@
 
-$(OUT_DIR)/$(RETRO_TYPELIB):
-	g-ir-compiler --shared-library $(RETRO_LIBNAME) --output $@ $(@D)/$(RETRO_GIRNAME)
+$(OUT_DIR)/$(TYPELIB):
+	g-ir-compiler --shared-library $(LIBNAME) --output $@ $(@D)/$(GIR)
 
-$(OUT_DIR)/$(RETRO_PKGCONF):
+$(OUT_DIR)/$(PKGCONF):
 	echo "prefix="$(PREFIX) > $@
 	echo "exec_prefix="$(EXEC_PREFIX) >> $@
 	echo "libdir="$(LIB_DIR) >> $@
 	echo "includedir="$(INCLUDE_DIR) >> $@
 	echo >> $@
-	echo "Name: "$(RETRO_NAME) >> $@
-	echo "Description: "$(RETRO_DESC) >> $@
-	echo "Version: "$(RETRO_VERSION) >> $@
-	echo "Requires: "$(RETRO_PKG) >> $@
+	echo "Name: "$(NAME) >> $@
+	echo "Description: "$(DESC) >> $@
+	echo "Version: "$(VERSION) >> $@
+	echo "Requires: "$(PKG) >> $@
 	echo "Libs: -L$$""{libdir} -lretro-gobject" >> $@
 	echo "Cflags: -I$$""{includedir}" >> $@
 
-$(RETRO_DOC): %: $(RETRO_SRC)
-	rm -Rf $@
-	valadoc \
-		-b $(<D) -o $@ \
-		$^ \
-		--vapidir=$(VAPI_DIR) $(RETRO_PKG:%=--pkg=%) \
-		--package-name=$(RETRO_LIBNAME) --package-version=$(RETRO_VERSION)
-
-$(RETRO_GTK_OUT): %: $(RETRO_GTK_SRC) $(RETRO_OUT) $(RETRO_DEPS)
-	mkdir -p $(@D)
-	valac \
-		-b $(<D) -d $(@D) \
-		--library=$(RETRO_GTK_LIBNAME) \
-		--vapi=$(RETRO_GTK_PKGNAME).vapi \
-		--gir=$(RETRO_GTK_GIRNAME) \
-		-H $(@D)/$(RETRO_GTK_HNAME) \
-		-o $(RETRO_GTK_SONAME) $(RETRO_GTK_SRC) \
-		--vapidir=$(VAPI_DIR) $(RETRO_GTK_PKG:%=--pkg=%) \
-		--save-temps \
-		-X -fPIC -X -shared
-	@touch $@
-
-$(RETRO_GTK_DEPS):
-	mkdir -p $(@D)
-	echo $(RETRO_GTK_PKG) | sed -e 's/\s\+/\n/g' > $@
-
-$(OUT_DIR)/$(RETRO_GTK_TYPELIB):
-	g-ir-compiler --shared-library $(RETRO_GTK_LIBNAME) --output $@ $(@D)/$(RETRO_GTK_GIRNAME)
-
-$(OUT_DIR)/$(RETRO_GTK_PKGCONF):
-	echo "prefix="$(PREFIX) > $@
-	echo "exec_prefix="$(EXEC_PREFIX) >> $@
-	echo "libdir="$(LIB_DIR) >> $@
-	echo "includedir="$(INCLUDE_DIR) >> $@
-	echo >> $@
-	echo "Name: "$(RETRO_GTK_NAME) >> $@
-	echo "Description: "$(RETRO_GTK_DESC) >> $@
-	echo "Version: "$(RETRO_GTK_VERSION) >> $@
-	echo "Requires: "$(RETRO_GTK_PKG) >> $@
-	echo "Libs: -L$$""{libdir} -lretro-gtk" >> $@
-	echo "Cflags: -I$$""{includedir}" >> $@
-
-install: install-retro
-
-install-retro:
-	install $(OUT_DIR)/$(RETRO_SONAME) $(LIB_DIR)
-	install $(OUT_DIR)/$(RETRO_HNAME) $(INCLUDE_DIR)
-	install $(OUT_DIR)/$(RETRO_GIRNAME) $(GIR_DIR)
-	install $(OUT_DIR)/$(RETRO_TYPELIB) $(TYPELIB_DIR)
-	install $(OUT_DIR)/$(RETRO_PKGCONF) $(PKG_DIR)
-	install $(RETRO_DEPS) $(DEPS_DIR)
-	install $(OUT_DIR)/$(RETRO_PKGNAME).vapi $(DEPS_DIR)
-
-install-retro-gtk:
-	install $(OUT_DIR)/$(RETRO_GTK_SONAME) $(LIB_DIR)
-	install $(OUT_DIR)/$(RETRO_GTK_HNAME) $(INCLUDE_DIR)
-	install $(OUT_DIR)/$(RETRO_GTK_GIRNAME) $(GIR_DIR)
-	install $(OUT_DIR)/$(RETRO_GTK_TYPELIB) $(TYPELIB_DIR)
-	install $(OUT_DIR)/$(RETRO_GTK_PKGCONF) $(PKG_DIR)
-	install $(RETRO_GTK_DEPS) $(DEPS_DIR)
-	install $(OUT_DIR)/$(RETRO_GTK_PKGNAME).vapi $(DEPS_DIR)
+install:
+	install $(OUT_DIR)/$(SO)      $(LIB_DIR)
+	install $(OUT_DIR)/$H         $(INCLUDE_DIR)
+	install $(OUT_DIR)/$(GIR)     $(GIR_DIR)
+	install $(OUT_DIR)/$(TYPELIB) $(TYPELIB_DIR)
+	install $(OUT_DIR)/$(PKGCONF) $(PKG_DIR)
+	install $(OUT_DIR)/$(DEPS)    $(DEPS_DIR)
+	install $(OUT_DIR)/$(VAPI)    $(DEPS_DIR)
 
 clean:
-	rm -Rf $(OUT_DIR) $(RETRO_DOC) $(RETRO_DIR)/$(RETRO_LIBNAME)-internal.h
+	rm -Rf $(OUT_DIR) $(SRC_DIR)/$(LIBNAME)-internal.h
 
-.PHONY: all demo retro retro-gtk install install-retro install-retro-gtk doc clean $(DEMO_CONFIG_FILE)
+.PHONY: all install clean
 

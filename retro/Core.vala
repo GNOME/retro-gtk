@@ -75,8 +75,6 @@ public class Core : Object, Environment {
 	public string content_directory { set; get; default = "."; }
 	public string save_directory { set; get; default = "."; }
 
-	public bool variable_update { set; get; default = false; }
-
 	public Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
@@ -188,6 +186,20 @@ public class Core : Object, Environment {
 		}
 	}
 
+	private VariablesHandler _variables_handler;
+	public VariablesHandler variables_handler {
+		get { return _variables_handler; }
+		construct set {
+			if (_variables_handler != null)
+				_variables_handler.core = null;
+
+			_variables_handler = value;
+
+			if (_variables_handler != null && _variables_handler.core != this)
+				_variables_handler.core = this;
+		}
+	}
+
 
 
 
@@ -213,8 +225,6 @@ public class Core : Object, Environment {
 		module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
 		module.set_input_poll (get_module_input_poll_cb ());
 		module.set_input_state (get_module_input_state_cb ());
-
-		init ();
 	}
 
 	~Core () {

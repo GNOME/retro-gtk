@@ -69,6 +69,7 @@ FILES= \
 	SystemInfo.vala \
 	Variable.vala \
 	VideoHandler.vala \
+	VariablesHandler.vala \
 	retro-core-cb-data.c \
 	retro-core-extern.c \
 	retro-core-interfaces.c \

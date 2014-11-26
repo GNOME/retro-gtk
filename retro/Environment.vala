@@ -30,10 +30,6 @@ public interface Environment: Object {
 	public abstract string content_directory { set; get; default = "."; }
 	public abstract string save_directory { set; get; default = "."; }
 
-	public signal string? get_variable (string key);
-	public abstract bool variable_update { set; get; default = false; }
-	public signal bool set_variables (Variable[] variables);
-
 	public abstract Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public abstract bool support_no_game { protected set; get; default = false; }
 	public abstract PerfLevel performance_level { protected set; get; }

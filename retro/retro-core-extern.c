@@ -20,6 +20,7 @@
 
 #include "retro-gobject-internal.h"
 #include "retro-core-interfaces.h"
+#include "retro-variables-handler.h"
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
 
@@ -194,34 +195,14 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 
-		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE: {
-			RetroVariable *variable = (RetroVariable *) data;
+		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE:
+			return retro_environment_get_variable (retro_core_get_variables_handler (self), (RetroVariable *) data);
 
-			gchar *result;
-			g_signal_emit_by_name ((RetroEnvironment*) interface, "get-variable", variable->key, &result);
-			variable->value = result ? result : "";
+		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES:
+			return retro_environment_set_variables (retro_core_get_variables_handler (self), (RetroVariable *) data);
 
-			return result ? TRUE : FALSE;
-		}
-
-		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES: {
-			RetroVariable *array = (RetroVariable *) data;
-
-			int length;
-			for (length = 0 ; array[length].key && array[length].value ; length++);
-
-			gboolean result = FALSE;
-			g_signal_emit_by_name ((RetroEnvironment*) interface, "set-variables", array, length, &result);
-
-			return result;
-		}
-
-		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE_UPDATE: {
-			gboolean *variable_update = (gboolean *) data;
-			*(variable_update) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_variable_update (interface);
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_variable_update (interface, FALSE);
-			return TRUE;
-		}
+		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE_UPDATE:
+			return retro_environment_get_variable_update (retro_core_get_variables_handler (self), (gboolean *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_SUPPORT_NO_GAME:
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_support_no_game (interface, *((gboolean *) data));

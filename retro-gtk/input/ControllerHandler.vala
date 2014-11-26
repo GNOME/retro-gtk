@@ -21,7 +21,22 @@ using Retro;
 namespace RetroGtk {
 
 public class ControllerHandler : Object, Retro.InputHandler {
-	public weak Core core { set; get; }
+	public weak Core _core;
+	public weak Core core {
+		get { return _core; }
+		set {
+			if (_core != null)
+				_core.input_handler = null;
+
+			_core = value;
+
+			if (_core != null && _core.input_handler != this) {
+				_core.input_handler = this;
+				init_core ();
+			}
+		}
+	}
+
 	private HashTable<uint?, ControllerDevice> controller_devices;
 
 	construct {
@@ -54,7 +69,8 @@ public class ControllerHandler : Object, Retro.InputHandler {
 			controller_devices.insert (port, device);
 		}
 
-		core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
+		if (core != null)
+			core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
 	}
 
 	public void remove_controller_device (uint port) {
@@ -62,7 +78,14 @@ public class ControllerHandler : Object, Retro.InputHandler {
 			controller_devices.remove (port);
 		}
 
-		core.set_controller_port_device (port, DeviceType.NONE);
+		if (core != null)
+			core.set_controller_port_device (port, DeviceType.NONE);
+	}
+
+	public void init_core () {
+		foreach (var port in controller_devices.get_keys ()) {
+			core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
+		}
 	}
 }
 

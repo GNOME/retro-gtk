@@ -47,12 +47,28 @@ public class Option : Object {
 	}
 }
 
-public class OptionsHandler: Object {
+public class OptionsHandler: Object, VariablesHandler {
+	public weak Core _core;
+	public weak Core core {
+		get { return _core; }
+		set {
+			if (_core != null)
+				_core.variables_handler = null;
+
+			_core = value;
+
+			if (_core != null && _core.variables_handler != this)
+				_core.variables_handler = this;
+		}
+	}
+
 	private HashTable<string,Option> table;
 
 	public signal void value_changed (string key);
+	private bool update;
 
-	public OptionsHandler () {
+	construct {
+		update = false;
 		table = new HashTable<string,Option> (str_hash, str_equal);
 	}
 
@@ -65,11 +81,13 @@ public class OptionsHandler: Object {
 	public void insert (owned string key, owned Variable value) {
 		table.insert (key, new Option (value));
 		value_changed (key);
+		update = true;
 	}
 
 	public void set_option (owned string key, owned string value) {
 		table[key].current = value;
 		value_changed (key);
+		update = true;
 	}
 
 	public bool contains (string key) {
@@ -122,6 +140,22 @@ public class OptionsHandler: Object {
 
 	public uint size () {
 		return table.size ();
+	}
+
+	public string? get_variable (string key) {
+		return lookup (key);
+	}
+
+	public void set_variable (Variable[] variables) {
+		insert_multiple (variables);
+	}
+
+	public bool get_variable_update () {
+		if (update) {
+			update = false;
+			return true;
+		}
+		return false;
 	}
 }
 

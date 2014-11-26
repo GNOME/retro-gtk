@@ -18,10 +18,24 @@
 
 using Clutter;
 
+using Retro;
+
 namespace RetroGtk {
 
 public class Display : GtkClutter.Embed, Retro.VideoHandler {
-	public weak Retro.Core core { set; get; }
+	public weak Core _core;
+	public weak Core core {
+		get { return _core; }
+		set {
+			if (_core != null)
+				_core.video_handler = null;
+
+			_core = value;
+
+			if (_core != null && _core.video_handler != this)
+				_core.video_handler = this;
+		}
+	}
 
 	private Texture texture;
 

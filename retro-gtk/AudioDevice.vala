@@ -18,9 +18,25 @@
 
 using PulseAudio;
 
+using Retro;
+
 namespace RetroGtk {
 
 public class AudioDevice : GLib.Object, Retro.AudioHandler {
+	public weak Core _core;
+	public weak Core core {
+		get { return _core; }
+		set {
+			if (_core != null)
+				_core.audio_handler = null;
+
+			_core = value;
+
+			if (_core != null && _core.audio_handler != this)
+				_core.audio_handler = this;
+		}
+	}
+
 	private GLibMainLoop      loop;
 	private Context           context;
 	private Context.Flags     context_flags;

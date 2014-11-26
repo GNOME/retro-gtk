@@ -146,9 +146,47 @@ public class Core : Object, Environment {
 	 */
 	public bool game_loaded { private set; get; default = false; }
 
-	public VideoHandler video_handler { get; construct set; }
-	public AudioHandler audio_handler { get; construct set; }
-	public InputHandler input_handler { get; construct set; }
+	private VideoHandler _video_handler;
+	public VideoHandler video_handler {
+		get { return _video_handler; }
+		construct set {
+			if (_video_handler != null)
+				_video_handler.core = null;
+
+			_video_handler = value;
+
+			if (_video_handler != null && _video_handler.core != this)
+				_video_handler.core = this;
+		}
+	}
+
+	private AudioHandler _audio_handler;
+	public AudioHandler audio_handler {
+		get { return _audio_handler; }
+		construct set {
+			if (_audio_handler != null)
+				_audio_handler.core = null;
+
+			_audio_handler = value;
+
+			if (_audio_handler != null && _audio_handler.core != this)
+				_audio_handler.core = this;
+		}
+	}
+
+	private InputHandler _input_handler;
+	public InputHandler input_handler {
+		get { return _input_handler; }
+		construct set {
+			if (_input_handler != null)
+				_input_handler.core = null;
+
+			_input_handler = value;
+
+			if (_input_handler != null && _input_handler.core != this)
+				_input_handler.core = this;
+		}
+	}
 
 
 

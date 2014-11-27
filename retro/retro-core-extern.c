@@ -20,6 +20,7 @@
 
 #include "retro-gobject-internal.h"
 #include "retro-core-interfaces.h"
+#include "retro-video-handler.h"
 #include "retro-variables-handler.h"
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
@@ -128,20 +129,13 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 
 	switch (cmd) {
 		case RETRO_ENVIRONMENT_COMMAND_SET_ROTATION:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_rotation (interface, *((RetroRotation *) data));
-			return TRUE;
+			return retro_environment_set_rotation (retro_core_get_video_handler (self), (RetroRotation *) data);
 
-		case RETRO_ENVIRONMENT_COMMAND_GET_OVERSCAN: {
-			gboolean *overscan = (gboolean *) data;
-			*(overscan) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_overscan (interface);
-			return TRUE;
-		}
+		case RETRO_ENVIRONMENT_COMMAND_GET_OVERSCAN:
+			return retro_environment_get_overscan (retro_core_get_video_handler (self), (gboolean *) data);
 
-		case RETRO_ENVIRONMENT_COMMAND_GET_CAN_DUPE: {
-			gboolean *can_dupe = (gboolean *) data;
-			*(can_dupe) = RETRO_ENVIRONMENT_GET_INTERFACE (interface)->get_can_dupe (interface);
-			return TRUE;
-		}
+		case RETRO_ENVIRONMENT_COMMAND_GET_CAN_DUPE:
+			return retro_environment_get_can_dupe (retro_core_get_video_handler (self), (gboolean *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_MESSAGE: {
 			gboolean result = FALSE;
@@ -166,8 +160,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_PIXEL_FORMAT:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_pixel_format (interface, *((RetroPixelFormat *) data));
-			return TRUE;
+			return retro_environment_set_pixel_format (retro_core_get_video_handler (self), (RetroPixelFormat *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS: {
 			RetroInputDescriptor *array = (RetroInputDescriptor *) data;

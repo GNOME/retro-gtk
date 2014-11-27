@@ -22,18 +22,14 @@ public interface Environment: Object {
 	public signal bool shutdown ();
 	public signal bool message (Message message);
 
-	public abstract bool overscan { set; get; default = true; }
-	public abstract bool can_dupe { set; get; default = false; }
 	public signal uint64 get_input_device_capabilities ();
 	public abstract string system_directory { set; get; default = "."; }
 	public abstract string libretro_path { set; get; default = "."; }
 	public abstract string content_directory { set; get; default = "."; }
 	public abstract string save_directory { set; get; default = "."; }
 
-	public abstract Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public abstract bool support_no_game { protected set; get; default = false; }
 	public abstract PerfLevel performance_level { protected set; get; }
-	public abstract PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
 	public abstract InputDescriptor[] input_descriptors { protected set; get; }
 	public abstract SystemAvInfo? system_av_info { protected set; get; default = null; }
 

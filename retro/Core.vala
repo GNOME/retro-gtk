@@ -68,17 +68,13 @@ public class Core : Object, Environment {
 
 	// Implementation of environment properties
 
-	public bool overscan { set; get; default = true; }
-	public bool can_dupe { set; get; default = false; }
 	public string system_directory { set; get; default = "."; }
 	public string libretro_path { set; get; default = "."; }
 	public string content_directory { set; get; default = "."; }
 	public string save_directory { set; get; default = "."; }
 
-	public Rotation rotation { protected set; get; default = Rotation.NONE; }
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
-	public PixelFormat pixel_format { protected set; get; default = PixelFormat.ORGB1555; }
 	public InputDescriptor[] input_descriptors { protected set; get; }
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 

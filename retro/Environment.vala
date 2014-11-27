@@ -22,7 +22,7 @@ public interface Environment: Object {
 	public signal bool shutdown ();
 	public signal bool message (Message message);
 
-	public signal uint64 get_input_device_capabilities ();
+
 	public abstract string system_directory { set; get; default = "."; }
 	public abstract string libretro_path { set; get; default = "."; }
 	public abstract string content_directory { set; get; default = "."; }
@@ -30,10 +30,7 @@ public interface Environment: Object {
 
 	public abstract bool support_no_game { protected set; get; default = false; }
 	public abstract PerfLevel performance_level { protected set; get; }
-	public abstract InputDescriptor[] input_descriptors { protected set; get; }
 	public abstract SystemAvInfo? system_av_info { protected set; get; default = null; }
-
-	public abstract KeyboardCallback? keyboard_callback { protected set; get; default = null; }
 
 	/**
 	 * If set, the {@link Core} can swap out multiple disk images in runtime.

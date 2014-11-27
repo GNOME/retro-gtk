@@ -75,10 +75,8 @@ public class Core : Object, Environment {
 
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
-	public InputDescriptor[] input_descriptors { protected set; get; }
 	public SystemAvInfo? system_av_info { protected set; get; default = null; }
 
-	public KeyboardCallback? keyboard_callback { protected set; get; default = null; }
 	public DiskController? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }
 	public AudioInput? audio_input_callback { protected set; get; default = null; }

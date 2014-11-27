@@ -21,6 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "retro-core-interfaces.h"
 #include "retro-video-handler.h"
+#include "retro-input-handler.h"
 #include "retro-variables-handler.h"
 
 gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironment *interface, RetroEnvironmentCommand cmd, gpointer data);
@@ -162,19 +163,11 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		case RETRO_ENVIRONMENT_COMMAND_SET_PIXEL_FORMAT:
 			return retro_environment_set_pixel_format (retro_core_get_video_handler (self), (RetroPixelFormat *) data);
 
-		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS: {
-			RetroInputDescriptor *array = (RetroInputDescriptor *) data;
-
-			int length;
-			for (length = 0 ; array[length].description ; length++);
-
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_input_descriptors (interface, array, length);
-			return TRUE;
-		}
+		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS:
+			return retro_environment_set_input_desciptors (retro_core_get_input_handler (self), (RetroInputDescriptor *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_KEYBOARD_CALLBACK:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_keyboard_callback (interface, (RetroKeyboardCallback *) data);
-			return TRUE;
+			return retro_environment_set_keyboard_callback (retro_core_get_input_handler (self), (RetroKeyboardCallback *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_DISK_CONTROL_INTERFACE: {
 			RetroCoreDiskController* callback = retro_core_disk_controller_new ((RetroCoreDiskControllerCallback *) data);
@@ -219,12 +212,8 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 
-		case RETRO_ENVIRONMENT_COMMAND_GET_INPUT_DEVICE_CAPABILITIES: {
-			guint64 *input_device_capabilities = (guint64 *) data;
-			g_signal_emit_by_name ((RetroEnvironment*) interface, "get-input-device-capabilities", input_device_capabilities);
-
-			return *input_device_capabilities != 0;
-		}
+		case RETRO_ENVIRONMENT_COMMAND_GET_INPUT_DEVICE_CAPABILITIES:
+			return retro_environment_get_input_device_capabilities (retro_core_get_input_handler (self), (guint64 *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_GET_CONTENT_DIRECTORY: {
 			const gchar **directory = (const gchar **) data;

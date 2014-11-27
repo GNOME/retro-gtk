@@ -37,6 +37,8 @@ public class ControllerHandler : Object, Retro.InputHandler {
 		}
 	}
 
+	public KeyboardCallback? keyboard_callback { set; get; }
+
 	private HashTable<uint?, ControllerDevice> controller_devices;
 
 	construct {
@@ -58,6 +60,15 @@ public class ControllerHandler : Object, Retro.InputHandler {
 			}
 		}
 
+		return 0;
+	}
+
+	public void set_descriptors (InputDescriptor[] input_descriptors) {
+		// TODO
+	}
+
+	public uint64 get_device_capabilities () {
+		// TODO
 		return 0;
 	}
 

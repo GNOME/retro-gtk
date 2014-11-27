@@ -39,8 +39,10 @@ public class Core : Object, Environment {
 	 */
 	public uint api_version {
 		get {
-			set_cb_data ();
-			return module.api_version ();
+			push_cb_data ();
+			var result = module.api_version ();
+			pop_cb_data ();
+			return result;
 		}
 	}
 
@@ -49,9 +51,10 @@ public class Core : Object, Environment {
 	 */
 	public SystemInfo system_info {
 		get {
-			set_cb_data ();
+			push_cb_data ();
 			unowned SystemInfo info;
 			module.get_system_info (out info);
+			pop_cb_data ();
 			return info;
 		}
 	}
@@ -61,8 +64,10 @@ public class Core : Object, Environment {
 	 */
 	public Region region {
 		get {
-			set_cb_data ();
-			return game_loaded ? module.get_region () : Region.UNKNOWN;
+			push_cb_data ();
+			var result = game_loaded ? module.get_region () : Region.UNKNOWN;
+			pop_cb_data ();
+			return result;
 		}
 	}
 
@@ -103,7 +108,8 @@ public class Core : Object, Environment {
 	 *
 	 * Must be called before any call to a function from the module.
 	 */
-	private extern void set_cb_data ();
+	private extern void push_cb_data ();
+	private extern void pop_cb_data ();
 
 	/*
 	 * Get a callback that can be passed to the module.
@@ -213,12 +219,13 @@ public class Core : Object, Environment {
 	construct {
 		module = new Module (file_name);
 
-		set_cb_data ();
+		push_cb_data ();
 		module.set_video_refresh (get_module_video_refresh_cb ());
 		module.set_audio_sample (get_module_audio_sample_cb ());
 		module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
 		module.set_input_poll (get_module_input_poll_cb ());
 		module.set_input_state (get_module_input_state_cb ());
+		pop_cb_data ();
 	}
 
 	~Core () {
@@ -233,17 +240,19 @@ public class Core : Object, Environment {
 	 * initialized.
 	 */
 	public void init () {
-		set_cb_data ();
+		push_cb_data ();
 		module.set_environment (get_module_environment_interface ());
 		module.init ();
+		pop_cb_data ();
 	}
 
 	/**
 	 * Deinitialize the module.
 	 */
 	private void deinit () {
-		set_cb_data ();
+		push_cb_data ();
 		module.deinit ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -261,7 +270,7 @@ public class Core : Object, Environment {
 	 * @return information on the system audio/video timings and geometry
 	 */
 	private void set_system_av_info (bool valid) {
-		set_cb_data ();
+		push_cb_data ();
 		if (valid) {
 			SystemAvInfo info;
 			module.get_system_av_info (out info);
@@ -271,6 +280,7 @@ public class Core : Object, Environment {
 		else {
 			system_av_info = null;
 		}
+		pop_cb_data ();
 	}
 
 	/**
@@ -280,16 +290,18 @@ public class Core : Object, Environment {
 	 * @param device the type of the device connected
 	 */
 	public void set_controller_port_device (uint port, DeviceType device) {
-		set_cb_data ();
+		push_cb_data ();
 		module.set_controller_port_device (port, device);
+		pop_cb_data ();
 	}
 
 	/**
 	 * Resets the current game.
 	 */
 	public void reset () {
-		set_cb_data ();
+		push_cb_data ();
 		module.reset ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -307,8 +319,9 @@ public class Core : Object, Environment {
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {
-		set_cb_data ();
+		push_cb_data ();
 		module.run ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -323,8 +336,11 @@ public class Core : Object, Environment {
 	 * @return the size needed to serialize the internal state
 	 */
 	public size_t serialize_size () {
-		set_cb_data ();
-		return module.serialize_size ();
+		push_cb_data ();
+		var result = module.serialize_size ();
+		pop_cb_data ();
+
+		return result;
 	}
 
 	/**
@@ -337,8 +353,11 @@ public class Core : Object, Environment {
 	 * @return false if the serialization failed, true otherwise
 	 */
 	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
-		set_cb_data ();
-		return module.serialize (out data);
+		push_cb_data ();
+		var result = module.serialize (out data);
+		pop_cb_data ();
+
+		return result;
 	}
 
 	/**
@@ -348,8 +367,11 @@ public class Core : Object, Environment {
 	 * @return false if the unserialization failed, true otherwise
 	 */
 	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
-		set_cb_data ();
-		return module.unserialize (data);
+		push_cb_data ();
+		var result = module.unserialize (data);
+		pop_cb_data ();
+
+		return result;
 	}
 
 	/**
@@ -357,8 +379,9 @@ public class Core : Object, Environment {
 	 */
 	[Deprecated (since = "1.0")]
 	public void cheat_reset () {
-		set_cb_data ();
+		push_cb_data ();
 		module.cheat_reset ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -370,8 +393,9 @@ public class Core : Object, Environment {
 	 */
 	[Deprecated (since = "1.0")]
 	public void cheat_set (uint index, bool enabled, string code) {
-		set_cb_data ();
+		push_cb_data ();
 		module.cheat_set (index, enabled, code);
+		pop_cb_data ();
 	}
 
 	/**
@@ -383,10 +407,10 @@ public class Core : Object, Environment {
 	public bool load_game (GameInfo game) {
 		if (game_loaded) unload_game ();
 
-		set_cb_data ();
+		push_cb_data ();
 		game_loaded = module.load_game (game);
-
 		set_system_av_info (game_loaded);
+		pop_cb_data ();
 
 		return game_loaded;
 	}
@@ -402,10 +426,10 @@ public class Core : Object, Environment {
 	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info) {
 		if (game_loaded) unload_game ();
 
-		set_cb_data ();
+		push_cb_data ();
 		game_loaded = module.load_game_special (game_type, info);
-
 		set_system_av_info (game_loaded);
+		pop_cb_data ();
 
 		return game_loaded;
 	}
@@ -414,8 +438,9 @@ public class Core : Object, Environment {
 	 * Unloads a currently loaded game.
 	 */
 	private void unload_game () {
-		set_cb_data ();
+		push_cb_data ();
 		module.unload_game ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -425,9 +450,11 @@ public class Core : Object, Environment {
 	 * @return the region of memory
 	 */
 	public uint8[] get_memory (MemoryType id) {
-		set_cb_data ();
+		push_cb_data ();
 		var data = (uint8[]) module.get_memory_data (id);
 		data.length = (int) module.get_memory_size (id);
+		pop_cb_data ();
+
 		return data;
 	}
 }

@@ -18,13 +18,35 @@
 
 #include "retro-core-cb-data.h"
 
-static _Thread_local void *cb_data;
+#include <glib.h>
 
-void retro_core_set_cb_data (void *self) {
-	cb_data = (void *) self;
+#define RETRO_CORE_CB_DATA_STACK_SIZE 32
+
+static _Thread_local void *cb_data[RETRO_CORE_CB_DATA_STACK_SIZE];
+static _Thread_local int i = 0;
+
+void retro_core_push_cb_data (void *self) {
+	if (i == RETRO_CORE_CB_DATA_STACK_SIZE) {
+		g_printerr ("Error: RetroCore callback data stack overflow.\n");
+		g_assert_not_reached ();
+	}
+	cb_data[i] = self;
+	i++;
+}
+
+void retro_core_pop_cb_data (void *self) {
+	if (i == 0) {
+		g_printerr ("Error: RetroCore callback data stack underflow.\n");
+		g_assert_not_reached ();
+	}
+	i--;
 }
 
 void *retro_core_get_cb_data () {
-	return cb_data;
+	if (i == 0) {
+		g_printerr ("Error: RetroCore callback data segmentation fault.\n");
+		g_assert_not_reached ();
+	}
+	return cb_data[i - 1];
 }
 

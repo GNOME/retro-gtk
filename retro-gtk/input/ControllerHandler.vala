@@ -25,8 +25,7 @@ public class ControllerHandler : Object, Retro.InputHandler {
 	public weak Core core {
 		get { return _core; }
 		set {
-			if (_core != null)
-				_core.input_handler = null;
+			if (_core == value) return;
 
 			_core = value;
 

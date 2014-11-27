@@ -27,8 +27,7 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 	public weak Core core {
 		get { return _core; }
 		set {
-			if (_core != null)
-				_core.video_handler = null;
+			if (_core == value) return;
 
 			_core = value;
 

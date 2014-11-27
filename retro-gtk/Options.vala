@@ -52,8 +52,7 @@ public class OptionsHandler: Object, VariablesHandler {
 	public weak Core core {
 		get { return _core; }
 		set {
-			if (_core != null)
-				_core.variables_handler = null;
+			if (_core == value) return;
 
 			_core = value;
 

@@ -27,8 +27,7 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 	public weak Core core {
 		get { return _core; }
 		set {
-			if (_core != null)
-				_core.audio_handler = null;
+			if (_core == value) return;
 
 			_core = value;
 

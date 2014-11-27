@@ -1,5 +1,4 @@
-/* AudioDevice.vala  A simple sound player.
- * Copyright (C) 2014  Adrien Plazas
+/* Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,36 +21,18 @@ using Retro;
 
 namespace RetroGtk {
 
-public class AudioDevice : GLib.Object, Retro.AudioHandler {
-	public weak Core _core;
-	public weak Core core {
-		get { return _core; }
-		set {
-			if (_core == value) return;
-
-			_core = value;
-
-			if (_core != null && _core.audio_handler != this)
-				_core.audio_handler = this;
-		}
-	}
-
+public class AudioPlayer : GLib.Object {
 	private GLibMainLoop      loop;
 	private Context           context;
 	private Context.Flags     context_flags;
 	private SampleSpec        spec;
 	private Stream.BufferAttr attr;
 
-	public uint32 sample_rate { construct; get; }
 
 	private bool started;
 	private Stream? stream = null;
 
-	public AudioDevice (uint32 sample_rate = 44100) {
-		Object (sample_rate: sample_rate);
-	}
-
-	construct {
+	public AudioPlayer (uint32 sample_rate = 44100) {
 		spec = SampleSpec () {
 			format   = SampleFormat.S16NE,
 			rate     = sample_rate,
@@ -61,27 +42,16 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 		started = false;
 	}
 
-	private void play_sample (int16 left, int16 right) {
-//		var audio_samples = new AudioSamples.from_sample (left, right, system_av_info.timing.sample_rate);
-		play ({ left, right });
-	}
-
-	private size_t play_batch (int16[] data, size_t frames) {
-//		var audio_samples = new AudioSamples (data, system_av_info.timing.sample_rate);
-		play (data);
-		return 0;
-	}
-
 	private void start () {
-		loop = new GLibMainLoop (); // there are other loops that can be used if you are not using glib/gtk main
+		loop = new GLibMainLoop ();
 
 		context = new Context (loop.get_api (), null);
 		context_flags = Context.Flags.NOFAIL;
 		context.set_state_callback (cstate_cb);
 
 		// Connect the context
-		if (context.connect ( null, context_flags, null) < 0) {
-			print ( "pa_context_connect () failed: %s\n", PulseAudio.strerror (context.errno ()));
+		if (context.connect (null, context_flags, null) < 0) {
+			stderr.printf ("Error: pa_context_connect () failed: %s\n", PulseAudio.strerror (context.errno ()));
 		}
 
 		started = true;
@@ -100,16 +70,15 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 			//Stream stream = new Stream (context, "", spec);
 			stream = new Stream (context, "", spec);
 			stream.set_overflow_callback (() => {
-				//print ("AudioDevice: stream overflow...\n");
+				stderr.printf ("Error: Stream overflow...\n");
 			});
 			stream.set_underflow_callback (() => {
-				//print ("AudioDevice: stream underflow...\n");
+				stderr.printf ("Error: Stream underflow...\n");
 			});
 
 			size_t fs = spec.frame_size ();
 			// Don't fix things more than necessary
-			if ( (fragment_size % fs) == 0 && n_fragments >= 2 && fragment_size > 0) {
-				print ("something went wrong\n");
+			if ((fragment_size % fs) == 0 && n_fragments >= 2 && fragment_size > 0) {
 				return ;
 			}
 
@@ -130,8 +99,6 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 					fragment_size = 1024;
 			}
 
-			print ("fragment_size: %s, n_fragments: %s, fs: %s\n", fragment_size.to_string (), n_fragments.to_string (), fs.to_string ());
-
 			attr.maxlength = (uint32) (fragment_size * (n_fragments+1));
 			attr.tlength = (uint32) (fragment_size * n_fragments);
 			attr.prebuf = (uint32) fragment_size;
@@ -139,8 +106,8 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 
 			int tmp = stream.connect_playback (null, attr, flags, null, null);
 			if (tmp < 0 ) {
-				print ("connect_playback returned %s\n", tmp.to_string ());
-				print (": pa_stream_connect_playback () failed: %s\n", PulseAudio.strerror (context.errno () ));
+				stderr.printf ("Error: Connect_playback returned %s\n", tmp.to_string ());
+				stderr.printf ("Error: pa_stream_connect_playback () failed: %s\n", PulseAudio.strerror (context.errno () ));
 			}
 		}
 	}

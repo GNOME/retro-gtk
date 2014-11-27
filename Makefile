@@ -39,7 +39,8 @@ FILES= \
 	input/KeyboardGamepadAdapter.vala \
 	input/KeyboardGamepadConfiguration.vala \
 	input/KeyboardGamepadConfigurationDialog.vala \
-	AudioDevice.vala \
+	audio/AudioDevice.vala \
+	audio/AudioPlayer.vala \
 	Display.vala \
 	FileStreamLogger.vala \
 	Options.vala \

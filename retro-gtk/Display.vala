@@ -39,11 +39,10 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 
 	private Texture texture;
 
-	public Retro.PixelFormat pixel_format {
-		get {
-			return core.pixel_format;
-		}
-	}
+	public Rotation rotation { get; set; default = Rotation.NONE; }
+	public bool overscan { get; set; default = false; }
+	public bool can_dupe { get; set; default = false; }
+	public Retro.PixelFormat pixel_format { get; set; default = PixelFormat.ORGB1555; }
 
 	construct {
 		var stage = get_stage ();
@@ -80,6 +79,10 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 
 		texture.set_cogl_texture (cogl_tex);
 	}
+
+//	public void set_pixel_format (PixelFormat pixel_format) {
+//		this.pixel_format = pixel_format;
+//	}
 
 	private void on_size_allocate (Gtk.Allocation allocation) {
 		double display_ratio = (double) 4 / 3;

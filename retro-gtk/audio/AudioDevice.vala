@@ -53,6 +53,10 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 		Object (sample_rate: sample_rate);
 	}
 
+	construct {
+		audio_player = new AudioPlayer ();
+	}
+
 	private uint32 _sample_rate;
 	public uint32 sample_rate {
 		get { return _sample_rate; }
@@ -61,7 +65,7 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 
 			_sample_rate = value;
 
-			audio_player = new AudioPlayer (value);
+			audio_player.set_sample_rate (value);
 		}
 		default = 44100;
 	}

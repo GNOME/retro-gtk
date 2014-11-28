@@ -21,12 +21,10 @@ using Retro;
 
 namespace RetroGtk {
 
-public class AudioPlayer : GLib.Object {
+private class AudioPlayer : GLib.Object {
 	private GLibMainLoop      loop;
 	private Context           context;
-	private Context.Flags     context_flags;
 	private SampleSpec        spec;
-	private Stream.BufferAttr attr;
 
 
 	private bool started;
@@ -42,11 +40,13 @@ public class AudioPlayer : GLib.Object {
 		started = false;
 	}
 
-	private void start () {
+	construct {
 		loop = new GLibMainLoop ();
+	}
 
+	private void start () {
 		context = new Context (loop.get_api (), null);
-		context_flags = Context.Flags.NOFAIL;
+		var context_flags = Context.Flags.NOFAIL;
 		context.set_state_callback (cstate_cb);
 
 		// Connect the context
@@ -57,10 +57,19 @@ public class AudioPlayer : GLib.Object {
 		started = true;
 	}
 
+	private void stop () {
+		if (!started) return;
+
+		context = null;
+		stream = null;
+
+		started = false;
+	}
+
 	// state callback, don't connect_playback until we are ready here.
 	private void cstate_cb (Context context) {
 		if (context.get_state () == Context.State.READY) {
-			attr = Stream.BufferAttr ();
+			var attr = Stream.BufferAttr ();
 
 			size_t fragment_size = 0;
 			size_t n_fragments   = 0;
@@ -122,6 +131,12 @@ public class AudioPlayer : GLib.Object {
 			stream.write (buffer, bytes);
 		}
 	}
+
+	public void set_sample_rate (uint32 sample_rate) {
+		stop ();
+		spec.rate = sample_rate;
+	}
+
 }
 
 }

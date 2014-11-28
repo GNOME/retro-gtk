@@ -33,6 +33,8 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		if (cb_data) {
 			if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
 
+			if (video_handler_command (retro_core_get_video_handler (cb_data), cmd, data)) return TRUE;
+
 			return retro_core_dispatch_environment_command (cb_data, RETRO_ENVIRONMENT (cb_data), cmd, data);
 		}
 
@@ -129,15 +131,6 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 	if (!self || !interface || !data) return FALSE;
 
 	switch (cmd) {
-		case RETRO_ENVIRONMENT_COMMAND_SET_ROTATION:
-			return retro_environment_set_rotation (retro_core_get_video_handler (self), (RetroRotation *) data);
-
-		case RETRO_ENVIRONMENT_COMMAND_GET_OVERSCAN:
-			return retro_environment_get_overscan (retro_core_get_video_handler (self), (gboolean *) data);
-
-		case RETRO_ENVIRONMENT_COMMAND_GET_CAN_DUPE:
-			return retro_environment_get_can_dupe (retro_core_get_video_handler (self), (gboolean *) data);
-
 		case RETRO_ENVIRONMENT_COMMAND_SET_MESSAGE: {
 			gboolean result = FALSE;
 			g_signal_emit_by_name ((RetroEnvironment*) interface, "set-message", (RetroMessage *) data, &result);
@@ -160,9 +153,6 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			return TRUE;
 		}
 
-		case RETRO_ENVIRONMENT_COMMAND_SET_PIXEL_FORMAT:
-			return retro_environment_set_pixel_format (retro_core_get_video_handler (self), (RetroPixelFormat *) data);
-
 		case RETRO_ENVIRONMENT_COMMAND_SET_INPUT_DESCRIPTORS:
 			return retro_environment_set_input_desciptors (retro_core_get_input_handler (self), (RetroInputDescriptor *) data);
 
@@ -172,12 +162,6 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		case RETRO_ENVIRONMENT_COMMAND_SET_DISK_CONTROL_INTERFACE: {
 			RetroCoreDiskController* callback = retro_core_disk_controller_new ((RetroCoreDiskControllerCallback *) data);
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_disk_control_interface (interface, RETRO_DISK_CONTROLLER (callback));
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_COMMAND_SET_HW_RENDER: {
-			RetroCoreHardwareRender* callback = retro_core_hardware_render_new ((RetroCoreHardwareRenderCallback *) data);
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_hw_render (interface, RETRO_HARDWARE_RENDER (callback));
 			return TRUE;
 		}
 

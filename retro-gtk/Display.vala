@@ -30,6 +30,7 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 			if (_core == value) return;
 
 			_core = value;
+			pixel_format = PixelFormat.ORGB1555;
 
 			if (_core != null && _core.video_handler != this)
 				_core.video_handler = this;

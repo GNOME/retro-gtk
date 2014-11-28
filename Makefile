@@ -38,8 +38,6 @@ FILES= \
 	CoreDelegates.vala \
 	Device.vala \
 	DiskController.vala \
-	Environment.vala \
-	EnvironmentCommand.vala \
 	FrameTime.vala \
 	GameInfo.vala \
 	GameType.vala \

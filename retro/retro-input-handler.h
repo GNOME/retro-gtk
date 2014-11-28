@@ -19,31 +19,40 @@
 #define __RETRO_INPUT_HANDLER_H__
 
 #include "retro-gobject-internal.h"
+#include "libretro-environment.h"
 
-inline gboolean retro_environment_set_input_desciptors (RetroInputHandler *self, const RetroInputDescriptor *descriptors) {
-	if (!self) g_return_val_if_reached (FALSE);
+inline gboolean input_handler_command (RetroInputHandler *self, unsigned cmd, gpointer data) {
+	if (!self) return FALSE;
 
+	switch (cmd) {
+		case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
+			return set_input_desciptors (self, (RetroInputDescriptor *) data);
+
+		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
+			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+			return get_input_device_capabilities (self, (guint64 *) data);
+
+		default:
+			return FALSE;
+	}
+}
+
+inline gboolean set_input_desciptors (RetroInputHandler *self, const RetroInputDescriptor *descriptors) {
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
-
 	retro_input_handler_set_descriptors (self, descriptors, length);
-
 	return TRUE;
 }
 
-inline gboolean retro_environment_set_keyboard_callback (RetroInputHandler *self, const RetroKeyboardCallback *callback) {
-	if (!self) g_return_val_if_reached (FALSE);
-
+inline gboolean set_keyboard_callback (RetroInputHandler *self, const RetroKeyboardCallback *callback) {
 	retro_input_handler_set_keyboard_callback (self, callback);
-
 	return TRUE;
 }
 
-inline gboolean retro_environment_get_input_device_capabilities (RetroInputHandler *self, guint64 *capabilities) {
-	if (!self) g_return_val_if_reached (FALSE);
-
+inline gboolean get_input_device_capabilities (RetroInputHandler *self, guint64 *capabilities) {
 	*capabilities = retro_input_handler_get_device_capabilities (self);
-
 	return TRUE;
 }
 

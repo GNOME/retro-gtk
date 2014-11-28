@@ -30,7 +30,7 @@ public static const uint API_VERSION = 1;
  * In contrary to what the libretro API allows, multiple Cores can live in
  * the same process.
  */
-public class Core : Object, Environment {
+public class Core : Object {
 	/**
 	 * The version of libretro used by the module
 	 *
@@ -73,6 +73,9 @@ public class Core : Object, Environment {
 
 	// Implementation of environment properties
 
+	public signal bool shutdown ();
+	public signal bool message (Message message);
+
 	public string system_directory { set; get; default = "."; }
 	public string libretro_path { set; get; default = "."; }
 	public string content_directory { set; get; default = "."; }
@@ -87,11 +90,52 @@ public class Core : Object, Environment {
 	public AudioInput? audio_input_callback { protected set; get; default = null; }
 	public FrameTime? frame_time_callback { protected set; get; default = null; }
 
+	/**
+	 * The rumble interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Rumble rumble_interface { set; get; default = null; }
+
+	/**
+	 * The sensor interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Sensor sensor_interface { set; get; default = null; }
+
+	/**
+	 * The camera interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Camera camera_interface { set; get; default = null; }
+
+	/**
+	 * The logging interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Log log_interface { set; get; default = null; }
+
+	/**
+	 * The performance interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Performance performance_interface { set; get; default = null; }
+
+	/**
+	 * The location interface.
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link environment_interface}.
+	 */
 	public Location location_interface { set; get; default = null; }
 
 

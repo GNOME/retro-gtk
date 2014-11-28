@@ -21,6 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 #include "retro-core-interfaces.h"
+#include "retro-environment-core.h"
 #include "retro-video-handler.h"
 #include "retro-input-handler.h"
 #include "retro-variables-handler.h"
@@ -31,18 +32,15 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	gboolean real_cb (unsigned cmd, gpointer data) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
 
-		if (cb_data) {
-			if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
+		if (!cb_data) g_assert_not_reached ();
 
-			if (video_handler_command (retro_core_get_video_handler (cb_data), cmd, data)) return TRUE;
-			if (input_handler_command (retro_core_get_input_handler (cb_data), cmd, data)) return TRUE;
-			if (variables_handler_command (retro_core_get_variables_handler (cb_data), cmd, data)) return TRUE;
+		if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
 
-			return retro_core_dispatch_environment_command (cb_data, cmd, data);
-		}
+		if (video_handler_command (retro_core_get_video_handler (cb_data), cmd, data)) return TRUE;
+		if (input_handler_command (retro_core_get_input_handler (cb_data), cmd, data)) return TRUE;
+		if (variables_handler_command (retro_core_get_variables_handler (cb_data), cmd, data)) return TRUE;
 
-		g_assert_not_reached ();
-		return FALSE;
+		return core_environment_command (cb_data, cmd, data);
 	}
 
 	return real_cb;
@@ -130,77 +128,3 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 	return real_cb;
 }
 
-gboolean retro_core_dispatch_environment_command (RetroCore *self, unsigned cmd, gpointer data) {
-	if (!self) return FALSE;
-
-	switch (cmd) {
-		case RETRO_ENVIRONMENT_SET_MESSAGE: {
-			gboolean result = FALSE;
-			g_signal_emit_by_name (self, "set-message", (RetroMessage *) data, &result);
-			return result;
-		}
-
-		case RETRO_ENVIRONMENT_SHUTDOWN: {
-			gboolean result = FALSE;
-			g_signal_emit_by_name (self, "shutdown", &result);
-			return result;
-		}
-
-		case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
-			retro_core_set_performance_level (self, *((RetroPerfLevel *) data));
-			return TRUE;
-
-		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
-			const gchar **directory = (const gchar **) data;
-			*(directory) = retro_core_get_system_directory (self);
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: {
-			RetroCoreDiskController* callback = retro_core_disk_controller_new ((RetroCoreDiskControllerCallback *) data);
-			retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROLLER (callback));
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
-			retro_core_set_support_no_game (self, *((gboolean *) data));
-			return TRUE;
-
-		case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
-			const gchar **directory = (const gchar **) data;
-			*(directory) = retro_core_get_libretro_path (self);
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
-			RetroCoreAudioInput* callback = retro_core_audio_input_new ((RetroCoreAudioInputCallback *) data);
-			retro_core_set_audio_input_callback (self, RETRO_AUDIO_INPUT (callback));
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: {
-			RetroCoreFrameTime* callback = retro_core_frame_time_new ((RetroCoreFrameTimeCallback *) data);
-			retro_core_set_frame_time_callback (self, RETRO_FRAME_TIME (callback));
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY: {
-			const gchar **directory = (const gchar **) data;
-			*(directory) = retro_core_get_content_directory (self);
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
-			const gchar **directory = (const gchar **) data;
-			*(directory) = retro_core_get_save_directory (self);
-			return TRUE;
-		}
-
-		case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
-			retro_core_set_av_info (self, retro_av_info_new ((RetroSystemAvInfo *) data));
-			return TRUE;
-
-		default:
-			return FALSE;
-	}
-}

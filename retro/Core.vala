@@ -80,7 +80,7 @@ public class Core : Object, Environment {
 
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
-	public AvInfo av_info { private set; get; }
+	public AvInfo av_info { internal set; get; }
 
 	public DiskController? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }

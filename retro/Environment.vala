@@ -30,7 +30,6 @@ public interface Environment: Object {
 
 	public abstract bool support_no_game { protected set; get; default = false; }
 	public abstract PerfLevel performance_level { protected set; get; }
-	public abstract AvInfo av_info { protected set; get; }
 
 	/**
 	 * If set, the {@link Core} can swap out multiple disk images in runtime.

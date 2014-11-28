@@ -34,6 +34,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 			if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
 
 			if (video_handler_command (retro_core_get_video_handler (cb_data), cmd, data)) return TRUE;
+			if (variables_handler_command (retro_core_get_variables_handler (cb_data), cmd, data)) return TRUE;
 
 			return retro_core_dispatch_environment_command (cb_data, RETRO_ENVIRONMENT (cb_data), cmd, data);
 		}
@@ -164,15 +165,6 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_disk_control_interface (interface, RETRO_DISK_CONTROLLER (callback));
 			return TRUE;
 		}
-
-		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE:
-			return retro_environment_get_variable (retro_core_get_variables_handler (self), (RetroVariable *) data);
-
-		case RETRO_ENVIRONMENT_COMMAND_SET_VARIABLES:
-			return retro_environment_set_variables (retro_core_get_variables_handler (self), (RetroVariable *) data);
-
-		case RETRO_ENVIRONMENT_COMMAND_GET_VARIABLE_UPDATE:
-			return retro_environment_get_variable_update (retro_core_get_variables_handler (self), (gboolean *) data);
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_SUPPORT_NO_GAME:
 			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_support_no_game (interface, *((gboolean *) data));

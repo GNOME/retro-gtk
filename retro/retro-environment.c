@@ -20,13 +20,12 @@
 
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
-#include "retro-core-interfaces.h"
-#include "retro-environment-core.h"
-#include "retro-video-handler.h"
-#include "retro-input-handler.h"
-#include "retro-variables-handler.h"
 
-gboolean retro_core_dispatch_environment_command (RetroCore *self, unsigned cmd, gpointer data);
+#include "retro-environment-core.h"
+#include "retro-environment-video.h"
+#include "retro-environment-input.h"
+#include "retro-environment-variables.h"
+#include "retro-environment-interfaces.h"
 
 gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	gboolean real_cb (unsigned cmd, gpointer data) {
@@ -34,13 +33,19 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 
 		if (!cb_data) g_assert_not_reached ();
 
-		if (retro_core_set_callback_interfaces (cb_data, cmd, data)) return TRUE;
+		if (environment_video_command (retro_core_get_video_handler (cb_data), cmd, data))
+			return TRUE;
 
-		if (video_handler_command (retro_core_get_video_handler (cb_data), cmd, data)) return TRUE;
-		if (input_handler_command (retro_core_get_input_handler (cb_data), cmd, data)) return TRUE;
-		if (variables_handler_command (retro_core_get_variables_handler (cb_data), cmd, data)) return TRUE;
+		if (environment_input_command (retro_core_get_input_handler (cb_data), cmd, data))
+			return TRUE;
 
-		return core_environment_command (cb_data, cmd, data);
+		if (environment_variables_command (retro_core_get_variables_handler (cb_data), cmd, data))
+			return TRUE;
+
+		if (environment_interfaces_command (cb_data, cmd, data))
+			return TRUE;
+
+		return environment_core_command (cb_data, cmd, data);
 	}
 
 	return real_cb;

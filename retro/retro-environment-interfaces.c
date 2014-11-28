@@ -16,12 +16,14 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "retro-core-interfaces.h"
+#include "retro-environment-interfaces.h"
 #include "libretro-environment.h"
 
 #include "retro-core-cb-data.h"
 
-gboolean retro_core_set_callback_interfaces (RetroCore *self, unsigned cmd, gpointer data) {
+inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data) {
+	if (!self) return FALSE;
+
 	switch (cmd) {
 	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
 		return retro_core_set_rumble_callback (self, (RetroRumbleCallback *) data);
@@ -40,9 +42,8 @@ gboolean retro_core_set_callback_interfaces (RetroCore *self, unsigned cmd, gpoi
 	}
 }
 
-gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_rumble_interface (cb_data);
+inline gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
+	gboolean interface_exists = retro_core_get_rumble_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
@@ -61,9 +62,8 @@ gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *c
 	return TRUE;
 }
 
-gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_sensor_interface (cb_data);
+inline gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
+	gboolean interface_exists = retro_core_get_sensor_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
@@ -94,9 +94,8 @@ gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *c
 	return TRUE;
 }
 
-gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_camera_interface (cb_data);
+inline gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
+	gboolean interface_exists = retro_core_get_camera_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {
@@ -167,7 +166,7 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 		g_assert_not_reached ();
 	}
 
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+	RetroCamera *interface = retro_core_get_camera_interface (self);
 
 	cb->caps = RETRO_CAMERA_GET_INTERFACE (interface)->get_caps (interface);
 	cb->width = RETRO_CAMERA_GET_INTERFACE (interface)->get_width (interface);
@@ -182,9 +181,8 @@ gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *c
 	return TRUE;
 }
 
-gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_log_interface (cb_data);
+inline gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
+	gboolean interface_exists = retro_core_get_log_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_log (guint level, const char *format, ...) {
@@ -211,9 +209,8 @@ gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	return TRUE;
 }
 
-gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_performance_interface (cb_data);
+inline gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
+	gboolean interface_exists = retro_core_get_performance_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gint64 real_get_time_usec () {
@@ -304,9 +301,8 @@ gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceC
 	return TRUE;
 }
 
-gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	gboolean interface_exists = cb_data && retro_core_get_location_interface (cb_data);
+inline gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb) {
+	gboolean interface_exists = retro_core_get_location_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {

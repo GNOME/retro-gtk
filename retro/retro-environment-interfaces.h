@@ -65,14 +65,7 @@ typedef struct {
 	gpointer deinitialized;
 } RetroLocationCallback;
 
-gboolean retro_core_set_callback_interfaces (RetroCore *self, unsigned cmd, gpointer data);
-
-gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb);
-gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb);
-gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb);
-gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb);
-gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb);
-gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb);
+gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data);
 
 #endif
 

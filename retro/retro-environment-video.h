@@ -15,13 +15,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#ifndef __RETRO_VIDEO_HANDLER_H__
-#define __RETRO_VIDEO_HANDLER_H__
+#ifndef __RETRO_ENVIRONMENT_VIDEO_H__
+#define __RETRO_ENVIRONMENT_VIDEO_H__
 
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean video_handler_command (RetroVideoHandler *self, unsigned cmd, gpointer data) {
+inline gboolean environment_video_command (RetroVideoHandler *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {
@@ -38,8 +38,6 @@ inline gboolean video_handler_command (RetroVideoHandler *self, unsigned cmd, gp
 			return set_pixel_format (self, (RetroPixelFormat *) data);
 
 		case RETRO_ENVIRONMENT_SET_HW_RENDER:
-			return FALSE; // TODO
-
 		default:
 			return FALSE;
 	}

@@ -22,7 +22,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean core_environment_command (RetroCore *self, unsigned cmd, gpointer data) {
+inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {

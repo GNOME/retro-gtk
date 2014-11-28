@@ -69,8 +69,8 @@ FILES= \
 	VideoHandler.vala \
 	VariablesHandler.vala \
 	retro-core-cb-data.c \
-	retro-core-extern.c \
-	retro-core-interfaces.c \
+	retro-environment.c \
+	retro-environment-interfaces.c \
 	$(NULL)
 
 PKG= \

@@ -15,13 +15,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#ifndef __RETRO_INPUT_HANDLER_H__
-#define __RETRO_INPUT_HANDLER_H__
+#ifndef __RETRO_ENVIRONMENT_INPUT_H__
+#define __RETRO_ENVIRONMENT_INPUT_H__
 
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean input_handler_command (RetroInputHandler *self, unsigned cmd, gpointer data) {
+inline gboolean environment_input_command (RetroInputHandler *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {

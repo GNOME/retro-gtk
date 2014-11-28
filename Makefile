@@ -79,7 +79,7 @@ $(OUT): %: $(SRC)
 		--gir=$(GIR) \
 		-H $(@D)/$H \
 		-o $(SO) $(SRC) \
-		--vapidir=$(VAPI_DIR) $(PKG:%=--pkg=%) \
+		$(PKG:%=--pkg=%) \
 		-X -fPIC -X -shared \
 		$(VALAC_OPTIONS) \
 		$(NULL)

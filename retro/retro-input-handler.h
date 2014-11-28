@@ -15,6 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+#ifndef __RETRO_INPUT_HANDLER_H__
+#define __RETRO_INPUT_HANDLER_H__
+
 #include "retro-gobject-internal.h"
 
 inline gboolean retro_environment_set_input_desciptors (RetroInputHandler *self, const RetroInputDescriptor *descriptors) {
@@ -43,4 +46,6 @@ inline gboolean retro_environment_get_input_device_capabilities (RetroInputHandl
 
 	return TRUE;
 }
+
+#endif
 

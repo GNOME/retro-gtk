@@ -15,6 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+#ifndef __RETRO_VARIABLES_HANDLER_H__
+#define __RETRO_VARIABLES_HANDLER_H__
+
 #include "retro-gobject-internal.h"
 
 inline gboolean retro_environment_get_variable (RetroVariablesHandler *self, RetroVariable *variable) {
@@ -44,4 +47,6 @@ inline gboolean retro_environment_get_variable_update (RetroVariablesHandler *se
 
 	return TRUE;
 }
+
+#endif
 

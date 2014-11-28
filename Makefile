@@ -30,6 +30,8 @@ TYPELIB= RetroGtk-$(VERSION).typelib
 PKGCONF= $(PKGNAME).pc
 
 FILES= \
+	audio/AudioDevice.vala \
+	audio/AudioPlayer.vala \
 	input/ControllerDevice.vala \
 	input/ControllerHandler.vala \
 	input/GamepadButtonType.vala \
@@ -39,13 +41,11 @@ FILES= \
 	input/KeyboardGamepadAdapter.vala \
 	input/KeyboardGamepadConfiguration.vala \
 	input/KeyboardGamepadConfigurationDialog.vala \
-	audio/AudioDevice.vala \
-	audio/AudioPlayer.vala \
-	Display.vala \
+	video/Display.vala \
+	video/video-converter.c \
 	FileStreamLogger.vala \
 	Options.vala \
 	Runner.vala \
-	video-converter.c \
 	$(NULL)
 
 PKG= \

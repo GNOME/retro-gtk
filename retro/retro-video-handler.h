@@ -25,7 +25,7 @@ inline gboolean retro_environment_set_rotation (RetroVideoHandler *self, const R
 	return TRUE;
 }
 
-inline gboolean retro_environment_get_overscan (RetroVariablesHandler *self, gboolean *overcan) {
+inline gboolean retro_environment_get_overscan (RetroVideoHandler *self, gboolean *overcan) {
 	if (!self) g_assert_not_reached ();
 
 	*overcan = retro_video_handler_get_overscan (self);
@@ -33,7 +33,7 @@ inline gboolean retro_environment_get_overscan (RetroVariablesHandler *self, gbo
 	return TRUE;
 }
 
-inline gboolean retro_environment_get_can_dupe (RetroVariablesHandler *self, gboolean *can_dupe) {
+inline gboolean retro_environment_get_can_dupe (RetroVideoHandler *self, gboolean *can_dupe) {
 	if (!self) g_assert_not_reached ();
 
 	*can_dupe = retro_video_handler_get_can_dupe (self);

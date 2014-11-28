@@ -80,7 +80,7 @@ public class Core : Object, Environment {
 
 	public bool support_no_game { protected set; get; default = false; }
 	public PerfLevel performance_level { protected set; get; }
-	public SystemAvInfo? system_av_info { protected set; get; default = null; }
+	public AvInfo av_info { private set; get; }
 
 	public DiskController? disk_control_interface { protected set; get; default = null; }
 	public HardwareRender? hw_render { protected set; get; default = null; }
@@ -269,16 +269,15 @@ public class Core : Object, Environment {
 	 * @param valid whether the av_info is valid or not
 	 * @return information on the system audio/video timings and geometry
 	 */
-	private void set_system_av_info (bool valid) {
+	private void update_av_info (bool valid) {
 		push_cb_data ();
 		if (valid) {
 			SystemAvInfo info;
 			module.get_system_av_info (out info);
-			system_av_info = info;
-
+			av_info = new AvInfo (info);
 		}
 		else {
-			system_av_info = null;
+			av_info = null;
 		}
 		pop_cb_data ();
 	}
@@ -409,7 +408,7 @@ public class Core : Object, Environment {
 
 		push_cb_data ();
 		game_loaded = module.load_game (game);
-		set_system_av_info (game_loaded);
+		update_av_info (game_loaded);
 		pop_cb_data ();
 
 		return game_loaded;
@@ -428,7 +427,7 @@ public class Core : Object, Environment {
 
 		push_cb_data ();
 		game_loaded = module.load_game_special (game_type, info);
-		set_system_av_info (game_loaded);
+		update_av_info (game_loaded);
 		pop_cb_data ();
 
 		return game_loaded;

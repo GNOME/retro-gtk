@@ -21,26 +21,53 @@ namespace Retro {
 /**
  * Stores video geometry informations.
  */
-public struct GameGeometry {
+internal struct GameGeometry {
+	public uint base_width;
+	public uint base_height;
+	public uint max_width;
+	public uint max_height;
+	public float aspect_ratio;
+}
+
+/**
+ * Stores video and audio timing informations.
+ */
+internal struct SystemTiming {
+	public double fps;
+	public double sample_rate;
+}
+
+/**
+ * Stores video geometry and AV timing informations.
+ */
+internal struct SystemAvInfo {
+	public GameGeometry geometry;
+	public SystemTiming timing;
+}
+
+/**
+ * Stores video geometry and AV timing informations.
+ */
+public class AvInfo : Object {
 	/**
 	 * Nominal video width of game.
 	 */
-	public uint base_width;
+	public uint base_width { construct; get; }
 
 	/**
 	 * Nominal video height of game.
 	 */
-	public uint base_height;
+	public uint base_height { construct; get; }
 
 	/**
 	 * Maximum possible width of game.
 	 */
-	public uint max_width;
+	public uint max_width { construct; get; }
 
 	/**
 	 * Maximum possible height of game.
 	 */
-	public uint max_height;
+	public uint max_height { construct; get; }
 
 	/**
 	 * Nominal aspect ratio of game.
@@ -49,37 +76,29 @@ public struct GameGeometry {
 	 *
 	 * A frontend could override this setting if desired.
 	 */
-	public float aspect_ratio;
-}
+	public float aspect_ratio { construct; get; }
 
-/**
- * Stores video and audio timing informations.
- */
-public struct SystemTiming {
 	/**
 	 * FPS of video content.
 	 */
-	public double fps;
+	public double fps { construct; get; }
 
 	/**
 	 * Sampling rate of audio.
 	 */
-	public double sample_rate;
-}
+	public double sample_rate { construct; get; }
 
-/**
- * Stores video geometry and AV timing informations.
- */
-public struct SystemAvInfo {
-	/**
-	 * Video geometry informations.
-	 */
-	public GameGeometry geometry;
-
-	/**
-	 * Video and audio timing informations.
-	 */
-	public SystemTiming timing;
+	internal AvInfo (SystemAvInfo system_av_info) {
+		Object (
+			base_width: system_av_info.geometry.base_width,
+			base_height: system_av_info.geometry.base_height,
+			max_width: system_av_info.geometry.max_width,
+			max_height: system_av_info.geometry.max_height,
+			aspect_ratio: system_av_info.geometry.aspect_ratio,
+			fps: system_av_info.timing.fps,
+			sample_rate: system_av_info.timing.sample_rate
+		);
+	}
 }
 
 }

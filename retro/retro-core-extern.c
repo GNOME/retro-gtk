@@ -228,7 +228,7 @@ gboolean retro_core_dispatch_environment_command (RetroCore *self, RetroEnvironm
 		}
 
 		case RETRO_ENVIRONMENT_COMMAND_SET_SYSTEM_AV_INFO:
-			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_system_av_info (interface, (RetroSystemAvInfo *) data);
+			RETRO_ENVIRONMENT_GET_INTERFACE (interface)->set_av_info (interface, retro_av_info_new ((RetroSystemAvInfo *) data));
 			return TRUE;
 
 		default:

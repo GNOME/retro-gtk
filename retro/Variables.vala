@@ -17,7 +17,7 @@
 
 namespace Retro {
 
-public interface VariablesInterface : Object {
+public interface Variables : Object {
 	public abstract weak Core core { get; set; }
 
 	public abstract string? get_variable (string key);

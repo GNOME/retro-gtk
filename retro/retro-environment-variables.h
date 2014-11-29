@@ -21,7 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean environment_variables_command (RetroVariablesInterface *self, unsigned cmd, gpointer data) {
+inline gboolean environment_variables_command (RetroVariables *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {
@@ -39,21 +39,21 @@ inline gboolean environment_variables_command (RetroVariablesInterface *self, un
 	}
 }
 
-inline gboolean get_variable (RetroVariablesInterface *self, RetroVariable *variable) {
-	gchar *result = retro_variables_interface_get_variable (self, variable->key);
+inline gboolean get_variable (RetroVariables *self, RetroVariable *variable) {
+	gchar *result = retro_variables_get_variable (self, variable->key);
 	variable->value = result ? result : "";
 	return result ? TRUE : FALSE;
 }
 
-inline gboolean set_variables (RetroVariablesInterface *self, const RetroVariable *variables) {
+inline gboolean set_variables (RetroVariables *self, const RetroVariable *variables) {
 	int length;
 	for (length = 0 ; variables[length].key && variables[length].value ; length++);
-	retro_variables_interface_set_variable (self, variables, length);
+	retro_variables_set_variable (self, variables, length);
 	return TRUE;
 }
 
-inline gboolean get_variable_update (RetroVariablesInterface *self, gboolean *update) {
-	*update = retro_variables_interface_get_variable_update (self);
+inline gboolean get_variable_update (RetroVariables *self, gboolean *update) {
+	*update = retro_variables_get_variable_update (self);
 	return TRUE;
 }
 

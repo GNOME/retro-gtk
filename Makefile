@@ -54,8 +54,8 @@ FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
+	Variables.vala \
 	Video.vala \
-	VariablesInterface.vala \
 	retro-core-cb-data.c \
 	retro-environment.c \
 	retro-environment-interfaces.c \

@@ -204,8 +204,8 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	private VariablesInterface _variables_interface;
-	public VariablesInterface variables_interface {
+	private Variables _variables_interface;
+	public Variables variables_interface {
 		get { return _variables_interface; }
 		construct set {
 			if (_variables_interface != null)

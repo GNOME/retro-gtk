@@ -23,13 +23,6 @@ namespace Retro {
  */
 public static const uint API_VERSION = 1;
 
-/**
- * Handle a libretro module.
- *
- * Core can load a libretro module and handle is isolated from other cores.
- * In contrary to what the libretro API allows, multiple Cores can live in
- * the same process.
- */
 public class Core : Object {
 	/**
 	 * The version of libretro used by the module
@@ -47,7 +40,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Gets system information.
+	 * The system informations
 	 */
 	public SystemInfo system_info {
 		get {
@@ -60,7 +53,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Gets region of the loaded game.
+	 * The region of the loaded game
 	 */
 	public Region region {
 		get {
@@ -71,123 +64,58 @@ public class Core : Object {
 		}
 	}
 
-	// Implementation of environment properties
-
-	public signal bool shutdown ();
-	public signal bool message (Message message);
-
-	public string system_directory { set; get; default = "."; }
-	public string libretro_path { set; get; default = "."; }
-	public string content_directory { set; get; default = "."; }
-	public string save_directory { set; get; default = "."; }
-
-	public bool support_no_game { protected set; get; default = false; }
-	public PerfLevel performance_level { protected set; get; }
-	public AvInfo av_info { internal set; get; }
-
-	public DiskController? disk_control_interface { protected set; get; default = null; }
-	public HardwareRender? hw_render { protected set; get; default = null; }
-	public AudioInput? audio_input_callback { protected set; get; default = null; }
-	public FrameTime? frame_time_callback { protected set; get; default = null; }
-
 	/**
-	 * The rumble interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Rumble rumble_interface { set; get; default = null; }
-
-	/**
-	 * The sensor interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Sensor sensor_interface { set; get; default = null; }
-
-	/**
-	 * The camera interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Camera camera_interface { set; get; default = null; }
-
-	/**
-	 * The logging interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Log log_interface { set; get; default = null; }
-
-	/**
-	 * The performance interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Performance performance_interface { set; get; default = null; }
-
-	/**
-	 * The location interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link environment_interface}.
-	 */
-	public Location location_interface { set; get; default = null; }
-
-
-
-
-
-	// Helper C methods
-
-	/**
-	 * Store the current instance.
-	 *
-	 * Store the current instance of Core in a thread local global variable.
-	 * It allows to know wich module call back and associate it with its Core.
-	 *
-	 * Must be called before any call to a function from the module.
-	 */
-	private extern void push_cb_data ();
-	private extern void pop_cb_data ();
-
-	/*
-	 * Get a callback that can be passed to the module.
-	 *
-	 * These callbacks act like wrappers around the real callbacks.
-	 */
-	private extern void *get_module_environment_interface ();
-	private extern void *get_module_video_refresh_cb ();
-	private extern void *get_module_audio_sample_cb ();
-	private extern void *get_module_audio_sample_batch_cb ();
-	private extern void *get_module_input_poll_cb ();
-	private extern void *get_module_input_state_cb ();
-
-
-
-
-
-	// Various members
-
-	/**
-	 * The file name of the module.
+	 * The file name of the module
 	 */
 	public string file_name { construct; get; }
 
 	/**
-	 * The dynamically loaded libretro module.
+	 * The directory the core will use to look for for additional data
 	 */
-	private Module module;
+	public string system_directory { set; get; default = "."; }
 
 	/**
-	 * Whether or not the a game is loaded.
+	 * The absolute path to the module file
+	 */
+	public string libretro_path { set; get; default = "."; }
+
+	/**
+	 * The directory the core will use to look for for additional assets
+	 */
+	public string content_directory { set; get; default = "."; }
+
+	/**
+	 * The directory the core will use to save user data
+	 */
+	public string save_directory { set; get; default = "."; }
+
+	/**
+	 * Whether or not the a game is loaded
 	 */
 	public bool game_loaded { private set; get; default = false; }
 
+	/**
+	 * Whether or not the core supports games
+	 */
+	public bool support_no_game { protected set; get; default = false; }
+
+	public PerfLevel performance_level { protected set; get; }
+
+	public AvInfo av_info { internal set; get; }
+
+	public DiskController? disk_control_interface { protected set; get; default = null; }
+
+	public HardwareRender? hw_render { protected set; get; default = null; }
+
+	public AudioInput? audio_input_callback { protected set; get; default = null; }
+
+	public FrameTime? frame_time_callback { protected set; get; default = null; }
+
+	/**
+	 * The video interface
+	 *
+	 * It must be set before {@link init()} is called.
+	 */
 	private VideoInterface _video_interface;
 	public VideoInterface video_interface {
 		get { return _video_interface; }
@@ -202,6 +130,11 @@ public class Core : Object {
 		}
 	}
 
+	/**
+	 * The audio interface
+	 *
+	 * It must be set before {@link init()} is called.
+	 */
 	private AudioInterface _audio_interface;
 	public AudioInterface audio_interface {
 		get { return _audio_interface; }
@@ -216,6 +149,11 @@ public class Core : Object {
 		}
 	}
 
+	/**
+	 * The input interface
+	 *
+	 * It must be set before {@link init()} is called.
+	 */
 	private InputInterface _input_interface;
 	public InputInterface input_interface {
 		get { return _input_interface; }
@@ -230,6 +168,12 @@ public class Core : Object {
 		}
 	}
 
+	/**
+	 * The variables interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
 	private VariablesInterface _variables_interface;
 	public VariablesInterface variables_interface {
 		get { return _variables_interface; }
@@ -244,12 +188,86 @@ public class Core : Object {
 		}
 	}
 
-
-
-
+	/**
+	 * The rumble interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Rumble rumble_interface { set; get; default = null; }
 
 	/**
-	 * Create a Core from the file name of a libretro implementation.
+	 * The sensor interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Sensor sensor_interface { set; get; default = null; }
+
+	/**
+	 * The camera interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Camera camera_interface { set; get; default = null; }
+
+	/**
+	 * The logging interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Log log_interface { set; get; default = null; }
+
+	/**
+	 * The performance interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Performance performance_interface { set; get; default = null; }
+
+	/**
+	 * The location interface
+	 *
+	 * Optional.
+	 * If set, it must be set before {@link init()} is called.
+	 */
+	public Location location_interface { set; get; default = null; }
+
+	public signal bool shutdown ();
+
+	public signal bool message (Message message);
+
+	/**
+	 * Store the current Core instance in a stack
+	 *
+	 * Stores the current instance of Core in a thread local global stack.
+	 * It allows to know wich Core a callback is related to.
+	 *
+	 * Must be called before any call to a function from the module.
+	 */
+	private extern void push_cb_data ();
+
+	/**
+	 * Remove the Core at the head of the stack
+	 *
+	 * Must be called after any call to {@link push_cb_data()}.
+	 */
+	private extern void pop_cb_data ();
+
+	private extern void *get_module_environment_interface ();
+	private extern void *get_module_video_refresh_cb ();
+	private extern void *get_module_audio_sample_cb ();
+	private extern void *get_module_audio_sample_batch_cb ();
+	private extern void *get_module_input_poll_cb ();
+	private extern void *get_module_input_state_cb ();
+
+	private Module module;
+
+	/**
+	 * Create a Core from the file name of a libretro implementation
 	 *
 	 * The file must be a dynamically loadable shared object implementing the
 	 * same version of the libretro API as Retro.
@@ -278,10 +296,9 @@ public class Core : Object {
 	}
 
 	/**
-	 * Initialize the module.
+	 * Initialize the module
 	 *
-	 * {@link environment_interface} must be set before the module is
-	 * initialized.
+	 * Must be called before loading a game and running the core.
 	 */
 	public void init () {
 		push_cb_data ();
@@ -291,7 +308,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Deinitialize the module.
+	 * Deinitialize the module
 	 */
 	private void deinit () {
 		push_cb_data ();
@@ -300,7 +317,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Gets information about system audio/video timings and geometry.
+	 * Get information about system audio/video timings and geometry
 	 *
 	 * Can be called only after {@link load_game} has successfully
 	 * completed.
@@ -327,7 +344,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Sets device to be used for player 'port'.
+	 * Set device to be used for player 'port'
 	 *
 	 * @param port the port on wich to connect a device
 	 * @param device the type of the device connected
@@ -339,7 +356,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Resets the current game.
+	 * Reset the current game
 	 */
 	public void reset () {
 		push_cb_data ();
@@ -348,7 +365,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Runs the game for one video frame.
+	 * Run the game for one video frame
 	 *
 	 * The callbacks must be set and the core must be initialized before
 	 * running the core.
@@ -358,7 +375,7 @@ public class Core : Object {
 	 *
 	 * If a frame is not rendered for reasons where a game "dropped" a frame,
 	 * this still counts as a frame, and {@link run} will explicitly dupe a
-	 * frame if the can_dupe property of {@link environment_interface} is set to true.
+	 * frame if the can_dupe property of {@link video_interface} is set to true.
 	 * In this case, the video callback can take a null argument for data.
 	 */
 	public void run () {
@@ -368,8 +385,8 @@ public class Core : Object {
 	}
 
 	/**
-	 * Returns the amount of data the implementation requires to serialize the
-	 * internal state (save states).
+	 * Return the amount of data the implementation requires to serialize the
+	 * internal state (save states)
 	 *
 	 * Beetween calls to {@link load_game} and
 	 * {@link unload_game}, the returned size is never allowed to
@@ -387,7 +404,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Serializes the internal state.
+	 * Serialize the internal state
 	 *
 	 * If failed, or size is lower than {@link serialize_size}, it
 	 * should return false, true otherwise.
@@ -404,7 +421,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Unserializes the internal state.
+	 * Unserialize the internal state
 	 *
 	 * @param data the buffer where the data is stored
 	 * @return false if the unserialization failed, true otherwise
@@ -418,9 +435,8 @@ public class Core : Object {
 	}
 
 	/**
-	 * Resets the cheats.
+	 * Reset the cheats
 	 */
-	[Deprecated (since = "1.0")]
 	public void cheat_reset () {
 		push_cb_data ();
 		module.cheat_reset ();
@@ -428,13 +444,12 @@ public class Core : Object {
 	}
 
 	/**
-	 * Sets a new cheat.
+	 * Set a new cheat
 	 *
 	 * @param index the index of the cheat
 	 * @param enabled whereas the cheat is enabled or not
 	 * @param code the cheat code
 	 */
-	[Deprecated (since = "1.0")]
 	public void cheat_set (uint index, bool enabled, string code) {
 		push_cb_data ();
 		module.cheat_set (index, enabled, code);
@@ -442,7 +457,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Loads a game.
+	 * Load a game
 	 *
 	 * @param game information to load the game
 	 * @return false if the loading failed, true otherwise
@@ -459,7 +474,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Loads a "special" kind of game. Should not be used except in extreme
+	 * Load a "special" kind of game. Should not be used except in extreme
 	 * cases.
 	 *
 	 * @param game_type the type of game to load
@@ -478,7 +493,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Unloads a currently loaded game.
+	 * Unload a currently loaded game
 	 */
 	private void unload_game () {
 		push_cb_data ();
@@ -487,7 +502,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Gets a region of memory.
+	 * Get a region of memory
 	 *
 	 * @param id the region of memory
 	 * @return the region of memory

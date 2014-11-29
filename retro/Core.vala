@@ -91,19 +91,19 @@ public class Core : Object {
 	/**
 	 * Whether or not the core supports games
 	 */
-	public bool support_no_game { protected set; get; default = false; }
+	public bool support_no_game { internal set; get; default = false; }
 
-	public PerfLevel performance_level { protected set; get; }
+	public PerfLevel performance_level { internal set; get; }
 
 	public AvInfo av_info { internal set; get; }
 
-	public DiskController? disk_control_interface { protected set; get; default = null; }
+	public DiskController? disk_control_interface { internal set; get; default = null; }
 
-	public HardwareRender? hw_render { protected set; get; default = null; }
+	public HardwareRender? hw_render { internal set; get; default = null; }
 
-	public AudioInput? audio_input_callback { protected set; get; default = null; }
+	public AudioInput? audio_input_callback { internal set; get; default = null; }
 
-	public FrameTime? frame_time_callback { protected set; get; default = null; }
+	public FrameTime? frame_time_callback { internal set; get; default = null; }
 
 	/**
 	 * The video interface

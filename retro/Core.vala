@@ -216,17 +216,17 @@ public class Core : Object {
 		}
 	}
 
-	private InputHandler _input_handler;
-	public InputHandler input_handler {
-		get { return _input_handler; }
+	private InputInterface _input_interface;
+	public InputInterface input_interface {
+		get { return _input_interface; }
 		construct set {
-			if (_input_handler != null)
-				_input_handler.core = null;
+			if (_input_interface != null)
+				_input_interface.core = null;
 
-			_input_handler = value;
+			_input_interface = value;
 
-			if (_input_handler != null && _input_handler.core != this)
-				_input_handler.core = this;
+			if (_input_interface != null && _input_interface.core != this)
+				_input_interface.core = this;
 		}
 	}
 

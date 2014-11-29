@@ -1,6 +1,6 @@
 namespace Retro {
 
-public interface InputHandler : Object {
+public interface InputInterface : Object {
 	public abstract weak Core core { get; set; }
 
 	public abstract void poll ();

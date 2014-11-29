@@ -36,7 +36,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		if (environment_video_command (retro_core_get_video_interface (cb_data), cmd, data))
 			return TRUE;
 
-		if (environment_input_command (retro_core_get_input_handler (cb_data), cmd, data))
+		if (environment_input_command (retro_core_get_input_interface (cb_data), cmd, data))
 			return TRUE;
 
 		if (environment_variables_command (retro_core_get_variables_handler (cb_data), cmd, data))
@@ -107,11 +107,11 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_if_reached ();
 
-		RetroInputHandler *handler = retro_core_get_input_handler (cb_data);
+		RetroInputInterface *handler = retro_core_get_input_interface (cb_data);
 
 		if (!handler) g_return_if_reached ();
 
-		retro_input_handler_poll (handler);
+		retro_input_interface_poll (handler);
 	}
 
 	return real_cb;
@@ -123,11 +123,11 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_val_if_reached (0);
 
-		RetroInputHandler *handler = retro_core_get_input_handler (cb_data);
+		RetroInputInterface *handler = retro_core_get_input_interface (cb_data);
 
 		if (!handler) g_return_val_if_reached (0);
 
-		return retro_input_handler_get_state (handler, port, device, index, id);
+		return retro_input_interface_get_state (handler, port, device, index, id);
 	}
 
 	return real_cb;

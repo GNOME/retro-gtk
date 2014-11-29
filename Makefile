@@ -48,10 +48,8 @@ FILES= \
 	Message.vala \
 	Module.vala \
 	Performance.vala \
-	PixelFormat.vala \
 	Region.vala \
 	Retro.vala \
-	Rotation.vala \
 	Rumble.vala \
 	Sensor.vala \
 	SystemAvInfo.vala \

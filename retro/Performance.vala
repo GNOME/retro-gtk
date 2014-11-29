@@ -17,6 +17,42 @@
 
 namespace Retro {
 
+public enum PerfLevel {
+	EMBEDED,
+	MOBILE,
+	LOW_END,
+	MID_END,
+	HIGH_END
+}
+
+[Flags]
+public enum SimdFlags {
+	SSE    = (1 << 0),
+	SSE2   = (1 << 1),
+	VMX    = (1 << 2),
+	VMX128 = (1 << 3),
+	AVX    = (1 << 4),
+	NEON   = (1 << 5),
+	SSE3   = (1 << 6),
+	SSSE3  = (1 << 7),
+	MMX    = (1 << 8),
+	MMXEXT = (1 << 9),
+	SSE4   = (1 << 10),
+	SSE42  = (1 << 11),
+	AVX2   = (1 << 12),
+	VFPU   = (1 << 13),
+	PS     = (1 << 14)
+}
+
+public struct PerfCounter {
+	string ident;
+	uint64 start_tick;
+	uint64 total_tick;
+	uint64 call_cnt_tick;
+
+	bool registered;
+}
+
 public interface Performance: Object {
 	public abstract int64 get_time_usec ();
 	public abstract uint64 get_cpu_features ();

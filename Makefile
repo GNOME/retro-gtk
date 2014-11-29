@@ -49,8 +49,6 @@ FILES= \
 	MemoryType.vala \
 	Message.vala \
 	Module.vala \
-	PerfCounter.vala \
-	PerfLevel.vala \
 	Performance.vala \
 	PixelFormat.vala \
 	Region.vala \
@@ -58,7 +56,6 @@ FILES= \
 	Rotation.vala \
 	Rumble.vala \
 	Sensor.vala \
-	SimdFlags.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \

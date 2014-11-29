@@ -63,6 +63,7 @@ FILES= \
 
 PKG= \
 	gmodule-2.0 \
+	gio-2.0 \
 	$(NULL)
 
 SRC = $(FILES:%=$(SRC_DIR)/%)

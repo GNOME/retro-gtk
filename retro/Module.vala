@@ -78,6 +78,12 @@ private class Module : Object {
 	public string file_name { construct; get; }
 
 	/**
+	 * Whether the module have been copied or not
+	 */
+	public bool copy { construct; private get; }
+	public File tmp_file;
+
+	/**
 	 * The dynamically loaded libretro module.
 	 */
 	private GLib.Module module;
@@ -125,11 +131,27 @@ private class Module : Object {
 	 *
 	 * @param file_name the file name of the libretro implementation to load
 	 */
-	public Module (string file_name) {
-		Object (file_name: file_name);
+	public Module (string file_name, bool copy_file) {
+		Object (file_name: file_name, copy: copy_file);
 	}
 
 	construct {
+		tmp_file = null;
+		if (copy) {
+			try {
+				var file = File.new_for_path (file_name);
+
+				FileIOStream ios;
+				tmp_file = File.new_tmp (null, out ios);
+				file.copy (tmp_file, FileCopyFlags.OVERWRITE);
+
+				file_name = tmp_file.get_path ();
+			}
+			catch (Error e) {
+				stderr.printf ("Error: %s\n", e.message);
+			}
+		}
+
 		module = GLib.Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 
 		void *function;
@@ -189,6 +211,11 @@ private class Module : Object {
 		get_memory_data = (GetMemoryData) function;
 		module.symbol ("retro_get_memory_size", out function);
 		get_memory_size = (GetMemorySize) function;
+	}
+
+	~Module () {
+		if (tmp_file != null)
+			tmp_file.delete ();
 	}
 }
 

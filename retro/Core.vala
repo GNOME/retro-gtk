@@ -17,11 +17,6 @@
 
 namespace Retro {
 
-/**
- * The version of libretro implemented by Retro.
- */
-public static const uint API_VERSION = 1;
-
 public class Core : Object {
 	/**
 	 * The version of libretro used by the module

@@ -16,18 +16,28 @@
  */
 
 namespace Retro {
-	public SystemInfo? get_system_info (string module_name) {
-		var module = GLib.Module.open (module_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 
-		void *function;
-		module.symbol ("retro_get_system_info", out function);
+/**
+ * The version of libretro implemented by Retro.
+ */
+public static const uint API_VERSION = 1;
 
-		if (function == null) return null;
+/**
+ * Get a module's system informations in a simple and light way
+ */
+public SystemInfo? get_system_info (string module_name) {
+	var module = GLib.Module.open (module_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 
-		unowned SystemInfo info;
-		((GetSystemInfo) function) (out info);
+	void *function;
+	module.symbol ("retro_get_system_info", out function);
 
-		return info;
-	}
+	if (function == null) return null;
+
+	unowned SystemInfo info;
+	((GetSystemInfo) function) (out info);
+
+	return info;
+}
+
 }
 

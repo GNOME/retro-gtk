@@ -17,6 +17,11 @@
 
 namespace Retro {
 
+public enum CameraBuffer {
+	OPENGL_TEXTURE,
+	RAW_FRAMEBUFFER
+}
+
 public interface Camera: Object {
 	public abstract uint64 caps { set; get; }
 	public abstract uint width { set; get; }

@@ -33,7 +33,6 @@ FILES= \
 	AudioInput.vala \
 	AudioInterface.vala \
 	Camera.vala \
-	CameraBuffer.vala \
 	Core.vala \
 	Device.vala \
 	DiskController.vala \

@@ -93,17 +93,48 @@ public class Core : Object {
 	 */
 	public bool support_no_game { internal set; get; default = false; }
 
+	/**
+	 * The level of performance requiered by the core to run correctly
+	 *
+	 * Can be set by the Core when loading a game.
+	 */
 	public PerfLevel performance_level { internal set; get; }
 
+	/**
+	 * Information on audio and video geometry and timings
+	 *
+	 * Can be set by the Core when loading a game.
+	 */
 	public AvInfo av_info { internal set; get; }
 
-	public DiskController? disk_control_interface { internal set; get; }
+	/**
+	 * The disk controlling interface
+	 *
+	 * The Core can set it to let the frontend insert and eject disks.
+	 */
+	public DiskController disk_control_interface { internal set; get; }
 
-	public HardwareRender? hw_render { internal set; get; }
+	/**
+	 * The video input interface
+	 *
+	 * The Core can set it to let the frontend pass video to it.
+	 */
+	public HardwareRender hw_render { internal set; get; }
 
-	public AudioInput? audio_input_callback { internal set; get; }
+	/**
+	 * The audio input interface
+	 *
+	 * The Core can set it to let the frontend pass audio to it.
+	 */
+	public AudioInput audio_input_callback { internal set; get; }
 
-	public FrameTime? frame_time_callback { internal set; get; }
+	/**
+	 * The time input interface
+	 *
+	 * The Core can set it to let the frontend inform it of the amount
+	 * of time passed since the last call to {@link run()}.
+	 */
+	public FrameTime frame_time_callback { internal set; get; }
 
 	/**
 	 * The video interface
@@ -230,8 +261,14 @@ public class Core : Object {
 	 */
 	public Location location_interface { set; get; }
 
+	/**
+	 * Ask the frontend to shut down
+	 */
 	public signal bool shutdown ();
 
+	/**
+	 * Ask the frontend to display a message
+	 */
 	public signal bool message (Message message);
 
 	/**

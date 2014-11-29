@@ -47,7 +47,7 @@ public class Option : Object {
 	}
 }
 
-public class OptionsHandler: Object, VariablesInterface {
+public class OptionsHandler: Object, Variables {
 	public weak Core _core;
 	public weak Core core {
 		get { return _core; }

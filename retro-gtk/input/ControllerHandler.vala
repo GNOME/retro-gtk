@@ -20,7 +20,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class ControllerHandler : Object, Retro.InputInterface {
+public class ControllerHandler : Object, Retro.Input {
 	public weak Core _core;
 	public weak Core core {
 		get { return _core; }

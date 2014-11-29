@@ -19,7 +19,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class AudioDevice : GLib.Object, Retro.AudioInterface {
+public class AudioDevice : GLib.Object, Retro.Audio {
 	private ulong av_info_sig = 0;
 	private ulong init_sig = 0;
 

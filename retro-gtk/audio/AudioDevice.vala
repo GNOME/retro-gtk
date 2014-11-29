@@ -19,7 +19,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class AudioDevice : GLib.Object, Retro.AudioHandler {
+public class AudioDevice : GLib.Object, Retro.AudioInterface {
 	private ulong av_info_sig = 0;
 	private ulong init_sig = 0;
 
@@ -41,8 +41,8 @@ public class AudioDevice : GLib.Object, Retro.AudioHandler {
 				update_sample_rate ();
 				av_info_sig = _core.notify["av-info"].connect_after (update_sample_rate);
 
-				if (_core.audio_handler != this)
-					_core.audio_handler = this;
+				if (_core.audio_interface != this)
+					_core.audio_interface = this;
 			}
 		}
 	}

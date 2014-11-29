@@ -22,7 +22,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class Display : GtkClutter.Embed, Retro.VideoHandler {
+public class Display : GtkClutter.Embed, Retro.VideoInterface {
 	public weak Core _core;
 	public weak Core core {
 		get { return _core; }
@@ -32,8 +32,8 @@ public class Display : GtkClutter.Embed, Retro.VideoHandler {
 			_core = value;
 			pixel_format = PixelFormat.ORGB1555;
 
-			if (_core != null && _core.video_handler != this)
-				_core.video_handler = this;
+			if (_core != null && _core.video_interface != this)
+				_core.video_interface = this;
 		}
 	}
 

@@ -1,5 +1,4 @@
-/* Retro  GObject libretro wrapper.
- * Copyright (C) 2014  Adrien Plazas
+/* Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

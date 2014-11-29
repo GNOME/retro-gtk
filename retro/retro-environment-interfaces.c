@@ -25,36 +25,41 @@ inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 	if (!self) return FALSE;
 
 	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
-		return retro_core_set_rumble_callback (self, (RetroRumbleCallback *) data);
-	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-		return retro_core_set_sensor_callback (self, (RetroSensorCallback *) data);
-	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-		return retro_core_set_camera_callback (self, (RetroCameraCallback *) data);
-	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
-		return retro_core_set_log_callback (self, (RetroLogCallback *) data);
-	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
-		return retro_core_set_performance_callback (self, (RetroPerformanceCallback *) data);
-	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
-		return retro_core_set_location_callback (self, (RetroLocationCallback *) data);
-	default:
-		return FALSE;
+		case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
+			return get_rumble_callback (self, (RetroRumbleCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
+			return get_sensor_callback (self, (RetroSensorCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+			return get_camera_callback (self, (RetroCameraCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+			return get_log_callback (self, (RetroLogCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
+			return get_performance_callback (self, (RetroPerformanceCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
+			return get_location_callback (self, (RetroLocationCallback *) data);
+
+		default:
+			return FALSE;
 	}
 }
 
-inline gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
+inline gboolean get_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
 	gboolean interface_exists = retro_core_get_rumble_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroRumble *interface = retro_core_get_rumble_interface (cb_data);
-			return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
-		}
+		if (!cb_data) g_return_val_if_reached (FALSE);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroRumble *interface = retro_core_get_rumble_interface (cb_data);
+		if (!interface) g_return_val_if_reached (FALSE);
+
+		return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
 	}
 
 	cb->set_rumble_state = real_set_rumble_state;
@@ -62,30 +67,28 @@ inline gboolean retro_core_set_rumble_callback (RetroCore *self, RetroRumbleCall
 	return TRUE;
 }
 
-inline gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
+inline gboolean get_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
 	gboolean interface_exists = retro_core_get_sensor_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
-			return RETRO_SENSOR_GET_INTERFACE (interface)->set_sensor_state (interface, port, action, rate);
-		}
+		if (!cb_data) g_return_val_if_reached (FALSE);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
+		if (!interface) g_return_val_if_reached (FALSE);
+
+		return RETRO_SENSOR_GET_INTERFACE (interface)->set_sensor_state (interface, port, action, rate);
 	}
 
 	gfloat real_get_sensor_input (guint port, guint id) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
-			return RETRO_SENSOR_GET_INTERFACE (interface)->get_sensor_input (interface, port, id);
-		}
+		if (!cb_data) g_return_val_if_reached (0.0);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
+		if (!interface) g_return_val_if_reached (0.0);
+
+		return RETRO_SENSOR_GET_INTERFACE (interface)->get_sensor_input (interface, port, id);
 	}
 
 	cb->set_sensor_state = real_set_sensor_state;
@@ -94,76 +97,68 @@ inline gboolean retro_core_set_sensor_callback (RetroCore *self, RetroSensorCall
 	return TRUE;
 }
 
-inline gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
+inline gboolean get_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
 	gboolean interface_exists = retro_core_get_camera_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			return RETRO_CAMERA_GET_INTERFACE (interface)->start (interface);
-		}
+		if (!cb_data) g_return_val_if_reached (FALSE);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_val_if_reached (FALSE);
+
+		return RETRO_CAMERA_GET_INTERFACE (interface)->start (interface);
 	}
 
 	void real_stop () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			RETRO_CAMERA_GET_INTERFACE (interface)->stop (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_CAMERA_GET_INTERFACE (interface)->stop (interface);
 	}
 
-	gfloat real_frame_raw_framebuffer (guint32 *buffer, guint width, guint height, gsize pitch) {
+	void real_frame_raw_framebuffer (guint32 *buffer, guint width, guint height, gsize pitch) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			RETRO_CAMERA_GET_INTERFACE (interface)->frame_raw_framebuffer (interface, buffer, width, height, pitch);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
-		return 0;
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_CAMERA_GET_INTERFACE (interface)->frame_raw_framebuffer (interface, buffer, width, height, pitch);
 	}
 
-	gfloat real_frame_opengl_texture (guint texture_id, guint texture_target, gfloat *affine) {
+	void real_frame_opengl_texture (guint texture_id, guint texture_target, gfloat *affine) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			RETRO_CAMERA_GET_INTERFACE (interface)->frame_opengl_texture (interface, texture_id, texture_target, affine);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
-		return 0;
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_CAMERA_GET_INTERFACE (interface)->frame_opengl_texture (interface, texture_id, texture_target, affine);
 	}
 
 	void real_initialized () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			RETRO_CAMERA_GET_INTERFACE (interface)->initialized (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_CAMERA_GET_INTERFACE (interface)->initialized (interface);
 	}
 
 	void real_deinitialized () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-			RETRO_CAMERA_GET_INTERFACE (interface)->deinitialized (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroCamera *interface = retro_core_get_camera_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_CAMERA_GET_INTERFACE (interface)->deinitialized (interface);
 	}
 
 	RetroCamera *interface = retro_core_get_camera_interface (self);
@@ -181,27 +176,24 @@ inline gboolean retro_core_set_camera_callback (RetroCore *self, RetroCameraCall
 	return TRUE;
 }
 
-inline gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *cb) {
+inline gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	gboolean interface_exists = retro_core_get_log_interface (self);
 	if (!interface_exists) return FALSE;
 
-	gboolean real_log (guint level, const char *format, ...) {
+	void real_log (guint level, const char *format, ...) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLog *interface = retro_core_get_log_interface (cb_data);
+		if (!cb_data) g_return_if_reached ();
 
-			// Get the arguments, set up the formatted message,
-			// pass it to the logging method and free it.
-			va_list args;
-			va_start (args, format);
-			char *message = g_strdup_vprintf (format, args);
-			gboolean result = RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, message);
-			g_free (message);
-			return result;
-		}
+		RetroLog *interface = retro_core_get_log_interface (cb_data);
+		if (!interface) g_return_if_reached ();
 
-		g_assert_not_reached ();
-		return 0;
+		// Get the arguments, set up the formatted message,
+		// pass it to the logging method and free it.
+		va_list args;
+		va_start (args, format);
+		char *message = g_strdup_vprintf (format, args);
+		RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, message);
+		g_free (message);
 	}
 
 	cb->log = real_log;
@@ -209,85 +201,78 @@ inline gboolean retro_core_set_log_callback (RetroCore *self, RetroLogCallback *
 	return TRUE;
 }
 
-inline gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
+inline gboolean get_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
 	gboolean interface_exists = retro_core_get_performance_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gint64 real_get_time_usec () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_time_usec (interface);
-		}
+		if (!cb_data) g_return_val_if_reached (0);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_val_if_reached (0);
+
+		return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_time_usec (interface);
 	}
 
 	guint64 real_get_cpu_features () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_cpu_features (interface);
-		}
+		if (!cb_data) g_return_val_if_reached (0);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_val_if_reached (0);
+
+		return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_cpu_features (interface);
 	}
 
 	guint64 real_get_perf_counter () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_perf_counter (interface);
-		}
+		if (!cb_data) g_return_val_if_reached (0);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_val_if_reached (0);
+
+		return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_perf_counter (interface);
 	}
 
 	void real_perf_register (RetroPerfCounter *counter) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_register (interface, counter);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_register (interface, counter);
 	}
 
 	void real_perf_start (RetroPerfCounter *counter) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_start (interface, counter);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_start (interface, counter);
 	}
 
 	void real_perf_stop (RetroPerfCounter *counter) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_stop (interface, counter);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_stop (interface, counter);
 	}
 
 	void real_perf_log () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-			RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_log (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_log (interface);
 	}
 
 	cb->get_time_usec = real_get_time_usec;
@@ -301,76 +286,68 @@ inline gboolean retro_core_set_performance_callback (RetroCore *self, RetroPerfo
 	return TRUE;
 }
 
-inline gboolean retro_core_set_location_callback (RetroCore *self, RetroLocationCallback *cb) {
+inline gboolean get_location_callback (RetroCore *self, RetroLocationCallback *cb) {
 	gboolean interface_exists = retro_core_get_location_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			return RETRO_LOCATION_GET_INTERFACE (interface)->start (interface);
-		}
+		if (!cb_data) g_return_val_if_reached (FALSE);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_val_if_reached (FALSE);
+
+		return RETRO_LOCATION_GET_INTERFACE (interface)->start (interface);
 	}
 
 	void real_stop () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			RETRO_LOCATION_GET_INTERFACE (interface)->stop (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_LOCATION_GET_INTERFACE (interface)->stop (interface);
 	}
 
-	gfloat real_get_position (gdouble *lat, gdouble *lon, gdouble *horiz_accuracy, gdouble *vert_accuracy) {
+	gboolean real_get_position (gdouble *lat, gdouble *lon, gdouble *horiz_accuracy, gdouble *vert_accuracy) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			RETRO_LOCATION_GET_INTERFACE (interface)->get_position (interface, lat, lon, horiz_accuracy, vert_accuracy);
-			return;
-		}
+		if (!cb_data) g_return_val_if_reached (FALSE);
 
-		g_assert_not_reached ();
-		return 0;
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_val_if_reached (FALSE);
+
+		return RETRO_LOCATION_GET_INTERFACE (interface)->get_position (interface, lat, lon, horiz_accuracy, vert_accuracy);
 	}
 
-	gfloat real_set_interval (guint interval_ms, guint interval_distance) {
+	void real_set_interval (guint interval_ms, guint interval_distance) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			RETRO_LOCATION_GET_INTERFACE (interface)->set_interval (interface, interval_ms, interval_distance);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
-		return 0;
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_LOCATION_GET_INTERFACE (interface)->set_interval (interface, interval_ms, interval_distance);
 	}
 
 	void real_initialized () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			RETRO_LOCATION_GET_INTERFACE (interface)->initialized (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+		RETRO_LOCATION_GET_INTERFACE (interface)->initialized (interface);
 	}
 
 	void real_deinitialized () {
 		RetroCore *cb_data = retro_core_get_cb_data ();
-		if (cb_data) {
-			RetroLocation *interface = retro_core_get_location_interface (cb_data);
-			RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
-			return;
-		}
+		if (!cb_data) g_return_if_reached ();
 
-		g_assert_not_reached ();
+		RetroLocation *interface = retro_core_get_location_interface (cb_data);
+		if (!interface) g_return_if_reached ();
+
+			RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
 	}
 
 	cb->start = real_start;

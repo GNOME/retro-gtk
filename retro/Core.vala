@@ -202,17 +202,17 @@ public class Core : Object {
 		}
 	}
 
-	private AudioHandler _audio_handler;
-	public AudioHandler audio_handler {
-		get { return _audio_handler; }
+	private AudioInterface _audio_interface;
+	public AudioInterface audio_interface {
+		get { return _audio_interface; }
 		construct set {
-			if (_audio_handler != null)
-				_audio_handler.core = null;
+			if (_audio_interface != null)
+				_audio_interface.core = null;
 
-			_audio_handler = value;
+			_audio_interface = value;
 
-			if (_audio_handler != null && _audio_handler.core != this)
-				_audio_handler.core = this;
+			if (_audio_interface != null && _audio_interface.core != this)
+				_audio_interface.core = this;
 		}
 	}
 

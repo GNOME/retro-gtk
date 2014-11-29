@@ -31,7 +31,7 @@ PKGCONF= $(PKGNAME).pc
 
 FILES= \
 	AudioInput.vala \
-	AudioHandler.vala \
+	AudioInterface.vala \
 	Camera.vala \
 	CameraBuffer.vala \
 	Core.vala \

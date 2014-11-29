@@ -165,8 +165,8 @@ public class Core : Object {
 	 *
 	 * It must be set before {@link init()} is called.
 	 */
-	private AudioInterface _audio_interface;
-	public AudioInterface audio_interface {
+	private Audio _audio_interface;
+	public Audio audio_interface {
 		get { return _audio_interface; }
 		construct set {
 			if (_audio_interface != null)

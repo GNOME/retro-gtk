@@ -17,7 +17,7 @@
 
 namespace Retro {
 
-public interface AudioInterface : Object {
+public interface Audio : Object {
 	public abstract weak Core core { get; set; }
 
 	public abstract void play_sample (int16 left, int16 right);

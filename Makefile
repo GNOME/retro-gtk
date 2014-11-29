@@ -30,8 +30,8 @@ TYPELIB= Retro-$(VERSION).typelib
 PKGCONF= $(PKGNAME).pc
 
 FILES= \
+	Audio.vala \
 	AudioInput.vala \
-	AudioInterface.vala \
 	Camera.vala \
 	Core.vala \
 	Device.vala \

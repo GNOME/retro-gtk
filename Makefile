@@ -40,7 +40,7 @@ FILES= \
 	GameInfo.vala \
 	GameType.vala \
 	HardwareRender.vala \
-	InputInterface.vala \
+	Input.vala \
 	Keyboard.vala \
 	Location.vala \
 	Log.vala \

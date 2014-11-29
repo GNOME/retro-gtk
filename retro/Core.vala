@@ -184,8 +184,8 @@ public class Core : Object {
 	 *
 	 * It must be set before {@link init()} is called.
 	 */
-	private InputInterface _input_interface;
-	public InputInterface input_interface {
+	private Input _input_interface;
+	public Input input_interface {
 		get { return _input_interface; }
 		construct set {
 			if (_input_interface != null)

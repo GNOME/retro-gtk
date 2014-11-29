@@ -21,7 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean environment_input_command (RetroInputInterface *self, unsigned cmd, gpointer data) {
+inline gboolean environment_input_command (RetroInput *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {
@@ -39,20 +39,20 @@ inline gboolean environment_input_command (RetroInputInterface *self, unsigned c
 	}
 }
 
-inline gboolean set_input_desciptors (RetroInputInterface *self, const RetroInputDescriptor *descriptors) {
+inline gboolean set_input_desciptors (RetroInput *self, const RetroInputDescriptor *descriptors) {
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
-	retro_input_interface_set_descriptors (self, descriptors, length);
+	retro_input_set_descriptors (self, descriptors, length);
 	return TRUE;
 }
 
-inline gboolean set_keyboard_callback (RetroInputInterface *self, const RetroKeyboardCallback *callback) {
-	retro_input_interface_set_keyboard_callback (self, callback);
+inline gboolean set_keyboard_callback (RetroInput *self, const RetroKeyboardCallback *callback) {
+	retro_input_set_keyboard_callback (self, callback);
 	return TRUE;
 }
 
-inline gboolean get_input_device_capabilities (RetroInputInterface *self, guint64 *capabilities) {
-	*capabilities = retro_input_interface_get_device_capabilities (self);
+inline gboolean get_input_device_capabilities (RetroInput *self, guint64 *capabilities) {
+	*capabilities = retro_input_get_device_capabilities (self);
 	return TRUE;
 }
 

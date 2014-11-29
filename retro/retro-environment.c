@@ -106,11 +106,11 @@ gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_if_reached ();
 
-		RetroInputInterface *handler = retro_core_get_input_interface (cb_data);
+		RetroInput *handler = retro_core_get_input_interface (cb_data);
 
 		if (!handler) g_return_if_reached ();
 
-		retro_input_interface_poll (handler);
+		retro_input_poll (handler);
 	}
 
 	return real_cb;
@@ -122,11 +122,11 @@ gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_val_if_reached (0);
 
-		RetroInputInterface *handler = retro_core_get_input_interface (cb_data);
+		RetroInput *handler = retro_core_get_input_interface (cb_data);
 
 		if (!handler) g_return_val_if_reached (0);
 
-		return retro_input_interface_get_state (handler, port, device, index, id);
+		return retro_input_get_state (handler, port, device, index, id);
 	}
 
 	return real_cb;

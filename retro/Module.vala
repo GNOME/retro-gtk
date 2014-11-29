@@ -17,6 +17,57 @@
 
 namespace Retro {
 
+[CCode (has_target = false)]
+private delegate void CallbackSetter (void *cb);
+
+[CCode (has_target = false)]
+private delegate void Init ();
+[CCode (has_target = false)]
+private delegate void Deinit ();
+
+[CCode (has_target = false)]
+private delegate uint ApiVersion ();
+
+[CCode (has_target = false)]
+private delegate void GetSystemInfo (out unowned SystemInfo info);
+[CCode (has_target = false)]
+private delegate void GetSystemAvInfo (out unowned SystemAvInfo info);
+
+[CCode (has_target = false)]
+private delegate void SetControllerPortDevice (uint port, DeviceType device);
+
+[CCode (has_target = false)]
+private delegate void Reset ();
+[CCode (has_target = false)]
+private delegate void Run ();
+
+[CCode (has_target = false)]
+private delegate size_t SerializeSize ();
+[CCode (has_target = false)]
+private delegate bool Serialize ([CCode (array_length_type = "gsize")] out uint8[] data);
+[CCode (has_target = false)]
+private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[] data);
+
+[CCode (has_target = false)]
+private delegate void CheatReset ();
+[CCode (has_target = false)]
+private delegate void CheatSet (uint index, bool enabled, string code);
+
+[CCode (has_target = false)]
+private delegate bool LoadGame (GameInfo game);
+[CCode (has_target = false)]
+private delegate bool LoadGameSpecial (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info);
+[CCode (has_target = false)]
+private delegate void UnloadGame ();
+
+[CCode (has_target = false)]
+private delegate Region GetRegion ();
+
+[CCode (has_target = false)]
+private delegate void *GetMemoryData (MemoryType id);
+[CCode (has_target = false)]
+private delegate size_t GetMemorySize (MemoryType id);
+
 /**
  * Loads a libretro module.
  */

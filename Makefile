@@ -35,7 +35,6 @@ FILES= \
 	Camera.vala \
 	CameraBuffer.vala \
 	Core.vala \
-	CoreDelegates.vala \
 	Device.vala \
 	DiskController.vala \
 	FrameTime.vala \

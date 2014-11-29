@@ -45,7 +45,6 @@ FILES= \
 	Keyboard.vala \
 	Location.vala \
 	Log.vala \
-	LogLevel.vala \
 	MemoryType.vala \
 	Message.vala \
 	Module.vala \

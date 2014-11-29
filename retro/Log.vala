@@ -18,6 +18,16 @@
 namespace Retro {
 
 /**
+ * The level of importance of a message.
+ */
+public enum LogLevel {
+	DEBUG = 0,
+	INFO,
+	WARN,
+	ERROR
+}
+
+/**
  * An interface for logging.
  */
 public interface Log: Object {

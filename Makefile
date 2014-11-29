@@ -53,7 +53,6 @@ FILES= \
 	Sensor.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
-	Variable.vala \
 	Variables.vala \
 	Video.vala \
 	retro-core-cb-data.c \

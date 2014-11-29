@@ -58,8 +58,6 @@ FILES= \
 	Rotation.vala \
 	Rumble.vala \
 	Sensor.vala \
-	SensorAction.vala \
-	SensorAccelerometer.vala \
 	SimdFlags.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \

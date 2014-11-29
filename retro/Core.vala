@@ -267,9 +267,9 @@ public class Core : Object {
 	public signal bool shutdown ();
 
 	/**
-	 * Ask the frontend to display a message
+	 * Ask the frontend to display a message for an amount of frames
 	 */
-	public signal bool message (Message message);
+	public signal bool message (string message, uint frames);
 
 	/**
 	 * Store the current Core instance in a stack

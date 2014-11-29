@@ -45,7 +45,6 @@ FILES= \
 	Location.vala \
 	Log.vala \
 	MemoryType.vala \
-	Message.vala \
 	Module.vala \
 	Performance.vala \
 	Region.vala \

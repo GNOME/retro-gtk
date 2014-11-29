@@ -21,6 +21,11 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
+typedef struct {
+	const gchar *msg;
+	guint frames;
+} RetroMessage;
+
 inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
@@ -75,7 +80,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 
 inline gboolean set_message (RetroCore *self, const RetroMessage *message) {
 	gboolean result = FALSE;
-	g_signal_emit_by_name (self, "message", message, &result);
+	g_signal_emit_by_name (self, "message", message->msg, message->frames, &result);
 	return result;
 }
 

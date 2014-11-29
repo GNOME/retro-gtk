@@ -97,13 +97,13 @@ public class Core : Object {
 
 	public AvInfo av_info { internal set; get; }
 
-	public DiskController? disk_control_interface { internal set; get; default = null; }
+	public DiskController? disk_control_interface { internal set; get; }
 
-	public HardwareRender? hw_render { internal set; get; default = null; }
+	public HardwareRender? hw_render { internal set; get; }
 
-	public AudioInput? audio_input_callback { internal set; get; default = null; }
+	public AudioInput? audio_input_callback { internal set; get; }
 
-	public FrameTime? frame_time_callback { internal set; get; default = null; }
+	public FrameTime? frame_time_callback { internal set; get; }
 
 	/**
 	 * The video interface
@@ -188,7 +188,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Rumble rumble_interface { set; get; default = null; }
+	public Rumble rumble_interface { set; get; }
 
 	/**
 	 * The sensor interface
@@ -196,7 +196,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Sensor sensor_interface { set; get; default = null; }
+	public Sensor sensor_interface { set; get; }
 
 	/**
 	 * The camera interface
@@ -204,7 +204,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Camera camera_interface { set; get; default = null; }
+	public Camera camera_interface { set; get; }
 
 	/**
 	 * The logging interface
@@ -212,7 +212,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Log log_interface { set; get; default = null; }
+	public Log log_interface { set; get; }
 
 	/**
 	 * The performance interface
@@ -220,7 +220,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Performance performance_interface { set; get; default = null; }
+	public Performance performance_interface { set; get; }
 
 	/**
 	 * The location interface
@@ -228,7 +228,7 @@ public class Core : Object {
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
 	 */
-	public Location location_interface { set; get; default = null; }
+	public Location location_interface { set; get; }
 
 	public signal bool shutdown ();
 

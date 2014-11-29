@@ -45,6 +45,7 @@ FILES= \
 	video/video-converter.c \
 	FileStreamLogger.vala \
 	Options.vala \
+	RetroGtk.vala \
 	Runner.vala \
 	$(NULL)
 

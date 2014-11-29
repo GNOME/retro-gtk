@@ -146,8 +146,8 @@ public class Core : Object {
 	 *
 	 * It must be set before {@link init()} is called.
 	 */
-	private VideoInterface _video_interface;
-	public VideoInterface video_interface {
+	private Video _video_interface;
+	public Video video_interface {
 		get { return _video_interface; }
 		construct set {
 			if (_video_interface != null)

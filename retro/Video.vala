@@ -57,7 +57,7 @@ public enum PixelFormat {
 	UNKNOWN = -1;
 }
 
-public interface VideoInterface : Object {
+public interface Video : Object {
 	public abstract weak Core core { get; set; }
 
 	public abstract void render (uint8[] data, uint width, uint height, size_t pitch);

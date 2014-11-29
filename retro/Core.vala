@@ -230,17 +230,17 @@ public class Core : Object {
 		}
 	}
 
-	private VariablesHandler _variables_handler;
-	public VariablesHandler variables_handler {
-		get { return _variables_handler; }
+	private VariablesInterface _variables_interface;
+	public VariablesInterface variables_interface {
+		get { return _variables_interface; }
 		construct set {
-			if (_variables_handler != null)
-				_variables_handler.core = null;
+			if (_variables_interface != null)
+				_variables_interface.core = null;
 
-			_variables_handler = value;
+			_variables_interface = value;
 
-			if (_variables_handler != null && _variables_handler.core != this)
-				_variables_handler.core = this;
+			if (_variables_interface != null && _variables_interface.core != this)
+				_variables_interface.core = this;
 		}
 	}
 

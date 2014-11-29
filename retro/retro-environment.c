@@ -39,7 +39,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		if (environment_input_command (retro_core_get_input_interface (cb_data), cmd, data))
 			return TRUE;
 
-		if (environment_variables_command (retro_core_get_variables_handler (cb_data), cmd, data))
+		if (environment_variables_command (retro_core_get_variables_interface (cb_data), cmd, data))
 			return TRUE;
 
 		if (environment_interfaces_command (cb_data, cmd, data))

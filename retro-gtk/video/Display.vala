@@ -60,6 +60,8 @@ public class Display : GtkClutter.Embed, Retro.VideoInterface {
 	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
 
 	public void render (uint8[] data, uint width, uint height, size_t pitch) {
+		if (data == null) return; // Dupe a frame
+
 		var picture = video_to_pixbuf (data, width, height,  pitch, pixel_format);
 
 		Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;

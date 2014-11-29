@@ -57,7 +57,6 @@ FILES= \
 	Retro.vala \
 	Rotation.vala \
 	Rumble.vala \
-	RumbleEffect.vala \
 	Sensor.vala \
 	SensorAction.vala \
 	SensorAccelerometer.vala \

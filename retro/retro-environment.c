@@ -33,7 +33,7 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 
 		if (!cb_data) g_assert_not_reached ();
 
-		if (environment_video_command (retro_core_get_video_handler (cb_data), cmd, data))
+		if (environment_video_command (retro_core_get_video_interface (cb_data), cmd, data))
 			return TRUE;
 
 		if (environment_input_command (retro_core_get_input_handler (cb_data), cmd, data))
@@ -59,11 +59,11 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 		if (!cb_data) g_return_if_reached ();
 
-		RetroVideoHandler *handler = retro_core_get_video_handler (cb_data);
+		RetroVideoInterface *handler = retro_core_get_video_interface (cb_data);
 
 		if (!handler) g_return_if_reached ();
 
-		retro_video_handler_render (handler, data, pitch * height, width, height, pitch);
+		retro_video_interface_render (handler, data, pitch * height, width, height, pitch);
 	}
 
 	return real_cb;

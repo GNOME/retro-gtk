@@ -21,7 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean environment_video_command (RetroVideoHandler *self, unsigned cmd, gpointer data) {
+inline gboolean environment_video_command (RetroVideoInterface *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 
 	switch (cmd) {
@@ -43,23 +43,23 @@ inline gboolean environment_video_command (RetroVideoHandler *self, unsigned cmd
 	}
 }
 
-inline gboolean set_rotation (RetroVideoHandler *self, const RetroRotation *rotation) {
-	retro_video_handler_set_rotation (self, *rotation);
+inline gboolean set_rotation (RetroVideoInterface *self, const RetroRotation *rotation) {
+	retro_video_interface_set_rotation (self, *rotation);
 	return TRUE;
 }
 
-inline gboolean get_overscan (RetroVideoHandler *self, gboolean *overcan) {
-	*overcan = retro_video_handler_get_overscan (self);
+inline gboolean get_overscan (RetroVideoInterface *self, gboolean *overcan) {
+	*overcan = retro_video_interface_get_overscan (self);
 	return TRUE;
 }
 
-inline gboolean get_can_dupe (RetroVideoHandler *self, gboolean *can_dupe) {
-	*can_dupe = retro_video_handler_get_can_dupe (self);
+inline gboolean get_can_dupe (RetroVideoInterface *self, gboolean *can_dupe) {
+	*can_dupe = retro_video_interface_get_can_dupe (self);
 	return TRUE;
 }
 
-inline gboolean set_pixel_format (RetroVideoHandler *self, const RetroPixelFormat *pixel_format) {
-	retro_video_handler_set_pixel_format (self, *pixel_format);
+inline gboolean set_pixel_format (RetroVideoInterface *self, const RetroPixelFormat *pixel_format) {
+	retro_video_interface_set_pixel_format (self, *pixel_format);
 	return TRUE;
 }
 

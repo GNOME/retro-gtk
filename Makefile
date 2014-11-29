@@ -66,7 +66,7 @@ FILES= \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variable.vala \
-	VideoHandler.vala \
+	VideoInterface.vala \
 	VariablesHandler.vala \
 	retro-core-cb-data.c \
 	retro-environment.c \

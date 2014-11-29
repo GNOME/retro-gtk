@@ -188,17 +188,17 @@ public class Core : Object {
 	 */
 	public bool game_loaded { private set; get; default = false; }
 
-	private VideoHandler _video_handler;
-	public VideoHandler video_handler {
-		get { return _video_handler; }
+	private VideoInterface _video_interface;
+	public VideoInterface video_interface {
+		get { return _video_interface; }
 		construct set {
-			if (_video_handler != null)
-				_video_handler.core = null;
+			if (_video_interface != null)
+				_video_interface.core = null;
 
-			_video_handler = value;
+			_video_interface = value;
 
-			if (_video_handler != null && _video_handler.core != this)
-				_video_handler.core = this;
+			if (_video_interface != null && _video_interface.core != this)
+				_video_interface.core = this;
 		}
 	}
 

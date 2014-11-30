@@ -88,7 +88,7 @@ public class ControllerHandler : Object, Retro.Input {
 		keyboard.key_release_event.connect ((w, e) => on_key_event (e, false));
 	}
 
-	private KeyboardModifierKey modifier_key_converter (int keyval, Gdk.ModifierType modifiers) {
+	private KeyboardModifierKey modifier_key_converter (uint keyval, Gdk.ModifierType modifiers) {
 		var retro_modifiers = KeyboardModifierKey.NONE;
 		if ((bool) (modifiers & Gdk.ModifierType.SHIFT_MASK))
 			retro_modifiers |= KeyboardModifierKey.SHIFT;

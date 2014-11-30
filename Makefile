@@ -39,6 +39,7 @@ FILES= \
 	input/GamepadConfiguration.vala \
 	input/GamepadConfigurationDialog.vala \
 	input/GamepadView.vala \
+	input/Keyboard.vala \
 	input/KeyboardState.vala \
 	input/Mouse.vala \
 	video/Display.vala \

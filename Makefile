@@ -53,6 +53,7 @@ FILES= \
 	Retro.vala \
 	Rumble.vala \
 	Sensor.vala \
+	Subsystem.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Variables.vala \

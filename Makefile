@@ -42,6 +42,7 @@ FILES= \
 	HardwareRender.vala \
 	Input.vala \
 	Keyboard.vala \
+	Language.vala \
 	Location.vala \
 	Log.vala \
 	MemoryType.vala \

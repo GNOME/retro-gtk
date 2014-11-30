@@ -21,24 +21,28 @@ using Gdk;
 
 namespace RetroGtk {
 
-public class KeyboardBox : EventBox {
+public class KeyboardState : Object {
+	public Widget widget { get; construct; }
+
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
 
-	public bool verbose { set; get; default = false; }
-
 	public signal void key_state_changed ();
 
-	construct {
-		set_can_focus (true);
+	public KeyboardState (Widget widget) {
+		Object (widget: widget);
+	}
 
-		focus_in_event.connect (() => {
-			has_focus = true;
+	construct {
+		widget.set_can_focus (true);
+
+		widget.focus_in_event.connect (() => {
+			widget.has_focus = true;
 			return false;
 		});
 
-		focus_out_event.connect (() => {
-			has_focus = false;
+		widget.focus_out_event.connect (() => {
+			widget.has_focus = false;
 
 			foreach (var key in key_state.get_keys ())
 				key_state[key] = false;
@@ -48,14 +52,14 @@ public class KeyboardBox : EventBox {
 			return false;
 		});
 
-		button_press_event.connect (() => {
-			grab_focus ();
+		widget.button_press_event.connect (() => {
+			widget.grab_focus ();
 			return false;
 		});
 
-		key_press_event.connect (on_key_press_event);
+		widget.key_press_event.connect (on_key_press_event);
 
-		key_release_event.connect (on_key_release_event);
+		widget.key_release_event.connect (on_key_release_event);
 
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 
@@ -63,8 +67,6 @@ public class KeyboardBox : EventBox {
 	}
 
 	private bool on_key_press_event (Widget source, EventKey event) {
-		if (verbose) print_event_key (event);
-
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, true);
 		}
@@ -78,8 +80,6 @@ public class KeyboardBox : EventBox {
 	}
 
 	private bool on_key_release_event (Widget source, EventKey event) {
-		if (verbose) print_event_key (event);
-
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, false);
 		}
@@ -95,10 +95,6 @@ public class KeyboardBox : EventBox {
 		}
 
 		return false;
-	}
-
-	private static void print_event_key (EventKey event) {
-		stdout.printf ("str: %s, send event: %d, time: %u, state: %d, keyval: %u, length: %d, hw keycode: %u, group: %u, is mod: %u\n", event.str, event.send_event, event.time, (int) event.state, event.keyval, event.length, event.hardware_keycode, event.group, event.is_modifier );
 	}
 }
 

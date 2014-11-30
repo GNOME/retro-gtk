@@ -39,7 +39,7 @@ FILES= \
 	input/GamepadConfiguration.vala \
 	input/GamepadConfigurationDialog.vala \
 	input/GamepadView.vala \
-	input/KeyboardBox.vala \
+	input/KeyboardState.vala \
 	input/Mouse.vala \
 	video/Display.vala \
 	video/video-converter.c \

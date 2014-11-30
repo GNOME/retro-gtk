@@ -64,7 +64,8 @@ public class GamepadConfigurationDialog : Gtk.Dialog {
 		prompt = new Label (null);
 		prompt.show ();
 
-		var kb = new KeyboardBox ();
+		var kb = new EventBox ();
+		new KeyboardState (kb);
 		kb.key_press_event.connect (on_button_press_event);
 		kb.show ();
 

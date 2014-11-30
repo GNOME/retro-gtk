@@ -85,7 +85,7 @@ public class ControllerHandler : Object, Retro.Input {
 			core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
 	}
 
-	public void set_keyboard (KeyboardBox keyboard) {
+	public void set_keyboard (Gtk.Widget keyboard) {
 		keyboard.key_press_event.connect ((w, e) => on_key_event (e, true));
 		keyboard.key_release_event.connect ((w, e) => on_key_event (e, false));
 	}

@@ -206,7 +206,10 @@ public enum MouseId {
 	X,
 	Y,
 	LEFT,
-	RIGHT
+	RIGHT,
+	WHEELUP,
+	WHEELDOWN,
+	MIDDLE
 }
 
 public enum LightgunId {

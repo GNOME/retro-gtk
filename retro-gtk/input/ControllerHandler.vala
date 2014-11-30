@@ -29,6 +29,8 @@ public class ControllerHandler : Object, Retro.Input {
 
 			_core = value;
 
+			keyboard_callback = null;
+
 			if (_core != null && _core.input_interface != this) {
 				_core.input_interface = this;
 				init_core ();

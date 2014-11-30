@@ -36,5 +36,33 @@ public enum MemoryType {
 	}
 }
 
+[Flags]
+public enum MemDesc {
+	CONST     = (1 << 0),
+	BIGENDIAN = (1 << 1),
+	ALIGN_2   = (1 << 16),
+	ALIGN_4   = (2 << 16),
+	ALIGN_8   = (3 << 16),
+	MINSIZE_2 = (1 << 24),
+	MINSIZE_4 = (2 << 24),
+	MINSIZE_8 = (3 << 24)
+}
+
+public struct MemoryDescriptor {
+	uint64 flags;
+	void *ptr;
+	size_t offset;
+	size_t start;
+	size_t select;
+	size_t disconnect;
+	size_t len;
+	string addrspace;
+}
+
+public struct MemoryMap {
+	MemoryDescriptor? descriptors;
+	uint num_descriptors;
+}
+
 }
 

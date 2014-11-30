@@ -25,8 +25,7 @@ public class Gamepad : Object, ControllerDevice {
 	public Widget widget { get; construct; }
 	public GamepadConfiguration configuration { get; construct set; }
 
-	private HashTable<uint?, bool?> key_state;
-	private Keymap keymap;
+	private KeyboardState keyboard;
 
 	public Gamepad (Widget widget) {
 		Object (widget: widget);
@@ -37,34 +36,7 @@ public class Gamepad : Object, ControllerDevice {
 	}
 
 	construct {
-		widget.set_can_focus (true);
-
-		widget.focus_in_event.connect (() => {
-			widget.has_focus = true;
-			return false;
-		});
-
-		widget.focus_out_event.connect (() => {
-			widget.has_focus = false;
-
-			foreach (var key in key_state.get_keys ())
-				key_state[key] = false;
-
-			return false;
-		});
-
-		widget.button_press_event.connect (() => {
-			widget.grab_focus ();
-			return false;
-		});
-
-		widget.key_press_event.connect (on_key_press_event);
-
-		widget.key_release_event.connect (on_key_release_event);
-
-		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
-
-		keymap = Keymap.get_default ();
+		keyboard = new KeyboardState (widget);
 
 		if (configuration == null) {
 			configuration = new GamepadConfiguration ();
@@ -85,32 +57,7 @@ public class Gamepad : Object, ControllerDevice {
 	}
 
 	public bool get_button_pressed (GamepadButtonType button) {
-		uint16 hardware_keycode = configuration.get_button_key (button);
-
-		if (key_state.contains (hardware_keycode)) {
-			return key_state.lookup ((uint) hardware_keycode);
-		}
-
-		return false;
-	}
-
-	private bool on_key_press_event (Widget source, EventKey event) {
-		if (key_state.contains ((uint) event.hardware_keycode)) {
-			key_state.replace ((uint) event.hardware_keycode, true);
-		}
-		else  {
-			key_state.insert ((uint) event.hardware_keycode, true);
-		}
-
-		return false;
-	}
-
-	private bool on_key_release_event (Widget source, EventKey event) {
-		if (key_state.contains ((uint) event.hardware_keycode)) {
-			key_state.replace ((uint) event.hardware_keycode, false);
-		}
-
-		return false;
+		return keyboard.get_key_state (configuration.get_button_key (button));
 	}
 }
 

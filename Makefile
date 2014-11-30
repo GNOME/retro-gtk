@@ -41,6 +41,7 @@ FILES= \
 	input/KeyboardGamepadAdapter.vala \
 	input/KeyboardGamepadConfiguration.vala \
 	input/KeyboardGamepadConfigurationDialog.vala \
+	input/Mouse.vala \
 	video/Display.vala \
 	video/video-converter.c \
 	FileStreamLogger.vala \

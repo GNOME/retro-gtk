@@ -34,6 +34,7 @@ FILES= \
 	audio/AudioPlayer.vala \
 	input/ControllerDevice.vala \
 	input/ControllerHandler.vala \
+	input/Gamepad.vala \
 	input/GamepadButtonType.vala \
 	input/GamepadView.vala \
 	input/Keyboard.vala \

@@ -18,7 +18,7 @@
 
 namespace RetroGtk {
 
-public class KeyboardGamepadConfiguration : Object {
+public class GamepadConfiguration : Object {
 	private uint16[] gamepad_keys;
 
 	construct {

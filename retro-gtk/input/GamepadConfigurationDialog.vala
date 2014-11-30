@@ -21,14 +21,14 @@ using Gtk;
 
 namespace RetroGtk {
 
-public class KeyboardGamepadConfigurationDialog : Gtk.Dialog {
+public class GamepadConfigurationDialog : Gtk.Dialog {
 	private GamepadView view;
 	private Label prompt;
 
 	private Widget apply_button;
 
-	private KeyboardGamepadConfiguration current_configuration { get; set; }
-	public KeyboardGamepadConfiguration? configuration { get; private set; }
+	private GamepadConfiguration current_configuration { get; set; }
+	public GamepadConfiguration? configuration { get; private set; }
 
 	private uint current_button;
 	private static const GamepadButtonType[] buttons = {
@@ -55,7 +55,7 @@ public class KeyboardGamepadConfigurationDialog : Gtk.Dialog {
 		current_button = 0;
 		use_header_bar = 1;
 
-		current_configuration = new KeyboardGamepadConfiguration ();
+		current_configuration = new GamepadConfiguration ();
 
 		view = new RetroGtk.GamepadView ();
 		view.set_size_request (320, 240);

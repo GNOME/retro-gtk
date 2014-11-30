@@ -23,7 +23,7 @@ namespace RetroGtk {
 
 public class Gamepad : Object, ControllerDevice {
 	public Widget widget { get; construct; }
-	public KeyboardGamepadConfiguration configuration { get; construct set; }
+	public GamepadConfiguration configuration { get; construct set; }
 
 	private HashTable<uint?, bool?> key_state;
 	private Keymap keymap;
@@ -32,7 +32,7 @@ public class Gamepad : Object, ControllerDevice {
 		Object (widget: widget);
 	}
 
-	public Gamepad.with_configuration (Widget widget, KeyboardGamepadConfiguration configuration) {
+	public Gamepad.with_configuration (Widget widget, GamepadConfiguration configuration) {
 		Object (widget: widget, configuration: configuration);
 	}
 
@@ -67,7 +67,7 @@ public class Gamepad : Object, ControllerDevice {
 		keymap = Keymap.get_default ();
 
 		if (configuration == null) {
-			configuration = new KeyboardGamepadConfiguration ();
+			configuration = new GamepadConfiguration ();
 			configuration.set_to_default ();
 		}
 	}

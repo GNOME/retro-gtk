@@ -36,12 +36,12 @@ FILES= \
 	input/ControllerHandler.vala \
 	input/Gamepad.vala \
 	input/GamepadButtonType.vala \
+	input/GamepadConfiguration.vala \
+	input/GamepadConfigurationDialog.vala \
 	input/GamepadView.vala \
 	input/Keyboard.vala \
 	input/KeyboardBox.vala \
 	input/KeyboardGamepadAdapter.vala \
-	input/KeyboardGamepadConfiguration.vala \
-	input/KeyboardGamepadConfigurationDialog.vala \
 	input/Mouse.vala \
 	video/Display.vala \
 	video/video-converter.c \

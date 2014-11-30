@@ -20,19 +20,19 @@ namespace RetroGtk {
 
 public class KeyboardGamepadAdapter : Object, ControllerDevice {
 	public Keyboard keyboard { get; construct; }
-	public KeyboardGamepadConfiguration configuration { get; construct set; }
+	public GamepadConfiguration configuration { get; construct set; }
 
 	public KeyboardGamepadAdapter (Keyboard keyboard) {
 		Object (keyboard: keyboard);
 	}
 
-	public KeyboardGamepadAdapter.with_configuration (Keyboard keyboard, KeyboardGamepadConfiguration configuration) {
+	public KeyboardGamepadAdapter.with_configuration (Keyboard keyboard, GamepadConfiguration configuration) {
 		Object (keyboard: keyboard, configuration: configuration);
 	}
 
 	construct {
 		if (configuration == null) {
-			configuration = new KeyboardGamepadConfiguration ();
+			configuration = new GamepadConfiguration ();
 			configuration.set_to_default ();
 		}
 	}

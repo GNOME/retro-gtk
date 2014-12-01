@@ -23,6 +23,15 @@ namespace Retro {
 public static const uint API_VERSION = 1;
 
 /**
+ * Error type thrown by interfaces when accessing one of their Core's
+ * callback
+ */
+public errordomain CbError {
+	NO_CORE,
+	NO_CALLBACK
+}
+
+/**
  * Get a module's system informations in a simple and light way
  */
 public SystemInfo? get_system_info (string module_name) {

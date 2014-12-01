@@ -18,8 +18,6 @@
 #ifndef __RETRO_CORE_GLOBAL_H__
 #define __RETRO_CORE_GLOBAL_H__
 
-void retro_core_push_cb_data (void *data);
-void retro_core_pop_cb_data (void *data);
 void *retro_core_get_cb_data ();
 
 #endif

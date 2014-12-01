@@ -310,14 +310,14 @@ public class Core : Object {
 	 *
 	 * Must be called before any call to a function from the module.
 	 */
-	private extern void push_cb_data ();
+	internal extern void push_cb_data ();
 
 	/**
 	 * Remove the Core at the head of the stack
 	 *
 	 * Must be called after any call to {@link push_cb_data()}.
 	 */
-	private extern void pop_cb_data ();
+	internal extern void pop_cb_data ();
 
 	private extern void *get_module_environment_interface ();
 	private extern void *get_module_video_refresh_cb ();

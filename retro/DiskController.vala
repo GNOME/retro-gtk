@@ -29,10 +29,8 @@ namespace Retro {
  * {@link eject_state} to true.
  * Set the {@link image_index} to the one you want to use.
  * Insert the disk again by setting {@link eject_state} to false.
- *
- * TODO Change visibility once the interface have been tested.
  */
-internal interface DiskController: Object {
+public interface DiskController: Object {
 	/**
 	 * The current eject state.
 	 *

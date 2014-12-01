@@ -182,10 +182,8 @@ public class Core : Object {
 	 * The disk controlling interface
 	 *
 	 * The Core can set it to let the frontend insert and eject disks.
-	 *
-	 * TODO Change visibility once the interface have been tested.
 	 */
-	internal DiskController disk_control_interface { internal set; get; }
+	public DiskController disk_control_interface { internal set; get; }
 
 	/**
 	 * The video input interface

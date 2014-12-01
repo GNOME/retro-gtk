@@ -42,12 +42,12 @@ public interface Audio : Object {
 	 * ask for audio to play. The audio data will then be sent via the
 	 * usual methods.
 	 */
-	public virtual signal void audio_request () throws CbError {
+	public void audio_request () throws CbError {
 		if (core == null)
-			throw new InterfaceError.NO_CORE ("No core");
+			throw new CbError.NO_CORE ("No core");
 
 		if (core.audio_callback == null)
-			throw new InterfaceError.NO_CALLBACK ("No audio callback");
+			throw new CbError.NO_CALLBACK ("No audio callback");
 
 		core.audio_callback.callback ();
 	}
@@ -59,12 +59,12 @@ public interface Audio : Object {
 	 * it must be set to false one the audio player don't want to request
 	 * for audio anymore.
 	 */
-	public bool can_request_audio (bool enabled) throws CbError {
+	public void can_request_audio (bool enabled) throws CbError {
 		if (core == null)
-			throw new InterfaceError.NO_CORE ("No core");
+			throw new CbError.NO_CORE ("No core");
 
 		if (core.audio_callback == null)
-			throw new InterfaceError.NO_CALLBACK ("No audio callback");
+			throw new CbError.NO_CALLBACK ("No audio callback");
 
 		core.audio_callback.set_state (enabled);
 	}

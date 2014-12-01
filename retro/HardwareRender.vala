@@ -28,7 +28,8 @@ public interface HardwareRender: Object {
 		OPENGL,
 		OPENGLES2,
 		OPENGL_CORE,
-		OPENGLES3
+		OPENGLES3,
+		OPENGLES_VERSION
 	}
 
 	public abstract ContexType context_type { set; get; default = ContexType.NONE; }

@@ -24,8 +24,24 @@ public interface Input : Object {
 	public abstract int16 get_state (uint port, DeviceType device, uint index, uint id);
 
 	public abstract void set_descriptors (InputDescriptor[] input_descriptors);
-	public abstract KeyboardCallback? keyboard_callback { set; get; }
 	public abstract uint64 get_device_capabilities ();
+
+	public virtual signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) throws CbError {
+		if (core == null)
+			throw new InterfaceError.NO_CORE ("No core");
+
+		if (core.keyboard_callback == null)
+			throw new InterfaceError.NO_CALLBACK ("No keyboard callback");
+
+		core.keyboard_callback.callback (down, keycode, character, key_modifiers);
+	}
+}
+
+[CCode (has_target = false)]
+private delegate void KeyboardCallbackCallback (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+
+private struct KeyboardCallback {
+	KeyboardCallbackCallback callback;
 }
 
 }

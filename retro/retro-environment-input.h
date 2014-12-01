@@ -28,9 +28,6 @@ inline gboolean environment_input_command (RetroInput *self, unsigned cmd, gpoin
 		case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
 			return set_input_desciptors (self, (RetroInputDescriptor *) data);
 
-		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
-			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
-
 		case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
 			return get_input_device_capabilities (self, (guint64 *) data);
 
@@ -43,11 +40,6 @@ inline gboolean set_input_desciptors (RetroInput *self, const RetroInputDescript
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
 	retro_input_set_descriptors (self, descriptors, length);
-	return TRUE;
-}
-
-inline gboolean set_keyboard_callback (RetroInput *self, const RetroKeyboardCallback *callback) {
-	retro_input_set_keyboard_callback (self, callback);
 	return TRUE;
 }
 

@@ -178,11 +178,4 @@ public enum KeyboardModifierKey {
 	SCROLLOCK  = 0x40
 }
 
-[CCode (has_target = false)]
-public delegate void KeyboardEvent (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
-
-public struct KeyboardCallback {
-	KeyboardEvent callback;
-}
-
 }

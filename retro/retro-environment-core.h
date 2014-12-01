@@ -42,6 +42,9 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
 			get_system_directory (self, (gchar **) data);
 
+		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
+			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
+
 		case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
 			set_disk_control_interface (self, (RetroCoreDiskControllerCallback *) data);
 
@@ -97,6 +100,11 @@ inline gboolean set_performance_level (RetroCore *self, RetroPerfLevel *performa
 
 inline gboolean get_system_directory (RetroCore *self, const gchar **system_directory) {
 	*(system_directory) = retro_core_get_system_directory (self);
+	return TRUE;
+}
+
+inline gboolean set_keyboard_callback (RetroCore *self, const RetroKeyboardCallback *callback) {
+	retro_core_set_keyboard_callback (self, callback);
 	return TRUE;
 }
 

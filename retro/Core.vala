@@ -18,6 +18,9 @@
 namespace Retro {
 
 public class Core : Object {
+	internal static RecMutex r_mutex = RecMutex ();
+	internal static RecMutex w_mutex = RecMutex ();
+
 	/**
 	 * The version of libretro used by the module
 	 *

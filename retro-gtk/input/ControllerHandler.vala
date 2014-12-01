@@ -29,16 +29,12 @@ public class ControllerHandler : Object, Retro.Input {
 
 			_core = value;
 
-			keyboard_callback = null;
-
 			if (_core != null && _core.input_interface != this) {
 				_core.input_interface = this;
 				init_core ();
 			}
 		}
 	}
-
-	public KeyboardCallback? keyboard_callback { set; get; }
 
 	private HashTable<uint?, ControllerDevice> controller_devices;
 	private Keyboard keyboard;
@@ -90,8 +86,12 @@ public class ControllerHandler : Object, Retro.Input {
 		this.keyboard = keyboard;
 
 		keyboard.key_event.connect ((p, k, c, m) => {
-			if (keyboard_callback != null)
-				keyboard_callback.callback (p, k, c, m);
+			try {
+				key_event (p, k, c, m);
+			}
+			catch (CbError e) {
+				// There is no core or the core set no keyboard callback
+			}
 		});
 	}
 

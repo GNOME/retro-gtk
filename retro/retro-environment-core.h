@@ -109,7 +109,7 @@ inline gboolean set_keyboard_callback (RetroCore *self, const RetroKeyboardCallb
 }
 
 inline gboolean set_disk_control_interface (RetroCore *self, RetroCoreDiskControllerCallback *callback) {
-	retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROLLER (retro_core_disk_controller_new (callback)));
+	retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROLLER (retro_core_disk_controller_new (self, callback)));
 	return TRUE;
 }
 

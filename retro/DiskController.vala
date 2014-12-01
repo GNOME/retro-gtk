@@ -107,6 +107,8 @@ internal interface DiskController: Object {
 }
 
 private class CoreDiskController: Object, DiskController {
+	public weak Core core { private get; construct; }
+
 	[CCode (has_target = false)]
 	internal delegate bool SetEjectState (bool ejected);
 
@@ -143,12 +145,17 @@ private class CoreDiskController: Object, DiskController {
 	public bool eject_state {
 		set {
 			if (callback_struct.set_eject_state != null) {
+				core.push_cb_data ();
 				callback_struct.set_eject_state (value);
+				core.pop_cb_data ();
 			}
 		}
 		get {
 			if (callback_struct.get_eject_state != null) {
-				return callback_struct.get_eject_state ();
+				core.push_cb_data ();
+				var result = callback_struct.get_eject_state ();
+				core.pop_cb_data ();
+				return result;
 			}
 			return false;
 		}
@@ -157,31 +164,42 @@ private class CoreDiskController: Object, DiskController {
 	public uint image_index {
 		set {
 			if (callback_struct.set_image_index != null) {
+				core.push_cb_data ();
 				callback_struct.set_image_index (value);
+				core.pop_cb_data ();
 			}
 		}
 		get {
 			if (callback_struct.get_image_index != null) {
-				return callback_struct.get_image_index ();
+				core.push_cb_data ();
+				var result = callback_struct.get_image_index ();
+				core.pop_cb_data ();
+				return result;
 			}
 			return 0;
 		}
 	}
 
-	internal CoreDiskController (Callback callback_struct) {
-		Object (callback_struct: callback_struct);
+	internal CoreDiskController (Core core, Callback callback_struct) {
+		Object (core: core, callback_struct: callback_struct);
 	}
 
 	public uint get_num_images () {
 		if (callback_struct.get_num_images != null) {
-			return callback_struct.get_num_images ();
+			core.push_cb_data ();
+			var result = callback_struct.get_num_images ();
+			core.pop_cb_data ();
+			return result;
 		}
 		return 0;
 	}
 
 	public bool replace_image_index (uint index, GameInfo info) {
 		if (callback_struct.replace_image_index != null) {
-			return callback_struct.replace_image_index (index, info);
+			core.push_cb_data ();
+			var result = callback_struct.replace_image_index (index, info);
+			core.pop_cb_data ();
+			return result;
 		}
 		return false;
 	}
@@ -190,7 +208,9 @@ private class CoreDiskController: Object, DiskController {
 	public bool remove_image_index (uint index) {
 		if (callback_struct.replace_image_index != null) {
 			var i = image_index;
+			core.push_cb_data ();
 			var result = callback_struct.replace_image_index (index, null);
+			core.pop_cb_data ();
 			// Notify a change on the "image-index" property
 			if (i != image_index) notify_property ("image-index");
 			return result;
@@ -200,7 +220,10 @@ private class CoreDiskController: Object, DiskController {
 
 	public bool add_image_index () {
 		if (callback_struct.add_image_index != null) {
-			return callback_struct.add_image_index ();
+			core.push_cb_data ();
+			var result = callback_struct.add_image_index ();
+			core.pop_cb_data ();
+			return result;
 		}
 		return false;
 	}

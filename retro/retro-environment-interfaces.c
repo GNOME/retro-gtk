@@ -48,7 +48,7 @@ inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 }
 
 inline gboolean get_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
-	gboolean interface_exists = retro_core_get_rumble_interface (self);
+	void *interface_exists = retro_core_get_rumble_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
@@ -67,7 +67,7 @@ inline gboolean get_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
 }
 
 inline gboolean get_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
-	gboolean interface_exists = retro_core_get_sensor_interface (self);
+	void *interface_exists = retro_core_get_sensor_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
@@ -97,7 +97,7 @@ inline gboolean get_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
 }
 
 inline gboolean get_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
-	gboolean interface_exists = retro_core_get_camera_interface (self);
+	void *interface_exists = retro_core_get_camera_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {
@@ -176,7 +176,7 @@ inline gboolean get_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
 }
 
 inline gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
-	gboolean interface_exists = retro_core_get_log_interface (self);
+	void *interface_exists = retro_core_get_log_interface (self);
 	if (!interface_exists) return FALSE;
 
 	void real_log (guint level, const char *format, ...) {
@@ -201,7 +201,7 @@ inline gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
 }
 
 inline gboolean get_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
-	gboolean interface_exists = retro_core_get_performance_interface (self);
+	void *interface_exists = retro_core_get_performance_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gint64 real_get_time_usec () {
@@ -286,7 +286,7 @@ inline gboolean get_performance_callback (RetroCore *self, RetroPerformanceCallb
 }
 
 inline gboolean get_location_callback (RetroCore *self, RetroLocationCallback *cb) {
-	gboolean interface_exists = retro_core_get_location_interface (self);
+	void *interface_exists = retro_core_get_location_interface (self);
 	if (!interface_exists) return FALSE;
 
 	gboolean real_start () {

@@ -23,7 +23,6 @@ namespace RetroGtk {
 
 public class GamepadConfigurationDialog : Gtk.Dialog {
 	private GamepadView view;
-	private Label prompt;
 
 	private Widget apply_button;
 
@@ -58,23 +57,15 @@ public class GamepadConfigurationDialog : Gtk.Dialog {
 		current_configuration = new GamepadConfiguration ();
 
 		view = new RetroGtk.GamepadView ();
-		view.set_size_request (320, 240);
+		view.set_size_request (480, 360);
 		view.show ();
-
-		prompt = new Label (null);
-		prompt.show ();
 
 		var kb = new EventBox ();
 		new KeyboardState (kb);
 		kb.key_press_event.connect (on_button_press_event);
 		kb.show ();
 
-		var box = new Box (Orientation.VERTICAL, 6);
-		box.pack_start (view);
-		box.pack_start (prompt);
-		box.show ();
-
-		kb.add (box);
+		kb.add (view);
 		get_content_area ().pack_start (kb);
 
 		apply_button = add_button ("_Apply", ResponseType.APPLY);
@@ -91,15 +82,20 @@ public class GamepadConfigurationDialog : Gtk.Dialog {
 	private void prompt_button (GamepadButtonType? button) {
 		view.reset ();
 
+		var header_bar = get_header_bar ();
+
 		if (button == null) {
-			prompt.set_text ("Configuration finished");
+			if (header_bar is HeaderBar)
+				(header_bar as HeaderBar).set_title ("Configuration competed");
 			return;
 		}
 
 		view.highlight_button ((GamepadButtonType) button, true);
 
 		var button_name = button.to_string ();
-		prompt.set_text (@"Press a key for the $button_name button");
+
+		if (header_bar is HeaderBar)
+			(header_bar as HeaderBar).set_title ("Press a key for the this button");
 	}
 
 	private bool on_button_press_event (EventKey event) {

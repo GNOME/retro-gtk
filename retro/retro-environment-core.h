@@ -31,10 +31,10 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 
 	switch (cmd) {
 		case RETRO_ENVIRONMENT_SET_MESSAGE:
-			return set_message ((RetroMessage *) data);
+			return set_message (self, (RetroMessage *) data);
 
 		case RETRO_ENVIRONMENT_SHUTDOWN:
-			return set_shutdown ();
+			return set_shutdown (self);
 
 		case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
 			return set_performance_level (self, (RetroPerfLevel *) data);

@@ -134,11 +134,11 @@ public class Core : Object {
 	public HardwareRender hw_render { internal set; get; }
 
 	/**
-	 * The audio input interface
+	 * The audio callback interface
 	 *
 	 * The Core can set it to let the frontend pass audio to it.
 	 */
-	public AudioInput audio_input_callback { internal set; get; }
+	internal AudioCallback? audio_callback { set; get; }
 
 	/**
 	 * The time input interface

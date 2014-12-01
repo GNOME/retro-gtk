@@ -26,12 +26,12 @@ public interface Input : Object {
 	public abstract void set_descriptors (InputDescriptor[] input_descriptors);
 	public abstract uint64 get_device_capabilities ();
 
-	public virtual signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) throws CbError {
+	public void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) throws CbError {
 		if (core == null)
-			throw new InterfaceError.NO_CORE ("No core");
+			throw new CbError.NO_CORE ("No core");
 
 		if (core.keyboard_callback == null)
-			throw new InterfaceError.NO_CALLBACK ("No keyboard callback");
+			throw new CbError.NO_CALLBACK ("No keyboard callback");
 
 		core.keyboard_callback.callback (down, keycode, character, key_modifiers);
 	}

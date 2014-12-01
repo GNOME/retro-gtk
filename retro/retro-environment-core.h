@@ -55,7 +55,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return get_libretro_path (self, (gchar **) data);
 
 		case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
-			return set_audio_callback (self, (RetroCoreAudioInputCallback *) data);
+			return set_audio_callback (self, (RetroAudioCallback *) data);
 
 		case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
 			return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
@@ -123,8 +123,8 @@ inline gboolean get_libretro_path (RetroCore *self, const gchar **libretro_direc
 	return TRUE;
 }
 
-inline gboolean set_audio_callback (RetroCore *self, RetroCoreAudioInputCallback *callback) {
-	retro_core_set_audio_input_callback (self, RETRO_AUDIO_INPUT (retro_core_audio_input_new (callback)));
+inline gboolean set_audio_callback (RetroCore *self, RetroAudioCallback *callback) {
+	retro_core_set_audio_callback (self, callback);
 	return TRUE;
 }
 

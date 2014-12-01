@@ -40,7 +40,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return set_performance_level (self, (RetroPerfLevel *) data);
 
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
-			get_system_directory (self, (gchar **) data);
+			return get_system_directory (self, (gchar **) data);
 
 		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);

@@ -17,12 +17,18 @@
 
 namespace Retro {
 
-public enum CameraBuffer {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal enum CameraBuffer {
 	OPENGL_TEXTURE,
 	RAW_FRAMEBUFFER
 }
 
-public interface Camera: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface Camera: Object {
 	public abstract uint64 caps { set; get; }
 	public abstract uint width { set; get; }
 	public abstract uint height { set; get; }

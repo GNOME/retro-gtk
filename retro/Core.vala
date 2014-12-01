@@ -123,15 +123,19 @@ public class Core : Object {
 	 * The disk controlling interface
 	 *
 	 * The Core can set it to let the frontend insert and eject disks.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public DiskController disk_control_interface { internal set; get; }
+	internal DiskController disk_control_interface { internal set; get; }
 
 	/**
 	 * The video input interface
 	 *
 	 * The Core can set it to let the frontend pass video to it.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public HardwareRender hw_render { internal set; get; }
+	internal HardwareRender hw_render { internal set; get; }
 
 	/**
 	 * The audio callback interface
@@ -145,8 +149,10 @@ public class Core : Object {
 	 *
 	 * The Core can set it to let the frontend inform it of the amount
 	 * of time passed since the last call to {@link run()}.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public FrameTime frame_time_callback { internal set; get; }
+	internal FrameTime frame_time_callback { internal set; get; }
 
 	/**
 	 * The video interface
@@ -230,24 +236,30 @@ public class Core : Object {
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public Rumble rumble_interface { set; get; }
+	internal Rumble rumble_interface { set; get; }
 
 	/**
 	 * The sensor interface
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public Sensor sensor_interface { set; get; }
+	internal Sensor sensor_interface { set; get; }
 
 	/**
 	 * The camera interface
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public Camera camera_interface { set; get; }
+	internal Camera camera_interface { set; get; }
 
 	/**
 	 * The logging interface
@@ -262,16 +274,20 @@ public class Core : Object {
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public Performance performance_interface { set; get; }
+	internal Performance performance_interface { set; get; }
 
 	/**
 	 * The location interface
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init()} is called.
+	 *
+	 * TODO Change visibility once the interface have been tested.
 	 */
-	public Location location_interface { set; get; }
+	internal Location location_interface { set; get; }
 
 	/**
 	 * Ask the frontend to shut down
@@ -361,7 +377,7 @@ public class Core : Object {
 	/**
 	 * Deinitialize the module
 	 */
-	private void deinit () {
+	public void deinit () {
 		push_cb_data ();
 		module.deinit ();
 		pop_cb_data ();

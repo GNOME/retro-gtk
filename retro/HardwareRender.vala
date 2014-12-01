@@ -17,7 +17,10 @@
 
 namespace Retro {
 
-public interface HardwareRender: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface HardwareRender: Object {
 	public static const ulong FRAME_BUFFER_VALID = ulong.MAX;
 
 	[CCode (has_target = false)]

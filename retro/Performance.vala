@@ -25,8 +25,11 @@ public enum PerfLevel {
 	HIGH_END
 }
 
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
 [Flags]
-public enum SimdFlags {
+internal enum SimdFlags {
 	SSE    = (1 << 0),
 	SSE2   = (1 << 1),
 	VMX    = (1 << 2),
@@ -44,7 +47,10 @@ public enum SimdFlags {
 	PS     = (1 << 14)
 }
 
-public struct PerfCounter {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct PerfCounter {
 	string ident;
 	uint64 start_tick;
 	uint64 total_tick;
@@ -53,7 +59,10 @@ public struct PerfCounter {
 	bool registered;
 }
 
-public interface Performance: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface Performance: Object {
 	public abstract int64 get_time_usec ();
 	public abstract uint64 get_cpu_features ();
 	public abstract uint64 get_perf_counter ();

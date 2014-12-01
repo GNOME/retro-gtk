@@ -17,12 +17,18 @@
 
 namespace Retro {
 
-public enum RumbleEffect {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal enum RumbleEffect {
 	STRONG,
 	WEAK
 }
 
-public interface Rumble: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface Rumble: Object {
 	public abstract bool set_rumble_state (uint port, RumbleEffect effect, uint16 strength);
 }
 

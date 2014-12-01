@@ -17,7 +17,10 @@
 
 namespace Retro {
 
-public interface FrameTime: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface FrameTime: Object {
 	public abstract int64 usec_reference { set; get; default = 0; }
 	public abstract void callback (int64 usec);
 }

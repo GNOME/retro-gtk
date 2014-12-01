@@ -22,8 +22,10 @@ namespace Retro {
  *
  * The purpose of this interface is to be able to retrieve location-based
  * information from the host device, such as current latitude / longitude.
+ *
+ * TODO Change visibility once the interface have been tested.
  */
-public interface Location: Object {
+internal interface Location: Object {
 	/**
 	 * Start location services.
 	 *

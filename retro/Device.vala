@@ -229,12 +229,12 @@ public enum PointerId {
 }
 
 public struct InputDescriptor {
-   uint port;
-   DeviceType device;
-   uint index;
-   uint id;
+	uint port;
+	DeviceType device;
+	uint index;
+	uint id;
 
-   string description;
+	string description;
 }
 
 }

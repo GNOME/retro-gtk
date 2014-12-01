@@ -36,8 +36,11 @@ public enum MemoryType {
 	}
 }
 
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
 [Flags]
-public enum MemDesc {
+internal enum MemDesc {
 	CONST     = (1 << 0),
 	BIGENDIAN = (1 << 1),
 	ALIGN_2   = (1 << 16),
@@ -48,7 +51,10 @@ public enum MemDesc {
 	MINSIZE_8 = (3 << 24)
 }
 
-public struct MemoryDescriptor {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct MemoryDescriptor {
 	uint64 flags;
 	void *ptr;
 	size_t offset;
@@ -59,7 +65,10 @@ public struct MemoryDescriptor {
 	string addrspace;
 }
 
-public struct MemoryMap {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct MemoryMap {
 	MemoryDescriptor? descriptors;
 	uint num_descriptors;
 }

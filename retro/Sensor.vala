@@ -17,18 +17,27 @@
 
 namespace Retro {
 
-public enum SensorAccelerometer {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal enum SensorAccelerometer {
 	X,
 	Y,
 	Z
 }
 
-public enum SensorAction {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal enum SensorAction {
 	ACCELEROMETER_ENABLE,
 	ACCELEROMETER_DISABLE
 }
 
-public interface Sensor: Object {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal interface Sensor: Object {
 	public abstract bool set_sensor_state (uint port, SensorAction action, uint rate);
 	public abstract float get_sensor_input (uint port, SensorAccelerometer id);
 }

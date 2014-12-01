@@ -17,12 +17,18 @@
 
 namespace Retro {
 
-public struct ControllerDescription {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct ControllerDescription {
 	string desc;
 	uint id;
 }
 
-public struct ControllerInfo {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct ControllerInfo {
 	ControllerDescription? types;
 	uint num_types;
 }

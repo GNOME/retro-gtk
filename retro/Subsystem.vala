@@ -17,12 +17,18 @@
 
 namespace Retro {
 
-public struct SubsystemMemoryInfo {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct SubsystemMemoryInfo {
 	string extension;
 	uint type;
 }
 
-public struct SubsystemRomInfo {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct SubsystemRomInfo {
 	string desc;
 	string valid_extensions;
 	bool need_fullpath;
@@ -32,7 +38,10 @@ public struct SubsystemRomInfo {
 	uint num_memory;
 }
 
-public struct SubsystemInfo {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal struct SubsystemInfo {
 	string desc;
 	string ident;
 	SubsystemRomInfo? roms;

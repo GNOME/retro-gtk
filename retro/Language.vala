@@ -17,7 +17,10 @@
 
 namespace Retro {
 
-public enum Language {
+/**
+ * TODO Change visibility once the interface have been tested.
+ */
+internal enum Language {
 	ENGLISH,
 	JAPANESE,
 	FRENCH,

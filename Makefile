@@ -51,6 +51,7 @@ FILES= \
 	MainLoop.vala \
 	Options.vala \
 	RetroGtk.vala \
+	ThreadedLoop.vala \
 	$(NULL)
 
 PKG= \
@@ -71,7 +72,7 @@ OUT= \
 	$(OUT_DIR)/$H \
 	$(NULL)
 
-VALAC_OPTIONS= --save-temps
+VALAC_OPTIONS= --save-temps --thread --target-glib 2.32
 
 all: $(OUT) $(OUT_DIR)/$(DEPS) $(OUT_DIR)/$(TYPELIB) $(OUT_DIR)/$(PKGCONF)
 

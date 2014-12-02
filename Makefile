@@ -47,6 +47,7 @@ FILES= \
 	video/Display.vala \
 	video/video-converter.c \
 	FileStreamLogger.vala \
+	Loop.vala \
 	Options.vala \
 	RetroGtk.vala \
 	Runner.vala \

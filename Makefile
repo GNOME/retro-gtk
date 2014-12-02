@@ -57,7 +57,6 @@ FILES= \
 	SystemInfo.vala \
 	Variables.vala \
 	Video.vala \
-	retro-core-cb-data.c \
 	retro-environment.c \
 	retro-environment-interfaces.c \
 	$(NULL)

@@ -18,8 +18,6 @@
 #include "retro-environment-interfaces.h"
 #include "libretro-environment.h"
 
-#include "retro-core-cb-data.h"
-
 inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data) {
 	if (!self) return FALSE;
 

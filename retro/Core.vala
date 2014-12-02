@@ -18,8 +18,64 @@
 namespace Retro {
 
 public class Core : Object {
-	internal static RecMutex r_mutex = RecMutex ();
-	internal static RecMutex w_mutex = RecMutex ();
+	private static RecMutex r_mutex = RecMutex ();
+	private static RecMutex w_mutex = RecMutex ();
+	private static Core[] objects = new Core[32];
+	private static int i = 0;
+
+	/**
+	 * Store the current Core instance in a stack
+	 *
+	 * Stores the current instance of Core in a thread local global stack.
+	 * It allows to know wich Core a callback is related to.
+	 *
+	 * Must be called before any call to a function from the module.
+	 */
+	internal void push_cb_data () {
+		w_mutex.lock ();
+		r_mutex.lock ();
+
+		if (i == objects.length) {
+			stderr.printf ("Error: Callback data stack overflow.\n");
+			assert_not_reached ();
+		}
+
+		objects[i] = this;
+		i++;
+
+		r_mutex.unlock ();
+	}
+
+	/**
+	 * Remove the Core at the head of the stack
+	 *
+	 * Must be called after any call to {@link push_cb_data()}.
+	 */
+	internal void pop_cb_data () {
+		r_mutex.lock ();
+		if (i == 0) {
+			stderr.printf ("Error: Callback data stack underflow.\n");
+			assert_not_reached ();
+		}
+
+		i--;
+
+		r_mutex.unlock ();
+		w_mutex.unlock ();
+	}
+
+	internal static Core get_cb_data () {
+		r_mutex.lock ();
+		if (i == 0) {
+			stderr.printf ("Error: Callback data segmentation fault.\n");
+			assert_not_reached ();
+		}
+
+		Core result =  objects[i - 1];
+		r_mutex.unlock ();
+
+		return result;
+	}
 
 	/**
 	 * The version of libretro used by the module
@@ -301,23 +357,6 @@ public class Core : Object {
 	 * Ask the frontend to display a message for an amount of frames
 	 */
 	public signal bool message (string message, uint frames);
-
-	/**
-	 * Store the current Core instance in a stack
-	 *
-	 * Stores the current instance of Core in a thread local global stack.
-	 * It allows to know wich Core a callback is related to.
-	 *
-	 * Must be called before any call to a function from the module.
-	 */
-	internal extern void push_cb_data ();
-
-	/**
-	 * Remove the Core at the head of the stack
-	 *
-	 * Must be called after any call to {@link push_cb_data()}.
-	 */
-	internal extern void pop_cb_data ();
 
 	private extern void *get_module_environment_interface ();
 	private extern void *get_module_video_refresh_cb ();

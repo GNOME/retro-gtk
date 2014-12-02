@@ -42,6 +42,7 @@ FILES= \
 	input/Keyboard.vala \
 	input/KeyboardState.vala \
 	input/Mouse.vala \
+	video/CairoDisplay.vala \
 	video/Display.vala \
 	video/video-converter.c \
 	FileStreamLogger.vala \

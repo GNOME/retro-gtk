@@ -162,3 +162,74 @@ GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, 
 	return pb;
 }
 
+guchar *xrgb1555_to_argb8888 (const guint16 *data, guint width, guint height, gsize pitch) {
+	guchar get_r (guint16 pixel) {
+		guchar color = ((pixel >> 10) << 3);
+		return color;
+	}
+
+	guchar get_g (guint16 pixel) {
+		guchar color = ((pixel >> 5) << 3);
+		return color;
+	}
+
+	guchar get_b (guint16 pixel) {
+		guchar color = (pixel << 3);
+		return color;
+	}
+
+	gsize rgb_pitch = width*4;
+	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
+
+	gsize i, j;
+	for (i = 0 ; i < height ; i++) {
+		gsize xrgb_row = i* (pitch / sizeof (guint16));
+		gsize rgb_row = i*rgb_pitch;
+
+		for (j = 0 ; j < width ; j++) {
+			gsize xrgb_col = j;
+			gsize rgb_col = j*4;
+
+			gsize rgb_pixel_i = rgb_row+rgb_col;
+
+			// blue
+			rgb[rgb_pixel_i]   = get_b (data[xrgb_row+xrgb_col]);
+			// green
+			rgb[rgb_pixel_i+1] = get_g (data[xrgb_row+xrgb_col]);
+			// red
+			rgb[rgb_pixel_i+2] = get_r (data[xrgb_row+xrgb_col]);
+			// alpha
+			rgb[rgb_pixel_i+3] = 0;
+		}
+	}
+
+	return rgb;
+}
+
+GdkPixbuf* video_to_argb8888_pixbuf (void* data, guint width, guint height, gsize pitch, gint pixel_format) {
+	guint8 *vid = (guint8 *) data;
+
+	guchar *rgb = NULL;
+
+	switch (pixel_format) {
+		case RETRO_PIXEL_FORMAT_0RGB1555:
+			rgb = xrgb1555_to_argb8888 (data, width, height, pitch);
+			break;
+	}
+
+	gsize rgb_pitch = 4 * width;
+
+	GdkColorspace colorspace = GDK_COLORSPACE_RGB;
+	gboolean has_alpha = TRUE;
+	gint bits_per_sample = 8;
+	gint rowstride = rgb_pitch;
+
+	void rgb_free (guchar *pixels, gpointer data) {
+		free (pixels);
+	}
+
+	GdkPixbuf *pb = gdk_pixbuf_new_from_data (rgb, colorspace, has_alpha, bits_per_sample, width, height, rowstride, rgb_free, NULL);
+
+	return pb;
+}
+

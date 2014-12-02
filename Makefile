@@ -51,7 +51,6 @@ FILES= \
 	MainLoop.vala \
 	Options.vala \
 	RetroGtk.vala \
-	Runner.vala \
 	$(NULL)
 
 PKG= \

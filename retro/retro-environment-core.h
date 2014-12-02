@@ -46,7 +46,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
 
 		case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
-			set_disk_control_interface (self, (RetroCoreDiskControllerCallback *) data);
+			set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
 		case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
 			return set_support_no_game (self, (gboolean *) data);
@@ -108,8 +108,8 @@ inline gboolean set_keyboard_callback (RetroCore *self, const RetroKeyboardCallb
 	return TRUE;
 }
 
-inline gboolean set_disk_control_interface (RetroCore *self, RetroCoreDiskControllerCallback *callback) {
-	retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROLLER (retro_core_disk_controller_new (self, callback)));
+inline gboolean set_disk_control_interface (RetroCore *self, RetroDiskControlCallback *callback) {
+	retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROL (retro_disk_control_new (self, callback)));
 	return TRUE;
 }
 

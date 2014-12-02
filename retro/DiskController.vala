@@ -18,7 +18,7 @@
 namespace Retro {
 
 /**
- * Handles a virtual disk drive.
+ * Handles a virtual disk drive
  *
  * Used by a {@link Core} which can swap out multiple disk images in runtime.
  *
@@ -30,9 +30,18 @@ namespace Retro {
  * Set the {@link image_index} to the one you want to use.
  * Insert the disk again by setting {@link eject_state} to false.
  */
-public interface DiskController: Object {
+public class DiskControl: Object {
+	private weak Core core;
+
+	private DiskControlCallback callback_struct;
+
+	internal DiskControl (Core core, DiskControlCallback callback_struct) {
+		this.core = core;
+		this.callback_struct = callback_struct;
+	}
+
 	/**
-	 * The current eject state.
+	 * Set the current eject state
 	 *
 	 * When set to true, "ejects" the virtual disk tray.
 	 * When set to false, "closes" the virtual disk tray.
@@ -40,27 +49,85 @@ public interface DiskController: Object {
 	 * When ejected, the disk image index can be set.
 	 *
 	 * The default state is "closed".
+	 *
+	 * @param ejected the desired eject state
+	 * @return whether the change happened or not
 	 */
-	public abstract bool eject_state { set; get; default = false; }
+	public bool set_eject_state (bool ejected) {
+		if (callback_struct.set_eject_state == null) return false;
+
+		core.push_cb_data ();
+		var result = callback_struct.set_eject_state (ejected);
+		core.pop_cb_data ();
+		return result;
+	}
 
 	/**
-	 * The current disk index.
+	 * Get the current eject state
 	 *
-	 * Can only be set when disk is ejected.
+	 * See {@link set_eject_state} for more informations.
 	 *
-	 * If the value is >= {@link get_num_images}, no disk is currently inserted.
+	 * @return the current eject state
 	 */
-	public abstract uint image_index { set; get; default = 0; }
+	public bool get_eject_state () {
+		if (callback_struct.get_eject_state == null) return false;
+
+		core.push_cb_data ();
+		var result = callback_struct.get_eject_state ();
+		core.pop_cb_data ();
+		return result;
+	}
 
 	/**
-	 * Gets the total number of images which are available to use.
+	 * Set the current disk index
+	 *
+	 * Can only be set when the disk drive is ejected.
+	 *
+	 * If the value is >= {@link get_num_images}, no disk is currently
+	 * inserted.
+	 *
+	 * @param ejected the desired image index
+	 * @return whether the change happened or not
+	 */
+	public bool set_image_index (uint image_index) {
+		if (callback_struct.set_image_index == null) return false;
+
+		core.push_cb_data ();
+		var result = callback_struct.set_image_index (image_index);
+		core.pop_cb_data ();
+		return result;
+	}
+
+	/**
+	 * The current disk index
+	 *
+	 * @return the current image index
+	 */
+	public uint get_image_index () {
+		if (callback_struct.get_image_index == null) return 0;
+
+		core.push_cb_data ();
+		var result = callback_struct.get_image_index ();
+		core.pop_cb_data ();
+		return result;
+	}
+
+	/**
+	 * Gets the total number of images which are available to use
 	 *
 	 * @return total number of images available to use
 	 */
-	public abstract uint get_num_images ();
+	public uint get_num_images () {
+		if (callback_struct.get_num_images == null) return 0;
+
+		core.push_cb_data ();
+		var result = callback_struct.get_num_images ();
+		core.pop_cb_data ();
+		return result;
+	}
 
 	/**
-	 * Replaces the disk image associated with index.
+	 * Replaces the disk image associated with index
 	 *
 	 * Virtual disk tray must be ejected when calling this.
 	 *
@@ -69,12 +136,19 @@ public interface DiskController: Object {
 	 *
 	 * @param index index of the disk image to replace
 	 * @param info information on the disk image to use
-	 * @return FIXME
+	 * @return whether the change happened or not
 	 */
-	public abstract bool replace_image_index (uint index, GameInfo info);
+	public bool replace_image_index (uint index, GameInfo info) {
+		if (callback_struct.replace_image_index == null) return false;
+
+		core.push_cb_data ();
+		var result = callback_struct.replace_image_index (index, info);
+		core.pop_cb_data ();
+		return result;
+	}
 
 	/**
-	 * Removes the disk image associated with index.
+	 * Removes the disk image associated with index
 	 *
 	 * Virtual disk tray must be ejected when calling this.
 	 *
@@ -86,146 +160,71 @@ public interface DiskController: Object {
 	 * Index 1 will be removed, and the new index is 3.
 	 *
 	 * @param index index of the disk image to remove
-	 * @return FIXME
+	 * @return whether the change happened or not
 	 */
-	public abstract bool remove_image_index (uint index);
+	public bool remove_image_index (uint index) {
+		if (callback_struct.replace_image_index == null) return false;
+
+		var i = get_image_index ();
+		core.push_cb_data ();
+		var result = callback_struct.replace_image_index (index, null);
+		core.pop_cb_data ();
+		// Notify a change on the "image-index" property
+		if (i != get_image_index ()) notify_property ("image-index");
+		return result;
+	}
 
 	/**
 	 * Adds a new valid index ({@link get_num_images}) to the internal disk
-	 * list.
+	 * list
 	 *
 	 * This will increment subsequent return values from {@link get_num_images}
 	 * by 1.
 	 * This image index cannot be used until a disk image has been set with
 	 * {@link replace_image_index}.
 	 *
-	 * @return FIXME
+	 * @return whether the change happened or not
 	 */
-	public abstract bool add_image_index ();
-}
-
-private class CoreDiskController: Object, DiskController {
-	public weak Core core { private get; construct; }
-
-	[CCode (has_target = false)]
-	internal delegate bool SetEjectState (bool ejected);
-
-	[CCode (has_target = false)]
-	internal delegate bool GetEjectState ();
-
-	[CCode (has_target = false)]
-	internal delegate uint GetImageIndex ();
-
-	[CCode (has_target = false)]
-	internal delegate bool SetImageIndex (uint index);
-
-	[CCode (has_target = false)]
-	internal delegate uint GetNumImages ();
-
-	[CCode (has_target = false)]
-	internal delegate bool ReplaceImageIndex (uint index, GameInfo? info);
-
-	[CCode (has_target = false)]
-	internal delegate bool AddImageIndex ();
-
-	internal struct Callback {
-		public SetEjectState set_eject_state;
-		public GetEjectState get_eject_state;
-		public GetImageIndex get_image_index;
-		public SetImageIndex set_image_index;
-		public GetNumImages get_num_images;
-		public ReplaceImageIndex replace_image_index;
-		public AddImageIndex add_image_index;
-	}
-
-	public Callback callback_struct { construct; private get; }
-
-	public bool eject_state {
-		set {
-			if (callback_struct.set_eject_state != null) {
-				core.push_cb_data ();
-				callback_struct.set_eject_state (value);
-				core.pop_cb_data ();
-			}
-		}
-		get {
-			if (callback_struct.get_eject_state != null) {
-				core.push_cb_data ();
-				var result = callback_struct.get_eject_state ();
-				core.pop_cb_data ();
-				return result;
-			}
-			return false;
-		}
-	}
-
-	public uint image_index {
-		set {
-			if (callback_struct.set_image_index != null) {
-				core.push_cb_data ();
-				callback_struct.set_image_index (value);
-				core.pop_cb_data ();
-			}
-		}
-		get {
-			if (callback_struct.get_image_index != null) {
-				core.push_cb_data ();
-				var result = callback_struct.get_image_index ();
-				core.pop_cb_data ();
-				return result;
-			}
-			return 0;
-		}
-	}
-
-	internal CoreDiskController (Core core, Callback callback_struct) {
-		Object (core: core, callback_struct: callback_struct);
-	}
-
-	public uint get_num_images () {
-		if (callback_struct.get_num_images != null) {
-			core.push_cb_data ();
-			var result = callback_struct.get_num_images ();
-			core.pop_cb_data ();
-			return result;
-		}
-		return 0;
-	}
-
-	public bool replace_image_index (uint index, GameInfo info) {
-		if (callback_struct.replace_image_index != null) {
-			core.push_cb_data ();
-			var result = callback_struct.replace_image_index (index, info);
-			core.pop_cb_data ();
-			return result;
-		}
-		return false;
-	}
-
-
-	public bool remove_image_index (uint index) {
-		if (callback_struct.replace_image_index != null) {
-			var i = image_index;
-			core.push_cb_data ();
-			var result = callback_struct.replace_image_index (index, null);
-			core.pop_cb_data ();
-			// Notify a change on the "image-index" property
-			if (i != image_index) notify_property ("image-index");
-			return result;
-		}
-		return false;
-	}
-
 	public bool add_image_index () {
-		if (callback_struct.add_image_index != null) {
-			core.push_cb_data ();
-			var result = callback_struct.add_image_index ();
-			core.pop_cb_data ();
-			return result;
-		}
-		return false;
+		if (callback_struct.add_image_index == null) return false;
+
+		core.push_cb_data ();
+		var result = callback_struct.add_image_index ();
+		core.pop_cb_data ();
+		return result;
 	}
 }
+
+internal struct DiskControlCallback {
+	public DiskControlCallbackSetEjectState set_eject_state;
+	public DiskControlCallbackGetEjectState get_eject_state;
+	public DiskControlCallbackGetImageIndex get_image_index;
+	public DiskControlCallbackSetImageIndex set_image_index;
+	public DiskControlCallbackGetNumImages get_num_images;
+	public DiskControlCallbackReplaceImageIndex replace_image_index;
+	public DiskControlCallbackAddImageIndex add_image_index;
+}
+
+[CCode (has_target = false)]
+private delegate bool DiskControlCallbackSetEjectState (bool ejected);
+
+[CCode (has_target = false)]
+private delegate bool DiskControlCallbackGetEjectState ();
+
+[CCode (has_target = false)]
+private delegate uint DiskControlCallbackGetImageIndex ();
+
+[CCode (has_target = false)]
+private delegate bool DiskControlCallbackSetImageIndex (uint index);
+
+[CCode (has_target = false)]
+private delegate uint DiskControlCallbackGetNumImages ();
+
+[CCode (has_target = false)]
+private delegate bool DiskControlCallbackReplaceImageIndex (uint index, GameInfo? info);
+
+[CCode (has_target = false)]
+private delegate bool DiskControlCallbackAddImageIndex ();
 
 }
 

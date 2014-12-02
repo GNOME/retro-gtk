@@ -602,7 +602,7 @@ public class Core : Object {
 	/**
 	 * Unload a currently loaded game
 	 */
-	private void unload_game () {
+	public void unload_game () {
 		push_cb_data ();
 		module.unload_game ();
 		pop_cb_data ();

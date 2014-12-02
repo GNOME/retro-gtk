@@ -44,6 +44,7 @@ FILES= \
 	input/Mouse.vala \
 	video/CairoDisplay.vala \
 	video/ClutterDisplay.vala \
+	video/Display.vala \
 	video/video-converter.c \
 	FileStreamLogger.vala \
 	Options.vala \

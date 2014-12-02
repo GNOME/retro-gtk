@@ -21,7 +21,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class CairoDisplay : Gtk.DrawingArea, Retro.Video {
+public class CairoDisplay : Gtk.DrawingArea, Video, Display {
 	public weak Core _core;
 	public weak Core core {
 		get { return _core; }

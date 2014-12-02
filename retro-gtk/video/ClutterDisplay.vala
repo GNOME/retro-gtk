@@ -1,5 +1,4 @@
-/* RetroGtk  Building blocks for a Retro frontend.
- * Copyright (C) 2014  Adrien Plazas
+/* Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +21,7 @@ using Retro;
 
 namespace RetroGtk {
 
-public class Display : GtkClutter.Embed, Retro.Video {
+public class ClutterDisplay : GtkClutter.Embed, Retro.Video {
 	public weak Core _core;
 	public weak Core core {
 		get { return _core; }
@@ -50,7 +49,7 @@ public class Display : GtkClutter.Embed, Retro.Video {
 		stage.set_background_color (Color.get_static (StaticColor.BLACK));
 
 		texture = new Texture ();
-		hide_texture ();
+		hide_video ();
 		stage.add_actor (texture);
 
 		size_allocate.connect (on_size_allocate);
@@ -108,10 +107,6 @@ public class Display : GtkClutter.Embed, Retro.Video {
 		texture.set_cogl_texture (cogl_tex);
 	}
 
-//	public void set_pixel_format (PixelFormat pixel_format) {
-//		this.pixel_format = pixel_format;
-//	}
-
 	private void on_size_allocate (Gtk.Allocation allocation) {
 		double display_ratio = (double) 4 / 3;
 		double allocated_ratio = (double) allocation.width / allocation.height;
@@ -145,11 +140,11 @@ public class Display : GtkClutter.Embed, Retro.Video {
 		texture.set_position (x, y);
 	}
 
-	public void show_texture () {
+	public void show_video () {
 		texture.visible = true;
 	}
 
-	public void hide_texture () {
+	public void hide_video () {
 		texture.visible = false;
 	}
 }

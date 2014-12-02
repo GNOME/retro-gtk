@@ -59,7 +59,6 @@ PKG= \
 	cairo \
 	clutter-gtk-1.0 \
 	libpulse \
-	libpulse-mainloop-glib \
 	retro-gobject-1.0 \
 	$(NULL)
 

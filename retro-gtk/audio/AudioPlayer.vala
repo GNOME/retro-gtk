@@ -22,7 +22,7 @@ using Retro;
 namespace RetroGtk {
 
 private class AudioPlayer : GLib.Object {
-	private GLibMainLoop      loop;
+	private ThreadedMainLoop  loop;
 	private Context           context;
 	private SampleSpec        spec;
 
@@ -41,7 +41,7 @@ private class AudioPlayer : GLib.Object {
 	}
 
 	construct {
-		loop = new GLibMainLoop ();
+		loop = new ThreadedMainLoop ();
 	}
 
 	private void start () {
@@ -54,11 +54,15 @@ private class AudioPlayer : GLib.Object {
 			stderr.printf ("Error: pa_context_connect () failed: %s\n", PulseAudio.strerror (context.errno ()));
 		}
 
+		loop.start ();
+
 		started = true;
 	}
 
 	private void stop () {
 		if (!started) return;
+
+		loop.stop ();
 
 		context = null;
 		stream = null;

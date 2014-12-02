@@ -62,22 +62,48 @@ public class Display : GtkClutter.Embed, Retro.Video {
 	public void render (uint8[] data, uint width, uint height, size_t pitch) {
 		if (data == null) return; // Dupe a frame
 
-		var picture = video_to_pixbuf (data, width, height,  pitch, pixel_format);
+		Cogl.Texture cogl_tex;
 
-		Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;
+		switch (pixel_format) {
+			case PixelFormat.ORGB1555:
+				var pb = video_to_pixbuf (data, width, height, pitch, pixel_format);
 
-		Cogl.PixelFormat format = Cogl.PixelFormat.RGB_888;
-		Cogl.PixelFormat internal_format = Cogl.PixelFormat.RGB_888;
+				Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;
 
-		Cogl.Texture cogl_tex = new Cogl.Texture.from_data (
-			picture.width,
-			picture.height,
-			flags,
-			format,
-			internal_format,
-			picture.rowstride,
-			(uchar[]) picture.get_pixels_with_length ()
-		);
+				cogl_tex = new Cogl.Texture.from_data (
+					pb.width, pb.height, flags,
+					Cogl.PixelFormat.RGB_888,
+					Cogl.PixelFormat.RGB_888,
+					pb.rowstride,
+					(uchar[]) pb.get_pixels_with_length ()
+				);
+				break;
+
+			case PixelFormat.XRGB8888:
+				Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;
+
+				cogl_tex = new Cogl.Texture.from_data (
+					width, height, flags,
+					Cogl.PixelFormat.BGRA_8888,
+					Cogl.PixelFormat.RGB_888,
+					(uint) pitch, (uchar[]) data
+				);
+				break;
+
+			case PixelFormat.RGB565:
+				Cogl.TextureFlags flags = Cogl.TextureFlags.NO_AUTO_MIPMAP | Cogl.TextureFlags.NO_SLICING | Cogl.TextureFlags.NO_ATLAS;
+
+				cogl_tex = new Cogl.Texture.from_data (
+					width, height, flags,
+					Cogl.PixelFormat.RGB_565,
+					Cogl.PixelFormat.RGB_888,
+					(uint) pitch, (uchar[]) data
+				);
+				break;
+
+			default:
+				return;
+		}
 
 		texture.set_cogl_texture (cogl_tex);
 	}

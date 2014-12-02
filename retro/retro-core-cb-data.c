@@ -30,7 +30,6 @@ static int i = 0;
 void retro_core_push_cb_data (void *self) {
 	g_rec_mutex_lock (retro_core_w_mutex);
 	g_rec_mutex_lock (retro_core_r_mutex);
-printf ("PUSH %d\n", i);
 	if (i == RETRO_CORE_CB_DATA_STACK_SIZE) {
 		g_printerr ("Error: RetroCore callback data stack overflow.\n");
 		g_assert_not_reached ();
@@ -42,7 +41,6 @@ printf ("PUSH %d\n", i);
 
 void retro_core_pop_cb_data (void *self) {
 	g_rec_mutex_lock (retro_core_r_mutex);
-printf ("POP %d\n", i);
 	if (i == 0) {
 		g_printerr ("Error: RetroCore callback data stack underflow.\n");
 		g_assert_not_reached ();
@@ -54,7 +52,6 @@ printf ("POP %d\n", i);
 
 void *retro_core_get_cb_data () {
 	g_rec_mutex_lock (retro_core_r_mutex);
-printf ("GET %d\n", i);
 	if (i == 0) {
 		g_printerr ("Error: RetroCore callback data segmentation fault.\n");
 		g_assert_not_reached ();

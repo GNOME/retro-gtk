@@ -1,4 +1,5 @@
 out
+doc*
 *-internal.h
 
 # Object files

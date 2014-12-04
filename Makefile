@@ -14,6 +14,7 @@ SRC_DIR = retro
 
 OUT_DIR = out
 VAPI_DIR = vapi
+DOC_DIR = doc
 
 NAME=Retro
 DESC=GObject based libretro wrapper
@@ -76,6 +77,7 @@ OUT= \
 	$(NULL)
 
 VALAC_OPTIONS= --save-temps
+VALADOC_OPTIONS=
 
 all: $(OUT) $(OUT_DIR)/$(DEPS) $(OUT_DIR)/$(TYPELIB) $(OUT_DIR)/$(PKGCONF)
 
@@ -125,8 +127,23 @@ install:
 	install $(OUT_DIR)/$(DEPS)    $(DEPS_DIR)
 	install $(OUT_DIR)/$(VAPI)    $(DEPS_DIR)
 
-clean:
-	rm -Rf $(OUT_DIR) $(SRC_DIR)/$(LIBNAME)-internal.h
+doc: doc-vala
 
-.PHONY: all install clean
+doc-vala: $(DOC_DIR)-vala/$(PKGNAME)
+
+$(DOC_DIR)-vala/$(PKGNAME): $(SRC)
+	rm -Rf $@
+	mkdir -p $(@D)
+	valadoc \
+		-b $(<D) -o $@ \
+		--package-name=$(LIBNAME) --package-version=$(VERSION) \
+		$(PKG:%=--pkg=%) \
+		$^ \
+		$(VALADOC_OPTIONS) \
+		$(NULL)
+
+clean:
+	rm -Rf $(OUT_DIR) $(SRC_DIR)/$(LIBNAME)-internal.h $(DOC_DIR)
+
+.PHONY: all install clean doc doc-vala
 

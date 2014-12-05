@@ -17,6 +17,9 @@
 
 namespace Retro {
 
+/**
+ * Key types to feed to a {@link Core} via {@link Input.key_event}.
+ */
 public enum KeyboardKey {
 	UNKNOWN        = 0,
 	FIRST          = 0,
@@ -164,6 +167,9 @@ public enum KeyboardKey {
 	LAST
 }
 
+/**
+ * Modifier key types to feed to a {@link Core} via {@link Input.key_event}.
+ */
 [Flags]
 public enum KeyboardModifierKey {
 	NONE       = 0x0000,

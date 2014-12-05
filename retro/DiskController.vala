@@ -18,17 +18,19 @@
 namespace Retro {
 
 /**
- * Handles a virtual disk drive
+ * Handles a virtual disk drive.
  *
- * Used by a {@link Core} which can swap out multiple disk images in runtime.
+ * It si used by a {@link Core} which can swap out multiple disk images at
+ * runtime.
  *
  * If the {@link Core} can do this automatically, it should strive to do so.
  * However, there are cases where the user must manually do so.
  *
- * Overview: To swap a disk image, eject the disk image by setting
- * {@link eject_state} to true.
- * Set the {@link image_index} to the one you want to use.
- * Insert the disk again by setting {@link eject_state} to false.
+ * To swap a disk image:
+ *
+ *  * eject the disk image by setting the eject state to true;
+ *  * set the image index to the one you want to use.
+ *  * insert the disk again by setting the eject state to false.
  */
 public class DiskControl: Object {
 	private weak Core core;
@@ -41,17 +43,17 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Set the current eject state
+	 * Sets the current eject state.
 	 *
-	 * When set to true, "ejects" the virtual disk tray.
-	 * When set to false, "closes" the virtual disk tray.
+	 * When set to true, ejects the virtual disk tray.
+	 * When set to false, closes the virtual disk tray.
 	 *
 	 * When ejected, the disk image index can be set.
 	 *
 	 * The default state is "closed".
 	 *
 	 * @param ejected the desired eject state
-	 * @return whether the change happened or not
+	 * @return //true// on successfully changed eject state, //false// otherwise
 	 */
 	public bool set_eject_state (bool ejected) {
 		if (callback_struct.set_eject_state == null) return false;
@@ -63,7 +65,7 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Get the current eject state
+	 * Gets the current eject state.
 	 *
 	 * See {@link set_eject_state} for more informations.
 	 *
@@ -79,15 +81,15 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Set the current disk index
+	 * Sets the current disk index.
 	 *
 	 * Can only be set when the disk drive is ejected.
 	 *
-	 * If the value is >= {@link get_num_images}, no disk is currently
-	 * inserted.
+	 * If the value is >= to the total number of images,
+	 * no disk is currently inserted.
 	 *
-	 * @param ejected the desired image index
-	 * @return whether the change happened or not
+	 * @param image_index the desired image index
+	 * @return //true// on successfully changed image index, //false// otherwise
 	 */
 	public bool set_image_index (uint image_index) {
 		if (callback_struct.set_image_index == null) return false;
@@ -99,7 +101,7 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * The current disk index
+	 * Gets the current disk index.
 	 *
 	 * @return the current image index
 	 */
@@ -113,7 +115,7 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Gets the total number of images which are available to use
+	 * Gets the total number of images which are available to use.
 	 *
 	 * @return total number of images available to use
 	 */
@@ -127,7 +129,7 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Replaces the disk image associated with index
+	 * Replaces the disk image associated with index.
 	 *
 	 * Virtual disk tray must be ejected when calling this.
 	 *
@@ -136,7 +138,7 @@ public class DiskControl: Object {
 	 *
 	 * @param index index of the disk image to replace
 	 * @param info information on the disk image to use
-	 * @return whether the change happened or not
+	 * @return //true// on successfully replaced image, //false// otherwise
 	 */
 	public bool replace_image_index (uint index, GameInfo info) {
 		if (callback_struct.replace_image_index == null) return false;
@@ -148,19 +150,19 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Removes the disk image associated with index
+	 * Removes the disk image associated with index.
 	 *
 	 * Virtual disk tray must be ejected when calling this.
 	 *
 	 * It will remove the disk image from the internal list.
-	 * As a result, {@link image_index} can change.
+	 * As a result, the current image index can change.
 	 *
-	 * E.g. {@link remove_image_index} (1), and previous
-	 * {@link image_index} was 4 before.
+	 * E.g. remove_image_index (1), and previous
+	 * image index was 4 before.
 	 * Index 1 will be removed, and the new index is 3.
 	 *
 	 * @param index index of the disk image to remove
-	 * @return whether the change happened or not
+	 * @return //true// on successfully removed index, //false// otherwise
 	 */
 	public bool remove_image_index (uint index) {
 		if (callback_struct.replace_image_index == null) return false;
@@ -175,15 +177,14 @@ public class DiskControl: Object {
 	}
 
 	/**
-	 * Adds a new valid index ({@link get_num_images}) to the internal disk
-	 * list
+	 * Adds a new valid index to the internal disk lit.
 	 *
 	 * This will increment subsequent return values from {@link get_num_images}
 	 * by 1.
 	 * This image index cannot be used until a disk image has been set with
 	 * {@link replace_image_index}.
 	 *
-	 * @return whether the change happened or not
+	 * @return //true// on successfully added index, //false// otherwise
 	 */
 	public bool add_image_index () {
 		if (callback_struct.add_image_index == null) return false;

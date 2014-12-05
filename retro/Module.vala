@@ -69,7 +69,7 @@ private delegate void *GetMemoryData (MemoryType id);
 private delegate size_t GetMemorySize (MemoryType id);
 
 /**
- * Loads a libretro module.
+ * Loads a Libretro module.
  */
 private class Module : Object {
 	/**
@@ -84,7 +84,7 @@ private class Module : Object {
 	public File tmp_file;
 
 	/**
-	 * The dynamically loaded libretro module.
+	 * The dynamically loaded Libretro module.
 	 */
 	private GLib.Module module;
 
@@ -124,12 +124,12 @@ private class Module : Object {
 	public GetMemorySize get_memory_size { get; private set; }
 
 	/**
-	 * Create a Module from the file name of a libretro implementation.
+	 * Create a Module from the file name of a Libretro implementation.
 	 *
 	 * The file must be a dynamically loadable shared object implementing the
-	 * same version of the libretro API as Retro.
+	 * same version of the Libretro API as Retro.
 	 *
-	 * @param file_name the file name of the libretro implementation to load
+	 * @param file_name the file name of the Libretro implementation to load
 	 */
 	public Module (string file_name, bool copy_file) {
 		Object (file_name: file_name, copy: copy_file);

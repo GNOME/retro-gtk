@@ -17,6 +17,9 @@
 
 namespace Retro {
 
+/**
+ * The device types.
+ */
 public enum DeviceType {
 	TYPE_MASK = 0xff,
 
@@ -41,7 +44,7 @@ public enum DeviceType {
 	 * It is similar to Super Nintendo's mouse (with two axes and two buttons).
 	 *
 	 * X and Y coordinates are reported relatively to last poll (poll callback).
-	 * It is up to the libretro implementation to keep track of where the mouse pointer
+	 * It is up to the Libretro implementation to keep track of where the mouse pointer
 	 * is supposed to be on the screen.
 	 *
 	 * The frontend must make sure not to interfere with its own hardware mouse pointer.
@@ -80,7 +83,7 @@ public enum DeviceType {
 	/**
 	 * An abstract pointing mecanism (e.g. touch).
 	 *
-	 * This allows libretro to query in absolute coordinates where on the screen a pointer
+	 * This allows Libretro to query in absolute coordinates where on the screen a pointer
 	 * (a mouse or something similar) is being placed.
 	 * For a touch centric device, coordinates reported are the coordinates of the press.
 	 *
@@ -94,19 +97,19 @@ public enum DeviceType {
 	 * (X, Y) = (-0x7fff, -0x7fff) will correspond to the top-left pixel of the game image, etc.
 	 *
 	 * To check if the pointer coordinates are valid (e.g. a touch display actually being touched),
-	 * {@link Retro.Device.PointerId.PRESSED} returns 1 or 0.
-	 * If using a mouse, {@link Retro.Device.PointerId.PRESSED} will usually correspond to the left
+	 * {@link PointerId.PRESSED} returns 1 or 0.
+	 * If using a mouse, {@link PointerId.PRESSED} will usually correspond to the left
 	 * mouse button.
-	 * {@link Retro.Device.PointerId.PRESSED} will only return 1 if the pointer is inside the game
+	 * {@link PointerId.PRESSED} will only return 1 if the pointer is inside the game
 	 * screen.
 	 *
-	 * For multi-touch, the index argument of {@link Retro.Core.InputState} can be used to
+	 * For multi-touch, the index argument of {@link Input.get_state} can be used to
 	 * successively query more presses.
-	 * If index = 0 returns 1 for {@link Retro.Device.PointerId.PRESSED}, coordinates can be extracted
-	 * with {@link Retro.Device.PointerId.X}, {@link Retro.Device.PointerId.Y} for index = 0.
-	 * One can then query {@link Retro.Device.PointerId.PRESSED}, {@link Retro.Device.PointerId.X},
-	 * {@link Retro.Device.PointerId.Y} with index = 1, and so on.
-	 * Eventually {@link Retro.Device.PointerId.PRESSED} will return 0 for an index. No further
+	 * If index = 0 returns 1 for {@link PointerId.PRESSED}, coordinates can be extracted
+	 * with {@link PointerId.X}, {@link PointerId.Y} for index = 0.
+	 * One can then query {@link PointerId.PRESSED}, {@link PointerId.X},
+	 * {@link PointerId.Y} with index = 1, and so on.
+	 * Eventually {@link PointerId.PRESSED} will return 0 for an index. No further
 	 * presses are registered at this point.
 	 */
 	POINTER = 6,
@@ -114,57 +117,60 @@ public enum DeviceType {
 	/**
 	 * A joypad multitap.
 	 *
-	 * It is a specialization of the {@link Retro.Device.Type.JOYPAD}.
+	 * It is a specialization of the {@link DeviceType.JOYPAD}.
 	 *
-	 * It should only be used in {@link Retro.Core.set_controller_port_device} to inform libretro
+	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
 	 * implementations about use of a joypad multitap.
 	 *
-	 * In input state callback, however, the device will be {@link Retro.Device.Type.JOYPAD}.
+	 * In input state callback, however, the device will be {@link DeviceType.JOYPAD}.
 	 */
 	JOYPAD_MULTITAP = (1 << 8) | DeviceType.JOYPAD,
 
 	/**
 	 * A Super Nintendo Super Scope.
 	 *
-	 * It is a specialization of the {@link Retro.Device.Type.LIGHTGUN}.
+	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
 	 *
-	 * It should only be used in {@link Retro.Core.set_controller_port_device} to inform libretro
+	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
 	 * implementations about use of a Super Nintendo Super Scope.
 	 *
-	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
+	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
 	 */
 	LIGHTGUN_SUPER_SCOPE = (1 << 8) | DeviceType.LIGHTGUN,
 
 	/**
 	 * A Konami Justifier.
 	 *
-	 * It is a specialization of the {@link Retro.Device.Type.LIGHTGUN}.
+	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
 	 *
-	 * It should only be used in {@link Retro.Core.set_controller_port_device} to inform libretro
+	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
 	 * implementations about use of a Konami Justifier.
 	 *
-	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
+	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
 	 */
 	LIGHTGUN_JUSTIFIER = (2 << 8) | DeviceType.LIGHTGUN,
 
 	/**
 	 * Konami Justifiers.
 	 *
-	 * It is a specialization of the {@link Retro.Device.Type.LIGHTGUN}.
+	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
 	 *
-	 * It should only be used in {@link Retro.Core.set_controller_port_device} to inform libretro
+	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
 	 * implementations about use of Konami Justifiers.
 	 *
-	 * In input state callback, however, the device will be {@link Retro.Device.Type.LIGHTGUN}.
+	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
 	 */
 	LIGHTGUN_JUSTIFIERS = (3 << 8) | DeviceType.LIGHTGUN;
 
 	/**
 	 * Gets the basic type of a device type.
 	 *
+	 * Applies the type mask on a DeviceType to get its basic type.
 	 * If the device type is already basic, it will return the same type.
-	 * E.g Type.JOYPAD_MULTITAP.get_basic_type () returns Type.JOYPAD,
-	 * and Type.JOYPAD.get_basic_type () also returns Type.JOYPAD.
+	 *
+	 * E.g DeviceType.JOYPAD_MULTITAP.get_basic_type () returns
+	 * DeviceType.JOYPAD, and DeviceType.JOYPAD.get_basic_type () also
+	 * returns Type.JOYPAD.
 	 *
 	 * @return the basic type of a device type
 	 */
@@ -173,6 +179,9 @@ public enum DeviceType {
 	}
 }
 
+/**
+ * The input types of a joypad.
+ */
 public enum JoypadId {
 	B,
 	Y,
@@ -192,16 +201,25 @@ public enum JoypadId {
 	R3
 }
 
+/**
+ * The analog sticks of an analog joypad.
+ */
 public enum AnalogIndex {
 	LEFT,
 	RIGHT
 }
 
+/**
+ * The axes of an analog stick.
+ */
 public enum AnalogId {
 	X,
 	Y
 }
 
+/**
+ * The input types of a mouse.
+ */
 public enum MouseId {
 	X,
 	Y,
@@ -212,6 +230,9 @@ public enum MouseId {
 	MIDDLE
 }
 
+/**
+ * The input types of a lightgun.
+ */
 public enum LightgunId {
 	X,
 	Y,
@@ -222,12 +243,18 @@ public enum LightgunId {
 	START
 }
 
+/**
+ * The input types of a pointer.
+ */
 public enum PointerId {
 	X,
 	Y,
 	PRESSED
 }
 
+/**
+ * Describes an input source.
+ */
 public struct InputDescriptor {
 	uint port;
 	DeviceType device;

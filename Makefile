@@ -19,7 +19,7 @@ DOC_DIR = doc
 NAME=Retro
 DESC=GObject based libretro wrapper
 LIBNAME=retro-gobject
-VERSION=1.0
+VERSION=0.1
 PKGNAME=$(LIBNAME)-$(VERSION)
 
 SO=      lib$(LIBNAME).so

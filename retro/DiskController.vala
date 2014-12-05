@@ -54,9 +54,14 @@ public class DiskControl: Object {
 	 *
 	 * @param ejected the desired eject state
 	 * @return //true// on successfully changed eject state, //false// otherwise
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool set_eject_state (bool ejected) {
-		if (callback_struct.set_eject_state == null) return false;
+	public bool set_eject_state (bool ejected) throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.set_eject_state == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.set_eject_state (ejected);
@@ -70,9 +75,14 @@ public class DiskControl: Object {
 	 * See {@link set_eject_state} for more informations.
 	 *
 	 * @return the current eject state
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool get_eject_state () {
-		if (callback_struct.get_eject_state == null) return false;
+	public bool get_eject_state () throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.get_eject_state == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.get_eject_state ();
@@ -90,9 +100,14 @@ public class DiskControl: Object {
 	 *
 	 * @param image_index the desired image index
 	 * @return //true// on successfully changed image index, //false// otherwise
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool set_image_index (uint image_index) {
-		if (callback_struct.set_image_index == null) return false;
+	public bool set_image_index (uint image_index) throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.set_image_index == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.set_image_index (image_index);
@@ -104,9 +119,14 @@ public class DiskControl: Object {
 	 * Gets the current disk index.
 	 *
 	 * @return the current image index
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public uint get_image_index () {
-		if (callback_struct.get_image_index == null) return 0;
+	public uint get_image_index () throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.get_image_index == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.get_image_index ();
@@ -118,9 +138,14 @@ public class DiskControl: Object {
 	 * Gets the total number of images which are available to use.
 	 *
 	 * @return total number of images available to use
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public uint get_num_images () {
-		if (callback_struct.get_num_images == null) return 0;
+	public uint get_num_images () throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.get_num_images == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.get_num_images ();
@@ -139,9 +164,14 @@ public class DiskControl: Object {
 	 * @param index index of the disk image to replace
 	 * @param info information on the disk image to use
 	 * @return //true// on successfully replaced image, //false// otherwise
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool replace_image_index (uint index, GameInfo info) {
-		if (callback_struct.replace_image_index == null) return false;
+	public bool replace_image_index (uint index, GameInfo info) throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.replace_image_index == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.replace_image_index (index, info);
@@ -163,9 +193,14 @@ public class DiskControl: Object {
 	 *
 	 * @param index index of the disk image to remove
 	 * @return //true// on successfully removed index, //false// otherwise
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool remove_image_index (uint index) {
-		if (callback_struct.replace_image_index == null) return false;
+	public bool remove_image_index (uint index) throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.replace_image_index == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		var i = get_image_index ();
 		core.push_cb_data ();
@@ -185,9 +220,14 @@ public class DiskControl: Object {
 	 * {@link replace_image_index}.
 	 *
 	 * @return //true// on successfully added index, //false// otherwise
+	 * @throws CbError the core or its callback couldn't be found
 	 */
-	public bool add_image_index () {
-		if (callback_struct.add_image_index == null) return false;
+	public bool add_image_index () throws CbError {
+		if (core == null)
+			throw new CbError.NO_CORE ("DiskControl has no core");
+
+		if (callback_struct.add_image_index == null)
+			throw new CbError.NO_CALLBACK ("DiskControl has no callback for this operation");
 
 		core.push_cb_data ();
 		var result = callback_struct.add_image_index ();

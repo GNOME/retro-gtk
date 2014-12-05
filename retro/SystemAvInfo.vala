@@ -49,41 +49,42 @@ internal struct SystemAvInfo {
  */
 public class AvInfo : Object {
 	/**
-	 * Nominal video width of game.
+	 * The nominal video width of the game.
 	 */
 	public uint base_width { construct; get; }
 
 	/**
-	 * Nominal video height of game.
+	 * The nominal video height of the game.
 	 */
 	public uint base_height { construct; get; }
 
 	/**
-	 * Maximum possible width of game.
+	 * The maximum possible width of the game.
 	 */
 	public uint max_width { construct; get; }
 
 	/**
-	 * Maximum possible height of game.
+	 * The maximum possible height of the game.
 	 */
 	public uint max_height { construct; get; }
 
 	/**
-	 * Nominal aspect ratio of game.
+	 * The nominal aspect ratio of the game.
 	 *
-	 * If aspect_ratio is <= 0.0, an aspect ratio of base_width / base_height is assumed.
+	 * If aspect_ratio is <= 0.0, an aspect ratio of
+	 * base_width / base_height is assumed.
 	 *
 	 * A frontend could override this setting if desired.
 	 */
 	public float aspect_ratio { construct; get; }
 
 	/**
-	 * FPS of video content.
+	 * The frames per seconds of the video content.
 	 */
 	public double fps { construct; get; }
 
 	/**
-	 * Sampling rate of audio.
+	 * The sampling rate of the audio.
 	 */
 	public double sample_rate { construct; get; }
 

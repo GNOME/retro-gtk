@@ -24,7 +24,7 @@ public static const uint API_VERSION = 1;
 
 /**
  * Error type thrown by interfaces when accessing one of their Core's
- * callback
+ * callback.
  */
 public errordomain CbError {
 	NO_CORE,
@@ -32,7 +32,11 @@ public errordomain CbError {
 }
 
 /**
- * Get a module's system informations in a simple and light way
+ * Gets a module's system informations in a simple and light way.
+ *
+ * @param module_name the file name of the module to get the system
+ * informations
+ * @return the system infos of the module or //null//
  */
 public SystemInfo? get_system_info (string module_name) {
 	var module = GLib.Module.open (module_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);

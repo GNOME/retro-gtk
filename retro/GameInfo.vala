@@ -18,12 +18,12 @@
 namespace Retro {
 
 /**
- * Store information on a game.
+ * Stores information on a game.
  *
- * Used by a {@link Retro.Core} to load a game.
+ * Used by a {@link Core} to load a game.
  *
- * If the core needs a full path to the game file, then it doesn't need the data
- * as it will load it itself: use the default constructor.
+ * If the core needs a full path to the game file, then it doesn't need the
+ * data as it will load it itself: use the default constructor.
  *
  * If the store doesn't need a full path, the path still be saved as some
  * implementations still need it, and the file will be read and stored into the
@@ -35,7 +35,7 @@ public struct GameInfo {
 	 *
 	 * Usually used as a reference.
 	 * May be null if rom was loaded from stdin or similar.
-	 * {@link Retro.SystemInfo.need_fullpath} guaranteed that this path is
+	 * {@link SystemInfo.need_fullpath} guaranteed that this path is
 	 * valid.
 	 */
 	public string path;
@@ -43,21 +43,22 @@ public struct GameInfo {
 	/**
 	 * Memory buffer of loaded game.
 	 *
-	 * Will be null if {@link Retro.SystemInfo.need_fullpath} was set.
+	 * Will be null if {@link SystemInfo.need_fullpath} was set.
 	 */
 	[CCode (array_length_type = "gsize")]
 	public uint8[] data;
 
 	/**
 	 * String of implementation specific meta-data.
+	 *
+	 * Deprecated in Libretro 1.0
 	 */
-	[Deprecated (since = "1.0")]
 	public string meta;
 
 	/**
-	 * Sets a from a game file name.
+	 * Sets from a game file name.
 	 *
-	 * Use this constructor if the {@link Retro.Core} needs a full path to the
+	 * Use this constructor if the {@link Core} needs a full path to the
 	 * game and not its data.
 	 *
 	 * @param file_name the game to store information from
@@ -68,9 +69,9 @@ public struct GameInfo {
 	}
 
 	/**
-	 * Sets a from a game file name.
+	 * Sets from a game file name.
 	 *
-	 * Use this constructor if the {@link Retro.Core} needs the data of the
+	 * Use this constructor if the {@link Core} needs the data of the
 	 * game.
 	 *
 	 * @param file_name the game to store information from

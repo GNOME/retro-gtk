@@ -17,6 +17,9 @@
 
 namespace Retro {
 
+/**
+ * Special game types to use with {@link Core.load_game_special}
+ */
 public enum GameType {
 	BSX            = 0x101,
 	BSX_SLOTTED    = 0x102,

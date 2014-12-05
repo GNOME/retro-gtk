@@ -17,11 +17,35 @@
 
 namespace Retro {
 
+/**
+ * The performance level requiered by a {@link Core}.
+ */
 public enum PerfLevel {
+	/**
+	 * The performance level of an embeded device such as a Raspberry Pi.
+	 */
 	EMBEDED,
+
+	/**
+	 * The performance level of a modern smartphone or tablet.
+	 */
 	MOBILE,
+
+	/**
+	 * The performance level of a low end desktop computer or middle end
+	 * laptop computer.
+	 */
 	LOW_END,
+
+	/**
+	 * The performance level of a middle end desktop computer or high end
+	 * laptop computer.
+	 */
 	MID_END,
+
+	/**
+	 * The performance level of a high end desktop computer.
+	 */
 	HIGH_END
 }
 

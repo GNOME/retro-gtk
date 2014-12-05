@@ -17,6 +17,9 @@
 
 namespace Retro {
 
+/**
+ * Handles a Libretro module.
+ */
 public class Core : Object {
 	private static RecMutex r_mutex = RecMutex ();
 	private static RecMutex w_mutex = RecMutex ();
@@ -24,7 +27,7 @@ public class Core : Object {
 	private static int i = 0;
 
 	/**
-	 * Store the current Core instance in a stack
+	 * Stores the current Core instance in a stack.
 	 *
 	 * Stores the current instance of Core in a thread local global stack.
 	 * It allows to know wich Core a callback is related to.
@@ -47,7 +50,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Remove the Core at the head of the stack
+	 * Removes the Core at the head of the stack.
 	 *
 	 * Must be called after any call to {@link push_cb_data()}.
 	 */
@@ -78,7 +81,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * The version of libretro used by the module
+	 * The version of Libretro used by the module.
 	 *
 	 * Can be compared with {@link API_VERSION} to validate ABI
 	 * compatibility.
@@ -93,7 +96,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * The system informations
+	 * The system informations.
 	 */
 	public SystemInfo system_info {
 		get {
@@ -106,7 +109,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * The region of the loaded game
+	 * The region of the loaded game.
 	 */
 	public Region region {
 		get {
@@ -118,75 +121,75 @@ public class Core : Object {
 	}
 
 	/**
-	 * Whether the module have been copied or not
+	 * Whether the module have been copied or not.
 	 */
 	public bool copy { construct; private get; }
 
 	/**
-	 * The file name of the loaded module
+	 * The file name of the loaded module.
 	 */
 	public string file_name { construct; get; }
 
 	/**
-	 * The directory the core will use to look for for additional data
+	 * The directory the core will use to look for for additional data.
 	 */
 	public string system_directory { set; get; default = "."; }
 
 	/**
-	 * The absolute path to the source module file
+	 * The absolute path to the source module file.
 	 */
 	public string libretro_path { set; get; default = "."; }
 
 	/**
-	 * The directory the core will use to look for for additional assets
+	 * The directory the core will use to look for for additional assets.
 	 */
 	public string content_directory { set; get; default = "."; }
 
 	/**
-	 * The directory the core will use to save user data
+	 * The directory the core will use to save user data.
 	 */
 	public string save_directory { set; get; default = "."; }
 
 	/**
-	 * Whether or not the a game is loaded
+	 * Whether or not the a game is loaded.
 	 */
 	public bool game_loaded { private set; get; default = false; }
 
 	/**
-	 * Whether or not the core supports games
+	 * Whether or not the core supports games.
 	 */
 	public bool support_no_game { internal set; get; default = false; }
 
 	/**
-	 * The level of performance requiered by the core to run correctly
+	 * The level of performance requiered by the core to run correctly.
 	 *
 	 * Can be set by the Core when loading a game.
 	 */
 	public PerfLevel performance_level { internal set; get; }
 
 	/**
-	 * Information on audio and video geometry and timings
+	 * Information on audio and video geometry and timings.
 	 *
 	 * Can be set by the Core when loading a game.
 	 */
 	public AvInfo av_info { internal set; get; }
 
 	/**
-	 * The keyboard callback interface
+	 * The keyboard callback interface.
 	 *
 	 * The Core can set it to let the frontend notify of keyboard input.
 	 */
 	internal KeyboardCallback? keyboard_callback { set; get; }
 
 	/**
-	 * The disk controlling interface
+	 * The disk controlling interface.
 	 *
-	 * The Core can set it to let the frontend insert and eject disks.
+	 * The Core can set it to let the frontend insert and eject disks images.
 	 */
 	public DiskControl disk_control_interface { internal set; get; }
 
 	/**
-	 * The video input interface
+	 * The video input interface.
 	 *
 	 * The Core can set it to let the frontend pass video to it.
 	 *
@@ -195,14 +198,14 @@ public class Core : Object {
 	internal HardwareRender hw_render { internal set; get; }
 
 	/**
-	 * The audio callback interface
+	 * The audio callback interface.
 	 *
 	 * The Core can set it to let the frontend pass audio to it.
 	 */
 	internal AudioCallback? audio_callback { set; get; }
 
 	/**
-	 * The time input interface
+	 * The time input interface.
 	 *
 	 * The Core can set it to let the frontend inform it of the amount
 	 * of time passed since the last call to {@link run()}.
@@ -211,12 +214,12 @@ public class Core : Object {
 	 */
 	internal FrameTime frame_time_callback { internal set; get; }
 
-	/**
-	 * The video interface
-	 *
-	 * It must be set before {@link init()} is called.
-	 */
 	private Video _video_interface;
+	/**
+	 * The video interface.
+	 *
+	 * It must be set before {@link init} is called.
+	 */
 	public Video video_interface {
 		get { return _video_interface; }
 		construct set {
@@ -230,12 +233,12 @@ public class Core : Object {
 		}
 	}
 
-	/**
-	 * The audio interface
-	 *
-	 * It must be set before {@link init()} is called.
-	 */
 	private Audio _audio_interface;
+	/**
+	 * The audio interface.
+	 *
+	 * It must be set before {@link init} is called.
+	 */
 	public Audio audio_interface {
 		get { return _audio_interface; }
 		construct set {
@@ -249,12 +252,12 @@ public class Core : Object {
 		}
 	}
 
-	/**
-	 * The input interface
-	 *
-	 * It must be set before {@link init()} is called.
-	 */
 	private Input _input_interface;
+	/**
+	 * The input interface.
+	 *
+	 * It must be set before {@link init} is called.
+	 */
 	public Input input_interface {
 		get { return _input_interface; }
 		construct set {
@@ -268,13 +271,13 @@ public class Core : Object {
 		}
 	}
 
+	private Variables _variables_interface;
 	/**
-	 * The variables interface
+	 * The variables interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 */
-	private Variables _variables_interface;
 	public Variables variables_interface {
 		get { return _variables_interface; }
 		construct set {
@@ -289,70 +292,70 @@ public class Core : Object {
 	}
 
 	/**
-	 * The rumble interface
+	 * The rumble interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 *
 	 * TODO Change visibility once the interface have been tested.
 	 */
 	internal Rumble rumble_interface { set; get; }
 
 	/**
-	 * The sensor interface
+	 * The sensor interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 *
 	 * TODO Change visibility once the interface have been tested.
 	 */
 	internal Sensor sensor_interface { set; get; }
 
 	/**
-	 * The camera interface
+	 * The camera interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 *
 	 * TODO Change visibility once the interface have been tested.
 	 */
 	internal Camera camera_interface { set; get; }
 
 	/**
-	 * The logging interface
+	 * The logging interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 */
 	public Log log_interface { set; get; }
 
 	/**
-	 * The performance interface
+	 * The performance interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 *
 	 * TODO Change visibility once the interface have been tested.
 	 */
 	internal Performance performance_interface { set; get; }
 
 	/**
-	 * The location interface
+	 * The location interface.
 	 *
 	 * Optional.
-	 * If set, it must be set before {@link init()} is called.
+	 * If set, it must be set before {@link init} is called.
 	 *
 	 * TODO Change visibility once the interface have been tested.
 	 */
 	internal Location location_interface { set; get; }
 
 	/**
-	 * Ask the frontend to shut down
+	 * Asks the frontend to shut down.
 	 */
 	public signal bool shutdown ();
 
 	/**
-	 * Ask the frontend to display a message for an amount of frames
+	 * Asks the frontend to display a message for an amount of frames.
 	 */
 	public signal bool message (string message, uint frames);
 
@@ -366,15 +369,15 @@ public class Core : Object {
 	private Module module;
 
 	/**
-	 * Create a Core from the file name of a libretro implementation
+	 * Creates a Core from the file name of a Libretro implementation.
 	 *
 	 * The file must be a dynamically loadable shared object implementing the
-	 * same version of the libretro API as Retro.
+	 * same version of the Libretro API as Retro.
 	 *
 	 * The module can be copied before being loaded to avoid clash on the
 	 * module's static variables.
 	 *
-	 * @param file_name the file name of the libretro implementation to load
+	 * @param file_name the file name of the Libretro implementation to load
 	 * @param copy_module wheter the module should be copied or not
 	 */
 	public Core (string file_name, bool copy_module = false) {
@@ -403,7 +406,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Initialize the module
+	 * Initializes the module.
 	 *
 	 * Must be called before loading a game and running the core.
 	 */
@@ -415,7 +418,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Deinitialize the module
+	 * Deinitializes the module.
 	 */
 	public void deinit () {
 		push_cb_data ();
@@ -424,7 +427,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Get information about system audio/video timings and geometry
+	 * Gets information about system audio/video timings and geometry.
 	 *
 	 * Can be called only after {@link load_game} has successfully
 	 * completed.
@@ -451,7 +454,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Set device to be used for player 'port'
+	 * Sets device to be used for player 'port'.
 	 *
 	 * @param port the port on wich to connect a device
 	 * @param device the type of the device connected
@@ -463,7 +466,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Reset the current game
+	 * Resets the current game.
 	 */
 	public void reset () {
 		push_cb_data ();
@@ -472,7 +475,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Run the game for one video frame
+	 * Runs the game for one video frame.
 	 *
 	 * The callbacks must be set and the core must be initialized before
 	 * running the core.
@@ -492,8 +495,8 @@ public class Core : Object {
 	}
 
 	/**
-	 * Return the amount of data the implementation requires to serialize the
-	 * internal state (save states)
+	 * Returns the amount of data the implementation requires to serialize
+	 * the internal state.
 	 *
 	 * Beetween calls to {@link load_game} and
 	 * {@link unload_game}, the returned size is never allowed to
@@ -511,7 +514,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Serialize the internal state
+	 * Serializes the internal state.
 	 *
 	 * If failed, or size is lower than {@link serialize_size}, it
 	 * should return false, true otherwise.
@@ -528,7 +531,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Unserialize the internal state
+	 * Unserializes the internal state.
 	 *
 	 * @param data the buffer where the data is stored
 	 * @return false if the unserialization failed, true otherwise
@@ -542,7 +545,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Reset the cheats
+	 * Resets the cheats.
 	 */
 	public void cheat_reset () {
 		push_cb_data ();
@@ -551,10 +554,10 @@ public class Core : Object {
 	}
 
 	/**
-	 * Set a new cheat
+	 * Sets a new cheat.
 	 *
 	 * @param index the index of the cheat
-	 * @param enabled whereas the cheat is enabled or not
+	 * @param enabled whether the cheat is enabled or not
 	 * @param code the cheat code
 	 */
 	public void cheat_set (uint index, bool enabled, string code) {
@@ -564,7 +567,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Load a game
+	 * Load. a game.
 	 *
 	 * @param game information to load the game
 	 * @return false if the loading failed, true otherwise
@@ -581,7 +584,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Load a "special" kind of game. Should not be used except in extreme
+	 * Loads a "special" kind of game. Should not be used except in extreme
 	 * cases.
 	 *
 	 * @param game_type the type of game to load
@@ -600,7 +603,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Unload a currently loaded game
+	 * Unloads a currently loaded game.
 	 */
 	public void unload_game () {
 		push_cb_data ();
@@ -609,7 +612,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Get a region of memory
+	 * Gets a region of memory.
 	 *
 	 * @param id the region of memory
 	 * @return the region of memory

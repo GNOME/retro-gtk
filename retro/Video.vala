@@ -17,6 +17,9 @@
 
 namespace Retro {
 
+/**
+ * The rotation type of a display.
+ */
 public enum Rotation {
 	NONE,
 	COUNTERCLOCKWISE,
@@ -25,7 +28,7 @@ public enum Rotation {
 }
 
 /**
- * Pixel formats used by libretro.
+ * Pixel formats used by Libretro.
  */
 public enum PixelFormat {
 	/**
@@ -57,14 +60,44 @@ public enum PixelFormat {
 	UNKNOWN = -1;
 }
 
+/**
+ * An interface to render a {@link Core}'s video.
+ */
 public interface Video : Object {
+	/**
+	 * The core to handle video from.
+	 */
 	public abstract weak Core core { get; set; }
 
+	/**
+	 * Ask to render video.
+	 */
 	public abstract void render (uint8[] data, uint width, uint height, size_t pitch);
 
+	/**
+	 * The rotation of the image sent to {@link render}.
+	 *
+	 * It will be set by the {@link core}.
+	 */
 	public abstract Rotation rotation { get; set; }
+
+	/**
+	 * Ask the core to render with overscan or not.
+	 */
 	public abstract bool overscan { get; set; }
+
+	/**
+	 * Warn the {@link core} that it can dupe frames.
+	 *
+	 * If it does so, the data passed to {@link render} may be //null//.
+	 */
 	public abstract bool can_dupe { get; set; }
+
+	/**
+	 * The pixel format of the data sent to {@link render}.
+	 *
+	 * It will be set by the {@link core}.
+	 */
 	public abstract PixelFormat pixel_format { get; set; }
 }
 

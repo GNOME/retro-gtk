@@ -8,7 +8,7 @@ OUT_DIR = out
 DOC_DIR = doc-vala
 
 LIBNAME=retro-gobject
-VERSION=0.1
+VERSION=0.2
 PKGNAME=$(LIBNAME)-$(VERSION)
 
 FILES= \

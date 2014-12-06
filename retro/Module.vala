@@ -72,6 +72,8 @@ private delegate size_t GetMemorySize (MemoryType id);
  * Loads a Libretro module.
  */
 private class Module : Object {
+	private static GenericSet<string> loaded_modules = new GenericSet<string> (str_hash, str_equal);
+
 	/**
 	 * The file name of the module.
 	 */
@@ -80,7 +82,7 @@ private class Module : Object {
 	/**
 	 * Whether the module have been copied or not
 	 */
-	public bool copy { construct; private get; }
+	private bool is_a_copy;
 	public File tmp_file;
 
 	/**
@@ -131,13 +133,19 @@ private class Module : Object {
 	 *
 	 * @param file_name the file name of the Libretro implementation to load
 	 */
-	public Module (string file_name, bool copy_file) {
-		Object (file_name: file_name, copy: copy_file);
+	public Module (string file_name) {
+		Object (file_name: file_name);
 	}
 
 	construct {
+		file_name = File.new_for_path (file_name).resolve_relative_path ("").get_path ();
+
 		tmp_file = null;
-		if (copy) {
+		is_a_copy = false;
+
+		string loaded_file_name = null;
+
+		if (loaded_modules.contains (file_name)) {
 			try {
 				var file = File.new_for_path (file_name);
 
@@ -145,14 +153,33 @@ private class Module : Object {
 				tmp_file = File.new_tmp (null, out ios);
 				file.copy (tmp_file, FileCopyFlags.OVERWRITE);
 
-				file_name = tmp_file.get_path ();
+				is_a_copy = true;
+				loaded_file_name = tmp_file.get_path ();
 			}
 			catch (Error e) {
 				stderr.printf ("Error: %s\n", e.message);
+
+				if (tmp_file != null) {
+					try {
+						tmp_file.delete ();
+					}
+					catch (Error e) {
+						stderr.printf ("Error: %s\n", e.message);
+					}
+				}
+				tmp_file = null;
+
+				is_a_copy = false;
+				loaded_file_name = file_name;
 			}
 		}
+		else {
+			loaded_modules.add (file_name);
 
-		module = GLib.Module.open (file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
+			loaded_file_name = file_name;
+		}
+
+		module = GLib.Module.open (loaded_file_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
 
 		void *function;
 
@@ -214,8 +241,17 @@ private class Module : Object {
 	}
 
 	~Module () {
-		if (tmp_file != null)
-			tmp_file.delete ();
+		if (tmp_file != null) {
+			try {
+				tmp_file.delete ();
+			}
+			catch (Error e) {
+				stderr.printf ("Error: %s\n", e.message);
+			}
+		}
+
+		if (!is_a_copy)
+			loaded_modules.remove (file_name);
 	}
 }
 

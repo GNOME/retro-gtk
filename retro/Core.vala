@@ -129,12 +129,7 @@ public class Core : Object {
 	}
 
 	/**
-	 * Whether the module have been copied or not.
-	 */
-	public bool copy { construct; private get; }
-
-	/**
-	 * The file name of the loaded module.
+	 * The file name of the module.
 	 */
 	public string file_name { construct; get; }
 
@@ -382,22 +377,16 @@ public class Core : Object {
 	 * The file must be a dynamically loadable shared object implementing the
 	 * same version of the Libretro API as Retro.
 	 *
-	 * The module can be copied before being loaded to avoid clash on the
-	 * module's static variables.
-	 *
 	 * @param file_name the file name of the Libretro implementation to load
-	 * @param copy_module wheter the module should be copied or not
 	 */
-	public Core (string file_name, bool copy_module = false) {
-		Object (file_name: file_name, copy: copy_module);
+	public Core (string file_name) {
+		Object (file_name: file_name);
 	}
 
 	construct {
 		libretro_path = File.new_for_path (file_name).resolve_relative_path ("").get_path ();
 
-		module = new Module (file_name, copy);
-
-		file_name = module.file_name;
+		module = new Module (libretro_path);
 
 		push_cb_data ();
 		module.set_video_refresh (get_module_video_refresh_cb ());

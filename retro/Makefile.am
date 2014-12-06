@@ -21,6 +21,7 @@ dist_vapi_DATA = retro-gobject-0.2.vapi retro-gobject-0.2.deps
 
 libretro_gobject_la_SOURCES = \
 	loop/Loop.vala \
+	loop/ThreadedLoop.vala \
 	Audio.vala \
 	Camera.vala \
 	Controller.vala \
@@ -59,6 +60,8 @@ libretro_gobject_la_VALAFLAGS = \
 	--pkg gobject-2.0 \
 	--pkg gmodule-2.0 \
 	--pkg gio-2.0  \
+	--thread \
+	--target-glib 2.32 \
 	--library retro-gobject-0.2 \
 	--vapi retro-gobject-0.2.vapi \
 	--gir Retro-0.2.gir \

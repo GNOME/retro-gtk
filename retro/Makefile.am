@@ -20,6 +20,7 @@ vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gobject-0.2.vapi retro-gobject-0.2.deps
 
 libretro_gobject_la_SOURCES = \
+	log/FileStreamLog.vala \
 	loop/Loop.vala \
 	loop/MainLoop.vala \
 	loop/ThreadedLoop.vala \

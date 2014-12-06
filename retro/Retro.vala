@@ -18,7 +18,7 @@
 namespace Retro {
 
 /**
- * The version of libretro implemented by Retro.
+ * The version of Libretro implemented by Retro.
  */
 public static const uint API_VERSION = 1;
 

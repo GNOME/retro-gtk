@@ -37,11 +37,8 @@ libretro_gtk_la_SOURCES = \
 	video/Display.vala \
 	video/video-converter.c \
 	FileStreamLogger.vala \
-	Loop.vala \
-	MainLoop.vala \
 	Options.vala \
 	RetroGtk.vala \
-	ThreadedLoop.vala \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

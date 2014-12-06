@@ -135,7 +135,7 @@ public class CairoDisplay : Gtk.DrawingArea, Video, Display {
 		var h = (double) get_allocated_height ();
 
 		// Set the size of the display
-		double display_ratio = (double) 4 / 3;
+		double display_ratio = (double) core.av_info.aspect_ratio;
 		double allocated_ratio = w / h;
 
 		// If the screen is wider than the video...

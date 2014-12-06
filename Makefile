@@ -59,7 +59,7 @@ PKG= \
 	cairo \
 	clutter-gtk-1.0 \
 	libpulse \
-	retro-gobject-1.0 \
+	retro-gobject-0.1 \
 	$(NULL)
 
 SRC = $(FILES:%=$(SRC_DIR)/%)

@@ -71,9 +71,6 @@ public class AvInfo : Object {
 	/**
 	 * The nominal aspect ratio of the game.
 	 *
-	 * If aspect_ratio is <= 0.0, an aspect ratio of
-	 * base_width / base_height is assumed.
-	 *
 	 * A frontend could override this setting if desired.
 	 */
 	public float aspect_ratio { construct; get; }
@@ -98,6 +95,14 @@ public class AvInfo : Object {
 			fps: system_av_info.timing.fps,
 			sample_rate: system_av_info.timing.sample_rate
 		);
+	}
+
+	construct {
+		/* If aspect_ratio is <= 0.0, an aspect ratio of
+		 * base_width / base_height is assumed.
+		 */
+		if (aspect_ratio <= 0)
+			aspect_ratio = (float) base_width / base_height;
 	}
 }
 

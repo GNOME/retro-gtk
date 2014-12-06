@@ -40,6 +40,8 @@ public class Core : Object {
 
 		if (i == objects.length) {
 			stderr.printf ("Error: Callback data stack overflow.\n");
+
+			r_mutex.unlock ();
 			assert_not_reached ();
 		}
 
@@ -58,23 +60,29 @@ public class Core : Object {
 		r_mutex.lock ();
 		if (i == 0) {
 			stderr.printf ("Error: Callback data stack underflow.\n");
+
+			r_mutex.unlock ();
+			w_mutex.unlock ();
 			assert_not_reached ();
 		}
 
 		i--;
+		objects[i] = null;
 
 		r_mutex.unlock ();
 		w_mutex.unlock ();
 	}
 
-	internal static Core get_cb_data () {
+	internal static unowned Core get_cb_data () {
 		r_mutex.lock ();
 		if (i == 0) {
 			stderr.printf ("Error: Callback data segmentation fault.\n");
+
+			r_mutex.unlock ();
 			assert_not_reached ();
 		}
 
-		Core result =  objects[i - 1];
+		unowned Core result =  objects[i - 1];
 		r_mutex.unlock ();
 
 		return result;

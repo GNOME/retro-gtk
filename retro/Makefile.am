@@ -28,6 +28,7 @@ libretro_gobject_la_SOURCES = \
 	variable/Options.vala \
 	variable/Variables.vala \
 	Audio.vala \
+	AvInfo.vala \
 	Camera.vala \
 	Controller.vala \
 	Core.vala \
@@ -49,7 +50,6 @@ libretro_gobject_la_SOURCES = \
 	Rumble.vala \
 	Sensor.vala \
 	Subsystem.vala \
-	SystemAvInfo.vala \
 	SystemInfo.vala \
 	Video.vala \
 	retro-environment.c \

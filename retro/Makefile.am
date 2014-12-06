@@ -26,6 +26,7 @@ libretro_gobject_la_SOURCES = \
 	loop/MainLoop.vala \
 	loop/ThreadedLoop.vala \
 	variable/Options.vala \
+	variable/Variables.vala \
 	Audio.vala \
 	Camera.vala \
 	Controller.vala \
@@ -50,7 +51,6 @@ libretro_gobject_la_SOURCES = \
 	Subsystem.vala \
 	SystemAvInfo.vala \
 	SystemInfo.vala \
-	Variables.vala \
 	Video.vala \
 	retro-environment.c \
 	retro-environment-interfaces.c \

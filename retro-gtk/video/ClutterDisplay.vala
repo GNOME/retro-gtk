@@ -108,7 +108,7 @@ public class ClutterDisplay : GtkClutter.Embed, Video, Display {
 	}
 
 	private void on_size_allocate (Gtk.Allocation allocation) {
-		double display_ratio = (double) 4 / 3;
+		double display_ratio = (double) core.av_info.aspect_ratio;
 		double allocated_ratio = (double) allocation.width / allocation.height;
 
 		bool screen_is_wider = allocated_ratio > display_ratio;

@@ -24,6 +24,7 @@ libretro_gobject_la_SOURCES = \
 	loop/Loop.vala \
 	loop/MainLoop.vala \
 	loop/ThreadedLoop.vala \
+	variable/Options.vala \
 	Audio.vala \
 	Camera.vala \
 	Controller.vala \

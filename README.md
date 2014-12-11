@@ -21,3 +21,6 @@ Then compile:
 
 [Retro 0.1 Vala documentation](http://kekun.github.io/retro-gobject/doc/retro-gobject-0.1/vala/retro-gobject/index.htm)
 
+You can compile the Vala documentation by doing:
+`make -f Makefile.valadoc`
+

@@ -16,32 +16,23 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-using Gtk;
-using Gdk;
+using Jsk;
 
 namespace RetroGtk {
 
 public class Gamepad : Object, ControllerDevice {
-	public Widget widget { get; construct; }
-	public GamepadConfiguration configuration { get; construct set; }
+	public Jsk.Gamepad gamepad { get; construct; }
 
-	private KeyboardState keyboard;
+	private int16[] gamepad_state;
 
-	public Gamepad (Widget widget) {
-		Object (widget: widget);
-	}
-
-	public Gamepad.with_configuration (Widget widget, GamepadConfiguration configuration) {
-		Object (widget: widget, configuration: configuration);
+	public Gamepad (Jsk.Gamepad gamepad) {
+		Object (gamepad: gamepad);
 	}
 
 	construct {
-		keyboard = new KeyboardState (widget);
+		gamepad_state = new int16[Jsk.GamepadInputType.MAX];
 
-		if (configuration == null) {
-			configuration = new GamepadConfiguration ();
-			configuration.set_to_default ();
-		}
+		gamepad.gamepad_event.connect ((e) => gamepad_state[e.type] = e.value);
 	}
 
 	public void poll () {}
@@ -57,7 +48,44 @@ public class Gamepad : Object, ControllerDevice {
 	}
 
 	public bool get_button_pressed (GamepadButtonType button) {
-		return keyboard.get_key_state (configuration.get_button_key (button));
+		switch (button) {
+			case GamepadButtonType.ACTION_DOWN:
+				return gamepad_state[GamepadInputType.APAD_DOWN] != 0;
+			case GamepadButtonType.ACTION_LEFT:
+				return gamepad_state[GamepadInputType.APAD_LEFT] != 0;
+			case GamepadButtonType.SELECT:
+				return gamepad_state[GamepadInputType.SELECT] != 0;
+			case GamepadButtonType.START:
+				return gamepad_state[GamepadInputType.START] != 0;
+			case GamepadButtonType.DIRECTION_UP:
+				return gamepad_state[GamepadInputType.DPAD_UP] != 0;
+			case GamepadButtonType.DIRECTION_DOWN:
+				return gamepad_state[GamepadInputType.DPAD_DOWN] != 0;
+			case GamepadButtonType.DIRECTION_LEFT:
+				return gamepad_state[GamepadInputType.DPAD_LEFT] != 0;
+			case GamepadButtonType.DIRECTION_RIGHT:
+				return gamepad_state[GamepadInputType.DPAD_RIGHT] != 0;
+			case GamepadButtonType.ACTION_RIGHT:
+				return gamepad_state[GamepadInputType.APAD_RIGHT] != 0;
+			case GamepadButtonType.ACTION_UP:
+				return gamepad_state[GamepadInputType.APAD_UP] != 0;
+			case GamepadButtonType.SHOULDER_L:
+				return gamepad_state[GamepadInputType.SHOULDER_L] != 0;
+			case GamepadButtonType.SHOULDER_R:
+				return gamepad_state[GamepadInputType.SHOULDER_R] != 0;
+			case GamepadButtonType.SHOULDER_L2:
+				return gamepad_state[GamepadInputType.TRIGGER_L] != 0;
+			case GamepadButtonType.SHOULDER_R2:
+				return gamepad_state[GamepadInputType.TRIGGER_R] != 0;
+			case GamepadButtonType.STICK_L:
+				return gamepad_state[GamepadInputType.STICK_L] != 0;
+			case GamepadButtonType.STICK_R:
+				return gamepad_state[GamepadInputType.STICK_R] != 0;
+			case GamepadButtonType.HOME:
+				return gamepad_state[GamepadInputType.HOME] != 0;
+			default:
+				return false;
+		}
 	}
 }
 

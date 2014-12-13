@@ -5,5 +5,6 @@ gtk+-3.0
 cairo
 clutter-gtk-1.0
 libpulse
+jsk-0.1
 retro-gobject-0.2
 

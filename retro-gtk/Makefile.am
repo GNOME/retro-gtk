@@ -32,6 +32,7 @@ libretro_gtk_la_SOURCES = \
 	input/Keyboard.vala \
 	input/KeyboardState.vala \
 	input/Mouse.vala \
+	input/VirtualGamepad.vala \
 	video/CairoDisplay.vala \
 	video/ClutterDisplay.vala \
 	video/Display.vala \
@@ -48,6 +49,7 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg cairo \
 	--pkg clutter-gtk-1.0 \
 	--pkg libpulse \
+	--pkg jsk-0.1 \
 	--pkg retro-gobject-0.2 \
 	--thread \
 	--target-glib 2.32 \

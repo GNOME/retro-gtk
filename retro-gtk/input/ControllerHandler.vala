@@ -29,8 +29,10 @@ public class ControllerHandler : Object, Retro.Input {
 
 			_core = value;
 
-			if (_core != null && _core.input_interface != this) {
-				_core.input_interface = this;
+			if (_core != null) {
+				if (_core.input_interface != this)
+					_core.input_interface = this;
+
 				init_core ();
 			}
 		}

@@ -38,13 +38,18 @@ public class Gamepad : Object, ControllerDevice {
 	public void poll () {}
 
 	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
-		if ((Retro.DeviceType) device != Retro.DeviceType.JOYPAD) return 0;
-
-		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
+		switch (device) {
+			case Retro.DeviceType.JOYPAD:
+				return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
+			case Retro.DeviceType.ANALOG:
+				return get_analog_value ((Retro.AnalogIndex) index, (Retro.AnalogId) id);
+			default:
+				return 0;
+		}
 	}
 
 	public uint64 get_device_capabilities () {
-		return 1 << Retro.DeviceType.JOYPAD;
+		return (1 << Retro.DeviceType.JOYPAD) | (1 << Retro.DeviceType.ANALOG);
 	}
 
 	public bool get_button_pressed (GamepadButtonType button) {
@@ -85,6 +90,31 @@ public class Gamepad : Object, ControllerDevice {
 				return gamepad_state[GamepadInputType.HOME] != 0;
 			default:
 				return false;
+		}
+	}
+
+	public int16 get_analog_value (Retro.AnalogIndex index, Retro.AnalogId id) {
+		switch (index) {
+			case Retro.AnalogIndex.LEFT:
+				switch (id) {
+					case Retro.AnalogId.X:
+						return gamepad_state[GamepadInputType.LEFT_X];
+					case Retro.AnalogId.Y:
+						return gamepad_state[GamepadInputType.LEFT_Y];
+					default:
+						return 0;
+				}
+			case Retro.AnalogIndex.RIGHT:
+				switch (id) {
+					case Retro.AnalogId.X:
+						return gamepad_state[GamepadInputType.RIGHT_X];
+					case Retro.AnalogId.Y:
+						return gamepad_state[GamepadInputType.RIGHT_Y];
+					default:
+						return 0;
+				}
+			default:
+				return 0;
 		}
 	}
 }

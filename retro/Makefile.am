@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
+	-DPACKAGE_PLUGINS_DIR=\""$(pkglibdir)/plugins"\" \
 	$(RETRO_GOBJECT_CFLAGS) \
 	$(NULL)
 
@@ -32,6 +33,7 @@ libretro_gobject_la_SOURCES = \
 	Camera.vala \
 	Controller.vala \
 	Core.vala \
+	CoreFactory.vala \
 	Device.vala \
 	DiskController.vala \
 	FrameTime.vala \
@@ -59,10 +61,12 @@ libretro_gobject_la_SOURCES = \
 libretro_gobject_la_LDFLAGS =
 
 libretro_gobject_la_VALAFLAGS = \
+	--pkg config \
 	--pkg glib-2.0 \
 	--pkg gobject-2.0 \
 	--pkg gmodule-2.0 \
 	--pkg gio-2.0  \
+	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \
 	--library retro-gobject-0.2 \

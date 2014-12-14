@@ -52,6 +52,10 @@ public class VirtualGamepad : Object, ControllerDevice {
 		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
 	}
 
+	public Retro.DeviceType get_device_type () {
+		return Retro.DeviceType.JOYPAD;
+	}
+
 	public uint64 get_device_capabilities () {
 		return 1 << Retro.DeviceType.JOYPAD;
 	}

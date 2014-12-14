@@ -48,6 +48,10 @@ public class Gamepad : Object, ControllerDevice {
 		}
 	}
 
+	public Retro.DeviceType get_device_type () {
+		return Retro.DeviceType.ANALOG;
+	}
+
 	public uint64 get_device_capabilities () {
 		return (1 << Retro.DeviceType.JOYPAD) | (1 << Retro.DeviceType.ANALOG);
 	}

@@ -81,7 +81,7 @@ public class ControllerHandler : Object, Retro.Input {
 		}
 
 		if (core != null)
-			core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
+			core.set_controller_port_device (port, device.get_device_type ());
 	}
 
 	public void set_keyboard (Keyboard keyboard) {
@@ -108,7 +108,7 @@ public class ControllerHandler : Object, Retro.Input {
 
 	public void init_core () {
 		foreach (var port in controller_devices.get_keys ()) {
-			core.set_controller_port_device (port, Retro.DeviceType.JOYPAD);
+			core.set_controller_port_device (port, controller_devices[port].get_device_type ());
 		}
 	}
 }

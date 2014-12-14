@@ -153,6 +153,10 @@ public class Mouse : Object, ControllerDevice {
 		}
 	}
 
+	public Retro.DeviceType get_device_type () {
+		return Retro.DeviceType.MOUSE;
+	}
+
 	public uint64 get_device_capabilities () {
 		return 1 << Retro.DeviceType.MOUSE;
 	}

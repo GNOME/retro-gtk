@@ -407,7 +407,7 @@ public class Core : Object {
 	 *
 	 * Must be called before loading a game and running the core.
 	 */
-	public void init () {
+	public virtual signal void init () {
 		push_cb_data ();
 		module.set_environment (get_module_environment_interface ());
 		module.init ();

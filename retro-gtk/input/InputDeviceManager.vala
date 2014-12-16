@@ -1,5 +1,4 @@
-/* RetroGtk  Building blocks for a Retro frontend.
- * Copyright (C) 2014  Adrien Plazas
+/* Copyright (C) 2014  Adrien Plazas
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +15,23 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-using Retro;
-
 namespace RetroGtk {
 
-public interface ControllerDevice : Object {
-	public abstract void  poll ();
-	public abstract int16 get_input_state (DeviceType device, uint index, uint id);
+public class InputDeviceManager : Retro.InputDeviceManager {
+	private Keyboard keyboard;
 
-	public abstract DeviceType get_device_type ();
-	public abstract uint64 get_device_capabilities ();
+	public void set_keyboard (Keyboard keyboard) {
+		this.keyboard = keyboard;
+
+		keyboard.key_event.connect ((p, k, c, m) => {
+			try {
+				key_event (p, k, c, m);
+			}
+			catch (Retro.CbError e) {
+				// There is no core or the core set no keyboard callback
+			}
+		});
+	}
 }
 
 }

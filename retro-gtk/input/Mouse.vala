@@ -85,7 +85,7 @@ private class MotionParser : Object {
 	}
 }
 
-public class Mouse : Object, ControllerDevice {
+public class Mouse : Object, Retro.InputDevice {
 	public Widget widget { get; construct; }
 
 	public bool parse {

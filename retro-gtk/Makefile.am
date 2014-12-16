@@ -27,6 +27,7 @@ libretro_gtk_la_SOURCES = \
 	input/GamepadButtonType.vala \
 	input/GamepadConfiguration.vala \
 	input/GamepadConfigurationDialog.vala \
+	input/InputDeviceManager.vala \
 	input/GamepadView.vala \
 	input/Keyboard.vala \
 	input/KeyboardState.vala \

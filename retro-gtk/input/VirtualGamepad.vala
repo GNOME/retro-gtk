@@ -21,7 +21,7 @@ using Gdk;
 
 namespace RetroGtk {
 
-public class VirtualGamepad : Object, ControllerDevice {
+public class VirtualGamepad : Object, Retro.InputDevice {
 	public Widget widget { get; construct; }
 	public GamepadConfiguration configuration { get; construct set; }
 

@@ -20,7 +20,7 @@ using Jsk;
 
 namespace RetroGtk {
 
-public class Gamepad : Object, ControllerDevice {
+public class Gamepad : Object, Retro.InputDevice {
 	public Jsk.Gamepad gamepad { get; construct; }
 
 	private int16[] gamepad_state;

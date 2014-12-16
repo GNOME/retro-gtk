@@ -21,6 +21,10 @@ vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gobject-0.2.vapi retro-gobject-0.2.deps
 
 libretro_gobject_la_SOURCES = \
+	input/Controller.vala \
+	input/Device.vala \
+	input/Input.vala \
+	input/Keyboard.vala \
 	log/FileStreamLog.vala \
 	log/Log.vala \
 	loop/Loop.vala \
@@ -31,17 +35,13 @@ libretro_gobject_la_SOURCES = \
 	Audio.vala \
 	AvInfo.vala \
 	Camera.vala \
-	Controller.vala \
 	Core.vala \
 	CoreFactory.vala \
-	Device.vala \
 	DiskController.vala \
 	FrameTime.vala \
 	GameInfo.vala \
 	GameType.vala \
 	HardwareRender.vala \
-	Input.vala \
-	Keyboard.vala \
 	Language.vala \
 	Location.vala \
 	Memory.vala \

@@ -20,8 +20,7 @@ vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gtk-0.1.vapi retro-gtk-0.1.deps
 
 libretro_gtk_la_SOURCES = \
-	audio/AudioDevice.vala \
-	audio/AudioPlayer.vala \
+	audio/PaPlayer.vala \
 	input/ControllerDevice.vala \
 	input/ControllerHandler.vala \
 	input/Gamepad.vala \

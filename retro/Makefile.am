@@ -24,6 +24,8 @@ libretro_gobject_la_SOURCES = \
 	input/Controller.vala \
 	input/Device.vala \
 	input/Input.vala \
+	input/InputDevice.vala \
+	input/InputDeviceManager.vala \
 	input/Keyboard.vala \
 	log/FileStreamLog.vala \
 	log/Log.vala \

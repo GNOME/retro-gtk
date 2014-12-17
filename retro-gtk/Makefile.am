@@ -21,8 +21,6 @@ dist_vapi_DATA = retro-gtk-0.1.vapi retro-gtk-0.1.deps
 
 libretro_gtk_la_SOURCES = \
 	audio/PaPlayer.vala \
-	input/ControllerDevice.vala \
-	input/ControllerHandler.vala \
 	input/Gamepad.vala \
 	input/GamepadButtonType.vala \
 	input/GamepadConfiguration.vala \

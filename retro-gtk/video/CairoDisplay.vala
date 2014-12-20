@@ -48,7 +48,7 @@ public class CairoDisplay : Gtk.DrawingArea, Video, Display {
 
 	public Rotation rotation { get; set; default = Rotation.NONE; }
 	public bool overscan { get; set; default = false; }
-	public bool can_dupe { get; set; default = false; }
+	public bool can_dupe { get; set; default = true; }
 	public Retro.PixelFormat pixel_format { get; set; default = PixelFormat.ORGB1555; }
 
 	construct {

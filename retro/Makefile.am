@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	-DPACKAGE_PLUGINS_DIR=\""$(pkglibdir)/plugins"\" \
+	-DPACKAGE_PLUGINS_DIR=\""$(pkglibdir)-0.2/plugins"\" \
 	$(RETRO_GOBJECT_CFLAGS) \
 	$(NULL)
 

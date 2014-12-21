@@ -24,7 +24,7 @@ public interface Input : Object {
 	/**
 	 * The core to handle the inputs for.
 	 */
-	public abstract weak Core core { get; set; }
+	public abstract Core core { get; set; }
 
 	/**
 	 * Asks the frontend to poll inputs.

@@ -255,13 +255,13 @@ public class Core : Object {
 		}
 	}
 
-	private Input _input_interface;
+	private weak Input _input_interface;
 	/**
 	 * The input interface.
 	 *
 	 * It must be set before {@link init} is called.
 	 */
-	public Input input_interface {
+	public weak Input input_interface {
 		get { return _input_interface; }
 		construct set {
 			if (_input_interface != null)

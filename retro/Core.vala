@@ -274,14 +274,14 @@ public class Core : Object {
 		}
 	}
 
-	private Variables _variables_interface;
+	private weak Variables _variables_interface;
 	/**
 	 * The variables interface.
 	 *
 	 * Optional.
 	 * If set, it must be set before {@link init} is called.
 	 */
-	public Variables variables_interface {
+	public weak Variables variables_interface {
 		get { return _variables_interface; }
 		construct set {
 			if (_variables_interface != null)

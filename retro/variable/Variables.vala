@@ -52,7 +52,7 @@ public interface Variables : Object {
 	/**
 	 * The core whose variables will be handled.
 	 */
-	public abstract weak Core core { get; set; }
+	public abstract Core core { get; set; }
 
 	/**
 	 * Gets the value for a variable.

@@ -50,8 +50,8 @@ public class Options: Object, Variables {
 	/**
 	 * The core whose variables will be handled.
 	 */
-	public weak Core _core;
-	public weak Core core {
+	public Core _core;
+	public Core core {
 		get { return _core; }
 		set {
 			if (_core == value) return;

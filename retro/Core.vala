@@ -236,13 +236,13 @@ public class Core : Object {
 		}
 	}
 
-	private Audio _audio_interface;
+	private weak Audio _audio_interface;
 	/**
 	 * The audio interface.
 	 *
 	 * It must be set before {@link init} is called.
 	 */
-	public Audio audio_interface {
+	public weak Audio audio_interface {
 		get { return _audio_interface; }
 		construct set {
 			if (_audio_interface != null)

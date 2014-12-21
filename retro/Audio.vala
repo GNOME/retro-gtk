@@ -24,7 +24,7 @@ public interface Audio : Object {
 	/**
 	 * The core to handle audio from.
 	 */
-	public abstract weak Core core { get; set; }
+	public abstract Core core { get; set; }
 
 	/**
 	 * Renders a single audio frame.

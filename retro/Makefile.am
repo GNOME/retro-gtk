@@ -6,7 +6,10 @@ AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	-DPACKAGE_PLUGINS_DIR=\""$(pkglibdir)-0.2/plugins"\" \
+	-DPROJECT_NAME=\""retro"\" \
+	-DPROJECT_API_VERSION=\""0.2"\" \
+	-DPROJECT_DIR_NAME=\""retro-0.2"\" \
+	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-0.2/plugins"\" \
 	$(RETRO_GOBJECT_CFLAGS) \
 	$(NULL)
 

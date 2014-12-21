@@ -30,7 +30,7 @@ public class CoreFactory : Object {
 		module_for_ext = new HashTable<string, Array<string>> (str_hash, str_equal);
 
 		try {
-			var dirpath = Config.PACKAGE_PLUGINS_DIR;
+			var dirpath = Config.PROJECT_PLUGINS_DIR;
 			var directory = File.new_for_path (dirpath);
 			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
 

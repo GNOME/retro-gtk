@@ -22,7 +22,7 @@ using Retro;
 namespace RetroGtk {
 
 public class ClutterDisplay : GtkClutter.Embed, Video, Display {
-	public weak Core _core;
+	private weak Core _core;
 	public weak Core core {
 		get { return _core; }
 		set {

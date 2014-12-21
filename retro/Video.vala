@@ -67,7 +67,7 @@ public interface Video : Object {
 	/**
 	 * The core to handle video from.
 	 */
-	public abstract weak Core core { get; set; }
+	public abstract Core core { get; set; }
 
 	/**
 	 * Ask to render video.

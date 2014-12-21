@@ -217,13 +217,13 @@ public class Core : Object {
 	 */
 	internal FrameTime frame_time_callback { internal set; get; }
 
-	private Video _video_interface;
+	private weak Video _video_interface;
 	/**
 	 * The video interface.
 	 *
 	 * It must be set before {@link init} is called.
 	 */
-	public Video video_interface {
+	public weak Video video_interface {
 		get { return _video_interface; }
 		construct set {
 			if (_video_interface != null)

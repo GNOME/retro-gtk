@@ -192,7 +192,7 @@ public class PaPlayer : GLib.Object, Retro.Audio {
 	private ulong av_info_sig = 0;
 	private ulong init_sig = 0;
 
-	public weak Core _core;
+	private weak Core _core;
 	public weak Core core {
 		get { return _core; }
 		set {

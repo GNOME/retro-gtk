@@ -22,8 +22,8 @@ using Retro;
 namespace RetroGtk {
 
 public class ClutterDisplay : GtkClutter.Embed, Video, Display {
-	private weak Core _core;
-	public weak Core core {
+	private Core _core;
+	public Core core {
 		get { return _core; }
 		set {
 			if (_core == value) return;

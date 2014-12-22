@@ -1,6 +1,16 @@
-# Retro
+# retro-gobject
 
-Retor is a GObject based Libretro wrapper for frontends. 
+retro-gobject is a GObject based Libretro wrapper for frontends.
+
+## Dependencies
+
+retro-gobject depends on the following libraries at compile time and at run time:
+- gobject-2.0
+- glib-2.0 >= 2.32
+- gmodule-2.0
+- gio-2.0
+
+It is known to work on Fedora 21, but it currently can't compile on Fedora 20.
 
 ## Compiling
 

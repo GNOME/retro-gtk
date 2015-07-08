@@ -15,6 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+[CCode (gir_namespace = "Retro", gir_version = "0.2")]
 namespace Retro {
 
 /**

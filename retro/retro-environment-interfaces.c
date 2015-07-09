@@ -18,33 +18,6 @@
 #include "retro-environment-interfaces.h"
 #include "libretro-environment.h"
 
-inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data) {
-	if (!self) return FALSE;
-
-	switch (cmd) {
-		case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
-			return get_rumble_callback (self, (RetroRumbleCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-			return get_sensor_callback (self, (RetroSensorCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-			return get_camera_callback (self, (RetroCameraCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
-			return get_log_callback (self, (RetroLogCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
-			return get_performance_callback (self, (RetroPerformanceCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
-			return get_location_callback (self, (RetroLocationCallback *) data);
-
-		default:
-			return FALSE;
-	}
-}
-
 inline gboolean get_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
 	void *interface_exists = retro_core_get_rumble_interface (self);
 	if (!interface_exists) return FALSE;
@@ -355,5 +328,32 @@ inline gboolean get_location_callback (RetroCore *self, RetroLocationCallback *c
 	cb->deinitialized = real_deinitialized;
 
 	return TRUE;
+}
+
+inline gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data) {
+	if (!self) return FALSE;
+
+	switch (cmd) {
+		case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
+			return get_rumble_callback (self, (RetroRumbleCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
+			return get_sensor_callback (self, (RetroSensorCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+			return get_camera_callback (self, (RetroCameraCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+			return get_log_callback (self, (RetroLogCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
+			return get_performance_callback (self, (RetroPerformanceCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
+			return get_location_callback (self, (RetroLocationCallback *) data);
+
+		default:
+			return FALSE;
+	}
 }
 

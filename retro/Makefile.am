@@ -23,6 +23,8 @@ lib_LTLIBRARIES = libretro-gobject.la
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gobject-0.2.vapi retro-gobject-0.2.deps
 
+BUILT_SOURCES = retro-gobject-internal.h
+
 libretro_gobject_la_SOURCES = \
 	input/Controller.vala \
 	input/Device.vala \
@@ -63,6 +65,11 @@ libretro_gobject_la_SOURCES = \
 	retro-environment-interfaces.c \
 	$(NULL)
 
+
+retro-environment.c: retro-gobject-internal.h
+
+retro-environment-interfaces.c: retro-gobject-internal.h
+
 libretro_gobject_la_LDFLAGS =
 
 libretro_gobject_la_VALAFLAGS = \
@@ -89,18 +96,33 @@ retro_gobjectinclude_HEADERS = \
 	retro-gobject.h \
 	$(NULL)
 
-INTROSPECTION_GIRS = Retro-0.2.gir
+# Introspection
+-include $(INTROSPECTION_MAKEFILE)
+
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+INTROSPECTION_GIRS += Retro-0.2.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibsdir = $(libdir)/girepository-1.0
-typelibs_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-Retro-0.2.typelib:
-	g-ir-compiler --shared-library retro-gobject-0.2.so --output Retro-0.2.typelib Retro-0.2.gir
+introspection_sources = $(retro_gobjectinclude_HEADERS)
 
-CLEANFILES = $(gir_DATA) $(typelibs_DATA)
+BUILT_SOURCES += libretro-gobject.la Retro-0.2.gir
+
+Retro_0_2_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
+Retro_0_2_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro
+Retro_0_2_gir_CFLAGS = $(RETRO_GOBJECT_CFLAGS)
+Retro_0_2_gir_LIBS = libretro-gobject.la
+Retro_0_2_gir_FILES = $(introspection_sources)
+Retro_0_2_gir_EXPORT_PACKAGES = retro
+
+CLEANFILES = $(gir_DATA) $(typelib_DATA)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gobject-0.2.pc

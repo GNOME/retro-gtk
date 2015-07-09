@@ -14,6 +14,7 @@ AM_PROG_AR
 
 AM_PROG_VALAC
 
+GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 dnl ***************************************************************************
 dnl Internationalization

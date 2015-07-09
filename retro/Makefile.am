@@ -116,11 +116,11 @@ introspection_sources = $(retro_gobjectinclude_HEADERS)
 BUILT_SOURCES += libretro-gobject.la Retro-0.2.gir
 
 Retro_0_2_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
-Retro_0_2_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro
+Retro_0_2_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro-gobject-0.2
 Retro_0_2_gir_CFLAGS = $(RETRO_GOBJECT_CFLAGS)
 Retro_0_2_gir_LIBS = libretro-gobject.la
 Retro_0_2_gir_FILES = $(introspection_sources)
-Retro_0_2_gir_EXPORT_PACKAGES = retro
+Retro_0_2_gir_EXPORT_PACKAGES = retro-gobject-0.2
 
 CLEANFILES = $(gir_DATA) $(typelib_DATA)
 

@@ -26,61 +26,6 @@ typedef struct {
 	guint frames;
 } RetroMessage;
 
-inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointer data) {
-	if (!self) return FALSE;
-
-	switch (cmd) {
-		case RETRO_ENVIRONMENT_SET_MESSAGE:
-			return set_message (self, (RetroMessage *) data);
-
-		case RETRO_ENVIRONMENT_SHUTDOWN:
-			return set_shutdown (self);
-
-		case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
-			return set_performance_level (self, (RetroPerfLevel *) data);
-
-		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
-			return get_system_directory (self, (gchar **) data);
-
-		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
-			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
-
-		case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
-			set_disk_control_interface (self, (RetroDiskControlCallback *) data);
-
-		case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
-			return set_support_no_game (self, (gboolean *) data);
-
-		case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
-			return get_libretro_path (self, (gchar **) data);
-
-		case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
-			return set_audio_callback (self, (RetroAudioCallback *) data);
-
-		case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
-			return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
-
-		case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
-			return get_content_directory (self, (gchar **) data);
-
-		case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:
-			return get_save_directory (self, (gchar **) data);
-
-		case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
-			return set_system_av_info (self, (RetroSystemAvInfo *) data);
-
-		case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
-		case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
-		case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
-		case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
-		case RETRO_ENVIRONMENT_SET_GEOMETRY:
-		case RETRO_ENVIRONMENT_GET_USERNAME:
-		case RETRO_ENVIRONMENT_GET_LANGUAGE:
-		default:
-			return FALSE;
-	}
-}
-
 inline gboolean set_message (RetroCore *self, const RetroMessage *message) {
 	gboolean result = FALSE;
 	g_signal_emit_by_name (self, "message", message->msg, message->frames, &result);
@@ -146,6 +91,61 @@ inline gboolean get_save_directory (RetroCore *self, const gchar **save_director
 inline gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
 	retro_core_set_av_info (self, retro_av_info_new (system_av_info));
 	return TRUE;
+}
+
+inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointer data) {
+	if (!self) return FALSE;
+
+	switch (cmd) {
+		case RETRO_ENVIRONMENT_SET_MESSAGE:
+			return set_message (self, (RetroMessage *) data);
+
+		case RETRO_ENVIRONMENT_SHUTDOWN:
+			return set_shutdown (self);
+
+		case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
+			return set_performance_level (self, (RetroPerfLevel *) data);
+
+		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
+			return get_system_directory (self, (gchar **) data);
+
+		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
+			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
+
+		case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
+			set_disk_control_interface (self, (RetroDiskControlCallback *) data);
+
+		case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
+			return set_support_no_game (self, (gboolean *) data);
+
+		case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
+			return get_libretro_path (self, (gchar **) data);
+
+		case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
+			return set_audio_callback (self, (RetroAudioCallback *) data);
+
+		case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
+			return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
+
+		case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
+			return get_content_directory (self, (gchar **) data);
+
+		case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:
+			return get_save_directory (self, (gchar **) data);
+
+		case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
+			return set_system_av_info (self, (RetroSystemAvInfo *) data);
+
+		case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
+		case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
+		case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
+		case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
+		case RETRO_ENVIRONMENT_SET_GEOMETRY:
+		case RETRO_ENVIRONMENT_GET_USERNAME:
+		case RETRO_ENVIRONMENT_GET_LANGUAGE:
+		default:
+			return FALSE;
+	}
 }
 
 #endif

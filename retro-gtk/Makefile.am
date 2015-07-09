@@ -19,6 +19,8 @@ lib_LTLIBRARIES = libretro-gtk.la
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gtk-0.1.vapi retro-gtk-0.1.deps
 
+BUILT_SOURCES =
+
 libretro_gtk_la_SOURCES = \
 	audio/PaPlayer.vala \
 	input/Gamepad.vala \
@@ -65,18 +67,33 @@ retro_gtkinclude_HEADERS = \
 	retro-gtk.h \
 	$(NULL)
 
-INTROSPECTION_GIRS = RetroGtk-0.1.gir
+# Introspection
+-include $(INTROSPECTION_MAKEFILE)
+
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+INTROSPECTION_GIRS += RetroGtk-0.1.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibsdir = $(libdir)/girepository-1.0
-typelibs_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-RetroGtk-0.1.typelib:
-	g-ir-compiler --shared-library retro-gtk-0.1.so --output RetroGtk-0.1.typelib RetroGtk-0.1.gir
+introspection_sources = $(retro_gtkinclude_HEADERS)
 
-CLEANFILES = $(gir_DATA) $(typelibs_DATA)
+BUILT_SOURCES += libretro-gtk.la RetroGtk-0.1.gir
+
+RetroGtk_0_1_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 GtkClutter-1.0 Jsk-0.1 Retro-0.2
+RetroGtk_0_1_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.1
+RetroGtk_0_1_gir_CFLAGS = $(GTK)
+RetroGtk_0_1_gir_LIBS = libretro-gtk.la
+RetroGtk_0_1_gir_FILES = $(introspection_sources)
+RetroGtk_0_1_gir_EXPORT_PACKAGES = retro-gtk-0.1
+
+CLEANFILES = $(gir_DATA) $(typelib_DATA)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.1.pc

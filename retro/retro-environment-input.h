@@ -21,7 +21,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean set_input_desciptors (RetroInput *self, const RetroInputDescriptor *descriptors) {
+inline gboolean set_input_desciptors (RetroInput *self, RetroInputDescriptor *descriptors) {
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
 	retro_input_set_descriptors (self, descriptors, length);

@@ -43,12 +43,12 @@ inline gboolean set_performance_level (RetroCore *self, RetroPerfLevel *performa
 	return TRUE;
 }
 
-inline gboolean get_system_directory (RetroCore *self, const gchar **system_directory) {
+inline gboolean get_system_directory (RetroCore *self, const gchar* *system_directory) {
 	*(system_directory) = retro_core_get_system_directory (self);
 	return TRUE;
 }
 
-inline gboolean set_keyboard_callback (RetroCore *self, const RetroKeyboardCallback *callback) {
+inline gboolean set_keyboard_callback (RetroCore *self, RetroKeyboardCallback *callback) {
 	retro_core_set_keyboard_callback (self, callback);
 	return TRUE;
 }
@@ -63,7 +63,7 @@ inline gboolean set_support_no_game (RetroCore *self, gboolean *support_no_game)
 	return TRUE;
 }
 
-inline gboolean get_libretro_path (RetroCore *self, const gchar **libretro_directory) {
+inline gboolean get_libretro_path (RetroCore *self, const gchar* *libretro_directory) {
 	*(libretro_directory) = retro_core_get_libretro_path (self);
 	return TRUE;
 }
@@ -78,12 +78,12 @@ inline gboolean set_frame_time_callback (RetroCore *self, RetroCoreFrameTimeCall
 	return TRUE;
 }
 
-inline gboolean get_content_directory (RetroCore *self, const gchar **content_directory) {
+inline gboolean get_content_directory (RetroCore *self, const gchar* *content_directory) {
 	*(content_directory) = retro_core_get_content_directory (self);
 	return TRUE;
 }
 
-inline gboolean get_save_directory (RetroCore *self, const gchar **save_directory) {
+inline gboolean get_save_directory (RetroCore *self, const gchar* *save_directory) {
 	*(save_directory) = retro_core_get_save_directory (self);
 	return TRUE;
 }
@@ -107,7 +107,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return set_performance_level (self, (RetroPerfLevel *) data);
 
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
-			return get_system_directory (self, (gchar **) data);
+			return get_system_directory (self, (const gchar* *) data);
 
 		case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 			return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
@@ -119,7 +119,7 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return set_support_no_game (self, (gboolean *) data);
 
 		case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
-			return get_libretro_path (self, (gchar **) data);
+			return get_libretro_path (self, (const gchar* *) data);
 
 		case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
 			return set_audio_callback (self, (RetroAudioCallback *) data);
@@ -128,10 +128,10 @@ inline gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 			return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
 
 		case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
-			return get_content_directory (self, (gchar **) data);
+			return get_content_directory (self, (const gchar* *) data);
 
 		case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:
-			return get_save_directory (self, (gchar **) data);
+			return get_save_directory (self, (const gchar* *) data);
 
 		case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
 			return set_system_av_info (self, (RetroSystemAvInfo *) data);

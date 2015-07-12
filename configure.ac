@@ -44,6 +44,6 @@ PKG_CHECK_MODULES(RETRO_GOBJECT, [gobject-2.0 glib-2.0 gmodule-2.0 gio-2.0])
 
 AC_OUTPUT([
 Makefile
-retro/retro-gobject-0.2.pc
-retro/Makefile
+retro-gobject/retro-gobject-0.2.pc
+retro-gobject/Makefile
 po/Makefile.in])

@@ -27,7 +27,7 @@ inline gboolean get_variable (RetroVariables *self, RetroVariable *variable) {
 	return result ? TRUE : FALSE;
 }
 
-inline gboolean set_variables (RetroVariables *self, const RetroVariable *variables) {
+inline gboolean set_variables (RetroVariables *self, RetroVariable *variables) {
 	int length;
 	for (length = 0 ; variables[length].key && variables[length].value ; length++);
 	retro_variables_set_variable (self, variables, length);

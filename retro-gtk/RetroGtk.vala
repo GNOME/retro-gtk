@@ -24,6 +24,7 @@ namespace RetroGtk {
  *  * Gtk
  *  * Clutter
  */
+[Deprecated (since = "0.2")]
 public void init (ref unowned string[]? argv) {
 	Gtk.init (ref argv);
 	var clutter_error = Clutter.init (ref argv);

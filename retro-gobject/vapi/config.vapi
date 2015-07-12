@@ -1,3 +1,5 @@
+// This file is part of Retro. License: GPLv3
+
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "config.h")]
 namespace Config {
 	public const string GETTEXT_PACKAGE;

@@ -21,6 +21,7 @@ using Retro;
 
 namespace RetroGtk {
 
+[Deprecated (since = "0.2")]
 public class ClutterDisplay : GtkClutter.Embed, Video, Display {
 	private Core _core;
 	public Core core {

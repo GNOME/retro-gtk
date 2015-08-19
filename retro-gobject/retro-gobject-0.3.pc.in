@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/retro-gobject-0.2
+includedir=@includedir@/retro-gobject-0.3
 
 Name: Retro
 Description: GObject based libretro wrapper

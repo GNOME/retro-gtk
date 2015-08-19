@@ -8,8 +8,8 @@ AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
 	-DPROJECT_NAME=\""retro"\" \
 	-DPROJECT_API_VERSION=\""0.3"\" \
-	-DPROJECT_DIR_NAME=\""retro-0.3"\" \
-	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-0.3/plugins"\" \
+	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
+	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
 	$(RETRO_GOBJECT_CFLAGS) \
 	$(NULL)
 

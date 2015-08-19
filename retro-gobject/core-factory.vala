@@ -2,6 +2,7 @@
 
 namespace Retro {
 
+[Deprecated (since = "0.3")]
 public class CoreFactory : Object {
 	private HashTable<string, Array<string>> module_for_ext;
 

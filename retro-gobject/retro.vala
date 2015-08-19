@@ -38,5 +38,9 @@ public SystemInfo? get_system_info (string module_name) {
 	return info;
 }
 
+public static string get_plugins_dir () {
+	return Config.PROJECT_PLUGINS_DIR;
+}
+
 }
 

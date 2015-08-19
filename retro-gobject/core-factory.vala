@@ -19,7 +19,7 @@ public class CoreFactory : Object {
 		module_base_name = /.*\/libretro-(.+?)\.so.*/;
 
 		try {
-			var dirpath = Config.PROJECT_PLUGINS_DIR;
+			var dirpath = get_plugins_dir ();
 			var directory = File.new_for_path (dirpath);
 			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
 

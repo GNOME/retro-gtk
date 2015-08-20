@@ -8,7 +8,7 @@ namespace Retro {
 public class Core : Object {
 	private static RecMutex r_mutex = RecMutex ();
 	private static RecMutex w_mutex = RecMutex ();
-	private static Core[] objects = new Core[32];
+	private static (unowned Core)[] objects = new (unowned Core)[32];
 	private static int i = 0;
 
 	/**

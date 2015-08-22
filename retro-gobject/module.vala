@@ -29,7 +29,7 @@ private delegate void Run ();
 [CCode (has_target = false)]
 private delegate size_t SerializeSize ();
 [CCode (has_target = false)]
-private delegate bool Serialize ([CCode (array_length_type = "gsize")] out uint8[] data);
+private delegate bool Serialize ([CCode (array_length_type = "gsize")] uint8[] data);
 [CCode (has_target = false)]
 private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[] data);
 

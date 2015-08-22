@@ -504,9 +504,9 @@ public class Core : Object {
 	 * @param data the buffer where the data will be stored
 	 * @return false if the serialization failed, true otherwise
 	 */
-	public bool serialize ([CCode (array_length_type = "gsize")] out uint8[] data) {
+	public bool serialize ([CCode (array_length_type = "gsize")] uint8[] data) {
 		push_cb_data ();
-		var result = module.serialize (out data);
+		var result = module.serialize (data);
 		pop_cb_data ();
 
 		return result;

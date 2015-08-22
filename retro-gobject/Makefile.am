@@ -61,6 +61,7 @@ libretro_gobject_la_SOURCES = \
 	subsystem.vala \
 	system-info.vala \
 	video.vala \
+	retro-core.c \
 	retro-environment.c \
 	retro-environment-interfaces.c \
 	$(NULL)

@@ -354,7 +354,7 @@ public class Core : Object {
 	private extern void *get_module_input_poll_cb ();
 	private extern void *get_module_input_state_cb ();
 
-	private Module module;
+	internal Module module;
 
 	/**
 	 * Creates a Core from the file name of a Libretro implementation.
@@ -599,14 +599,7 @@ public class Core : Object {
 	 * @param id the region of memory
 	 * @return the region of memory
 	 */
-	public uint8[] get_memory (MemoryType id) {
-		push_cb_data ();
-		var data = (uint8[]) module.get_memory_data (id);
-		data.length = (int) module.get_memory_size (id);
-		pop_cb_data ();
-
-		return data;
-	}
+	public extern uint8[] get_memory (MemoryType id);
 }
 
 }

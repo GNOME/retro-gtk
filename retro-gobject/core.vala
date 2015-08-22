@@ -600,6 +600,14 @@ public class Core : Object {
 	 * @return the region of memory
 	 */
 	public extern uint8[] get_memory (MemoryType id);
+
+	/**
+	 * Sets a region of memory.
+	 *
+	 * @param id the region of memory
+	 * @param data the data to write in the memory region
+	 */
+	public extern void set_memory (MemoryType id, uint8[] data);
 }
 
 }

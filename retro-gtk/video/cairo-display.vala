@@ -1,84 +1,44 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Cairo;
-
-using Retro;
-
-namespace RetroGtk {
-
-public class CairoDisplay : Gtk.DrawingArea, Video, Display {
-	private Core _core;
-	public Core core {
+public class RetroGtk.CairoDisplay : Gtk.DrawingArea, Retro.Video, Display {
+	private Retro.Core _core;
+	public Retro.Core core {
 		get { return _core; }
 		set {
-			if (_core == value) return;
+			if (value == core)
+				return;
 
 			_core = value;
-			pixel_format = PixelFormat.ORGB1555;
+			pixel_format = Retro.PixelFormat.ORGB1555;
 
-			if (_core != null && _core.video_interface != this)
-				_core.video_interface = this;
+			if (core != null && core.video_interface != this)
+				core.video_interface = this;
 		}
 	}
 
-	private Mutex surface_mutex = new Mutex ();
-	private ImageSurface surface;
-	private bool show_surface;
+	public Gdk.Pixbuf pixbuf { set; get; }
 
-	/*
-	 * Pixbuf used to render some video formats
-	 * It must be kept valid until while the surface using it is used.
-	 */
-	private Gdk.Pixbuf pb;
-
-	public Rotation rotation { get; set; default = Rotation.NONE; }
+	public Retro.Rotation rotation { get; set; default = Retro.Rotation.NONE; }
 	public bool overscan { get; set; default = false; }
 	public bool can_dupe { get; set; default = true; }
-	public Retro.PixelFormat pixel_format { get; set; default = PixelFormat.ORGB1555; }
+	public Retro.PixelFormat pixel_format { get; set; default = Retro.PixelFormat.ORGB1555; }
+
+	private bool show_surface;
 
 	construct {
 		show_surface = true;
+
+		notify["pixbuf"].connect (queue_draw);
 	}
 
-	[CCode (cname = "video_to_argb8888_pixbuf", cheader_filename="video-converter.h")]
+	[CCode (cname = "video_to_pixbuf", cheader_filename="video-converter.h")]
 	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
 
 	public void render (uint8[] data, uint width, uint height, size_t pitch) {
-		if (data == null) return; // Dupe a frame
+		if (data == null)
+			return; // Dupe a frame
 
-		surface_mutex.lock ();
-		switch (pixel_format) {
-			case PixelFormat.ORGB1555:
-				pb = video_to_pixbuf (data, width, height, pitch, pixel_format);
-				surface = new ImageSurface.for_data (
-					(uchar[]) pb.get_pixels_with_length (), Format.RGB24,
-					pb.width, pb.height, Format.RGB24.stride_for_width (pb.width)
-				);
-				break;
-
-			case PixelFormat.XRGB8888:
-				pb = null;
-				surface = new ImageSurface.for_data (
-					(uchar[]) data, Format.ARGB32,
-					(int) width, (int) height, (int) pitch
-				);
-				break;
-
-			case PixelFormat.RGB565:
-				pb = null;
-				surface = new ImageSurface.for_data (
-					(uchar[]) data, Format.RGB16_565,
-					(int) width, (int) height, (int) pitch
-				);
-				break;
-
-			default:
-				stderr.printf ("Error: Unkown video format\n");
-				break;
-		}
-
-		queue_draw ();
-		surface_mutex.unlock ();
+		pixbuf = video_to_pixbuf (data, width, height, pitch, pixel_format);
 	}
 
 	public void show_video () {
@@ -91,28 +51,32 @@ public class CairoDisplay : Gtk.DrawingArea, Video, Display {
 		queue_draw ();
 	}
 
-	public override bool draw (Context cr) {
-		// Paint the background black
-		cr.set_source_rgb (0, 0, 0);
+	public override bool draw (Cairo.Context cr) {
+		draw_background (cr);
+
+		if (!show_surface)
+			return false;
+
+		var to_draw = pixbuf;
+		if (to_draw == null)
+			return false;
+
+		var surface = Gdk.cairo_surface_create_from_pixbuf (to_draw, 1, null);
+		double w, h, x, y;
+		get_video_box (out w, out h, out x, out y);
+		double xs = w / to_draw.width;
+		double ys = h / to_draw.height;
+
+		cr.scale (xs, ys);
+		cr.set_source_surface (surface, x/xs, y/ys);
 		cr.paint ();
 
-		// Paint the video
-		if (surface != null && show_surface) {
-			surface_mutex.lock ();
+		return true;
+	}
 
-			double w, h, x, y;
-			get_video_box (out w, out h, out x, out y);
-			double xs = w / surface.get_width ();
-			double ys = h / surface.get_height ();
-
-			cr.scale (xs, ys);
-			cr.set_source_surface (surface, x/xs, y/ys);
-			cr.paint ();
-
-			surface_mutex.unlock ();
-		}
-
-		return false;
+	private void draw_background (Cairo.Context cr) {
+		cr.set_source_rgb (0, 0, 0);
+		cr.paint ();
 	}
 
 	private void get_video_box (out double width, out double height, out double x, out double y) {
@@ -138,6 +102,3 @@ public class CairoDisplay : Gtk.DrawingArea, Video, Display {
 		y = (h - height) / 2;
 	}
 }
-
-}
-

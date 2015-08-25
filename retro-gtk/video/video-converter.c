@@ -4,215 +4,146 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-guchar *xrgb1555_to_rgb888 (const guint16 *data, guint width, guint height, gsize pitch) {
-	guchar get_r (guint16 pixel) {
-		guchar color = ((pixel >> 10) << 3);
-		return color;
-	}
+typedef guchar (*pixel_get_color_t) (const void *pixel);
+typedef guchar (*pixel16_get_color_t) (guint16 pixel);
+typedef guchar (*pixel32_get_color_t) (guint32 pixel);
 
-	guchar get_g (guint16 pixel) {
-		guchar color = ((pixel >> 5) << 3);
-		return color;
-	}
-
-	guchar get_b (guint16 pixel) {
-		guchar color = (pixel << 3);
-		return color;
-	}
-
-	gsize rgb_pitch = width*3;
-	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
+guchar *video_to_rgba8888 (const void *data,
+                         size_t pixel_size,
+                         guint width,
+                         guint height,
+                         gsize pitch,
+                         pixel_get_color_t get_r,
+                         pixel_get_color_t get_g,
+                         pixel_get_color_t get_b) {
+	gsize rgba_pitch = width * 4;
+	guchar *rgba = (guchar *) malloc (height * rgba_pitch);
 
 	gsize i, j;
 	for (i = 0 ; i < height ; i++) {
-		gsize xrgb_row = i* (pitch / sizeof (guint16));
-		gsize rgb_row = i*rgb_pitch;
+		gsize xrgb_row = i * pitch;
+		gsize rgba_row = i * rgba_pitch;
 
 		for (j = 0 ; j < width ; j++) {
-			gsize xrgb_col = j;
-			gsize rgb_col = j*3;
+			gsize xrgb_col = j * pixel_size;
+			gsize rgba_col = j * 4;
 
-			gsize rgb_pixel_i = rgb_row+rgb_col;
+			const void *xrgb_pixel = xrgb_row + xrgb_col + data;
+			gsize rgba_pixel = rgba_row + rgba_col;
 
-			// red
-			rgb[rgb_pixel_i]   = get_r (data[xrgb_row+xrgb_col]);
-			// green
-			rgb[rgb_pixel_i+1] = get_g (data[xrgb_row+xrgb_col]);
-			// blue
-			rgb[rgb_pixel_i+2] = get_b (data[xrgb_row+xrgb_col]);
+			const gsize R = 0;
+			const gsize G = 1;
+			const gsize B = 2;
+			const gsize A = 3;
+
+			rgba[rgba_pixel + R] = get_r (xrgb_pixel);
+			rgba[rgba_pixel + G] = get_g (xrgb_pixel);
+			rgba[rgba_pixel + B] = get_b (xrgb_pixel);
+			rgba[rgba_pixel + A] = 0xff;
 		}
 	}
 
-	return rgb;
+	return rgba;
 }
 
-guchar *xrgb8888_to_rgb888 (const guchar *data, guint width, guint height, gsize pitch) {
-	gsize rgb_pitch = width*3;
-	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
+guchar *xrgb1555_to_rgba8888 (const void *data, guint width, guint height, gsize pitch) {
+	guchar get_r (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
 
-	gsize i, j;
-	for (i = 0 ; i < height ; i++) {
-		gsize xrgb_row = i*pitch;
-		gsize rgb_row = i*rgb_pitch;
-		for (j = 0 ; j < width ; j++) {
-			gsize xrgb_col = j*4;
-			gsize rgb_col = j*3;
-
-			rgb[rgb_row+rgb_col]   = data[xrgb_row+xrgb_col+2];
-			rgb[rgb_row+rgb_col+1] = data[xrgb_row+xrgb_col+1];
-			rgb[rgb_row+rgb_col+2] = data[xrgb_row+xrgb_col];
-		}
+		return ((*pixel) >> 10) << 3;
 	}
 
-	return rgb;
+	guchar get_g (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
+
+		return ((*pixel) >> 5) << 3;
+	}
+
+	guchar get_b (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
+
+		return (*pixel) << 3;
+	}
+
+	return video_to_rgba8888 (data, sizeof (guint16), width, height, pitch, get_r, get_g, get_b);
 }
 
-guchar *rgb565_to_rgb888 (const guint16 *data, guint width, guint height, gsize pitch) {
-	guchar get_r (guint16 pixel) {
-		guchar color = ((pixel >> 11) << 3);
-		return color;
+guchar *xrgb8888_to_rgba8888 (const void *data, guint width, guint height, gsize pitch) {
+	guchar get_r (const void *data) {
+		const guint32 *pixel = (const guint32 *) data;
+
+		return (*pixel) >> 16;
 	}
 
-	guchar get_g (guint16 pixel) {
-		guchar color = ((pixel >> 5) << 2);
-		return color;
+	guchar get_g (const void *data) {
+		const guint32 *pixel = (const guint32 *) data;
+
+		return (*pixel) >> 8;
 	}
 
-	guchar get_b (guint16 pixel) {
-		guchar color = (pixel << 3);
-		return color;
+	guchar get_b (const void *data) {
+		const guint32 *pixel = (const guint32 *) data;
+
+		return (*pixel);
 	}
 
-	gsize rgb_pitch = width*3;
-	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
-
-	gsize i, j;
-	for (i = 0 ; i < height ; i++) {
-		gsize xrgb_row = i* (pitch / sizeof (guint16));
-		gsize rgb_row = i*rgb_pitch;
-
-		for (j = 0 ; j < width ; j++) {
-			gsize xrgb_col = j;
-			gsize rgb_col = j*3;
-
-			gsize rgb_pixel_i = rgb_row+rgb_col;
-
-			// red
-			rgb[rgb_pixel_i]   = get_r (data[xrgb_row+xrgb_col]);
-			// green
-			rgb[rgb_pixel_i+1] = get_g (data[xrgb_row+xrgb_col]);
-			// blue
-			rgb[rgb_pixel_i+2] = get_b (data[xrgb_row+xrgb_col]);
-		}
-	}
-
-	return rgb;
+	return video_to_rgba8888 (data, sizeof (guint32), width, height, pitch, get_r, get_g, get_b);
 }
 
+guchar *rgb565_to_rgba8888 (const void *data, guint width, guint height, gsize pitch) {
+	guchar get_r (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
+
+		return ((*pixel) >> 11) << 3;
+	}
+
+	guchar get_g (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
+
+		return ((*pixel) >> 5) << 2;
+	}
+
+	guchar get_b (const void *data) {
+		const guint16 *pixel = (const guint16 *) data;
+
+		return (*pixel) << 3;
+	}
+
+	return video_to_rgba8888 (data, sizeof (guint16), width, height, pitch, get_r, get_g, get_b);
+}
 
 GdkPixbuf* video_to_pixbuf (void* data, guint width, guint height, gsize pitch, gint pixel_format) {
-	guint8 *vid = (guint8 *) data;
-
-	guchar *rgb = NULL;
+	guchar *rgba = NULL;
 
 	switch (pixel_format) {
 		case RETRO_PIXEL_FORMAT_0RGB1555:
-			rgb = xrgb1555_to_rgb888 (data, width, height, pitch);
+			rgba = xrgb1555_to_rgba8888 (data, width, height, pitch);
+
 			break;
 		case RETRO_PIXEL_FORMAT_XRGB8888:
-			rgb = xrgb8888_to_rgb888 (data, width, height, pitch);
+			rgba = xrgb8888_to_rgba8888 (data, width, height, pitch);
+
 			break;
 		case RETRO_PIXEL_FORMAT_RGB565:
-			rgb = rgb565_to_rgb888 (data, width, height, pitch);
+			rgba = rgb565_to_rgba8888 (data, width, height, pitch);
+
 			break;
 		default:
-			rgb = xrgb1555_to_rgb888 (data, width, height, pitch);
-			break;
+			return NULL;
 	}
 
-	gsize rgb_pitch = 3 * width;
-
-	GdkColorspace colorspace = GDK_COLORSPACE_RGB;
-	gboolean has_alpha = FALSE;
-	gint bits_per_sample = 8;
-	gint rowstride = rgb_pitch;
-
-	void rgb_free (guchar *pixels, gpointer data) {
-		free (pixels);
-	}
-
-	GdkPixbuf *pb = gdk_pixbuf_new_from_data (rgb, colorspace, has_alpha, bits_per_sample, width, height, rowstride, rgb_free, NULL);
-
-	return pb;
-}
-
-guchar *xrgb1555_to_argb8888 (const guint16 *data, guint width, guint height, gsize pitch) {
-	guchar get_r (guint16 pixel) {
-		guchar color = ((pixel >> 10) << 3);
-		return color;
-	}
-
-	guchar get_g (guint16 pixel) {
-		guchar color = ((pixel >> 5) << 3);
-		return color;
-	}
-
-	guchar get_b (guint16 pixel) {
-		guchar color = (pixel << 3);
-		return color;
-	}
-
-	gsize rgb_pitch = width*4;
-	guchar *rgb = (guchar *) malloc (height * rgb_pitch);
-
-	gsize i, j;
-	for (i = 0 ; i < height ; i++) {
-		gsize xrgb_row = i* (pitch / sizeof (guint16));
-		gsize rgb_row = i*rgb_pitch;
-
-		for (j = 0 ; j < width ; j++) {
-			gsize xrgb_col = j;
-			gsize rgb_col = j*4;
-
-			gsize rgb_pixel_i = rgb_row+rgb_col;
-
-			// blue
-			rgb[rgb_pixel_i]   = get_b (data[xrgb_row+xrgb_col]);
-			// green
-			rgb[rgb_pixel_i+1] = get_g (data[xrgb_row+xrgb_col]);
-			// red
-			rgb[rgb_pixel_i+2] = get_r (data[xrgb_row+xrgb_col]);
-			// alpha
-			rgb[rgb_pixel_i+3] = 0;
-		}
-	}
-
-	return rgb;
-}
-
-GdkPixbuf* video_to_argb8888_pixbuf (void* data, guint width, guint height, gsize pitch, gint pixel_format) {
-	guint8 *vid = (guint8 *) data;
-
-	guchar *rgb = NULL;
-
-	switch (pixel_format) {
-		case RETRO_PIXEL_FORMAT_0RGB1555:
-			rgb = xrgb1555_to_argb8888 (data, width, height, pitch);
-			break;
-	}
-
-	gsize rgb_pitch = 4 * width;
+	gsize rgba_pitch = width * 4;
 
 	GdkColorspace colorspace = GDK_COLORSPACE_RGB;
 	gboolean has_alpha = TRUE;
 	gint bits_per_sample = 8;
-	gint rowstride = rgb_pitch;
+	gint rowstride = rgba_pitch;
 
-	void rgb_free (guchar *pixels, gpointer data) {
+	void rgba_free (guchar *pixels, gpointer data) {
 		free (pixels);
 	}
 
-	GdkPixbuf *pb = gdk_pixbuf_new_from_data (rgb, colorspace, has_alpha, bits_per_sample, width, height, rowstride, rgb_free, NULL);
+	GdkPixbuf *pb = gdk_pixbuf_new_from_data (rgba, colorspace, has_alpha, bits_per_sample, width, height, rowstride, rgba_free, NULL);
 
 	return pb;
 }

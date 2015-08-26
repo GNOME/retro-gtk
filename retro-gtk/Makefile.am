@@ -22,22 +22,25 @@ dist_vapi_DATA = retro-gtk-0.1.vapi retro-gtk-0.1.deps
 BUILT_SOURCES =
 
 libretro_gtk_la_SOURCES = \
-	audio/PaPlayer.vala \
-	input/Gamepad.vala \
-	input/GamepadButtonType.vala \
-	input/GamepadConfiguration.vala \
-	input/GamepadConfigurationDialog.vala \
-	input/InputDeviceManager.vala \
-	input/GamepadView.vala \
-	input/Keyboard.vala \
-	input/KeyboardState.vala \
-	input/Mouse.vala \
-	input/VirtualGamepad.vala \
-	video/CairoDisplay.vala \
-	video/ClutterDisplay.vala \
-	video/Display.vala \
+	audio/pa-player.vala \
+	\
+	input/gamepad.vala \
+	input/gamepad-button-type.vala \
+	input/gamepad-configuration.vala \
+	input/gamepad-configuration-dialog.vala \
+	input/gamepad-view.vala \
+	input/input-device-manager.vala \
+	input/keyboard.vala \
+	input/keyboard-state.vala \
+	input/mouse.vala \
+	input/virtual-gamepad.vala \
+	\
+	video/cairo-display.vala \
+	video/clutter-display.vala \
+	video/display.vala \
 	video/video-converter.c \
-	RetroGtk.vala \
+	\
+	retro-gtk.vala \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

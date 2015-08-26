@@ -248,21 +248,22 @@ public class Core : Object {
 	private weak Input _input_interface;
 	private ulong input_controller_connected_id;
 	private ulong input_controller_disconnected_id;
+	private ulong input_key_event_id;
 	/**
 	 * The input interface.
 	 *
 	 * It must be set before {@link init} is called.
 	 */
-	public weak Input input_interface {
+	public Input input_interface {
 		get { return _input_interface; }
 		construct set {
 			if (value == input_interface)
 				return;
 
 			if (input_interface != null) {
-				input_interface.core = null;
 				input_interface.disconnect (input_controller_connected_id);
 				input_interface.disconnect (input_controller_disconnected_id);
+				input_interface.disconnect (input_key_event_id);
 			}
 
 			_input_interface = value;
@@ -270,9 +271,9 @@ public class Core : Object {
 			if (input_interface == null)
 				return;
 
-			input_interface.core = this;
 			input_interface.controller_connected.connect (on_input_controller_connected);
 			input_interface.controller_disconnected.connect (on_input_controller_disconnected);
+			input_interface.key_event.connect (on_input_key_event);
 
 			if (is_initiated)
 				init_input ();
@@ -673,6 +674,16 @@ public class Core : Object {
 			return;
 
 		set_controller_port_device (port, DeviceType.NONE);
+	}
+
+	private void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) {
+		if (!is_initiated)
+			return;
+
+		if (keyboard_callback == null)
+			return;
+
+		keyboard_callback.callback (down, keycode, character, key_modifiers);
 	}
 }
 

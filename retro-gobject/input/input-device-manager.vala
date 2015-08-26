@@ -3,21 +3,6 @@
 namespace Retro {
 
 public class InputDeviceManager : Object, Input {
-	public Core _core;
-	public Core core {
-		get { return _core; }
-		set {
-			if (_core == value) return;
-
-			_core = value;
-
-			if (_core != null) {
-				if (_core.input_interface != this)
-					_core.input_interface = this;
-			}
-		}
-	}
-
 	private HashTable<uint?, InputDevice> controller_devices;
 
 	construct {

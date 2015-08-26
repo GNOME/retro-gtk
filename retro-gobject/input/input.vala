@@ -12,9 +12,14 @@ public interface Input : Object {
 	public signal void controller_disconnected (uint port);
 
 	/**
-	 * The core to handle the inputs for.
+	 * Warns of keyboard events.
+	 *
+	 * @param down whether the key has been pressed or released
+	 * @param keycode the core of the key
+	 * @param character the character of the key
+	 * @param key_modifiers the modifier key which are held
 	 */
-	public abstract Core core { get; set; }
+	public signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 
 	/**
 	 * Asks the frontend to poll inputs.
@@ -46,24 +51,6 @@ public interface Input : Object {
 	 * @return flags of the devices implemented by the frontend
 	 */
 	public abstract uint64 get_device_capabilities ();
-
-	/**
-	 * Warns the {@link core} of keyboard events.
-	 *
-	 * @param down whether the key has been pressed or released
-	 * @param keycode the core of the key
-	 * @param character the character of the key
-	 * @param key_modifiers the modifier key which are held
-	 */
-	public void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) throws CbError {
-		if (core == null)
-			throw new CbError.NO_CORE ("No core");
-
-		if (core.keyboard_callback == null)
-			throw new CbError.NO_CALLBACK ("No keyboard callback");
-
-		core.keyboard_callback.callback (down, keycode, character, key_modifiers);
-	}
 
 	public abstract void foreach_controller (ControllerCallback callback);
 

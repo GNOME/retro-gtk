@@ -28,6 +28,7 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea, Retro.Video, Display {
 	construct {
 		show_surface = true;
 
+		notify["sensitive"].connect (queue_draw);
 		notify["pixbuf"].connect (queue_draw);
 	}
 
@@ -60,6 +61,12 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea, Retro.Video, Display {
 		var to_draw = pixbuf;
 		if (to_draw == null)
 			return false;
+
+		if (!sensitive) {
+			var desaturated = new Gdk.Pixbuf (Gdk.Colorspace.RGB, to_draw.has_alpha, 8, to_draw.width, to_draw.height);
+			to_draw.saturate_and_pixelate (desaturated, 0.0f, false);
+			to_draw = desaturated;
+		}
 
 		var surface = Gdk.cairo_surface_create_from_pixbuf (to_draw, 1, null);
 		double w, h, x, y;

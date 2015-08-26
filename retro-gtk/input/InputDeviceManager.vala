@@ -24,12 +24,7 @@ public class InputDeviceManager : Retro.InputDeviceManager {
 		this.keyboard = keyboard;
 
 		keyboard.key_event.connect ((p, k, c, m) => {
-			try {
-				key_event (p, k, c, m);
-			}
-			catch (Retro.CbError e) {
-				// There is no core or the core set no keyboard callback
-			}
+			key_event (p, k, c, m);
 		});
 	}
 }

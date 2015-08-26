@@ -141,6 +141,11 @@ public class Core : Object {
 	/**
 	 * Whether or not the a game is loaded.
 	 */
+	public bool is_initiated { private set; get; default = false; }
+
+	/**
+	 * Whether or not the a game is loaded.
+	 */
 	public bool game_loaded { private set; get; default = false; }
 
 	/**
@@ -241,6 +246,8 @@ public class Core : Object {
 	}
 
 	private weak Input _input_interface;
+	private ulong input_controller_connected_id;
+	private ulong input_controller_disconnected_id;
 	/**
 	 * The input interface.
 	 *
@@ -249,13 +256,22 @@ public class Core : Object {
 	public weak Input input_interface {
 		get { return _input_interface; }
 		construct set {
-			if (_input_interface != null)
-				_input_interface.core = null;
+			if (value == input_interface)
+				return;
+
+			if (input_interface != null) {
+				input_interface.core = null;
+				input_interface.disconnect (input_controller_connected_id);
+				input_interface.disconnect (input_controller_disconnected_id);
+			}
 
 			_input_interface = value;
 
-			if (_input_interface != null && _input_interface.core != this)
-				_input_interface.core = this;
+			if (input_interface != null && input_interface.core != this) {
+				input_interface.core = this;
+				input_interface.controller_connected.connect (on_input_controller_connected);
+				input_interface.controller_disconnected.connect (on_input_controller_disconnected);
+			}
 		}
 	}
 
@@ -397,6 +413,7 @@ public class Core : Object {
 		module.set_environment (get_module_environment_interface ());
 		module.init ();
 		pop_cb_data ();
+		is_initiated = true;
 	}
 
 	/**
@@ -406,6 +423,7 @@ public class Core : Object {
 		push_cb_data ();
 		module.deinit ();
 		pop_cb_data ();
+		is_initiated = false;
 	}
 
 	/**
@@ -622,6 +640,15 @@ public class Core : Object {
 	 * @param data the data to write in the memory region
 	 */
 	public extern void set_memory (MemoryType id, uint8[] data);
+
+	private void on_input_controller_connected (uint port, InputDevice device) {
+		var device_type = device.get_device_type ();
+		set_controller_port_device (port, device_type);
+	}
+
+	private void on_input_controller_disconnected (uint port) {
+		set_controller_port_device (port, DeviceType.NONE);
+	}
 }
 
 }

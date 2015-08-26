@@ -54,24 +54,21 @@ public class InputDeviceManager : Object, Input {
 	}
 
 	public void set_controller_device (uint port, InputDevice device) {
-		if (controller_devices.contains (port)) {
+		if (controller_devices.contains (port))
 			controller_devices.replace (port, device);
-		}
-		else {
+		else
 			controller_devices.insert (port, device);
-		}
 
-		if (core != null)
-			core.set_controller_port_device (port, device.get_device_type ());
+		controller_connected (port, device);
 	}
 
 	public void remove_controller_device (uint port) {
-		if (controller_devices.contains (port)) {
-			controller_devices.remove (port);
-		}
+		if (!controller_devices.contains (port))
+			return;
 
-		if (core != null)
-			core.set_controller_port_device (port, DeviceType.NONE);
+		controller_devices.remove (port);
+
+		controller_disconnected (port);
 	}
 
 	public void init_core () {

@@ -6,6 +6,9 @@ namespace Retro {
  * An interface to render a {@link Core}'s inputs.
  */
 public interface Input : Object {
+	public signal void controller_connected (uint port, InputDevice device);
+	public signal void controller_disconnected (uint port);
+
 	/**
 	 * The core to handle the inputs for.
 	 */

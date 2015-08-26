@@ -267,11 +267,15 @@ public class Core : Object {
 
 			_input_interface = value;
 
-			if (input_interface != null && input_interface.core != this) {
-				input_interface.core = this;
-				input_interface.controller_connected.connect (on_input_controller_connected);
-				input_interface.controller_disconnected.connect (on_input_controller_disconnected);
-			}
+			if (input_interface == null)
+				return;
+
+			input_interface.core = this;
+			input_interface.controller_connected.connect (on_input_controller_connected);
+			input_interface.controller_disconnected.connect (on_input_controller_disconnected);
+
+			if (is_initiated)
+				init_input ();
 		}
 	}
 
@@ -413,6 +417,9 @@ public class Core : Object {
 		module.set_environment (get_module_environment_interface ());
 		module.init ();
 		pop_cb_data ();
+
+		init_input ();
+
 		is_initiated = true;
 	}
 
@@ -641,12 +648,30 @@ public class Core : Object {
 	 */
 	public extern void set_memory (MemoryType id, uint8[] data);
 
+	private void init_input () {
+		if (input_interface == null)
+			return;
+
+		input_interface.foreach_controller (init_controller_device);
+	}
+
+	private void init_controller_device (uint port, InputDevice device) {
+		var device_type = device.get_device_type ();
+		set_controller_port_device (port, device_type);
+	}
+
 	private void on_input_controller_connected (uint port, InputDevice device) {
+		if (!is_initiated)
+			return;
+
 		var device_type = device.get_device_type ();
 		set_controller_port_device (port, device_type);
 	}
 
 	private void on_input_controller_disconnected (uint port) {
+		if (!is_initiated)
+			return;
+
 		set_controller_port_device (port, DeviceType.NONE);
 	}
 }

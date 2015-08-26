@@ -6,6 +6,8 @@ namespace Retro {
  * An interface to render a {@link Core}'s inputs.
  */
 public interface Input : Object {
+	public delegate void ControllerCallback (uint port, InputDevice device);
+
 	public signal void controller_connected (uint port, InputDevice device);
 	public signal void controller_disconnected (uint port);
 
@@ -62,6 +64,9 @@ public interface Input : Object {
 
 		core.keyboard_callback.callback (down, keycode, character, key_modifiers);
 	}
+
+	public abstract void foreach_controller (ControllerCallback callback);
+
 }
 
 [CCode (has_target = false)]

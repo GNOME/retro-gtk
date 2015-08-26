@@ -14,8 +14,6 @@ public class InputDeviceManager : Object, Input {
 			if (_core != null) {
 				if (_core.input_interface != this)
 					_core.input_interface = this;
-
-				init_core ();
 			}
 		}
 	}
@@ -71,9 +69,9 @@ public class InputDeviceManager : Object, Input {
 		controller_disconnected (port);
 	}
 
-	public void init_core () {
+	public void foreach_controller (Input.ControllerCallback callback) {
 		foreach (var port in controller_devices.get_keys ()) {
-			core.set_controller_port_device (port, controller_devices[port].get_device_type ());
+			callback (port, controller_devices[port]);
 		}
 	}
 }

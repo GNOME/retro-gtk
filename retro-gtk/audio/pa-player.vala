@@ -97,6 +97,10 @@ private class PaDevice : GLib.Object {
 		ring_buffer = new RingBuffer (88200);
 	}
 
+	~PaDevice () {
+		stop ();
+	}
+
 	private void start () {
 		context = new Context (loop.get_api (), null);
 		var context_flags = Context.Flags.NOFAIL;

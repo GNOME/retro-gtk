@@ -50,7 +50,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.set_eject_state (ejected);
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -71,7 +71,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.get_eject_state ();
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -96,7 +96,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.set_image_index (image_index);
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -115,7 +115,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.get_image_index ();
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -134,7 +134,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.get_num_images ();
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -160,7 +160,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.replace_image_index (index, info);
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 
@@ -190,7 +190,7 @@ public class DiskControl: Object {
 		var i = get_image_index ();
 		core.push_cb_data ();
 		var result = callback_struct.replace_image_index (index, null);
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		// Notify a change on the "image-index" property
 		if (i != get_image_index ()) notify_property ("image-index");
 		return result;
@@ -216,7 +216,7 @@ public class DiskControl: Object {
 
 		core.push_cb_data ();
 		var result = callback_struct.add_image_index ();
-		core.pop_cb_data ();
+		Core.pop_cb_data ();
 		return result;
 	}
 }

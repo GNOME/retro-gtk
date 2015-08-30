@@ -41,7 +41,7 @@ public class Core : Object {
 	 *
 	 * Must be called after any call to {@link push_cb_data()}.
 	 */
-	internal void pop_cb_data () {
+	internal static void pop_cb_data () {
 		r_mutex.lock ();
 		if (i == 0) {
 			stderr.printf ("Error: Callback data stack underflow.\n");

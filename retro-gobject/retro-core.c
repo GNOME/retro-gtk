@@ -16,7 +16,7 @@ guint8* retro_core_get_memory (RetroCore* self, RetroMemoryType id, int* length)
 	guint8* data = get_mem_data (id);
 	gsize size = get_mem_size (id);
 
-	retro_core_pop_cb_data (self);
+	retro_core_pop_cb_data ();
 
 	data = g_memdup (data, size);
 	*length = (gint) (data ? size : 0);
@@ -39,7 +39,7 @@ void retro_core_set_memory (RetroCore* self, RetroMemoryType id, guint8* data, i
 	guint8* memory_region = get_mem_region (id);
 	gsize memory_region_size = get_mem_region_size (id);
 
-	retro_core_pop_cb_data (self);
+	retro_core_pop_cb_data ();
 
 	g_return_if_fail (memory_region != NULL);
 	g_return_if_fail (memory_region_size == length);

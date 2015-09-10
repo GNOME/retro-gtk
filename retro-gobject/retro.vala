@@ -8,6 +8,8 @@ namespace Retro {
  */
 public static const uint API_VERSION = 1;
 
+private const string ENV_PLUGIN_PATH = "RETRO_PLUGIN_PATH_1_0";
+
 /**
  * Error type thrown by interfaces when accessing one of their Core's
  * callback.
@@ -40,6 +42,24 @@ public SystemInfo? get_system_info (string module_name) {
 
 public static string get_plugins_dir () {
 	return Config.PROJECT_PLUGINS_DIR;
+}
+
+public string? search_module (string module_basename) {
+	var envp = Environ.@get ();
+	var retro_plugin_path = Environ.get_variable (envp, ENV_PLUGIN_PATH);
+
+	var paths = retro_plugin_path.split (":");
+	paths += Retro.get_plugins_dir ();
+
+	foreach (var path in paths)
+		if (path != "") {
+			var directory = File.new_for_path (path);
+			var file = directory.get_child (module_basename);
+			if (file.query_exists ())
+				return file.get_path ();
+		}
+
+	return null;
 }
 
 }

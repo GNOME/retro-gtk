@@ -46,7 +46,7 @@ public static string get_plugins_dir () {
 
 public string? search_module (string module_basename) {
 	var envp = Environ.@get ();
-	var retro_plugin_path = Environ.get_variable (envp, ENV_PLUGIN_PATH);
+	var retro_plugin_path = Environ.get_variable (envp, ENV_PLUGIN_PATH) ?? "";
 
 	var paths = retro_plugin_path.split (":");
 	paths += Retro.get_plugins_dir ();

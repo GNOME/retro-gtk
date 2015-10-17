@@ -1,0 +1,14 @@
+===========
+Version 0.4
+===========
+
+* Deprecate ClutterDisplay and RetroGtk.init().
+
+* Use kebab-case file naming convention.
+
+* CairoDisplay
+ - Draw on a publicly available Gdk.Pixbuf.
+ - Render itself desaturated when insensitive.
+
+* PaDevice
+ - Stop playing when destroyed to prevents crashes.

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(retro-gtk, 0.1)
+AC_INIT(retro-gtk, 0.4)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -44,6 +44,6 @@ PKG_CHECK_MODULES(RETRO_GTK, [gobject-2.0 glib-2.0 gtk+-3.0 cairo clutter-gtk-1.
 
 AC_OUTPUT([
 Makefile
-retro-gtk/retro-gtk-0.1.pc
+retro-gtk/retro-gtk-0.4.pc
 retro-gtk/Makefile
 po/Makefile.in])

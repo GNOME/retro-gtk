@@ -24,7 +24,6 @@ BUILT_SOURCES =
 libretro_gtk_la_SOURCES = \
 	audio/pa-player.vala \
 	\
-	input/gamepad.vala \
 	input/gamepad-button-type.vala \
 	input/gamepad-configuration.vala \
 	input/gamepad-configuration-dialog.vala \
@@ -53,7 +52,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg cairo \
 	--pkg clutter-gtk-1.0 \
 	--pkg libpulse \
-	--pkg jsk-0.1 \
 	--pkg retro-gobject-0.3 \
 	--thread \
 	--target-glib 2.32 \
@@ -90,7 +88,7 @@ introspection_sources = $(retro_gtkinclude_HEADERS)
 
 BUILT_SOURCES += libretro-gtk.la RetroGtk-0.1.gir
 
-RetroGtk_0_1_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 GtkClutter-1.0 Jsk-0.1 Retro-0.3
+RetroGtk_0_1_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 GtkClutter-1.0 Retro-0.3
 RetroGtk_0_1_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.1
 RetroGtk_0_1_gir_CFLAGS = $(GTK)
 RetroGtk_0_1_gir_LIBS = libretro-gtk.la

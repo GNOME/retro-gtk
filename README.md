@@ -12,7 +12,7 @@ retro-gtk depends on the following libraries at compile time and at run time:
 - clutter-gtk-1.0
 - libpulse
 - jsk-0.1
-- retro-gobject-0.3
+- retro-gobject-0.4
 
 It is known to work on Fedora 21.
 

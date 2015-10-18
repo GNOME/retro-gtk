@@ -39,6 +39,7 @@ libretro_gtk_la_SOURCES = \
 	video/clutter-display.vala \
 	video/display.vala \
 	video/video-converter.c \
+	video/video-converter.h \
 	\
 	retro-gtk.vala \
 	$(NULL)

@@ -173,6 +173,9 @@ public class Options: Object, Variables {
 	 * @return the value of the variable or //null// if the key doesn't exist
 	 */
 	public string? get_variable (string key) {
+		if (!contains (key))
+			return null;
+
 		return lookup (key);
 	}
 

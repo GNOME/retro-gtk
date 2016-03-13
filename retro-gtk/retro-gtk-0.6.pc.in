@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/retro-gtk-0.4
+includedir=@includedir@/retro-gtk-@VERSION@
 
 Name: RetroGtk
 Description: Library for integrating Retro into GTK+

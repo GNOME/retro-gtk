@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(retro-gobject, 0.4)
+AC_INIT(retro-gobject, 0.6)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -44,6 +44,6 @@ PKG_CHECK_MODULES(RETRO_GOBJECT, [gobject-2.0 glib-2.0 gmodule-2.0 gio-2.0])
 
 AC_OUTPUT([
 Makefile
-retro-gobject/retro-gobject-0.4.pc
+retro-gobject/retro-gobject-0.6.pc
 retro-gobject/Makefile
 po/Makefile.in])

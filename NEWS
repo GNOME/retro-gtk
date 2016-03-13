@@ -1,4 +1,14 @@
 ======================
+Version 0.6
+======================
+
+* Fix critical error when getting an unknown option variable
+
+* Bugs fixed:
+ 27 Lots of assertion when getting Option.current
+
+
+======================
 Version 0.4
 ======================
 

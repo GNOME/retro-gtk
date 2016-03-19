@@ -139,3 +139,4 @@ EXTRA_DIST = \
 	retro-gobject-0.6.pc.in \
 	$(NULL)
 
+-include $(top_srcdir)/git.mk

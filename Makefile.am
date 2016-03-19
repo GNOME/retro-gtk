@@ -34,3 +34,4 @@ DISTCLEANFILES = intltool-extract \
 uninstall-local:
 	-rm -r $(docdir)
 
+-include $(top_srcdir)/git.mk

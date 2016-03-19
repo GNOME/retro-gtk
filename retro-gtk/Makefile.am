@@ -123,3 +123,4 @@ EXTRA_DIST = \
 	retro-gtk-0.6.pc.in \
 	$(NULL)
 
+-include $(top_srcdir)/git.mk

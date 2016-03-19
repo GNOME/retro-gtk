@@ -8,6 +8,6 @@ includedir=@includedir@/retro-gtk-@VERSION@
 Name: RetroGtk
 Description: Library for integrating Retro into GTK+
 Version: @VERSION@
-Requires: @pkg_modules@
+Requires: @retro_gtk_pkg_modules@
 Libs: -L${libdir} -lretro-gtk
 Cflags: -I${includedir}

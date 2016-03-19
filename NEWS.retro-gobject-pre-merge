@@ -1,0 +1,40 @@
+======================
+Version 0.6
+======================
+
+* Fix critical error when getting an unknown option variable
+
+* Bugs fixed:
+ 27 Lots of assertion when getting Option.current
+
+
+======================
+Version 0.4
+======================
+
+* Plugins
+ - Switch the default plugins directory to "$(libdir)/retro-1.0/plugins".
+ - Add get_plugins_dir(), returns the default plugins directory.
+ - Add Retro.search_module(), look for modules in thedefault plugins dir and in paths from the "RETRO_PLUGIN_PATH_1_0" env variable.
+
+ * Deprecate CoreFactory.
+
+* Module
+ - Make serialize()'s data param no more out to properly implement Libretro.
+
+* Core stack
+ - Make the "caller Core stack" hold unowned references.
+ - Make pop_cb_data() static.
+
+* Core
+ - Implement the memory related methods in C.
+ - Fix the return types of some callbacks from gboolean to the actually expected types.
+
+* Input: remove the dependency on Core
+ - Notify controller (dis)connection.
+ - Add foreach_controller().
+ - Add key_event() signal.
+
+* Makefile
+ - Make retro-core.c depend on the internal header.
+ - Make .h files build dependencies.

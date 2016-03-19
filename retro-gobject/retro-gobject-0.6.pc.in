@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/retro-gobject-@VERSION@
+
+Name: Retro
+Description: GObject based libretro wrapper
+Version: @VERSION@
+Requires: @retro_gobject_pkg_modules@
+Libs: -L${libdir} -lretro-gobject
+Cflags: -I${includedir}

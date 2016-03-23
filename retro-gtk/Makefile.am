@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
+	-DRETRO_GOBJECT_USE_UNSTABLE_API \
 	-I$(top_srcdir)/retro-gobject \
 	$(RETRO_GTK_CFLAGS) \
 	$(NULL)
@@ -78,6 +79,10 @@ retro_gtkinclude_HEADERS = \
 	retro-gtk.h \
 	$(NULL)
 
+# Add unstable API guard
+$(srcdir)/retro-gtk.h:
+	sed -i "s/#define __RETRO_GTK_H__/#define __RETRO_GTK_H__\n\n#ifndef RETRO_GTK_USE_UNSTABLE_API\n#error    RetroGtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
+
 # Introspection
 -include $(INTROSPECTION_MAKEFILE)
 
@@ -109,7 +114,7 @@ RetroGtk_0_6_gir_SCANNERFLAGS = \
 	--add-include-path=$(top_builddir)/retro-gobject \
 	--include-uninstalled=$(top_builddir)/retro-gobject/Retro-0.6.gir \
 	$(NULL)
-RetroGtk_0_6_gir_CFLAGS = $(AM_CPPFLAGS)
+RetroGtk_0_6_gir_CFLAGS = -DRETRO_GTK_USE_UNSTABLE_API $(AM_CPPFLAGS)
 RetroGtk_0_6_gir_LIBS = libretro-gtk.la
 RetroGtk_0_6_gir_FILES = $(introspection_sources)
 RetroGtk_0_6_gir_EXPORT_PACKAGES = retro-gtk-0.6

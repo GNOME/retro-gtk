@@ -104,6 +104,10 @@ retro_gobjectinclude_HEADERS = \
 	retro-gobject.h \
 	$(NULL)
 
+# Add unstable API guard
+$(srcdir)/retro-gobject.h:
+	sed -i "s/#define __RETRO_GOBJECT_H__/#define __RETRO_GOBJECT_H__\n\n#ifndef RETRO_GOBJECT_USE_UNSTABLE_API\n#error    Retro is unstable API. You must define RETRO_GOBJECT_USE_UNSTABLE_API before including retro-gobject.h\n#endif/" $@
+
 # Introspection
 -include $(INTROSPECTION_MAKEFILE)
 
@@ -125,7 +129,7 @@ BUILT_SOURCES += libretro-gobject.la Retro-0.6.gir
 
 Retro_0_6_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
 Retro_0_6_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro-gobject-0.6
-Retro_0_6_gir_CFLAGS = $(RETRO_GOBJECT_CFLAGS)
+Retro_0_6_gir_CFLAGS = -DRETRO_GOBJECT_USE_UNSTABLE_API $(RETRO_GOBJECT_CFLAGS)
 Retro_0_6_gir_LIBS = libretro-gobject.la
 Retro_0_6_gir_FILES = $(introspection_sources)
 Retro_0_6_gir_EXPORT_PACKAGES = retro-gobject-0.6

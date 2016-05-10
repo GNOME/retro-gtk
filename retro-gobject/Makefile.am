@@ -127,6 +127,7 @@ introspection_sources = $(retro_gobjectinclude_HEADERS)
 
 BUILT_SOURCES += libretro-gobject.la Retro-0.6.gir
 
+Retro-0.6.gir: $(INTROSPECTION_SCANNER) libretro-gobject.la
 Retro_0_6_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
 Retro_0_6_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro-gobject-0.6
 Retro_0_6_gir_CFLAGS = -DRETRO_GOBJECT_USE_UNSTABLE_API $(RETRO_GOBJECT_CFLAGS)

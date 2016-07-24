@@ -6,7 +6,7 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-inline gboolean set_input_desciptors (RetroInput *self, RetroInputDescriptor *descriptors) {
+inline gboolean set_input_descriptors (RetroInput *self, RetroInputDescriptor *descriptors) {
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
 	retro_input_set_descriptors (self, descriptors, length);
@@ -23,7 +23,7 @@ inline gboolean environment_input_command (RetroInput *self, unsigned cmd, gpoin
 
 	switch (cmd) {
 		case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
-			return set_input_desciptors (self, (RetroInputDescriptor *) data);
+			return set_input_descriptors (self, (RetroInputDescriptor *) data);
 
 		case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
 			return get_input_device_capabilities (self, (guint64 *) data);

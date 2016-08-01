@@ -70,7 +70,6 @@ libretro_gobject_la_SOURCES = \
 	retro-environment-input.h \
 	retro-environment-interfaces.h \
 	retro-environment-variables.h \
-	retro-environment-video.h \
 	$(NULL)
 
 retro-core.c: retro-gobject-internal.h

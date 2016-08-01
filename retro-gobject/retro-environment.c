@@ -3,7 +3,6 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-#include "retro-environment-video.h"
 #include "retro-environment-input.h"
 #include "retro-environment-variables.h"
 #include "retro-environment-interfaces.h"
@@ -13,6 +12,12 @@ typedef struct {
 	guint frames;
 } RetroMessage;
 
+static gboolean get_can_dupe (RetroVideo *self, gboolean *can_dupe) {
+	*can_dupe = retro_video_get_can_dupe (self);
+
+	return TRUE;
+}
+
 static gboolean get_content_directory (RetroCore *self, const gchar* *content_directory) {
 	*(content_directory) = retro_core_get_content_directory (self);
 
@@ -21,6 +26,12 @@ static gboolean get_content_directory (RetroCore *self, const gchar* *content_di
 
 static gboolean get_libretro_path (RetroCore *self, const gchar* *libretro_directory) {
 	*(libretro_directory) = retro_core_get_libretro_path (self);
+
+	return TRUE;
+}
+
+static gboolean get_overscan (RetroVideo *self, gboolean *overcan) {
+	*overcan = retro_video_get_overscan (self);
 
 	return TRUE;
 }
@@ -70,6 +81,18 @@ static gboolean set_message (RetroCore *self, const RetroMessage *message) {
 
 static gboolean set_performance_level (RetroCore *self, RetroPerfLevel *performance_level) {
 	retro_core_set_performance_level (self, *performance_level);
+
+	return TRUE;
+}
+
+static gboolean set_pixel_format (RetroVideo *self, const RetroPixelFormat *pixel_format) {
+	retro_video_set_pixel_format (self, *pixel_format);
+
+	return TRUE;
+}
+
+static gboolean set_rotation (RetroVideo *self, const RetroRotation *rotation) {
+	retro_video_set_rotation (self, *rotation);
 
 	return TRUE;
 }
@@ -144,6 +167,29 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
 	case RETRO_ENVIRONMENT_GET_USERNAME:
 	case RETRO_ENVIRONMENT_GET_LANGUAGE:
+	default:
+		return FALSE;
+	}
+}
+
+static gboolean environment_video_command (RetroVideo *self, unsigned cmd, gpointer data) {
+	if (!self)
+		return FALSE;
+
+	switch (cmd) {
+	case RETRO_ENVIRONMENT_GET_CAN_DUPE:
+		return get_can_dupe (self, (gboolean *) data);
+
+	case RETRO_ENVIRONMENT_GET_OVERSCAN:
+		return get_overscan (self, (gboolean *) data);
+
+	case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
+		return set_pixel_format (self, (RetroPixelFormat *) data);
+
+	case RETRO_ENVIRONMENT_SET_ROTATION:
+		return set_rotation (self, (RetroRotation *) data);
+
+	case RETRO_ENVIRONMENT_SET_HW_RENDER:
 	default:
 		return FALSE;
 	}

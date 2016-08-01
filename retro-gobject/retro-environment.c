@@ -3,7 +3,6 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-#include "retro-environment-input.h"
 #include "retro-environment-variables.h"
 #include "retro-environment-interfaces.h"
 
@@ -20,6 +19,12 @@ static gboolean get_can_dupe (RetroVideo *self, gboolean *can_dupe) {
 
 static gboolean get_content_directory (RetroCore *self, const gchar* *content_directory) {
 	*(content_directory) = retro_core_get_content_directory (self);
+
+	return TRUE;
+}
+
+static gboolean get_input_device_capabilities (RetroInput *self, guint64 *capabilities) {
+	*capabilities = retro_input_get_device_capabilities (self);
 
 	return TRUE;
 }
@@ -62,6 +67,14 @@ static gboolean set_disk_control_interface (RetroCore *self, RetroDiskControlCal
 
 static gboolean set_frame_time_callback (RetroCore *self, RetroCoreFrameTimeCallback *callback) {
 	retro_core_set_frame_time_callback (self, RETRO_FRAME_TIME (retro_core_frame_time_new (callback)));
+
+	return TRUE;
+}
+
+static gboolean set_input_descriptors (RetroInput *self, RetroInputDescriptor *descriptors) {
+	int length;
+	for (length = 0 ; descriptors[length].description ; length++);
+	retro_input_set_descriptors (self, descriptors, length);
 
 	return TRUE;
 }
@@ -190,6 +203,22 @@ static gboolean environment_video_command (RetroVideo *self, unsigned cmd, gpoin
 		return set_rotation (self, (RetroRotation *) data);
 
 	case RETRO_ENVIRONMENT_SET_HW_RENDER:
+	default:
+		return FALSE;
+	}
+}
+
+static gboolean environment_input_command (RetroInput *self, unsigned cmd, gpointer data) {
+	if (!self)
+		return FALSE;
+
+	switch (cmd) {
+	case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+		return get_input_device_capabilities (self, (guint64 *) data);
+
+	case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
+		return set_input_descriptors (self, (RetroInputDescriptor *) data);
+
 	default:
 		return FALSE;
 	}

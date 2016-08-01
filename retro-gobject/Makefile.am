@@ -67,7 +67,6 @@ libretro_gobject_la_SOURCES = \
 	retro-environment.c \
 	retro-environment-interfaces.c \
 	libretro-environment.h \
-	retro-environment-core.h \
 	retro-environment-input.h \
 	retro-environment-interfaces.h \
 	retro-environment-variables.h \

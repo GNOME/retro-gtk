@@ -3,7 +3,6 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
-#include "retro-environment-variables.h"
 #include "retro-environment-interfaces.h"
 
 typedef struct {
@@ -49,6 +48,19 @@ static gboolean get_save_directory (RetroCore *self, const gchar* *save_director
 
 static gboolean get_system_directory (RetroCore *self, const gchar* *system_directory) {
 	*(system_directory) = retro_core_get_system_directory (self);
+
+	return TRUE;
+}
+
+static gboolean get_variable (RetroVariables *self, RetroVariable *variable) {
+	gchar *result = retro_variables_get_variable (self, variable->key);
+	variable->value = result ? result : "";
+
+	return !!result;
+}
+
+static gboolean get_variable_update (RetroVariables *self, gboolean *update) {
+	*update = retro_variables_get_variable_update (self);
 
 	return TRUE;
 }
@@ -118,6 +130,14 @@ static gboolean set_support_no_game (RetroCore *self, gboolean *support_no_game)
 
 static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
 	retro_core_set_av_info (self, retro_av_info_new (system_av_info));
+
+	return TRUE;
+}
+
+static gboolean set_variables (RetroVariables *self, RetroVariable *variables) {
+	int length;
+	for (length = 0 ; variables[length].key && variables[length].value ; length++);
+	retro_variables_set_variable (self, variables, length);
 
 	return TRUE;
 }
@@ -221,6 +241,24 @@ static gboolean environment_input_command (RetroInput *self, unsigned cmd, gpoin
 
 	default:
 		return FALSE;
+	}
+}
+
+static gboolean environment_variables_command (RetroVariables *self, unsigned cmd, gpointer data) {
+	if (!self) return FALSE;
+
+	switch (cmd) {
+		case RETRO_ENVIRONMENT_GET_VARIABLE:
+			return get_variable (self, (RetroVariable *) data);
+
+		case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
+			return get_variable_update (self, (gboolean *) data);
+
+		case RETRO_ENVIRONMENT_SET_VARIABLES:
+			return set_variables (self, (RetroVariable *) data);
+
+		default:
+			return FALSE;
 	}
 }
 

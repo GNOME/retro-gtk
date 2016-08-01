@@ -65,16 +65,12 @@ libretro_gobject_la_SOURCES = \
 	video.vala \
 	retro-core.c \
 	retro-environment.c \
-	retro-environment-interfaces.c \
 	libretro-environment.h \
-	retro-environment-interfaces.h \
 	$(NULL)
 
 retro-core.c: retro-gobject-internal.h
 
 retro-environment.c: retro-gobject-internal.h libretro-environment.h
-
-retro-environment-interfaces.c: retro-gobject-internal.h
 
 libretro_gobject_la_LDFLAGS =
 

@@ -80,7 +80,7 @@ retro_gtkinclude_HEADERS = \
 	$(NULL)
 
 # Add unstable API guard
-$(srcdir)/retro-gtk.h:
+$(outdir)/retro-gtk.h:
 	sed -i "s/#define __RETRO_GTK_H__/#define __RETRO_GTK_H__\n\n#ifndef RETRO_GTK_USE_UNSTABLE_API\n#error    RetroGtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
 
 # Introspection

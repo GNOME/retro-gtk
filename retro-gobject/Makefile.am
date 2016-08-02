@@ -105,7 +105,7 @@ retro_gobjectinclude_HEADERS = \
 	$(NULL)
 
 # Add unstable API guard
-$(srcdir)/retro-gobject.h:
+$(outdir)/retro-gobject.h:
 	sed -i "s/#define __RETRO_GOBJECT_H__/#define __RETRO_GOBJECT_H__\n\n#ifndef RETRO_GOBJECT_USE_UNSTABLE_API\n#error    Retro is unstable API. You must define RETRO_GOBJECT_USE_UNSTABLE_API before including retro-gobject.h\n#endif/" $@
 
 # Introspection

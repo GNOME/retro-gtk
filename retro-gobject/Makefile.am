@@ -57,6 +57,7 @@ libretro_gobject_la_SOURCES = \
 	performance.vala \
 	region.vala \
 	retro.vala \
+	retro-module-query.vala \
 	rumble.vala \
 	sensor.vala \
 	subsystem.vala \

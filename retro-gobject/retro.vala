@@ -40,10 +40,12 @@ public SystemInfo? get_system_info (string module_name) {
 	return info;
 }
 
+[Version (deprecated = true, deprecated_since = "0.8")]
 public static string get_plugins_dir () {
 	return Config.PROJECT_PLUGINS_DIR;
 }
 
+[Version (deprecated = true, deprecated_since = "0.8", replacement = "Retro.ModuleQuery.lookup_module_for_basename")]
 public string? search_module (string module_basename) {
 	var envp = Environ.@get ();
 	var retro_plugin_path = Environ.get_variable (envp, ENV_PLUGIN_PATH) ?? "";

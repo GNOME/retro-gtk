@@ -8,6 +8,7 @@ namespace Config {
 	public const string PROJECT_NAME;
 	public const string PROJECT_API_VERSION;
 	public const string PROJECT_DIR_NAME;
+	[Version (deprecated = true, deprecated_since = "0.8", replacement = "Config.RETRO_PLUGIN_PATH")]
 	public const string PROJECT_PLUGINS_DIR;
 	public const string RETRO_PLUGIN_PATH;
 	public const string PACKAGE;

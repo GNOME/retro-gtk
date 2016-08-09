@@ -10,7 +10,6 @@ AM_CPPFLAGS = \
 	-DPROJECT_API_VERSION=\""0.6"\" \
 	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
 	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
-	-DRETRO_PLUGIN_PATH=\""$(libdir)/retro-1.0/plugins:$(libdir)/libretro:$(libdir)"\" \
 	$(RETRO_GOBJECT_CFLAGS) \
 	$(NULL)
 
@@ -57,7 +56,6 @@ libretro_gobject_la_SOURCES = \
 	performance.vala \
 	region.vala \
 	retro.vala \
-	retro-module-query.vala \
 	rumble.vala \
 	sensor.vala \
 	subsystem.vala \

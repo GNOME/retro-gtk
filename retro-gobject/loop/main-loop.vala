@@ -54,7 +54,7 @@ public class MainLoop : Object, Loop {
 	 */
 	public void start () {
 		var info = core.av_info;
-		var fps = info == null ? info.fps : 60.0;
+		var fps = info != null ? info.fps : 60.0;
 		if (loop == null && speed_rate > 0) {
 			loop = Timeout.add ((uint) (1000 / (fps * speed_rate)), run);
 		}

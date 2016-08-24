@@ -55,6 +55,7 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg cairo \
 	--pkg clutter-gtk-1.0 \
 	--pkg libpulse \
+	--pkg libpulse-simple \
 	--pkg retro-gobject-0.6 \
 	--thread \
 	--target-glib 2.32 \

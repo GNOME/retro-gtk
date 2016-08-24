@@ -54,7 +54,7 @@ AC_SUBST(retro_gobject_pkg_modules)
 # retro-gtk
 ###########
 
-retro_gtk_pkg_modules="gobject-2.0 glib-2.0 gtk+-3.0 cairo clutter-gtk-1.0 libpulse"
+retro_gtk_pkg_modules="gobject-2.0 glib-2.0 gtk+-3.0 cairo clutter-gtk-1.0 libpulse libpulse-simple"
 PKG_CHECK_MODULES(RETRO_GTK, $retro_gtk_pkg_modules)
 retro_gtk_pkg_modules="$retro_gtk_pkg_modules retro-gobject-0.6"
 AC_SUBST(retro_gtk_pkg_modules)

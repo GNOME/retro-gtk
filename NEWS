@@ -1,4 +1,43 @@
 ===========
+Version 0.8
+===========
+
+* Merge retro-gobject into the retro-gtk tree
+
+* Remove deprecated symbols:
+ - Retro.CoreFactory
+ - Retro.get_plugins_dir()
+ - Retro.search_module()
+ - Retro.PROJECT_PLUGINS_DIR
+ - RetroGtk.ClutterDisplay
+ - RetroGtk.init()
+
+* Add dependency on libpulse-simple
+
+* Remove dependency on clutter-gtk
+
+* Add unstable API guards
+
+* Clean up multiple parts of the code and the build system
+
+* Allow to look for modules by the content of their .info file
+
+* Make the Retro.Rumble interface public
+
+* Fix the speed at which games are run
+
+* Fix sound stopping to play after some time
+
+* Bugs fixed:
+ 769306 retro-gobject: Fix typo
+ 769317 retro-gobject: Make Rumble public
+ 769415 Wrong location for retro-gtk.h and retro-gobject.h
+ 769729 retro-gobject: Allow to search modules from their .info
+ 769880 retro-gobject: Refactor retro-environment* files
+ 770340 Sound stops after some minutes
+
+
+===========
 Version 0.6
 ===========
 

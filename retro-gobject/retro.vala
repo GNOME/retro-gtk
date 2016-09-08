@@ -1,6 +1,6 @@
 // This file is part of Retro. License: GPLv3
 
-[CCode (gir_namespace = "Retro", gir_version = "0.6")]
+[CCode (gir_namespace = "Retro", gir_version = "0.8")]
 namespace Retro {
 
 /**

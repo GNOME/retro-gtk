@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
 	-DPROJECT_NAME=\""retro"\" \
-	-DPROJECT_API_VERSION=\""0.6"\" \
+	-DPROJECT_API_VERSION=\""0.8"\" \
 	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
 	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
 	-DRETRO_PLUGIN_PATH=\""$(libdir)/retro-1.0/plugins:$(libdir)/libretro:$(libdir)"\" \
@@ -22,7 +22,7 @@ AM_CFLAGS =\
 lib_LTLIBRARIES = libretro-gobject.la
 
 vapidir = $(datadir)/vala/vapi
-dist_vapi_DATA = retro-gobject-0.6.vapi retro-gobject-0.6.deps
+dist_vapi_DATA = retro-gobject-0.8.vapi retro-gobject-0.8.deps
 
 BUILT_SOURCES = retro-gobject-internal.h
 
@@ -82,8 +82,8 @@ libretro_gobject_la_VALAFLAGS = \
 	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \
-	--library retro-gobject-0.6 \
-	--vapi retro-gobject-0.6.vapi \
+	--library retro-gobject-0.8 \
+	--vapi retro-gobject-0.8.vapi \
 	-H retro-gobject.h \
 	-h retro-gobject-internal.h \
 	-X -fPIC -X -shared \
@@ -91,7 +91,7 @@ libretro_gobject_la_VALAFLAGS = \
 
 libretro_gobject_la_LIBADD = $(RETRO_GOBJECT_LIBS)
 
-retro_gobjectincludedir = $(includedir)/retro-gobject-0.6
+retro_gobjectincludedir = $(includedir)/retro-gobject-0.8
 retro_gobjectinclude_HEADERS = \
 	retro-gobject.h \
 	$(NULL)
@@ -107,7 +107,7 @@ INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-INTROSPECTION_GIRS += Retro-0.6.gir
+INTROSPECTION_GIRS += Retro-0.8.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -117,23 +117,23 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 introspection_sources = $(retro_gobjectinclude_HEADERS)
 
-BUILT_SOURCES += libretro-gobject.la Retro-0.6.gir
+BUILT_SOURCES += libretro-gobject.la Retro-0.8.gir
 
-Retro-0.6.gir: $(INTROSPECTION_SCANNER) libretro-gobject.la
-Retro_0_6_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
-Retro_0_6_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro-gobject-0.6
-Retro_0_6_gir_CFLAGS = -DRETRO_GOBJECT_USE_UNSTABLE_API $(RETRO_GOBJECT_CFLAGS)
-Retro_0_6_gir_LIBS = libretro-gobject.la
-Retro_0_6_gir_FILES = $(introspection_sources)
-Retro_0_6_gir_EXPORT_PACKAGES = retro-gobject-0.6
+Retro-0.8.gir: $(INTROSPECTION_SCANNER) libretro-gobject.la
+Retro_0_8_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
+Retro_0_8_gir_SCANNERFLAGS = --c-include=retro-gobject.h --pkg-export=retro-gobject-0.8
+Retro_0_8_gir_CFLAGS = -DRETRO_GOBJECT_USE_UNSTABLE_API $(RETRO_GOBJECT_CFLAGS)
+Retro_0_8_gir_LIBS = libretro-gobject.la
+Retro_0_8_gir_FILES = $(introspection_sources)
+Retro_0_8_gir_EXPORT_PACKAGES = retro-gobject-0.8
 
 CLEANFILES = $(gir_DATA) $(typelib_DATA)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = retro-gobject-0.6.pc
+pkgconfig_DATA = retro-gobject-0.8.pc
 
 EXTRA_DIST = \
-	retro-gobject-0.6.pc.in \
+	retro-gobject-0.8.pc.in \
 	$(NULL)
 
 -include $(top_srcdir)/git.mk

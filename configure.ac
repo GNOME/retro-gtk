@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(retro-gtk, 0.6)
+AC_INIT(retro-gtk, 0.8)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -48,7 +48,7 @@ AC_SUBST(retro_gobject_pkg_modules)
 
 retro_gtk_pkg_modules="gobject-2.0 glib-2.0 gtk+-3.0 cairo libpulse libpulse-simple"
 PKG_CHECK_MODULES(RETRO_GTK, $retro_gtk_pkg_modules)
-retro_gtk_pkg_modules="$retro_gtk_pkg_modules retro-gobject-0.6"
+retro_gtk_pkg_modules="$retro_gtk_pkg_modules retro-gobject-0.8"
 AC_SUBST(retro_gtk_pkg_modules)
 
 
@@ -57,8 +57,8 @@ AC_SUBST(retro_gtk_pkg_modules)
 
 AC_OUTPUT([
 Makefile
-retro-gobject/retro-gobject-0.6.pc
+retro-gobject/retro-gobject-0.8.pc
 retro-gobject/Makefile
-retro-gtk/retro-gtk-0.6.pc
+retro-gtk/retro-gtk-0.8.pc
 retro-gtk/Makefile
 po/Makefile.in])

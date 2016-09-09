@@ -6,12 +6,12 @@ using Cairo;
 namespace RetroGtk {
 
 public class GamepadView : DrawingArea {
-	private static const StateFlags DEFAULT_STATE = StateFlags.NORMAL;
-	private static const StateFlags HIGHLIGHT_STATE = StateFlags.LINK;
+	private const StateFlags DEFAULT_STATE = StateFlags.NORMAL;
+	private const StateFlags HIGHLIGHT_STATE = StateFlags.LINK;
 
 	private bool[] button_lightning;
 
-	private static const double TAU = Math.PI * 2;
+	private const double TAU = Math.PI * 2;
 
 	private Context cr;
 

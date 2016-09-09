@@ -6,7 +6,7 @@ namespace Retro {
  * TODO Change visibility once the interface have been tested.
  */
 internal interface HardwareRender: Object {
-	public static const ulong FRAME_BUFFER_VALID = ulong.MAX;
+	public const ulong FRAME_BUFFER_VALID = ulong.MAX;
 
 	[CCode (has_target = false)]
 	public delegate void ProcAdress ();

@@ -6,7 +6,7 @@ namespace Retro {
  * Sends log messages from a {@link Core} to a FileStream.
  */
 public class FileStreamLog: Object, Retro.Log {
-	private static const string default_color = "\033[39m";
+	private const string default_color = "\033[39m";
 
 	/**
 	 * The FileStream to log the core's messages to.

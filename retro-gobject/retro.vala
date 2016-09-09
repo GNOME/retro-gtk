@@ -6,7 +6,7 @@ namespace Retro {
 /**
  * The version of Libretro implemented by Retro.
  */
-public static const uint API_VERSION = 1;
+public const uint API_VERSION = 1;
 
 private const string ENV_PLUGIN_PATH = "RETRO_PLUGIN_PATH_1_0";
 

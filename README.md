@@ -12,6 +12,7 @@ retro-gtk depends on the following libraries at compile time and at run time:
 - gtk+-3.0
 - cairo
 - libpulse
+- libpulse-simple
 
 ## Compiling
 

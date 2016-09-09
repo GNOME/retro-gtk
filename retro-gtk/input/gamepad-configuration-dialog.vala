@@ -76,8 +76,6 @@ public class GamepadConfigurationDialog : Gtk.Dialog {
 
 		view.highlight_button ((GamepadButtonType) button, true);
 
-		var button_name = button.to_string ();
-
 		if (header_bar is HeaderBar)
 			(header_bar as HeaderBar).set_title ("Press a key for the this button");
 	}

@@ -1,6 +1,5 @@
 // This file is part of Retro. License: GPLv3
 
-[CCode (gir_namespace = "Retro", gir_version = "0.6")]
 namespace Retro.ModuleQuery {
 	public delegate bool ModuleInfoQueryCallback (HashTable<string, string> module_info);
 

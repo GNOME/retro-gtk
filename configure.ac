@@ -34,14 +34,6 @@ AC_DISABLE_STATIC
 LT_INIT
 
 
-#retro_gobject_pkg_modules="gobject-2.0 glib-2.0 gmodule-2.0 gio-2.0"
-#AC_SUBST(retro_gobject_pkg_modules)
-#PKG_CHECK_MODULES(RETRO_GOBJECT, [gobject-2.0 glib-2.0 gmodule-2.0 gio-2.0])
-
-#retro_gtk_pkg_modules="gobject-2.0 glib-2.0 gtk+-3.0 cairo clutter-gtk-1.0 libpulse"
-#AC_SUBST(retro_gtk_pkg_modules)
-#PKG_CHECK_MODULES(RETRO_GTK, [gobject-2.0 glib-2.0 gtk+-3.0 cairo clutter-gtk-1.0 libpulse])
-
 ###############
 # retro-gobject
 ###############

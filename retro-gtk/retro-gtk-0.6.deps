@@ -3,7 +3,6 @@ gobject-2.0
 glib-2.0
 gtk+-3.0
 cairo
-clutter-gtk-1.0
 libpulse
 libpulse-simple
 retro-gobject-0.6

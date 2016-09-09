@@ -50,7 +50,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg gobject-2.0 \
 	--pkg gtk+-3.0 \
 	--pkg cairo \
-	--pkg clutter-gtk-1.0 \
 	--pkg libpulse \
 	--pkg libpulse-simple \
 	--pkg retro-gobject-0.6 \
@@ -103,7 +102,7 @@ introspection_sources = $(retro_gtkinclude_HEADERS)
 
 BUILT_SOURCES += libretro-gtk.la RetroGtk-0.6.gir
 
-RetroGtk_0_6_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 GtkClutter-1.0 Retro-0.6
+RetroGtk_0_6_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 Retro-0.6
 RetroGtk_0_6_gir_SCANNERFLAGS = \
 	--c-include=retro-gtk.h \
 	--pkg-export=retro-gtk-0.6 \

@@ -40,29 +40,5 @@ public SystemInfo? get_system_info (string module_name) {
 	return info;
 }
 
-[Version (deprecated = true, deprecated_since = "0.8")]
-public static string get_plugins_dir () {
-	return Config.PROJECT_PLUGINS_DIR;
-}
-
-[Version (deprecated = true, deprecated_since = "0.8", replacement = "Retro.ModuleQuery.lookup_module_for_basename")]
-public string? search_module (string module_basename) {
-	var envp = Environ.@get ();
-	var retro_plugin_path = Environ.get_variable (envp, ENV_PLUGIN_PATH) ?? "";
-
-	var paths = retro_plugin_path.split (":");
-	paths += Retro.get_plugins_dir ();
-
-	foreach (var path in paths)
-		if (path != "") {
-			var directory = File.new_for_path (path);
-			var file = directory.get_child (module_basename);
-			if (file.query_exists ())
-				return file.get_path ();
-		}
-
-	return null;
-}
-
 }
 

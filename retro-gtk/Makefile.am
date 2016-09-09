@@ -40,8 +40,6 @@ libretro_gtk_la_SOURCES = \
 	video/display.vala \
 	video/video-converter.c \
 	video/video-converter.h \
-	\
-	retro-gtk.vala \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

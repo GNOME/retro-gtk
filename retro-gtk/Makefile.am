@@ -61,7 +61,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--target-glib 2.32 \
 	--library retro-gtk-0.6 \
 	--vapi retro-gtk-0.6.vapi \
-	--gir RetroGtk-0.6.gir \
 	-H retro-gtk.h \
 	-X -fPIC -X -shared \
 	$(NULL)

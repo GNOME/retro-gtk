@@ -85,7 +85,6 @@ libretro_gobject_la_VALAFLAGS = \
 	--target-glib 2.32 \
 	--library retro-gobject-0.6 \
 	--vapi retro-gobject-0.6.vapi \
-	--gir Retro-0.6.gir \
 	-H retro-gobject.h \
 	-h retro-gobject-internal.h \
 	-X -fPIC -X -shared \

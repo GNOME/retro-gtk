@@ -21,6 +21,12 @@ namespace Retro.ModuleQuery {
 	public string? lookup_module_for_info (ModuleInfoQueryCallback callback) throws Error {
 		foreach (var path in get_plugin_lookup_paths ()) {
 			var directory = File.new_for_path (path);
+			if (!directory.query_exists ())
+				continue;
+
+			if (directory.query_file_type (FileQueryInfoFlags.NOFOLLOW_SYMLINKS) != FileType.DIRECTORY)
+				continue;
+
 			var enumerator = directory.enumerate_children ("", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
 			for (var info = enumerator.next_file () ; info != null ; info = enumerator.next_file ()) {
 				var module_info_basename = info.get_name ();

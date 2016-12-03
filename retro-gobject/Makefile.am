@@ -46,6 +46,8 @@ libretro_gobject_la_SOURCES = \
 	memory.vala \
 	module.vala \
 	retro.vala \
+	retro-core-descriptor.vala \
+	retro-core-descriptor-error.vala \
 	retro-module-query.vala \
 	rumble.vala \
 	system-info.vala \

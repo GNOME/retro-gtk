@@ -471,28 +471,6 @@ public class Core : Object {
 	}
 
 	/**
-	 * Resets the cheats.
-	 */
-	public void cheat_reset () {
-		push_cb_data ();
-		module.cheat_reset ();
-		pop_cb_data ();
-	}
-
-	/**
-	 * Sets a new cheat.
-	 *
-	 * @param index the index of the cheat
-	 * @param enabled whether the cheat is enabled or not
-	 * @param code the cheat code
-	 */
-	public void cheat_set (uint index, bool enabled, string code) {
-		push_cb_data ();
-		module.cheat_set (index, enabled, code);
-		pop_cb_data ();
-	}
-
-	/**
 	 * Load. a game.
 	 *
 	 * @param game information to load the game

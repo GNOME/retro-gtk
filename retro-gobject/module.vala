@@ -33,10 +33,6 @@ private delegate bool Serialize ([CCode (array_length_type = "gsize")] uint8[] d
 [CCode (has_target = false)]
 private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[] data);
 
-[CCode (has_target = false)]
-private delegate void CheatReset ();
-[CCode (has_target = false)]
-private delegate void CheatSet (uint index, bool enabled, string code);
 
 [CCode (has_target = false)]
 private delegate bool LoadGame (GameInfo game);
@@ -95,9 +91,6 @@ private class Module : Object {
 	public SerializeSize serialize_size { get; private set; }
 	public Serialize serialize { get; private set; }
 	public Unserialize unserialize { get; private set; }
-
-	public CheatReset cheat_reset { get; private set; }
-	public CheatSet cheat_set { get; private set; }
 
 	public LoadGame load_game { get; private set; }
 	public UnloadGame unload_game { get; private set; }
@@ -204,10 +197,6 @@ private class Module : Object {
 		serialize = (Serialize) function;
 		module.symbol ("retro_unserialize", out function);
 		unserialize = (Unserialize) function;
-		module.symbol ("retro_cheat_reset", out function);
-		cheat_reset = (CheatReset) function;
-		module.symbol ("retro_cheat_set", out function);
-		cheat_set = (CheatSet) function;
 		module.symbol ("retro_load_game", out function);
 		load_game = (LoadGame) function;
 		module.symbol ("retro_unload_game", out function);

@@ -322,97 +322,122 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	}
 }
 
-gpointer retro_core_get_module_environment_interface (RetroCore *self) {
-	gboolean real_cb (unsigned cmd, gpointer data) {
-		RetroCore *cb_data = retro_core_get_cb_data ();
+static gboolean on_environment_interface (unsigned cmd, gpointer data) {
+	RetroCore *self;
 
-		if (!cb_data) g_assert_not_reached ();
+	self = retro_core_get_cb_data ();
 
-		return environment_core_command (cb_data, cmd, data);
-	}
+	if (self == NULL)
+		g_assert_not_reached ();
 
-	return real_cb;
+	return environment_core_command (self, cmd, data);
 }
 
+gpointer retro_core_get_module_environment_interface (RetroCore *self) {
+	return on_environment_interface;
+}
 
+static void on_video_refresh (guint8* data, guint width, guint height, gsize pitch) {
+	RetroCore *self;
+	RetroVideo *video;
+
+	self = retro_core_get_cb_data ();
+
+	if (self == NULL)
+		g_return_if_reached ();
+
+	video = retro_core_get_video_interface (self);
+
+	if (video == NULL)
+		g_return_if_reached ();
+
+	retro_video_render (video, data, pitch * height, width, height, pitch);
+}
 
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
-	void real_cb (guint8* data, guint width, guint height, gsize pitch) {
-		RetroCore *cb_data = retro_core_get_cb_data ();
+	return on_video_refresh;
+}
 
-		if (!cb_data) g_return_if_reached ();
+static void on_audio_sample (gint16 left, gint16 right) {
+	RetroCore *self;
+	RetroAudio *audio;
 
-		RetroVideo *handler = retro_core_get_video_interface (cb_data);
+	self = retro_core_get_cb_data ();
 
-		if (!handler) g_return_if_reached ();
+	if (self == NULL)
+		g_return_if_reached ();
 
-		retro_video_render (handler, data, pitch * height, width, height, pitch);
-	}
+	audio = retro_core_get_audio_interface (self);
 
-	return real_cb;
+	if (audio == NULL)
+		g_return_if_reached ();
+
+	retro_audio_play_sample (audio, left, right);
 }
 
 gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
-	void real_cb (gint16 left, gint16 right) {
-		RetroCore *cb_data = retro_core_get_cb_data ();
+	return on_audio_sample;
+}
 
-		if (!cb_data) g_return_if_reached ();
+static gsize on_audio_sample_batch (gint16* data, int frames) {
+	RetroCore *self;
+	RetroAudio *audio;
 
-		RetroAudio *handler = retro_core_get_audio_interface (cb_data);
+	self = retro_core_get_cb_data ();
 
-		if (!handler) g_return_if_reached ();
+	if (self == NULL)
+		g_return_val_if_reached (0);
 
-		retro_audio_play_sample (handler, left, right);
-	}
+	audio = retro_core_get_audio_interface (self);
 
-	return real_cb;
+	if (audio == NULL)
+		g_return_val_if_reached (0);
+
+	return retro_audio_play_batch (audio, data, frames * 2, frames);
 }
 
 gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
-	gsize real_cb (gint16* data, int frames) {
-		RetroCore *cb_data = retro_core_get_cb_data ();
+	return on_audio_sample_batch;
+}
 
-		if (!cb_data) g_return_val_if_reached (0);
+static void on_input_poll () {
+	RetroCore *self;
+	RetroInput *input;
 
-		RetroAudio *handler = retro_core_get_audio_interface (cb_data);
+	self = retro_core_get_cb_data ();
 
-		if (!handler) g_return_val_if_reached (0);
+	if (self == NULL)
+		g_return_if_reached ();
 
-		return retro_audio_play_batch (handler, data, frames * 2, frames);
-	}
+	input = retro_core_get_input_interface (self);
 
-	return real_cb;
+	if (input == NULL)
+		g_return_if_reached ();
+
+	retro_input_poll (input);
 }
 
 gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
-	void real_cb () {
-		RetroCore *cb_data = retro_core_get_cb_data ();
+	return on_input_poll;
+}
 
-		if (!cb_data) g_return_if_reached ();
+static gint16 on_input_state (guint port, guint device, guint index, guint id) {
+	RetroCore *self;
+	RetroInput *input;
 
-		RetroInput *handler = retro_core_get_input_interface (cb_data);
+	self = retro_core_get_cb_data ();
 
-		if (!handler) g_return_if_reached ();
+	if (self == NULL)
+		g_return_val_if_reached (0);
 
-		retro_input_poll (handler);
-	}
+	input = retro_core_get_input_interface (self);
 
-	return real_cb;
+	if (input == NULL)
+		g_return_val_if_reached (0);
+
+	return retro_input_get_state (input, port, device, index, id);
 }
 
 gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
-	gint16 real_cb (guint port, guint device, guint index, guint id) {
-		RetroCore *cb_data = retro_core_get_cb_data ();
-
-		if (!cb_data) g_return_val_if_reached (0);
-
-		RetroInput *handler = retro_core_get_input_interface (cb_data);
-
-		if (!handler) g_return_val_if_reached (0);
-
-		return retro_input_get_state (handler, port, device, index, id);
-	}
-
-	return real_cb;
+	return on_input_state;
 }
-

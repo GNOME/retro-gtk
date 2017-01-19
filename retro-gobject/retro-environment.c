@@ -126,15 +126,28 @@ static gboolean get_system_directory (RetroCore *self, const gchar* *system_dire
 	return TRUE;
 }
 
-static gboolean get_variable (RetroVariables *self, RetroVariable *variable) {
-	gchar *result = retro_variables_get_variable (self, variable->key);
+static gboolean get_variable (RetroCore *self, RetroVariable *variable) {
+	RetroVariables *variables;
+	gchar *result;
+
+	variables = retro_core_get_variables_interface (self);
+
+	g_return_val_if_fail (variables != NULL, FALSE);
+
+	result = retro_variables_get_variable (variables, variable->key);
 	variable->value = result ? result : "";
 
 	return !!result;
 }
 
-static gboolean get_variable_update (RetroVariables *self, gboolean *update) {
-	*update = retro_variables_get_variable_update (self);
+static gboolean get_variable_update (RetroCore *self, gboolean *update) {
+	RetroVariables *variables;
+
+	variables = retro_core_get_variables_interface (self);
+
+	g_return_val_if_fail (variables != NULL, FALSE);
+
+	*update = retro_variables_get_variable_update (variables);
 
 	return TRUE;
 }
@@ -202,10 +215,16 @@ static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_a
 	return TRUE;
 }
 
-static gboolean set_variables (RetroVariables *self, RetroVariable *variables) {
+static gboolean set_variables (RetroCore *self, RetroVariable *variable_array) {
+	RetroVariables *variables;
 	int length;
-	for (length = 0 ; variables[length].key && variables[length].value ; length++);
-	retro_variables_set_variable (self, variables, length);
+
+	variables = retro_core_get_variables_interface (self);
+
+	g_return_val_if_fail (variables != NULL, FALSE);
+
+	for (length = 0 ; variable_array[length].key && variable_array[length].value ; length++);
+	retro_variables_set_variable (variables, variable_array, length);
 
 	return TRUE;
 }
@@ -243,6 +262,12 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
 		return get_system_directory (self, (const gchar* *) data);
 
+	case RETRO_ENVIRONMENT_GET_VARIABLE:
+		return get_variable (self, (RetroVariable *) data);
+
+	case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
+		return get_variable_update (self, (gboolean *) data);
+
 	case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
 		set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
@@ -264,6 +289,9 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
 		return set_system_av_info (self, (RetroSystemAvInfo *) data);
 
+	case RETRO_ENVIRONMENT_SET_VARIABLES:
+		return set_variables (self, (RetroVariable *) data);
+
 	case RETRO_ENVIRONMENT_SHUTDOWN:
 		return shutdown (self);
 
@@ -281,24 +309,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
 	default:
 		return FALSE;
-	}
-}
-
-static gboolean environment_variables_command (RetroVariables *self, unsigned cmd, gpointer data) {
-	if (!self) return FALSE;
-
-	switch (cmd) {
-		case RETRO_ENVIRONMENT_GET_VARIABLE:
-			return get_variable (self, (RetroVariable *) data);
-
-		case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
-			return get_variable_update (self, (gboolean *) data);
-
-		case RETRO_ENVIRONMENT_SET_VARIABLES:
-			return set_variables (self, (RetroVariable *) data);
-
-		default:
-			return FALSE;
 	}
 }
 
@@ -327,9 +337,6 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
 
 		if (!cb_data) g_assert_not_reached ();
-
-		if (environment_variables_command (retro_core_get_variables_interface (cb_data), cmd, data))
-			return TRUE;
 
 		if (environment_interfaces_command (cb_data, cmd, data))
 			return TRUE;

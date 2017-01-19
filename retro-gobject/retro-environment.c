@@ -4,18 +4,6 @@
 #include "libretro-environment.h"
 
 typedef struct {
-	guint64  caps;
-	guint    width;
-	guint    height;
-	gpointer start;
-	gpointer stop;
-	gpointer frame_raw_framebuffer;
-	gpointer frame_opengl_texture;
-	gpointer initialized;
-	gpointer deinitialized;
-} RetroCameraCallback;
-
-typedef struct {
 	gpointer start;
 	gpointer stop;
 	gpointer get_position;
@@ -57,78 +45,6 @@ static gboolean rumble_callback_set_rumble_state (guint port, RetroRumbleEffect 
 		g_return_val_if_reached (FALSE);
 
 	return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
-}
-
-static gboolean camera_callback_start () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (FALSE);
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (FALSE);
-
-	return RETRO_CAMERA_GET_INTERFACE (interface)->start (interface);
-}
-
-static void camera_callback_stop () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_CAMERA_GET_INTERFACE (interface)->stop (interface);
-}
-
-static void camera_callback_frame_raw_framebuffer (guint32 *buffer, guint width, guint height, gsize pitch) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_CAMERA_GET_INTERFACE (interface)->frame_raw_framebuffer (interface, buffer, width, height, pitch);
-}
-
-static void camera_callback_frame_opengl_texture (guint texture_id, guint texture_target, gfloat *affine) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_CAMERA_GET_INTERFACE (interface)->frame_opengl_texture (interface, texture_id, texture_target, affine);
-}
-
-static void camera_callback_initialized () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_CAMERA_GET_INTERFACE (interface)->initialized (interface);
-}
-
-static void camera_callback_deinitialized () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroCamera *interface = retro_core_get_camera_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_CAMERA_GET_INTERFACE (interface)->deinitialized (interface);
 }
 
 static void log_callback_log (guint level, const char *format, ...) {
@@ -303,26 +219,6 @@ static void location_callback_deinitialized () {
 		g_return_if_reached ();
 
 	RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
-}
-
-static gboolean get_camera_callback (RetroCore *self, RetroCameraCallback *cb) {
-	void *interface_exists = retro_core_get_camera_interface (self);
-	if (!interface_exists)
-		return FALSE;
-
-	RetroCamera *interface = retro_core_get_camera_interface (self);
-
-	cb->caps = RETRO_CAMERA_GET_INTERFACE (interface)->get_caps (interface);
-	cb->width = RETRO_CAMERA_GET_INTERFACE (interface)->get_width (interface);
-	cb->height = RETRO_CAMERA_GET_INTERFACE (interface)->get_height (interface);
-	cb->start = camera_callback_start;
-	cb->stop = camera_callback_stop;
-	cb->frame_raw_framebuffer = camera_callback_frame_raw_framebuffer;
-	cb->frame_opengl_texture = camera_callback_frame_opengl_texture;
-	cb->initialized = camera_callback_initialized;
-	cb->deinitialized = camera_callback_deinitialized;
-
-	return TRUE;
 }
 
 static gboolean get_can_dupe (RetroVideo *self, gboolean *can_dupe) {
@@ -609,9 +505,6 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 		return FALSE;
 
 	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-		return get_camera_callback (self, (RetroCameraCallback *) data);
-
 	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
 		return get_location_callback (self, (RetroLocationCallback *) data);
 
@@ -624,6 +517,7 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
 		return get_rumble_callback (self, (RetroRumbleCallback *) data);
 
+	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
 	default:
 		return FALSE;

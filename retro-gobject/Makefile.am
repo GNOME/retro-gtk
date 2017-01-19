@@ -42,7 +42,6 @@ libretro_gobject_la_SOURCES = \
 	variable/variables.vala \
 	audio.vala \
 	av-info.vala \
-	camera.vala \
 	core.vala \
 	disk-controller.vala \
 	game-info.vala \

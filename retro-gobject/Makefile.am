@@ -45,7 +45,6 @@ libretro_gobject_la_SOURCES = \
 	camera.vala \
 	core.vala \
 	disk-controller.vala \
-	frame-time.vala \
 	game-info.vala \
 	game-type.vala \
 	language.vala \

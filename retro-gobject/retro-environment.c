@@ -477,12 +477,6 @@ static gboolean set_disk_control_interface (RetroCore *self, RetroDiskControlCal
 	return TRUE;
 }
 
-static gboolean set_frame_time_callback (RetroCore *self, RetroCoreFrameTimeCallback *callback) {
-	retro_core_set_frame_time_callback (self, RETRO_FRAME_TIME (retro_core_frame_time_new (callback)));
-
-	return TRUE;
-}
-
 static gboolean set_input_descriptors (RetroInput *self, RetroInputDescriptor *descriptors) {
 	int length;
 	for (length = 0 ; descriptors[length].description ; length++);
@@ -563,9 +557,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
 		set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
-	case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
-		return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
-
 	case RETRO_ENVIRONMENT_SET_MESSAGE:
 		return set_message (self, (RetroMessage *) data);
 
@@ -585,6 +576,7 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_USERNAME:
 	case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
+	case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
 	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:

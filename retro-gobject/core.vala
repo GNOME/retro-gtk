@@ -174,16 +174,6 @@ public class Core : Object {
 	 */
 	public DiskControl disk_control_interface { internal set; get; }
 
-	/**
-	 * The time input interface.
-	 *
-	 * The Core can set it to let the frontend inform it of the amount
-	 * of time passed since the last call to {@link run()}.
-	 *
-	 * TODO Change visibility once the interface have been tested.
-	 */
-	internal FrameTime frame_time_callback { internal set; get; }
-
 	private weak Video _video_interface;
 	/**
 	 * The video interface.

@@ -277,16 +277,6 @@ public class Core : Object {
 	public Log log_interface { set; get; }
 
 	/**
-	 * The location interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 *
-	 * TODO Change visibility once the interface have been tested.
-	 */
-	internal Location location_interface { set; get; }
-
-	/**
 	 * Asks the frontend to shut down.
 	 */
 	public signal bool shutdown ();

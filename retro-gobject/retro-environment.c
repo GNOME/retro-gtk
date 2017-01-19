@@ -4,15 +4,6 @@
 #include "libretro-environment.h"
 
 typedef struct {
-	gpointer start;
-	gpointer stop;
-	gpointer get_position;
-	gpointer set_interval;
-	gpointer initialized;
-	gpointer deinitialized;
-} RetroLocationCallback;
-
-typedef struct {
 	gpointer log;
 } RetroLogCallback;
 
@@ -55,78 +46,6 @@ static void log_callback_log (guint level, const char *format, ...) {
 	g_free (message);
 }
 
-static gboolean location_callback_start () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (FALSE);
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (FALSE);
-
-	return RETRO_LOCATION_GET_INTERFACE (interface)->start (interface);
-}
-
-static void location_callback_stop () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_LOCATION_GET_INTERFACE (interface)->stop (interface);
-}
-
-static gboolean location_callback_get_position (gdouble *lat, gdouble *lon, gdouble *horiz_accuracy, gdouble *vert_accuracy) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (FALSE);
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (FALSE);
-
-	return RETRO_LOCATION_GET_INTERFACE (interface)->get_position (interface, lat, lon, horiz_accuracy, vert_accuracy);
-}
-
-static void location_callback_set_interval (guint interval_ms, guint interval_distance) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_LOCATION_GET_INTERFACE (interface)->set_interval (interface, interval_ms, interval_distance);
-}
-
-static void location_callback_initialized () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_LOCATION_GET_INTERFACE (interface)->initialized (interface);
-}
-
-static void location_callback_deinitialized () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroLocation *interface = retro_core_get_location_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_LOCATION_GET_INTERFACE (interface)->deinitialized (interface);
-}
-
 static gboolean get_can_dupe (RetroVideo *self, gboolean *can_dupe) {
 	*can_dupe = retro_video_get_can_dupe (self);
 
@@ -147,21 +66,6 @@ static gboolean get_input_device_capabilities (RetroInput *self, guint64 *capabi
 
 static gboolean get_libretro_path (RetroCore *self, const gchar* *libretro_directory) {
 	*(libretro_directory) = retro_core_get_libretro_path (self);
-
-	return TRUE;
-}
-
-static gboolean get_location_callback (RetroCore *self, RetroLocationCallback *cb) {
-	void *interface_exists = retro_core_get_location_interface (self);
-	if (!interface_exists)
-		return FALSE;
-
-	cb->start = location_callback_start;
-	cb->stop = location_callback_stop;
-	cb->get_position = location_callback_get_position;
-	cb->set_interval = location_callback_set_interval;
-	cb->initialized = location_callback_initialized;
-	cb->deinitialized = location_callback_deinitialized;
 
 	return TRUE;
 }
@@ -387,9 +291,6 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 		return FALSE;
 
 	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
-		return get_location_callback (self, (RetroLocationCallback *) data);
-
 	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
 		return get_log_callback (self, (RetroLogCallback *) data);
 
@@ -397,6 +298,7 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 		return get_rumble_callback (self, (RetroRumbleCallback *) data);
 
 	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
 	default:

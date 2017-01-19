@@ -46,7 +46,6 @@ libretro_gobject_la_SOURCES = \
 	disk-controller.vala \
 	game-info.vala \
 	game-type.vala \
-	language.vala \
 	memory.vala \
 	module.vala \
 	region.vala \

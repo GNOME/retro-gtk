@@ -37,7 +37,6 @@ libretro_gobject_la_SOURCES = \
 	log/log.vala \
 	loop/loop.vala \
 	loop/main-loop.vala \
-	loop/threaded-loop.vala \
 	variable/options.vala \
 	variable/variables.vala \
 	audio.vala \

@@ -151,8 +151,9 @@ public class Core : Object {
 	 */
 	public AvInfo av_info { internal set; get; }
 
+	internal double _frames_per_second;
 	public double frames_per_second {
-		get { return av_info.fps; }
+		get { return _frames_per_second; }
 	}
 
 	/**
@@ -248,9 +249,11 @@ public class Core : Object {
 
 	internal Module module;
 
+	internal float aspect_ratio;
 	internal bool overscan;
 	internal PixelFormat pixel_format;
 	internal Rotation rotation;
+	internal double sample_rate;
 
 	/**
 	 * Creates a Core from the file name of a Libretro implementation.
@@ -322,7 +325,10 @@ public class Core : Object {
 			SystemAvInfo info;
 			module.get_system_av_info (out info);
 			av_info = new AvInfo (info);
+			_frames_per_second = info.timing.fps;
 			notify_property ("frames-per-second");
+			aspect_ratio = info.geometry.aspect_ratio;
+			sample_rate = info.timing.sample_rate;
 		}
 		else {
 			av_info = null;

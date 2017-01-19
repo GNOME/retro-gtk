@@ -187,7 +187,12 @@ static gboolean set_support_no_game (RetroCore *self, gboolean *support_no_game)
 
 static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
 	retro_core_set_av_info (self, retro_av_info_new (system_av_info));
-	g_object_notify (G_OBJECT (self), "frames-per-second");
+	if (self->_frames_per_second != system_av_info->timing.fps) {
+		self->_frames_per_second = system_av_info->timing.fps;
+		g_object_notify (G_OBJECT (self), "frames-per-second");
+	}
+	self->aspect_ratio = system_av_info->geometry.aspect_ratio;
+	self->sample_rate = system_av_info->timing.sample_rate;
 
 	return TRUE;
 }
@@ -312,8 +317,6 @@ static gboolean on_environment_interface (unsigned cmd, gpointer data) {
 
 static void on_video_refresh (guint8* data, guint width, guint height, gsize pitch) {
 	RetroCore *self;
-	RetroAvInfo *av_info;
-	gfloat aspect_ratio;
 
 	if (data == NULL)
 		return;
@@ -323,9 +326,7 @@ static void on_video_refresh (guint8* data, guint width, guint height, gsize pit
 	if (self == NULL)
 		g_return_if_reached ();
 
-	av_info = retro_core_get_av_info (self);
-	aspect_ratio = retro_av_info_get_aspect_ratio (av_info);
-	g_signal_emit_by_name (self, "video_output", data, pitch * height, width, height, pitch, self->pixel_format, aspect_ratio);
+	g_signal_emit_by_name (self, "video_output", data, pitch * height, width, height, pitch, self->pixel_format, self->aspect_ratio);
 }
 
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
@@ -334,8 +335,6 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 static void on_audio_sample (gint16 left, gint16 right) {
 	RetroCore *self;
-	RetroAvInfo *av_info;
-	gdouble sample_rate;
 	gint16 samples[] = { left, right };
 
 	self = retro_core_get_cb_data ();
@@ -343,32 +342,24 @@ static void on_audio_sample (gint16 left, gint16 right) {
 	if (self == NULL)
 		g_return_if_reached ();
 
-	av_info = retro_core_get_av_info (self);
-	sample_rate = retro_av_info_get_sample_rate (av_info);
-
-	if (sample_rate <= 0.0)
+	if (self->sample_rate <= 0.0)
 		return;
 
-	g_signal_emit_by_name (self, "audio_output", samples, 2, sample_rate);
+	g_signal_emit_by_name (self, "audio_output", samples, 2, self->sample_rate);
 }
 
 static gsize on_audio_sample_batch (gint16* data, int frames) {
 	RetroCore *self;
-	RetroAvInfo *av_info;
-	gdouble sample_rate;
 
 	self = retro_core_get_cb_data ();
 
 	if (self == NULL)
 		g_return_val_if_reached (0);
 
-	av_info = retro_core_get_av_info (self);
-	sample_rate = retro_av_info_get_sample_rate (av_info);
-
-	if (sample_rate <= 0.0)
+	if (self->sample_rate <= 0.0)
 		return 0;
 
-	g_signal_emit_by_name (self, "audio_output", data, frames * 2, sample_rate);
+	g_signal_emit_by_name (self, "audio_output", data, frames * 2, self->sample_rate);
 
 	// FIXME What should be returned?
 	return 0;

@@ -48,7 +48,6 @@ libretro_gobject_la_SOURCES = \
 	frame-time.vala \
 	game-info.vala \
 	game-type.vala \
-	hardware-render.vala \
 	language.vala \
 	location.vala \
 	memory.vala \

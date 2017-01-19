@@ -175,15 +175,6 @@ public class Core : Object {
 	public DiskControl disk_control_interface { internal set; get; }
 
 	/**
-	 * The video input interface.
-	 *
-	 * The Core can set it to let the frontend pass video to it.
-	 *
-	 * TODO Change visibility once the interface have been tested.
-	 */
-	internal HardwareRender hw_render { internal set; get; }
-
-	/**
 	 * The audio callback interface.
 	 *
 	 * The Core can set it to let the frontend pass audio to it.

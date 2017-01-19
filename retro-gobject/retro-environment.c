@@ -333,10 +333,6 @@ static gboolean on_environment_interface (unsigned cmd, gpointer data) {
 	return environment_core_command (self, cmd, data);
 }
 
-gpointer retro_core_get_module_environment_interface (RetroCore *self) {
-	return on_environment_interface;
-}
-
 static void on_video_refresh (guint8* data, guint width, guint height, gsize pitch) {
 	RetroCore *self;
 	RetroVideo *video;
@@ -375,10 +371,6 @@ static void on_audio_sample (gint16 left, gint16 right) {
 	retro_audio_play_sample (audio, left, right);
 }
 
-gpointer retro_core_get_module_audio_sample_cb (RetroCore *self) {
-	return on_audio_sample;
-}
-
 static gsize on_audio_sample_batch (gint16* data, int frames) {
 	RetroCore *self;
 	RetroAudio *audio;
@@ -394,10 +386,6 @@ static gsize on_audio_sample_batch (gint16* data, int frames) {
 		g_return_val_if_reached (0);
 
 	return retro_audio_play_batch (audio, data, frames * 2, frames);
-}
-
-gpointer retro_core_get_module_audio_sample_batch_cb (RetroCore *self) {
-	return on_audio_sample_batch;
 }
 
 static void on_input_poll () {
@@ -417,10 +405,6 @@ static void on_input_poll () {
 	retro_input_poll (input);
 }
 
-gpointer retro_core_get_module_input_poll_cb (RetroCore *self) {
-	return on_input_poll;
-}
-
 static gint16 on_input_state (guint port, guint device, guint index, guint id) {
 	RetroCore *self;
 	RetroInput *input;
@@ -438,6 +422,38 @@ static gint16 on_input_state (guint port, guint device, guint index, guint id) {
 	return retro_input_get_state (input, port, device, index, id);
 }
 
-gpointer retro_core_get_module_input_state_cb (RetroCore *self) {
-	return on_input_state;
+void retro_core_set_environment_interface (RetroCore *self) {
+	RetroModule *module;
+	RetroCallbackSetter set_environment;
+
+	module = self->module;
+	set_environment = retro_module_get_set_environment (module);
+
+	retro_core_push_cb_data (self);
+	set_environment (on_environment_interface);
+	retro_core_pop_cb_data ();
+}
+
+void retro_core_set_callbacks (RetroCore *self) {
+	RetroModule *module;
+	RetroCallbackSetter set_video_refresh;
+	RetroCallbackSetter set_audio_sample;
+	RetroCallbackSetter set_audio_sample_batch;
+	RetroCallbackSetter set_input_poll;
+	RetroCallbackSetter set_input_state;
+
+	module = self->module;
+	set_video_refresh = retro_module_get_set_video_refresh (module);
+	set_audio_sample = retro_module_get_set_audio_sample (module);
+	set_audio_sample_batch = retro_module_get_set_audio_sample_batch (module);
+	set_input_poll = retro_module_get_set_input_poll (module);
+	set_input_state = retro_module_get_set_input_state (module);
+
+	retro_core_push_cb_data (self);
+	set_video_refresh (on_video_refresh);
+	set_audio_sample (on_audio_sample);
+	set_audio_sample_batch (on_audio_sample_batch);
+	set_input_poll (on_input_poll);
+	set_input_state (on_input_state);
+	retro_core_pop_cb_data ();
 }

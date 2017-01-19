@@ -274,12 +274,8 @@ public class Core : Object {
 	 */
 	public signal bool message (string message, uint frames);
 
-	private extern void *get_module_environment_interface ();
-	private extern void *get_module_video_refresh_cb ();
-	private extern void *get_module_audio_sample_cb ();
-	private extern void *get_module_audio_sample_batch_cb ();
-	private extern void *get_module_input_poll_cb ();
-	private extern void *get_module_input_state_cb ();
+	private extern void set_environment_interface ();
+	private extern void set_callbacks ();
 
 	internal Module module;
 
@@ -299,14 +295,7 @@ public class Core : Object {
 		libretro_path = File.new_for_path (file_name).resolve_relative_path ("").get_path ();
 
 		module = new Module (libretro_path);
-
-		push_cb_data ();
-		module.set_video_refresh (get_module_video_refresh_cb ());
-		module.set_audio_sample (get_module_audio_sample_cb ());
-		module.set_audio_sample_batch (get_module_audio_sample_batch_cb ());
-		module.set_input_poll (get_module_input_poll_cb ());
-		module.set_input_state (get_module_input_state_cb ());
-		pop_cb_data ();
+		set_callbacks ();
 	}
 
 	~Core () {
@@ -320,8 +309,8 @@ public class Core : Object {
 	 * Must be called before loading a game and running the core.
 	 */
 	public virtual signal void init () {
+		set_environment_interface ();
 		push_cb_data ();
-		module.set_environment (get_module_environment_interface ());
 		module.init ();
 		pop_cb_data ();
 

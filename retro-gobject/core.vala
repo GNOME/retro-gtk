@@ -175,13 +175,6 @@ public class Core : Object {
 	public DiskControl disk_control_interface { internal set; get; }
 
 	/**
-	 * The audio callback interface.
-	 *
-	 * The Core can set it to let the frontend pass audio to it.
-	 */
-	internal AudioCallback? audio_callback { set; get; }
-
-	/**
 	 * The time input interface.
 	 *
 	 * The Core can set it to let the frontend inform it of the amount

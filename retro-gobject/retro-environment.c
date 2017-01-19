@@ -471,12 +471,6 @@ static gboolean get_variable_update (RetroVariables *self, gboolean *update) {
 	return TRUE;
 }
 
-static gboolean set_audio_callback (RetroCore *self, RetroAudioCallback *callback) {
-	retro_core_set_audio_callback (self, callback);
-
-	return TRUE;
-}
-
 static gboolean set_disk_control_interface (RetroCore *self, RetroDiskControlCallback *callback) {
 	retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROL (retro_disk_control_new (self, callback)));
 
@@ -566,9 +560,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
 		return get_system_directory (self, (const gchar* *) data);
 
-	case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
-		return set_audio_callback (self, (RetroAudioCallback *) data);
-
 	case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
 		set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
@@ -592,6 +583,7 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 
 	case RETRO_ENVIRONMENT_GET_LANGUAGE:
 	case RETRO_ENVIRONMENT_GET_USERNAME:
+	case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
 	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:

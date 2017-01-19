@@ -46,8 +46,14 @@ static void log_callback_log (guint level, const char *format, ...) {
 	g_free (message);
 }
 
-static gboolean get_can_dupe (RetroVideo *self, gboolean *can_dupe) {
-	*can_dupe = retro_video_get_can_dupe (self);
+static gboolean get_can_dupe (RetroCore *self, gboolean *can_dupe) {
+	RetroVideo *video;
+
+	video = retro_core_get_video_interface (self);
+
+	g_return_val_if_fail (video != NULL, FALSE);
+
+	*can_dupe = retro_video_get_can_dupe (video);
 
 	return TRUE;
 }
@@ -80,8 +86,14 @@ static gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	return TRUE;
 }
 
-static gboolean get_overscan (RetroVideo *self, gboolean *overcan) {
-	*overcan = retro_video_get_overscan (self);
+static gboolean get_overscan (RetroCore *self, gboolean *overcan) {
+	RetroVideo *video;
+
+	video = retro_core_get_video_interface (self);
+
+	g_return_val_if_fail (video != NULL, FALSE);
+
+	*overcan = retro_video_get_overscan (video);
 
 	return TRUE;
 }
@@ -142,14 +154,26 @@ static gboolean set_message (RetroCore *self, const RetroMessage *message) {
 	return result;
 }
 
-static gboolean set_pixel_format (RetroVideo *self, const RetroPixelFormat *pixel_format) {
-	retro_video_set_pixel_format (self, *pixel_format);
+static gboolean set_pixel_format (RetroCore *self, const RetroPixelFormat *pixel_format) {
+	RetroVideo *video;
+
+	video = retro_core_get_video_interface (self);
+
+	g_return_val_if_fail (video != NULL, FALSE);
+
+	retro_video_set_pixel_format (video, *pixel_format);
 
 	return TRUE;
 }
 
-static gboolean set_rotation (RetroVideo *self, const RetroRotation *rotation) {
-	retro_video_set_rotation (self, *rotation);
+static gboolean set_rotation (RetroCore *self, const RetroRotation *rotation) {
+	RetroVideo *video;
+
+	video = retro_core_get_video_interface (self);
+
+	g_return_val_if_fail (video != NULL, FALSE);
+
+	retro_video_set_rotation (video, *rotation);
 
 	return TRUE;
 }
@@ -186,11 +210,17 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 		return FALSE;
 
 	switch (cmd) {
+	case RETRO_ENVIRONMENT_GET_CAN_DUPE:
+		return get_can_dupe (self, (gboolean *) data);
+
 	case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
 		return get_content_directory (self, (const gchar* *) data);
 
 	case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
 		return get_libretro_path (self, (const gchar* *) data);
+
+	case RETRO_ENVIRONMENT_GET_OVERSCAN:
+		return get_overscan (self, (gboolean *) data);
 
 	case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:
 		return get_save_directory (self, (const gchar* *) data);
@@ -203,6 +233,12 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 
 	case RETRO_ENVIRONMENT_SET_MESSAGE:
 		return set_message (self, (RetroMessage *) data);
+
+	case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
+		return set_pixel_format (self, (RetroPixelFormat *) data);
+
+	case RETRO_ENVIRONMENT_SET_ROTATION:
+		return set_rotation (self, (RetroRotation *) data);
 
 	case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
 		return set_support_no_game (self, (gboolean *) data);
@@ -219,34 +255,12 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
 	case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
+	case RETRO_ENVIRONMENT_SET_HW_RENDER:
 	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
 	case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
 	case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
-	default:
-		return FALSE;
-	}
-}
-
-static gboolean environment_video_command (RetroVideo *self, unsigned cmd, gpointer data) {
-	if (!self)
-		return FALSE;
-
-	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_CAN_DUPE:
-		return get_can_dupe (self, (gboolean *) data);
-
-	case RETRO_ENVIRONMENT_GET_OVERSCAN:
-		return get_overscan (self, (gboolean *) data);
-
-	case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
-		return set_pixel_format (self, (RetroPixelFormat *) data);
-
-	case RETRO_ENVIRONMENT_SET_ROTATION:
-		return set_rotation (self, (RetroRotation *) data);
-
-	case RETRO_ENVIRONMENT_SET_HW_RENDER:
 	default:
 		return FALSE;
 	}
@@ -311,9 +325,6 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
 
 		if (!cb_data) g_assert_not_reached ();
-
-		if (environment_video_command (retro_core_get_video_interface (cb_data), cmd, data))
-			return TRUE;
 
 		if (environment_input_command (retro_core_get_input_interface (cb_data), cmd, data))
 			return TRUE;

@@ -276,16 +276,6 @@ public class Core : Object {
 	public Rumble rumble_interface { set; get; }
 
 	/**
-	 * The sensor interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 *
-	 * TODO Change visibility once the interface have been tested.
-	 */
-	internal Sensor sensor_interface { set; get; }
-
-	/**
 	 * The camera interface.
 	 *
 	 * Optional.

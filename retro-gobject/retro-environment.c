@@ -47,11 +47,6 @@ typedef struct {
 	gpointer set_rumble_state;
 } RetroRumbleCallback;
 
-typedef struct {
-	gpointer set_sensor_state;
-	gpointer get_sensor_input;
-} RetroSensorCallback;
-
 static gboolean rumble_callback_set_rumble_state (guint port, RetroRumbleEffect effect, guint16 strength) {
 	RetroCore *cb_data = retro_core_get_cb_data ();
 	if (!cb_data)
@@ -62,30 +57,6 @@ static gboolean rumble_callback_set_rumble_state (guint port, RetroRumbleEffect 
 		g_return_val_if_reached (FALSE);
 
 	return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
-}
-
-static gboolean sensor_callback_set_sensor_state (guint port, RetroSensorAction action, guint rate) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (FALSE);
-
-	RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (FALSE);
-
-	return RETRO_SENSOR_GET_INTERFACE (interface)->set_sensor_state (interface, port, action, rate);
-}
-
-static gfloat sensor_callback_get_sensor_input (guint port, guint id) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (0.0);
-
-	RetroSensor *interface = retro_core_get_sensor_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (0.0);
-
-	return RETRO_SENSOR_GET_INTERFACE (interface)->get_sensor_input (interface, port, id);
 }
 
 static gboolean camera_callback_start () {
@@ -441,17 +412,6 @@ static gboolean get_save_directory (RetroCore *self, const gchar* *save_director
 	return TRUE;
 }
 
-static gboolean get_sensor_callback (RetroCore *self, RetroSensorCallback *cb) {
-	void *interface_exists = retro_core_get_sensor_interface (self);
-	if (!interface_exists)
-		return FALSE;
-
-	cb->set_sensor_state = sensor_callback_set_sensor_state;
-	cb->get_sensor_input = sensor_callback_get_sensor_input;
-
-	return TRUE;
-}
-
 static gboolean get_system_directory (RetroCore *self, const gchar* *system_directory) {
 	*(system_directory) = retro_core_get_system_directory (self);
 
@@ -665,8 +625,6 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 		return get_rumble_callback (self, (RetroRumbleCallback *) data);
 
 	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-		return get_sensor_callback (self, (RetroSensorCallback *) data);
-
 	default:
 		return FALSE;
 	}

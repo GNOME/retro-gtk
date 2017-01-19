@@ -50,7 +50,6 @@ libretro_gobject_la_SOURCES = \
 	retro.vala \
 	retro-module-query.vala \
 	rumble.vala \
-	subsystem.vala \
 	system-info.vala \
 	video.vala \
 	retro-core.c \

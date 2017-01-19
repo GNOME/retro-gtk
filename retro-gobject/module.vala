@@ -41,8 +41,6 @@ private delegate void CheatSet (uint index, bool enabled, string code);
 [CCode (has_target = false)]
 private delegate bool LoadGame (GameInfo game);
 [CCode (has_target = false)]
-private delegate bool LoadGameSpecial (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info);
-[CCode (has_target = false)]
 private delegate void UnloadGame ();
 
 [CCode (has_target = false)]
@@ -102,7 +100,6 @@ private class Module : Object {
 	public CheatSet cheat_set { get; private set; }
 
 	public LoadGame load_game { get; private set; }
-	public LoadGameSpecial load_game_special { get; private set; }
 	public UnloadGame unload_game { get; private set; }
 
 	public GetRegion get_region { get; private set; }
@@ -213,8 +210,6 @@ private class Module : Object {
 		cheat_set = (CheatSet) function;
 		module.symbol ("retro_load_game", out function);
 		load_game = (LoadGame) function;
-		module.symbol ("retro_load_game_special", out function);
-		load_game_special = (LoadGameSpecial) function;
 		module.symbol ("retro_unload_game", out function);
 		unload_game = (UnloadGame) function;
 		module.symbol ("retro_get_region", out function);

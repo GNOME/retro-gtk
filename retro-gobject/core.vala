@@ -510,25 +510,6 @@ public class Core : Object {
 	}
 
 	/**
-	 * Loads a "special" kind of game. Should not be used except in extreme
-	 * cases.
-	 *
-	 * @param game_type the type of game to load
-	 * @param info the informations to load the game
-	 * @return false if the loading failed, true otherwise
-	 */
-	public bool load_game_special (GameType game_type, [CCode (array_length_type = "gsize")] GameInfo[] info) {
-		if (game_loaded) unload_game ();
-
-		push_cb_data ();
-		game_loaded = module.load_game_special (game_type, info);
-		update_av_info (game_loaded);
-		pop_cb_data ();
-
-		return game_loaded;
-	}
-
-	/**
 	 * Unloads a currently loaded game.
 	 */
 	public void unload_game () {

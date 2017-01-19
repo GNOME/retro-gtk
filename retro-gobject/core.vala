@@ -102,18 +102,6 @@ public class Core : Object {
 	}
 
 	/**
-	 * The region of the loaded game.
-	 */
-	public Region region {
-		get {
-			push_cb_data ();
-			var result = game_loaded ? module.get_region () : Region.UNKNOWN;
-			pop_cb_data ();
-			return result;
-		}
-	}
-
-	/**
 	 * The file name of the module.
 	 */
 	public string file_name { construct; get; }

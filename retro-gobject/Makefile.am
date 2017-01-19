@@ -47,7 +47,6 @@ libretro_gobject_la_SOURCES = \
 	game-info.vala \
 	memory.vala \
 	module.vala \
-	region.vala \
 	retro.vala \
 	retro-module-query.vala \
 	rumble.vala \

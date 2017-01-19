@@ -40,9 +40,6 @@ private delegate bool LoadGame (GameInfo game);
 private delegate void UnloadGame ();
 
 [CCode (has_target = false)]
-private delegate Region GetRegion ();
-
-[CCode (has_target = false)]
 private delegate void *GetMemoryData (MemoryType id);
 [CCode (has_target = false)]
 private delegate size_t GetMemorySize (MemoryType id);
@@ -94,8 +91,6 @@ private class Module : Object {
 
 	public LoadGame load_game { get; private set; }
 	public UnloadGame unload_game { get; private set; }
-
-	public GetRegion get_region { get; private set; }
 
 	public GetMemoryData get_memory_data { get; private set; }
 	public GetMemorySize get_memory_size { get; private set; }
@@ -201,8 +196,6 @@ private class Module : Object {
 		load_game = (LoadGame) function;
 		module.symbol ("retro_unload_game", out function);
 		unload_game = (UnloadGame) function;
-		module.symbol ("retro_get_region", out function);
-		get_region = (GetRegion) function;
 		module.symbol ("retro_get_memory_data", out function);
 		get_memory_data = (GetMemoryData) function;
 		module.symbol ("retro_get_memory_size", out function);

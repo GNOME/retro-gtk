@@ -8,7 +8,7 @@ namespace Retro {
  * It may cause problems if the core takes more time than expected to run a
  * frame.
  */
-public class MainLoop : Object, Loop {
+public class MainLoop : Object {
 	/**
 	 * The core to run.
 	 */

@@ -35,7 +35,6 @@ libretro_gobject_la_SOURCES = \
 	input/keyboard.vala \
 	log/file-stream-log.vala \
 	log/log.vala \
-	loop/loop.vala \
 	loop/main-loop.vala \
 	variable/options.vala \
 	variable/variables.vala \

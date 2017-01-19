@@ -253,8 +253,14 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
 		return get_libretro_path (self, (const gchar* *) data);
 
+	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+		return get_log_callback (self, (RetroLogCallback *) data);
+
 	case RETRO_ENVIRONMENT_GET_OVERSCAN:
 		return get_overscan (self, (gboolean *) data);
+
+	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
+		return get_rumble_callback (self, (RetroRumbleCallback *) data);
 
 	case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:
 		return get_save_directory (self, (const gchar* *) data);
@@ -295,7 +301,11 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SHUTDOWN:
 		return shutdown (self);
 
+	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_LANGUAGE:
+	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
+	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
+	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_USERNAME:
 	case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
@@ -312,34 +322,11 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	}
 }
 
-static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, gpointer data) {
-	if (!self)
-		return FALSE;
-
-	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
-		return get_log_callback (self, (RetroLogCallback *) data);
-
-	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
-		return get_rumble_callback (self, (RetroRumbleCallback *) data);
-
-	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-	case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
-	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
-	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-	default:
-		return FALSE;
-	}
-}
-
 gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 	gboolean real_cb (unsigned cmd, gpointer data) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
 
 		if (!cb_data) g_assert_not_reached ();
-
-		if (environment_interfaces_command (cb_data, cmd, data))
-			return TRUE;
 
 		return environment_core_command (cb_data, cmd, data);
 	}

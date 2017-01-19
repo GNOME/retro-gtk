@@ -64,8 +64,14 @@ static gboolean get_content_directory (RetroCore *self, const gchar* *content_di
 	return TRUE;
 }
 
-static gboolean get_input_device_capabilities (RetroInput *self, guint64 *capabilities) {
-	*capabilities = retro_input_get_device_capabilities (self);
+static gboolean get_input_device_capabilities (RetroCore *self, guint64 *capabilities) {
+	RetroInput *input;
+
+	input = retro_core_get_input_interface (self);
+
+	g_return_val_if_fail (input != NULL, FALSE);
+
+	*capabilities = retro_input_get_device_capabilities (input);
 
 	return TRUE;
 }
@@ -139,10 +145,16 @@ static gboolean set_disk_control_interface (RetroCore *self, RetroDiskControlCal
 	return TRUE;
 }
 
-static gboolean set_input_descriptors (RetroInput *self, RetroInputDescriptor *descriptors) {
+static gboolean set_input_descriptors (RetroCore *self, RetroInputDescriptor *descriptors) {
+	RetroInput *input;
 	int length;
+
+	input = retro_core_get_input_interface (self);
+
+	g_return_val_if_fail (input != NULL, FALSE);
+
 	for (length = 0 ; descriptors[length].description ; length++);
-	retro_input_set_descriptors (self, descriptors, length);
+	retro_input_set_descriptors (input, descriptors, length);
 
 	return TRUE;
 }
@@ -216,6 +228,9 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
 		return get_content_directory (self, (const gchar* *) data);
 
+	case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+		return get_input_device_capabilities (self, (guint64 *) data);
+
 	case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
 		return get_libretro_path (self, (const gchar* *) data);
 
@@ -230,6 +245,9 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 
 	case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
 		set_disk_control_interface (self, (RetroDiskControlCallback *) data);
+
+	case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
+		return set_input_descriptors (self, (RetroInputDescriptor *) data);
 
 	case RETRO_ENVIRONMENT_SET_MESSAGE:
 		return set_message (self, (RetroMessage *) data);
@@ -261,22 +279,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
 	case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
-	default:
-		return FALSE;
-	}
-}
-
-static gboolean environment_input_command (RetroInput *self, unsigned cmd, gpointer data) {
-	if (!self)
-		return FALSE;
-
-	switch (cmd) {
-	case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
-		return get_input_device_capabilities (self, (guint64 *) data);
-
-	case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
-		return set_input_descriptors (self, (RetroInputDescriptor *) data);
-
 	default:
 		return FALSE;
 	}
@@ -325,9 +327,6 @@ gpointer retro_core_get_module_environment_interface (RetroCore *self) {
 		RetroCore *cb_data = retro_core_get_cb_data ();
 
 		if (!cb_data) g_assert_not_reached ();
-
-		if (environment_input_command (retro_core_get_input_interface (cb_data), cmd, data))
-			return TRUE;
 
 		if (environment_variables_command (retro_core_get_variables_interface (cb_data), cmd, data))
 			return TRUE;

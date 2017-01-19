@@ -168,13 +168,6 @@ public class Core : Object {
 	public AvInfo av_info { internal set; get; }
 
 	/**
-	 * The keyboard callback interface.
-	 *
-	 * The Core can set it to let the frontend notify of keyboard input.
-	 */
-	internal KeyboardCallback? keyboard_callback { set; get; }
-
-	/**
 	 * The disk controlling interface.
 	 *
 	 * The Core can set it to let the frontend insert and eject disks images.
@@ -678,10 +671,7 @@ public class Core : Object {
 		if (!is_initiated)
 			return;
 
-		if (keyboard_callback == null)
-			return;
-
-		keyboard_callback.callback (down, keycode, character, key_modifiers);
+		// TODO Handle the key event.
 	}
 }
 

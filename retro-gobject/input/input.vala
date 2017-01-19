@@ -56,11 +56,4 @@ public interface Input : Object {
 
 }
 
-[CCode (has_target = false)]
-private delegate void KeyboardCallbackCallback (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
-
-private struct KeyboardCallback {
-	KeyboardCallbackCallback callback;
-}
-
 }

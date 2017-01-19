@@ -497,12 +497,6 @@ static gboolean set_input_descriptors (RetroInput *self, RetroInputDescriptor *d
 	return TRUE;
 }
 
-static gboolean set_keyboard_callback (RetroCore *self, RetroKeyboardCallback *callback) {
-	retro_core_set_keyboard_callback (self, callback);
-
-	return TRUE;
-}
-
 static gboolean set_message (RetroCore *self, const RetroMessage *message) {
 	gboolean result = FALSE;
 	g_signal_emit_by_name (self, "message", message->msg, message->frames, &result);
@@ -581,9 +575,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
 		return set_frame_time_callback (self, (RetroCoreFrameTimeCallback *) data);
 
-	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
-		return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
-
 	case RETRO_ENVIRONMENT_SET_MESSAGE:
 		return set_message (self, (RetroMessage *) data);
 
@@ -603,6 +594,7 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_GET_USERNAME:
 	case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
+	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
 	case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:

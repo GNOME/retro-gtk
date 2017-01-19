@@ -22,16 +22,6 @@ typedef struct {
 } RetroMessage;
 
 typedef struct {
-	gpointer get_time_usec;
-	gpointer get_cpu_features;
-	gpointer get_perf_counter;
-	gpointer perf_register;
-	gpointer perf_start;
-	gpointer perf_stop;
-	gpointer perf_log;
-} RetroPerformanceCallback;
-
-typedef struct {
 	gpointer set_rumble_state;
 } RetroRumbleCallback;
 
@@ -63,90 +53,6 @@ static void log_callback_log (guint level, const char *format, ...) {
 	char *message = g_strdup_vprintf (format, args);
 	RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, message);
 	g_free (message);
-}
-
-static gint64 performance_callback_get_time_usec () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (0);
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (0);
-
-	return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_time_usec (interface);
-}
-
-static guint64 performance_callback_get_cpu_features () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (0);
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (0);
-
-	return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_cpu_features (interface);
-}
-
-static guint64 performance_callback_get_perf_counter () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_val_if_reached (0);
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_val_if_reached (0);
-
-	return RETRO_PERFORMANCE_GET_INTERFACE (interface)->get_perf_counter (interface);
-}
-
-static void performance_callback_perf_register (RetroPerfCounter *counter) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_register (interface, counter);
-}
-
-static void performance_callback_perf_start (RetroPerfCounter *counter) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_start (interface, counter);
-}
-
-static void performance_callback_perf_stop (RetroPerfCounter *counter) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_stop (interface, counter);
-}
-
-static void performance_callback_perf_log () {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroPerformance *interface = retro_core_get_performance_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
-
-	RETRO_PERFORMANCE_GET_INTERFACE (interface)->perf_log (interface);
 }
 
 static gboolean location_callback_start () {
@@ -276,22 +182,6 @@ static gboolean get_overscan (RetroVideo *self, gboolean *overcan) {
 	return TRUE;
 }
 
-static gboolean get_performance_callback (RetroCore *self, RetroPerformanceCallback *cb) {
-	void *interface_exists = retro_core_get_performance_interface (self);
-	if (!interface_exists)
-		return FALSE;
-
-	cb->get_time_usec = performance_callback_get_time_usec;
-	cb->get_cpu_features = performance_callback_get_cpu_features;
-	cb->get_perf_counter = performance_callback_get_perf_counter;
-	cb->perf_register = performance_callback_perf_register;
-	cb->perf_start = performance_callback_perf_start;
-	cb->perf_stop = performance_callback_perf_stop;
-	cb->perf_log = performance_callback_perf_log;
-
-	return TRUE;
-}
-
 static gboolean get_rumble_callback (RetroCore *self, RetroRumbleCallback *cb) {
 	void *interface_exists = retro_core_get_rumble_interface (self);
 	if (!interface_exists)
@@ -346,12 +236,6 @@ static gboolean set_message (RetroCore *self, const RetroMessage *message) {
 	g_signal_emit_by_name (self, "message", message->msg, message->frames, &result);
 
 	return result;
-}
-
-static gboolean set_performance_level (RetroCore *self, RetroPerfLevel *performance_level) {
-	retro_core_set_performance_level (self, *performance_level);
-
-	return TRUE;
 }
 
 static gboolean set_pixel_format (RetroVideo *self, const RetroPixelFormat *pixel_format) {
@@ -416,9 +300,6 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_MESSAGE:
 		return set_message (self, (RetroMessage *) data);
 
-	case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
-		return set_performance_level (self, (RetroPerfLevel *) data);
-
 	case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
 		return set_support_no_game (self, (gboolean *) data);
 
@@ -436,6 +317,7 @@ static gboolean environment_core_command (RetroCore *self, unsigned cmd, gpointe
 	case RETRO_ENVIRONMENT_SET_GEOMETRY:
 	case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
+	case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
 	case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
 	case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
 	default:
@@ -511,13 +393,11 @@ static gboolean environment_interfaces_command (RetroCore *self, unsigned cmd, g
 	case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
 		return get_log_callback (self, (RetroLogCallback *) data);
 
-	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
-		return get_performance_callback (self, (RetroPerformanceCallback *) data);
-
 	case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
 		return get_rumble_callback (self, (RetroRumbleCallback *) data);
 
 	case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
 	case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
 	default:
 		return FALSE;

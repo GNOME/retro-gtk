@@ -154,13 +154,6 @@ public class Core : Object {
 	public bool support_no_game { internal set; get; default = false; }
 
 	/**
-	 * The level of performance requiered by the core to run correctly.
-	 *
-	 * Can be set by the Core when loading a game.
-	 */
-	public PerfLevel performance_level { internal set; get; }
-
-	/**
 	 * Information on audio and video geometry and timings.
 	 *
 	 * Can be set by the Core when loading a game.
@@ -282,16 +275,6 @@ public class Core : Object {
 	 * If set, it must be set before {@link init} is called.
 	 */
 	public Log log_interface { set; get; }
-
-	/**
-	 * The performance interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 *
-	 * TODO Change visibility once the interface have been tested.
-	 */
-	internal Performance performance_interface { set; get; }
 
 	/**
 	 * The location interface.

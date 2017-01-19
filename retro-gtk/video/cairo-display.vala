@@ -1,6 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-public class RetroGtk.CairoDisplay : Gtk.DrawingArea, Retro.Video, Display {
+public class RetroGtk.CairoDisplay : Gtk.DrawingArea, Retro.Video {
 	private Retro.Core _core;
 	public Retro.Core core {
 		get { return _core; }

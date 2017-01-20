@@ -47,13 +47,7 @@ static void log_callback_log (guint level, const char *format, ...) {
 }
 
 static gboolean get_can_dupe (RetroCore *self, gboolean *can_dupe) {
-	RetroVideo *video;
-
-	video = retro_core_get_video_interface (self);
-
-	g_return_val_if_fail (video != NULL, FALSE);
-
-	*can_dupe = retro_video_get_can_dupe (video);
+	*can_dupe = TRUE;
 
 	return TRUE;
 }
@@ -92,14 +86,8 @@ static gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
 	return TRUE;
 }
 
-static gboolean get_overscan (RetroCore *self, gboolean *overcan) {
-	RetroVideo *video;
-
-	video = retro_core_get_video_interface (self);
-
-	g_return_val_if_fail (video != NULL, FALSE);
-
-	*overcan = retro_video_get_overscan (video);
+static gboolean get_overscan (RetroCore *self, gboolean *overscan) {
+	*overscan = FALSE;
 
 	return TRUE;
 }
@@ -180,25 +168,13 @@ static gboolean set_message (RetroCore *self, const RetroMessage *message) {
 }
 
 static gboolean set_pixel_format (RetroCore *self, const RetroPixelFormat *pixel_format) {
-	RetroVideo *video;
-
-	video = retro_core_get_video_interface (self);
-
-	g_return_val_if_fail (video != NULL, FALSE);
-
-	retro_video_set_pixel_format (video, *pixel_format);
+	self->pixel_format = *pixel_format;
 
 	return TRUE;
 }
 
 static gboolean set_rotation (RetroCore *self, const RetroRotation *rotation) {
-	RetroVideo *video;
-
-	video = retro_core_get_video_interface (self);
-
-	g_return_val_if_fail (video != NULL, FALSE);
-
-	retro_video_set_rotation (video, *rotation);
+	self->rotation = *rotation;
 
 	return TRUE;
 }
@@ -335,19 +311,20 @@ static gboolean on_environment_interface (unsigned cmd, gpointer data) {
 
 static void on_video_refresh (guint8* data, guint width, guint height, gsize pitch) {
 	RetroCore *self;
-	RetroVideo *video;
+	RetroAvInfo *av_info;
+	gfloat aspect_ratio;
+
+	if (data == NULL)
+		return;
 
 	self = retro_core_get_cb_data ();
 
 	if (self == NULL)
 		g_return_if_reached ();
 
-	video = retro_core_get_video_interface (self);
-
-	if (video == NULL)
-		g_return_if_reached ();
-
-	retro_video_render (video, data, pitch * height, width, height, pitch);
+	av_info = retro_core_get_av_info (self);
+	aspect_ratio = retro_av_info_get_aspect_ratio (av_info);
+	g_signal_emit_by_name (self, "video_output", data, pitch * height, width, height, pitch, self->pixel_format, aspect_ratio);
 }
 
 gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {

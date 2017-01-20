@@ -11,6 +11,8 @@ public class Core : Object {
 	private static (unowned Core)[] objects = new (unowned Core)[32];
 	private static int i = 0;
 
+	public signal void video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio);
+
 	/**
 	 * Stores the current Core instance in a stack.
 	 *
@@ -155,25 +157,6 @@ public class Core : Object {
 	 */
 	public DiskControl disk_control_interface { internal set; get; }
 
-	private weak Video _video_interface;
-	/**
-	 * The video interface.
-	 *
-	 * It must be set before {@link init} is called.
-	 */
-	public weak Video video_interface {
-		get { return _video_interface; }
-		construct set {
-			if (_video_interface != null)
-				_video_interface.core = null;
-
-			_video_interface = value;
-
-			if (_video_interface != null && _video_interface.core != this)
-				_video_interface.core = this;
-		}
-	}
-
 	private weak Audio _audio_interface;
 	/**
 	 * The audio interface.
@@ -278,6 +261,10 @@ public class Core : Object {
 	private extern void set_callbacks ();
 
 	internal Module module;
+
+	internal bool overscan;
+	internal PixelFormat pixel_format;
+	internal Rotation rotation;
 
 	/**
 	 * Creates a Core from the file name of a Libretro implementation.

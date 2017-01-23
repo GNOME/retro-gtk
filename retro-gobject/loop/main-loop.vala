@@ -43,6 +43,8 @@ public class MainLoop : Object {
 					break;
 			}
 		});
+
+		core.notify["frames-per-second"].connect (on_frames_per_second_changed);
 	}
 
 	~MainLoop () {
@@ -53,10 +55,10 @@ public class MainLoop : Object {
 	 * Starts running the {@link core}.
 	 */
 	public void start () {
-		var info = core.av_info;
-		var fps = info != null ? info.fps : 60.0;
+		// TODO What if FPSs <= 0?
+
 		if (loop == null && speed_rate > 0) {
-			loop = Timeout.add ((uint) (1000 / (fps * speed_rate)), run);
+			loop = Timeout.add ((uint) (1000 / (core.frames_per_second * speed_rate)), run);
 		}
 	}
 
@@ -87,6 +89,14 @@ public class MainLoop : Object {
 		}
 
 		return false;
+	}
+
+	private void on_frames_per_second_changed () {
+		if (loop == null)
+			return;
+
+		stop ();
+		start ();
 	}
 }
 

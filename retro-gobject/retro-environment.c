@@ -187,6 +187,7 @@ static gboolean set_support_no_game (RetroCore *self, gboolean *support_no_game)
 
 static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
 	retro_core_set_av_info (self, retro_av_info_new (system_av_info));
+	g_object_notify (G_OBJECT (self), "frames-per-second");
 
 	return TRUE;
 }

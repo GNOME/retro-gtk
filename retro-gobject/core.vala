@@ -151,6 +151,10 @@ public class Core : Object {
 	 */
 	public AvInfo av_info { internal set; get; }
 
+	public double frames_per_second {
+		get { return av_info.fps; }
+	}
+
 	/**
 	 * The disk controlling interface.
 	 *
@@ -318,6 +322,7 @@ public class Core : Object {
 			SystemAvInfo info;
 			module.get_system_av_info (out info);
 			av_info = new AvInfo (info);
+			notify_property ("frames-per-second");
 		}
 		else {
 			av_info = null;

@@ -38,7 +38,6 @@ libretro_gobject_la_SOURCES = \
 	loop/main-loop.vala \
 	variable/options.vala \
 	variable/variables.vala \
-	audio.vala \
 	av-info.vala \
 	core.vala \
 	disk-controller.vala \

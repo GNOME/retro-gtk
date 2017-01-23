@@ -12,6 +12,7 @@ public class Core : Object {
 	private static int i = 0;
 
 	public signal void video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio);
+	public signal void audio_output (int16[] frames, double sample_rate);
 
 	/**
 	 * Stores the current Core instance in a stack.
@@ -156,25 +157,6 @@ public class Core : Object {
 	 * The Core can set it to let the frontend insert and eject disks images.
 	 */
 	public DiskControl disk_control_interface { internal set; get; }
-
-	private weak Audio _audio_interface;
-	/**
-	 * The audio interface.
-	 *
-	 * It must be set before {@link init} is called.
-	 */
-	public weak Audio audio_interface {
-		get { return _audio_interface; }
-		construct set {
-			if (_audio_interface != null)
-				_audio_interface.core = null;
-
-			_audio_interface = value;
-
-			if (_audio_interface != null && _audio_interface.core != this)
-				_audio_interface.core = this;
-		}
-	}
 
 	private weak Input _input_interface;
 	private ulong input_controller_connected_id;

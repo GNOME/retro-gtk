@@ -333,36 +333,44 @@ gpointer retro_core_get_module_video_refresh_cb (RetroCore *self) {
 
 static void on_audio_sample (gint16 left, gint16 right) {
 	RetroCore *self;
-	RetroAudio *audio;
+	RetroAvInfo *av_info;
+	gdouble sample_rate;
+	gint16 samples[] = { left, right };
 
 	self = retro_core_get_cb_data ();
 
 	if (self == NULL)
 		g_return_if_reached ();
 
-	audio = retro_core_get_audio_interface (self);
+	av_info = retro_core_get_av_info (self);
+	sample_rate = retro_av_info_get_sample_rate (av_info);
 
-	if (audio == NULL)
-		g_return_if_reached ();
+	if (sample_rate <= 0.0)
+		return;
 
-	retro_audio_play_sample (audio, left, right);
+	g_signal_emit_by_name (self, "audio_output", samples, 2, sample_rate);
 }
 
 static gsize on_audio_sample_batch (gint16* data, int frames) {
 	RetroCore *self;
-	RetroAudio *audio;
+	RetroAvInfo *av_info;
+	gdouble sample_rate;
 
 	self = retro_core_get_cb_data ();
 
 	if (self == NULL)
 		g_return_val_if_reached (0);
 
-	audio = retro_core_get_audio_interface (self);
+	av_info = retro_core_get_av_info (self);
+	sample_rate = retro_av_info_get_sample_rate (av_info);
 
-	if (audio == NULL)
-		g_return_val_if_reached (0);
+	if (sample_rate <= 0.0)
+		return 0;
 
-	return retro_audio_play_batch (audio, data, frames * 2, frames);
+	g_signal_emit_by_name (self, "audio_output", data, frames * 2, sample_rate);
+
+	// FIXME What should be returned?
+	return 0;
 }
 
 static void on_input_poll () {

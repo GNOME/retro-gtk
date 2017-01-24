@@ -144,13 +144,6 @@ public class Core : Object {
 	 */
 	public bool support_no_game { internal set; get; default = false; }
 
-	/**
-	 * Information on audio and video geometry and timings.
-	 *
-	 * Can be set by the Core when loading a game.
-	 */
-	public AvInfo av_info { internal set; get; }
-
 	internal double _frames_per_second;
 	public double frames_per_second {
 		get { return _frames_per_second; }
@@ -306,37 +299,6 @@ public class Core : Object {
 	}
 
 	/**
-	 * Gets information about system audio/video timings and geometry.
-	 *
-	 * Can be called only after {@link load_game} has successfully
-	 * completed.
-	 *
-	 * NOTE: The implementation of this function might not initialize every
-	 * variable if needed.
-	 * E.g. geometry.aspect_ratio might not be initialized if the core doesn't
-	 * desire a particular aspect ratio.
-	 *
-	 * @param valid whether the av_info is valid or not
-	 * @return information on the system audio/video timings and geometry
-	 */
-	private void update_av_info (bool valid) {
-		push_cb_data ();
-		if (valid) {
-			SystemAvInfo info;
-			module.get_system_av_info (out info);
-			av_info = new AvInfo (info);
-			_frames_per_second = info.timing.fps;
-			notify_property ("frames-per-second");
-			aspect_ratio = info.geometry.aspect_ratio;
-			sample_rate = info.timing.sample_rate;
-		}
-		else {
-			av_info = null;
-		}
-		pop_cb_data ();
-	}
-
-	/**
 	 * Sets device to be used for player 'port'.
 	 *
 	 * @param port the port on wich to connect a device
@@ -438,7 +400,9 @@ public class Core : Object {
 
 		push_cb_data ();
 		game_loaded = module.load_game (game);
-		update_av_info (game_loaded);
+		SystemAvInfo info;
+		module.get_system_av_info (out info);
+		set_system_av_info (info);
 		pop_cb_data ();
 
 		return game_loaded;
@@ -516,6 +480,8 @@ public class Core : Object {
 
 		// TODO Handle the key event.
 	}
+
+	private extern void set_system_av_info (SystemAvInfo system_av_info);
 }
 
 }

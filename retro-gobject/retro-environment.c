@@ -3,6 +3,8 @@
 #include "retro-gobject-internal.h"
 #include "libretro-environment.h"
 
+void retro_core_set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info);
+
 typedef struct {
 	gpointer log;
 } RetroLogCallback;
@@ -186,13 +188,7 @@ static gboolean set_support_no_game (RetroCore *self, gboolean *support_no_game)
 }
 
 static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
-	retro_core_set_av_info (self, retro_av_info_new (system_av_info));
-	if (self->_frames_per_second != system_av_info->timing.fps) {
-		self->_frames_per_second = system_av_info->timing.fps;
-		g_object_notify (G_OBJECT (self), "frames-per-second");
-	}
-	self->aspect_ratio = system_av_info->geometry.aspect_ratio;
-	self->sample_rate = system_av_info->timing.sample_rate;
+	retro_core_set_system_av_info (self, system_av_info);
 
 	return TRUE;
 }
@@ -434,3 +430,13 @@ void retro_core_set_callbacks (RetroCore *self) {
 	set_input_state (on_input_state);
 	retro_core_pop_cb_data ();
 }
+
+void retro_core_set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info) {
+	if (self->_frames_per_second != system_av_info->timing.fps) {
+		self->_frames_per_second = system_av_info->timing.fps;
+		g_object_notify (G_OBJECT (self), "frames-per-second");
+	}
+	self->aspect_ratio = system_av_info->geometry.aspect_ratio;
+	self->sample_rate = system_av_info->timing.sample_rate;
+}
+

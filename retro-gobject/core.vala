@@ -242,7 +242,12 @@ public class Core : Object {
 	}
 
 	~Core () {
-		if (game_loaded) unload_game ();
+		if (game_loaded) {
+			push_cb_data ();
+			module.unload_game ();
+			pop_cb_data ();
+		}
+
 		deinit ();
 	}
 
@@ -327,7 +332,11 @@ public class Core : Object {
 	 * @return false if the loading failed, true otherwise
 	 */
 	public bool load_game (GameInfo game) {
-		if (game_loaded) unload_game ();
+		if (game_loaded) {
+			push_cb_data ();
+			module.unload_game ();
+			pop_cb_data ();
+		}
 
 		push_cb_data ();
 		game_loaded = module.load_game (game);
@@ -337,15 +346,6 @@ public class Core : Object {
 		pop_cb_data ();
 
 		return game_loaded;
-	}
-
-	/**
-	 * Unloads a currently loaded game.
-	 */
-	public void unload_game () {
-		push_cb_data ();
-		module.unload_game ();
-		pop_cb_data ();
 	}
 
 	/**

@@ -200,14 +200,6 @@ public class Core : Object {
 	public Rumble rumble_interface { set; get; }
 
 	/**
-	 * The logging interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 */
-	public Log log_interface { set; get; }
-
-	/**
 	 * Asks the frontend to shut down.
 	 */
 	public signal bool shutdown ();

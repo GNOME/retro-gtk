@@ -30,21 +30,34 @@ static gboolean rumble_callback_set_rumble_state (guint port, RetroRumbleEffect 
 	return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface, port, effect, strength);
 }
 
-static void log_callback_log (guint level, const char *format, ...) {
-	RetroCore *cb_data = retro_core_get_cb_data ();
-	if (!cb_data)
-		g_return_if_reached ();
-
-	RetroLog *interface = retro_core_get_log_interface (cb_data);
-	if (!interface)
-		g_return_if_reached ();
+static void on_log (guint level, const gchar *format, ...) {
+	gchar *message;
 
 	// Get the arguments, set up the formatted message,
 	// pass it to the logging method and free it.
 	va_list args;
 	va_start (args, format);
-	char *message = g_strdup_vprintf (format, args);
-	RETRO_LOG_GET_INTERFACE (interface)->log (interface, level, message);
+	message = g_strdup_vprintf (format, args);
+
+	switch (level) {
+	case RETRO_LOG_LEVEL_DEBUG:
+		g_debug (message);
+
+		break;
+	case RETRO_LOG_LEVEL_INFO:
+		g_info (message);
+
+		break;
+	case RETRO_LOG_LEVEL_WARN:
+		g_warning (message);
+
+		break;
+	case RETRO_LOG_LEVEL_ERROR:
+		g_critical (message);
+
+		break;
+	}
+
 	g_free (message);
 }
 
@@ -79,11 +92,7 @@ static gboolean get_libretro_path (RetroCore *self, const gchar* *libretro_direc
 }
 
 static gboolean get_log_callback (RetroCore *self, RetroLogCallback *cb) {
-	void *interface_exists = retro_core_get_log_interface (self);
-	if (!interface_exists)
-		return FALSE;
-
-	cb->log = log_callback_log;
+	cb->log = on_log;
 
 	return TRUE;
 }

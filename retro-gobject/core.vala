@@ -242,13 +242,11 @@ public class Core : Object {
 	}
 
 	~Core () {
-		if (game_loaded) {
-			push_cb_data ();
+		push_cb_data ();
+		if (game_loaded)
 			module.unload_game ();
-			pop_cb_data ();
-		}
-
-		deinit ();
+		module.deinit ();
+		pop_cb_data ();
 	}
 
 	/**
@@ -265,16 +263,6 @@ public class Core : Object {
 		init_input ();
 
 		is_initiated = true;
-	}
-
-	/**
-	 * Deinitializes the module.
-	 */
-	public void deinit () {
-		push_cb_data ();
-		module.deinit ();
-		pop_cb_data ();
-		is_initiated = false;
 	}
 
 	/**

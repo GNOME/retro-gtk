@@ -313,55 +313,12 @@ public class Core : Object {
 		pop_cb_data ();
 	}
 
-	/**
-	 * Returns the amount of data the implementation requires to serialize
-	 * the internal state.
-	 *
-	 * Beetween calls to {@link load_game} and
-	 * {@link unload_game}, the returned size is never allowed to
-	 * be larger than a previous returned value, to ensure that the frontend can
-	 * allocate a save state buffer once.
-	 *
-	 * @return the size needed to serialize the internal state
-	 */
-	public size_t serialize_size () {
-		push_cb_data ();
-		var result = module.serialize_size ();
-		pop_cb_data ();
+	public extern bool supports_serialization ();
 
-		return result;
-	}
+	[CCode (array_length_type = "gsize")]
+	public extern uint8[] serialize_state () throws Error;
 
-	/**
-	 * Serializes the internal state.
-	 *
-	 * If failed, or size is lower than {@link serialize_size}, it
-	 * should return false, true otherwise.
-	 *
-	 * @param data the buffer where the data will be stored
-	 * @return false if the serialization failed, true otherwise
-	 */
-	public bool serialize ([CCode (array_length_type = "gsize")] uint8[] data) {
-		push_cb_data ();
-		var result = module.serialize (data);
-		pop_cb_data ();
-
-		return result;
-	}
-
-	/**
-	 * Unserializes the internal state.
-	 *
-	 * @param data the buffer where the data is stored
-	 * @return false if the unserialization failed, true otherwise
-	 */
-	public bool unserialize ([CCode (array_length_type = "gsize")] uint8[] data) {
-		push_cb_data ();
-		var result = module.unserialize (data);
-		pop_cb_data ();
-
-		return result;
-	}
+	public extern void deserialize_state ([CCode (array_length_type = "gsize")] uint8[] data) throws Error;
 
 	/**
 	 * Load. a game.

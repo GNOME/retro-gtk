@@ -31,7 +31,7 @@ private class Option : Object {
  *
  * The options are defined by the core's variables.
  */
-public class Options: Object, Variables {
+private class Options: Object, Variables {
 	/**
 	 * The core whose variables will be handled.
 	 */

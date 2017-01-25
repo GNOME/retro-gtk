@@ -191,26 +191,6 @@ public class Core : Object {
 		}
 	}
 
-	private weak Variables _variables_interface;
-	/**
-	 * The variables interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 */
-	public weak Variables variables_interface {
-		get { return _variables_interface; }
-		construct set {
-			if (_variables_interface != null)
-				_variables_interface.core = null;
-
-			_variables_interface = value;
-
-			if (_variables_interface != null && _variables_interface.core != this)
-				_variables_interface.core = this;
-		}
-	}
-
 	/**
 	 * The rumble interface.
 	 *
@@ -241,6 +221,7 @@ public class Core : Object {
 	private extern void set_callbacks ();
 
 	internal Module module;
+	internal Variables variables_interface;
 
 	internal float aspect_ratio;
 	internal bool overscan;
@@ -265,6 +246,7 @@ public class Core : Object {
 
 		module = new Module (libretro_path);
 		set_callbacks ();
+		variables_interface = new Retro.Options ();
 	}
 
 	~Core () {

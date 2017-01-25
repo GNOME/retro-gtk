@@ -7,7 +7,7 @@ namespace Retro {
  *
  * Used by a {@link Core} in its environment callback.
  */
-public struct Variable {
+private struct Variable {
 	/**
 	 * The key of the pair.
 	 */
@@ -33,7 +33,7 @@ public struct Variable {
 /**
  * An interface to handle a {@link Core}'s variables.
  */
-public interface Variables : Object {
+private interface Variables : Object {
 	/**
 	 * The core whose variables will be handled.
 	 */

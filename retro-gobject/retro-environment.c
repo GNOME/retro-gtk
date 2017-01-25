@@ -117,27 +117,16 @@ static gboolean get_system_directory (RetroCore *self, const gchar* *system_dire
 }
 
 static gboolean get_variable (RetroCore *self, RetroVariable *variable) {
-	RetroVariables *variables;
 	gchar *result;
 
-	variables = retro_core_get_variables_interface (self);
-
-	g_return_val_if_fail (variables != NULL, FALSE);
-
-	result = retro_variables_get_variable (variables, variable->key);
+	result = retro_variables_get_variable (self->variables_interface, variable->key);
 	variable->value = result ? result : "";
 
 	return !!result;
 }
 
 static gboolean get_variable_update (RetroCore *self, gboolean *update) {
-	RetroVariables *variables;
-
-	variables = retro_core_get_variables_interface (self);
-
-	g_return_val_if_fail (variables != NULL, FALSE);
-
-	*update = retro_variables_get_variable_update (variables);
+	*update = retro_variables_get_variable_update (self->variables_interface);
 
 	return TRUE;
 }
@@ -194,15 +183,10 @@ static gboolean set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_a
 }
 
 static gboolean set_variables (RetroCore *self, RetroVariable *variable_array) {
-	RetroVariables *variables;
 	int length;
 
-	variables = retro_core_get_variables_interface (self);
-
-	g_return_val_if_fail (variables != NULL, FALSE);
-
 	for (length = 0 ; variable_array[length].key && variable_array[length].value ; length++);
-	retro_variables_set_variable (variables, variable_array, length);
+	retro_variables_set_variable (self->variables_interface, variable_array, length);
 
 	return TRUE;
 }

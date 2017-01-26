@@ -40,6 +40,7 @@ libretro_gobject_la_SOURCES = \
 	variable/variables.vala \
 	av-info.vala \
 	core.vala \
+	core-error.vala \
 	disk-controller.vala \
 	game-info.vala \
 	memory.vala \

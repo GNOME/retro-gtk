@@ -15,8 +15,8 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 		notify["pixbuf"].connect (queue_draw);
 	}
 
-	[CCode (cname = "video_to_pixbuf", cheader_filename="video-converter.h")]
-	static extern Gdk.Pixbuf video_to_pixbuf ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
+	[CCode (cname = "gdk_pixbuf_new_from_video")]
+	static extern Gdk.Pixbuf gdk_pixbuf_new_from_video ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
 
 	public void set_core (Retro.Core core) {
 		if (this.core != null)
@@ -28,7 +28,7 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 
 	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format, float aspect_ratio) {
 		this.aspect_ratio = aspect_ratio;
-		pixbuf = video_to_pixbuf (data, width, height, pitch, pixel_format);
+		pixbuf = gdk_pixbuf_new_from_video (data, width, height, pitch, pixel_format);
 	}
 
 	public void show_video () {

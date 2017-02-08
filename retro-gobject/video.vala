@@ -23,7 +23,7 @@ public enum PixelFormat {
 	 * This pixel format is default for compatibility concerns only.
 	 * If a 15/16-bit pixel format is desired, consider using RGB565.
 	 */
-	ORGB1555,
+	XRGB1555,
 
 	/**
 	 * XRGB8888, native endian. X bits are ignored.

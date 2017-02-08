@@ -37,8 +37,7 @@ libretro_gtk_la_SOURCES = \
 	input/virtual-gamepad.vala \
 	\
 	video/cairo-display.vala \
-	video/video-converter.c \
-	video/video-converter.h \
+	video/retro-video-converter.c \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

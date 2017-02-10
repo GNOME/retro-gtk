@@ -3,7 +3,7 @@
 namespace Retro.ModuleQuery {
 	public delegate bool CoreDescriptorQueryCallback (CoreDescriptor core_descriptor);
 
-	private const string ENV_PLUGIN_PATH = "RETRO_PLUGIN_PATH_1_0";
+	private const string ENV_PLUGIN_PATH = "LIBRETRO_PLUGIN_PATH";
 
 	public void foreach_core_descriptor (CoreDescriptorQueryCallback callback) {
 		foreach (var path in get_plugin_lookup_paths ()) {

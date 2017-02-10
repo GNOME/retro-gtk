@@ -38,6 +38,7 @@ libretro_gtk_la_SOURCES = \
 	\
 	video/cairo-display.vala \
 	video/retro-video-converter.c \
+	video/video-filter.vala \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

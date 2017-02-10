@@ -4,11 +4,13 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 	public Gdk.Pixbuf pixbuf { set; get; }
 
 	private Retro.Core core;
+	private VideoFilter filter;
 	private ulong on_video_output_id;
 	private float aspect_ratio;
 	private bool show_surface;
 
 	construct {
+		filter = VideoFilter.SMOOTH;
 		show_surface = true;
 
 		notify["sensitive"].connect (queue_draw);
@@ -24,6 +26,11 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 
 		this.core = core;
 		on_video_output_id = core.video_output.connect (on_video_output);
+	}
+
+	public void set_filter (VideoFilter filter) {
+		this.filter = filter;
+		queue_draw ();
 	}
 
 	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format, float aspect_ratio) {
@@ -65,6 +72,18 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 
 		cr.scale (xs, ys);
 		cr.set_source_surface (surface, x/xs, y/ys);
+		var source = cr.get_source ();
+		switch (filter) {
+		case VideoFilter.SHARP:
+			source.set_filter (Cairo.Filter.NEAREST);
+
+			break;
+		case VideoFilter.SMOOTH:
+		default:
+			source.set_filter (Cairo.Filter.BILINEAR);
+
+			break;
+		}
 		cr.paint ();
 
 		return true;

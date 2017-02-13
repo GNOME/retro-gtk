@@ -27,6 +27,8 @@ dist_vapi_DATA = retro-gobject-0.8.vapi retro-gobject-0.8.deps
 BUILT_SOURCES = retro-gobject-internal.h
 
 libretro_gobject_la_SOURCES = \
+	audio/pa-player.vala \
+	\
 	input/controller.vala \
 	input/device.vala \
 	input/input.vala \
@@ -79,6 +81,8 @@ libretro_gobject_la_VALAFLAGS = \
 	--pkg gmodule-2.0 \
 	--pkg gobject-2.0 \
 	--pkg gtk+-3.0 \
+	--pkg libpulse \
+	--pkg libpulse-simple \
 	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \

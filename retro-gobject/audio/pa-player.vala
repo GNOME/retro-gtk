@@ -1,14 +1,12 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-public class PaPlayer : GLib.Object {
-	private Retro.Core core;
+public class Retro.PaPlayer : GLib.Object {
+	private Core core;
 	private ulong on_audio_output_id;
 	private double sample_rate;
 	private PulseAudio.Simple simple;
 
-	public void set_core (Retro.Core core) {
+	public void set_core (Core core) {
 		if (this.core != null)
 			this.core.disconnect (on_audio_output_id);
 
@@ -37,6 +35,3 @@ public class PaPlayer : GLib.Object {
 		                     null);
 	}
 }
-
-}
-

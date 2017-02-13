@@ -24,8 +24,6 @@ dist_vapi_DATA = retro-gtk-0.8.vapi retro-gtk-0.8.deps
 BUILT_SOURCES =
 
 libretro_gtk_la_SOURCES = \
-	audio/pa-player.vala \
-	\
 	input/gamepad-button-type.vala \
 	input/gamepad-configuration.vala \
 	input/input-device-manager.vala \
@@ -42,8 +40,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg glib-2.0 \
 	--pkg gobject-2.0 \
 	--pkg gtk+-3.0 \
-	--pkg libpulse \
-	--pkg libpulse-simple \
 	--pkg retro-gobject-0.8 \
 	--thread \
 	--target-glib 2.32 \

@@ -6,9 +6,12 @@ AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	-DRETRO_GOBJECT_USE_UNSTABLE_API \
-	-I$(top_srcdir)/retro-gobject \
-	$(RETRO_GTK_CFLAGS) \
+	-DPROJECT_NAME=\""retro"\" \
+	-DPROJECT_API_VERSION=\""0.8"\" \
+	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
+	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
+	-DRETRO_PLUGIN_PATH=\""$(libdir)/retro-1.0/plugins:$(libdir)/libretro:$(libdir)"\" \
+	$(retro_gtk_CFLAGS) \
 	$(NULL)
 
 AM_CFLAGS =\
@@ -21,41 +24,81 @@ lib_LTLIBRARIES = libretro-gtk.la
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = retro-gtk-0.8.vapi retro-gtk-0.8.deps
 
-BUILT_SOURCES =
+BUILT_SOURCES = retro-gtk-internal.h
 
 libretro_gtk_la_SOURCES = \
+	audio/pa-player.vala \
+	\
+	input/controller.vala \
+	input/device.vala \
 	input/gamepad-button-type.vala \
 	input/gamepad-configuration.vala \
+	input/input.vala \
+	input/input-device.vala \
 	input/input-device-manager.vala \
 	input/keyboard.vala \
 	input/keyboard-state.vala \
 	input/mouse.vala \
 	input/virtual-gamepad.vala \
+	\
+	log/file-stream-log.vala \
+	log/log.vala \
+	\
+	loop/main-loop.vala \
+	\
+	variable/options.vala \
+	variable/variables.vala \
+	\
+	av-info.vala \
+	core.vala \
+	core-error.vala \
+	disk-controller.vala \
+	game-info.vala \
+	memory.vala \
+	module.vala \
+	retro.vala \
+	retro-core-descriptor.vala \
+	retro-core-descriptor-error.vala \
+	retro-module-query.vala \
+	rumble.vala \
+	system-info.vala \
+	video.vala \
+	retro-core.c \
+	retro-environment.c \
+	libretro-environment.h \
+	\
+	video/cairo-display.vala \
+	video/retro-video-converter.c \
+	video/video-filter.vala \
 	$(NULL)
+
+retro-core.c: retro-gtk-internal.h
+
+retro-environment.c: retro-gtk-internal.h libretro-environment.h
 
 libretro_gtk_la_LDFLAGS =
 
 libretro_gtk_la_VALAFLAGS = \
-	--vapidir $(top_builddir)/retro-gobject \
+	--pkg cairo \
+	--pkg config \
+	--pkg gio-2.0  \
 	--pkg glib-2.0 \
+	--pkg gmodule-2.0 \
 	--pkg gobject-2.0 \
-	--pkg retro-gobject-0.8 \
+	--pkg gtk+-3.0 \
+	--pkg libpulse \
+	--pkg libpulse-simple \
+	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \
 	--library retro-gtk-0.8 \
 	--vapi retro-gtk-0.8.vapi \
 	-H retro-gtk.h \
+	-h retro-gtk-internal.h \
 	-X -fPIC -X -shared \
 	$(NULL)
 
-libretro_gtk_la_LIBADD = \
-	$(top_builddir)/retro-gobject/libretro-gobject.la \
-	$(RETRO_GTK_LIBS) \
-	$(NULL)
-
-libretro_gtk_la_DEPENDENCIES = \
-	$(top_builddir)/retro-gobject/libretro-gobject.la \
-	$(NULL)
+libretro_gtk_la_LIBADD = $(retro_gtk_LIBS)
 
 retro_gtkincludedir = $(includedir)/retro-gtk-0.8
 retro_gtkinclude_HEADERS = \
@@ -64,20 +107,16 @@ retro_gtkinclude_HEADERS = \
 
 # Add unstable API guard
 $(outdir)/retro-gtk.h:
-	sed -i "s/#define __RETRO_GTK_H__/#define __RETRO_GTK_H__\n\n#ifndef RETRO_GTK_USE_UNSTABLE_API\n#error    RetroGtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
+	sed -i "s/#define __retro_gtk_H__/#define __retro_gtk_H__\n\n#ifndef retro_gtk_USE_UNSTABLE_API\n#error    Retro is unstable API. You must define retro_gtk_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
 
 # Introspection
 -include $(INTROSPECTION_MAKEFILE)
 
-RetroGtk-0.8.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la $(top_builddir)/retro-gobject/libretro-gobject.la $(top_builddir)/retro-gobject/Retro-0.8.gir
 INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
-INTROSPECTION_COMPILER_ARGS = \
-	--includedir=$(srcdir) \
-	--includedir=$(top_builddir)/retro-gobject \
-	$(NULL)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-INTROSPECTION_GIRS += RetroGtk-0.8.gir
+INTROSPECTION_GIRS += Retro-0.8.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -87,20 +126,15 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 introspection_sources = $(retro_gtkinclude_HEADERS)
 
-BUILT_SOURCES += libretro-gtk.la RetroGtk-0.8.gir
+BUILT_SOURCES += libretro-gtk.la Retro-0.8.gir
 
-RetroGtk_0_8_gir_INCLUDES = GLib-2.0 GObject-2.0 Gtk-3.0 cairo-1.0 Retro-0.8
-RetroGtk_0_8_gir_SCANNERFLAGS = \
-	--c-include=retro-gtk.h \
-	--pkg-export=retro-gtk-0.8 \
-	-I$(top_builddir)/retro-gobject \
-	--add-include-path=$(top_builddir)/retro-gobject \
-	--include-uninstalled=$(top_builddir)/retro-gobject/Retro-0.8.gir \
-	$(NULL)
-RetroGtk_0_8_gir_CFLAGS = -DRETRO_GTK_USE_UNSTABLE_API $(AM_CPPFLAGS)
-RetroGtk_0_8_gir_LIBS = libretro-gtk.la
-RetroGtk_0_8_gir_FILES = $(introspection_sources)
-RetroGtk_0_8_gir_EXPORT_PACKAGES = retro-gtk-0.8
+Retro-0.8.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
+Retro_0_8_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
+Retro_0_8_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.8
+Retro_0_8_gir_CFLAGS = -Dretro_gtk_USE_UNSTABLE_API $(retro_gtk_CFLAGS)
+Retro_0_8_gir_LIBS = libretro-gtk.la
+Retro_0_8_gir_FILES = $(introspection_sources)
+Retro_0_8_gir_EXPORT_PACKAGES = retro-gtk-0.8
 
 CLEANFILES = $(gir_DATA) $(typelib_DATA)
 

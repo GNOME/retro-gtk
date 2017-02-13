@@ -1,12 +1,9 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Gtk;
-using Gdk;
-
 namespace RetroGtk {
 
 private class MotionParser : Object {
-	private Screen screen;
+	private Gdk.Screen screen;
 
 	private bool _grab_pointer;
 	public bool grab_pointer {
@@ -23,10 +20,10 @@ private class MotionParser : Object {
 	/*
 	 * Return wether a movement happened or not
 	 */
-	public bool parse_event (EventMotion event, out int x_movement, out int y_movement) {
+	public bool parse_event (Gdk.EventMotion event, out int x_movement, out int y_movement) {
 		var device = event.device;
 
-		Screen s;
+		Gdk.Screen s;
 		int x, y;
 		device.get_position (out s, out x, out y);
 
@@ -71,7 +68,7 @@ private class MotionParser : Object {
 }
 
 public class Mouse : Object, Retro.InputDevice {
-	public Widget widget { get; construct; }
+	public Gtk.Widget widget { get; construct; }
 
 	public bool parse {
 		get { return parser.grab_pointer; }
@@ -85,7 +82,7 @@ public class Mouse : Object, Retro.InputDevice {
 
 	private ulong ungrab_id;
 
-	public Mouse (Widget widget) {
+	public Mouse (Gtk.Widget widget) {
 		Object (widget: widget);
 	}
 
@@ -103,7 +100,7 @@ public class Mouse : Object, Retro.InputDevice {
 
 		// Ungrab on press of Escape
 		widget.key_press_event.connect ((w, e) => {
-			if (e.keyval == Key.Escape && (bool) (e.state & ModifierType.CONTROL_MASK))
+			if (e.keyval == Gdk.Key.Escape && (bool) (e.state & Gdk.ModifierType.CONTROL_MASK))
 				ungrab (e.time);
 			return false;
 		});
@@ -146,7 +143,7 @@ public class Mouse : Object, Retro.InputDevice {
 		return 1 << Retro.DeviceType.MOUSE;
 	}
 
-	private bool on_button_press_event (Widget source, EventButton event) {
+	private bool on_button_press_event (Gtk.Widget source, Gdk.EventButton event) {
 		if (!parse) {
 			grab (event.device, event.window, event.time);
 			return false;
@@ -162,7 +159,7 @@ public class Mouse : Object, Retro.InputDevice {
 		return false;
 	}
 
-	private bool on_button_release_event (Widget source, EventButton event) {
+	private bool on_button_release_event (Gtk.Widget source, Gdk.EventButton event) {
 		if (button_state.contains (event.button)) {
 			button_state.replace (event.button, false);
 		}
@@ -173,7 +170,7 @@ public class Mouse : Object, Retro.InputDevice {
 	/**
 	 * Update the pointer's position
 	 */
-	private bool on_motion_notify_event (Widget source, EventMotion event) {
+	private bool on_motion_notify_event (Gtk.Widget source, Gdk.EventMotion event) {
 		if (!parse) return false;
 
 		int x, y;
@@ -201,16 +198,16 @@ public class Mouse : Object, Retro.InputDevice {
 	/**
 	 * Grab the poiner
 	 */
-	private void grab (Device device, Gdk.Window window, uint32 time) {
+	private void grab (Gdk.Device device, Gdk.Window window, uint32 time) {
 		// Save the pointer's position
-		Screen screen;
+		Gdk.Screen screen;
 		int x, y;
 		device.get_position (out screen, out x, out y);
 
 		// Grab the device
 		parse = true;
-		var cursor = new Cursor (CursorType.BLANK_CURSOR);
-		device.grab (window, GrabOwnership.NONE, false, EventMask.ALL_EVENTS_MASK, cursor, time);
+		var cursor = new Gdk.Cursor (Gdk.CursorType.BLANK_CURSOR);
+		device.grab (window, Gdk.GrabOwnership.NONE, false, Gdk.EventMask.ALL_EVENTS_MASK, cursor, time);
 
 		// Ungrab the device when asked
 		ungrab_id = ungrab.connect ((time) => {

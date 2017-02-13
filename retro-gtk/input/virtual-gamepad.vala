@@ -1,21 +1,18 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Gtk;
-using Gdk;
-
 namespace RetroGtk {
 
 public class VirtualGamepad : Object, Retro.InputDevice {
-	public Widget widget { get; construct; }
+	public Gtk.Widget widget { get; construct; }
 	public GamepadConfiguration configuration { get; construct set; }
 
 	private KeyboardState keyboard;
 
-	public VirtualGamepad (Widget widget) {
+	public VirtualGamepad (Gtk.Widget widget) {
 		Object (widget: widget);
 	}
 
-	public VirtualGamepad.with_configuration (Widget widget, GamepadConfiguration configuration) {
+	public VirtualGamepad.with_configuration (Gtk.Widget widget, GamepadConfiguration configuration) {
 		Object (widget: widget, configuration: configuration);
 	}
 

@@ -1,16 +1,12 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using PulseAudio;
-
-using Retro;
-
 namespace RetroGtk {
 
 public class PaPlayer : GLib.Object {
 	private Retro.Core core;
 	private ulong on_audio_output_id;
 	private double sample_rate;
-	private Simple simple;
+	private PulseAudio.Simple simple;
 
 	public void set_core (Retro.Core core) {
 		if (this.core != null)
@@ -31,12 +27,12 @@ public class PaPlayer : GLib.Object {
 	private void prepare_for_sample_rate (double sample_rate) {
 		this.sample_rate = sample_rate;
 
-		var sample_spec = SampleSpec() {
-			format = SampleFormat.S16NE,
+		var sample_spec = PulseAudio.SampleSpec() {
+			format = PulseAudio.SampleFormat.S16NE,
 			rate = (uint32) sample_rate,
 			channels = 2
 		};
-		simple = new Simple (null, null, Stream.Direction.PLAYBACK,
+		simple = new PulseAudio.Simple (null, null, PulseAudio.Stream.Direction.PLAYBACK,
 		                     null, "", sample_spec, null, null,
 		                     null);
 	}

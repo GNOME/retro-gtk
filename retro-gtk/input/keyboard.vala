@@ -1,18 +1,13 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Gtk;
-using Gdk;
-
-using Retro;
-
 namespace RetroGtk {
 
 public class Keyboard : Object {
-	public Widget widget { get; construct; }
+	public Gtk.Widget widget { get; construct; }
 
-	public signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+	public signal void key_event (bool down, Retro.KeyboardKey keycode, uint32 character, Retro.KeyboardModifierKey key_modifiers);
 
-	public Keyboard (Widget widget) {
+	public Keyboard (Gtk.Widget widget) {
 		Object (widget: widget);
 	}
 
@@ -21,141 +16,141 @@ public class Keyboard : Object {
 		widget.key_release_event.connect ((w, e) => on_key_event (e, false));
 	}
 
-	private KeyboardModifierKey modifier_key_converter (uint keyval, Gdk.ModifierType modifiers) {
-		var retro_modifiers = KeyboardModifierKey.NONE;
+	private Retro.KeyboardModifierKey modifier_key_converter (uint keyval, Gdk.ModifierType modifiers) {
+		var retro_modifiers = Retro.KeyboardModifierKey.NONE;
 		if ((bool) (modifiers & Gdk.ModifierType.SHIFT_MASK))
-			retro_modifiers |= KeyboardModifierKey.SHIFT;
+			retro_modifiers |= Retro.KeyboardModifierKey.SHIFT;
 		if ((bool) (modifiers & Gdk.ModifierType.CONTROL_MASK))
-			retro_modifiers |= KeyboardModifierKey.CTRL;
+			retro_modifiers |= Retro.KeyboardModifierKey.CTRL;
 		if ((bool) (modifiers & Gdk.ModifierType.MOD1_MASK))
-			retro_modifiers |= KeyboardModifierKey.ALT;
+			retro_modifiers |= Retro.KeyboardModifierKey.ALT;
 		if ((bool) (modifiers & Gdk.ModifierType.META_MASK))
-			retro_modifiers |= KeyboardModifierKey.META;
+			retro_modifiers |= Retro.KeyboardModifierKey.META;
 		if (keyval == Gdk.Key.Num_Lock)
-			retro_modifiers |= KeyboardModifierKey.NUMLOCK;
+			retro_modifiers |= Retro.KeyboardModifierKey.NUMLOCK;
 		if ((bool) (modifiers & Gdk.ModifierType.LOCK_MASK))
-			retro_modifiers |= KeyboardModifierKey.CAPSLOCK;
+			retro_modifiers |= Retro.KeyboardModifierKey.CAPSLOCK;
 		if (keyval == Gdk.Key.Scroll_Lock)
-			retro_modifiers |= KeyboardModifierKey.SCROLLOCK;
+			retro_modifiers |= Retro.KeyboardModifierKey.SCROLLOCK;
 		return retro_modifiers;
 	}
 
-	private KeyboardKey key_converter (uint keyval) {
+	private Retro.KeyboardKey key_converter (uint keyval) {
 		// Common keys (0x0020 to 0x00fe)
 		if (keyval < 0x80) {
 			var key = (0x7f & keyval);
 
 			// If the key is uppercase, turn it lower case
 			if (key >= 'A' && key <= 'Z')
-				return (KeyboardKey) (key + 0x20);
+				return (Retro.KeyboardKey) (key + 0x20);
 
-			return (KeyboardKey) key;
+			return (Retro.KeyboardKey) key;
 		}
 
 		// Function keys
 		var fx = keyval - Gdk.Key.F1;
-		if (fx < 15) return (KeyboardKey) ((uint) KeyboardKey.F1 + fx);
+		if (fx < 15) return (Retro.KeyboardKey) ((uint) Retro.KeyboardKey.F1 + fx);
 
 		// Keypad digits
 		var kp = keyval - Gdk.Key.KP_0;
-		if (kp < 10) return (KeyboardKey) ((uint) KeyboardKey.KP0 + kp);
+		if (kp < 10) return (Retro.KeyboardKey) ((uint) Retro.KeyboardKey.KP0 + kp);
 
 		// Various keys
 		// Missing keys: MODE, COMPOSE, POWER
 		switch (keyval) {
 			case Gdk.Key.BackSpace:
-				return KeyboardKey.BACKSPACE;
+				return Retro.KeyboardKey.BACKSPACE;
 			case Gdk.Key.Tab:
-				return KeyboardKey.TAB;
+				return Retro.KeyboardKey.TAB;
 			case Gdk.Key.Clear:
-				return KeyboardKey.CLEAR;
+				return Retro.KeyboardKey.CLEAR;
 			case Gdk.Key.Return:
-				return KeyboardKey.RETURN;
+				return Retro.KeyboardKey.RETURN;
 			case Gdk.Key.Pause:
-				return KeyboardKey.PAUSE;
+				return Retro.KeyboardKey.PAUSE;
 			case Gdk.Key.Escape:
-				return KeyboardKey.ESCAPE;
+				return Retro.KeyboardKey.ESCAPE;
 			case Gdk.Key.Delete:
-				return KeyboardKey.DELETE;
+				return Retro.KeyboardKey.DELETE;
 
 			case Gdk.Key.Up:
-				return KeyboardKey.UP;
+				return Retro.KeyboardKey.UP;
 			case Gdk.Key.Down:
-				return KeyboardKey.DOWN;
+				return Retro.KeyboardKey.DOWN;
 			case Gdk.Key.Left:
-				return KeyboardKey.LEFT;
+				return Retro.KeyboardKey.LEFT;
 			case Gdk.Key.Right:
-				return KeyboardKey.RIGHT;
+				return Retro.KeyboardKey.RIGHT;
 			case Gdk.Key.Insert:
-				return KeyboardKey.INSERT;
+				return Retro.KeyboardKey.INSERT;
 			case Gdk.Key.Home:
-				return KeyboardKey.HOME;
+				return Retro.KeyboardKey.HOME;
 			case Gdk.Key.End:
-				return KeyboardKey.END;
+				return Retro.KeyboardKey.END;
 			case Gdk.Key.Page_Up:
-				return KeyboardKey.PAGEUP;
+				return Retro.KeyboardKey.PAGEUP;
 			case Gdk.Key.Page_Down:
-				return KeyboardKey.PAGEDOWN;
+				return Retro.KeyboardKey.PAGEDOWN;
 
 			case Gdk.Key.KP_Decimal:
-				return KeyboardKey.KP_PERIOD;
+				return Retro.KeyboardKey.KP_PERIOD;
 			case Gdk.Key.KP_Divide:
-				return KeyboardKey.KP_DIVIDE;
+				return Retro.KeyboardKey.KP_DIVIDE;
 			case Gdk.Key.KP_Multiply:
-				return KeyboardKey.KP_MULTIPLY;
+				return Retro.KeyboardKey.KP_MULTIPLY;
 			case Gdk.Key.KP_Subtract:
-				return KeyboardKey.KP_MINUS;
+				return Retro.KeyboardKey.KP_MINUS;
 			case Gdk.Key.KP_Add:
-				return KeyboardKey.KP_PLUS;
+				return Retro.KeyboardKey.KP_PLUS;
 			case Gdk.Key.KP_Enter:
-				return KeyboardKey.KP_ENTER;
+				return Retro.KeyboardKey.KP_ENTER;
 			case Gdk.Key.KP_Equal:
-				return KeyboardKey.KP_EQUALS;
+				return Retro.KeyboardKey.KP_EQUALS;
 
 			case Gdk.Key.Num_Lock:
-				return KeyboardKey.NUMLOCK;
+				return Retro.KeyboardKey.NUMLOCK;
 			case Gdk.Key.Caps_Lock:
-				return KeyboardKey.CAPSLOCK;
+				return Retro.KeyboardKey.CAPSLOCK;
 			case Gdk.Key.Scroll_Lock:
-				return KeyboardKey.SCROLLOCK;
+				return Retro.KeyboardKey.SCROLLOCK;
 			case Gdk.Key.Shift_R:
-				return KeyboardKey.RSHIFT;
+				return Retro.KeyboardKey.RSHIFT;
 			case Gdk.Key.Shift_L:
-				return KeyboardKey.LSHIFT;
+				return Retro.KeyboardKey.LSHIFT;
 			case Gdk.Key.Control_R:
-				return KeyboardKey.RCTRL;
+				return Retro.KeyboardKey.RCTRL;
 			case Gdk.Key.Control_L:
-				return KeyboardKey.LCTRL;
+				return Retro.KeyboardKey.LCTRL;
 			case Gdk.Key.Alt_R:
-				return KeyboardKey.RALT;
+				return Retro.KeyboardKey.RALT;
 			case Gdk.Key.Alt_L:
-				return KeyboardKey.LALT;
+				return Retro.KeyboardKey.LALT;
 			case Gdk.Key.Meta_R:
-				return KeyboardKey.RMETA;
+				return Retro.KeyboardKey.RMETA;
 			case Gdk.Key.Meta_L:
-				return KeyboardKey.LMETA;
+				return Retro.KeyboardKey.LMETA;
 			case Gdk.Key.Super_R:
-				return KeyboardKey.RSUPER;
+				return Retro.KeyboardKey.RSUPER;
 			case Gdk.Key.Super_L:
-				return KeyboardKey.LSUPER;
+				return Retro.KeyboardKey.LSUPER;
 
 			case Gdk.Key.Help:
-				return KeyboardKey.HELP;
+				return Retro.KeyboardKey.HELP;
 			case Gdk.Key.Print:
-				return KeyboardKey.PRINT;
+				return Retro.KeyboardKey.PRINT;
 			case Gdk.Key.Sys_Req:
-				return KeyboardKey.SYSREQ;
+				return Retro.KeyboardKey.SYSREQ;
 			case Gdk.Key.Break:
-				return KeyboardKey.BREAK;
+				return Retro.KeyboardKey.BREAK;
 			case Gdk.Key.Menu:
-				return KeyboardKey.MENU;
+				return Retro.KeyboardKey.MENU;
 			case Gdk.Key.EuroSign:
-				return KeyboardKey.EURO;
+				return Retro.KeyboardKey.EURO;
 			case Gdk.Key.Undo:
-				return KeyboardKey.UNDO;
+				return Retro.KeyboardKey.UNDO;
 
 			default:
-				return KeyboardKey.UNKNOWN;
+				return Retro.KeyboardKey.UNKNOWN;
 		}
 	}
 

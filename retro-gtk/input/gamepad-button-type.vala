@@ -1,8 +1,5 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Gtk;
-using Cairo;
-
 namespace RetroGtk {
 
 public enum GamepadButtonType {

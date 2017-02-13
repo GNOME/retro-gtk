@@ -1,19 +1,16 @@
 // This file is part of RetroGtk. License: GPLv3
 
-using Gtk;
-using Gdk;
-
 namespace RetroGtk {
 
 public class KeyboardState : Object {
-	public Widget widget { get; construct; }
+	public Gtk.Widget widget { get; construct; }
 
 	private HashTable<uint?, bool?> key_state;
-	private Keymap keymap;
+	private Gdk.Keymap keymap;
 
 	public signal void key_state_changed ();
 
-	public KeyboardState (Widget widget) {
+	public KeyboardState (Gtk.Widget widget) {
 		Object (widget: widget);
 	}
 
@@ -47,10 +44,10 @@ public class KeyboardState : Object {
 
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 
-		keymap = Keymap.get_default ();
+		keymap = Gdk.Keymap.get_default ();
 	}
 
-	private bool on_key_press_event (Widget source, EventKey event) {
+	private bool on_key_press_event (Gtk.Widget source, Gdk.EventKey event) {
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, true);
 		}
@@ -63,7 +60,7 @@ public class KeyboardState : Object {
 		return false;
 	}
 
-	private bool on_key_release_event (Widget source, EventKey event) {
+	private bool on_key_release_event (Gtk.Widget source, Gdk.EventKey event) {
 		if (key_state.contains ((uint) event.hardware_keycode)) {
 			key_state.replace ((uint) event.hardware_keycode, false);
 		}

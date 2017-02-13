@@ -1,9 +1,9 @@
 // This file is part of RetroGtk. License: GPLv3
 
-public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
+public class Retro.CairoDisplay : Gtk.DrawingArea {
 	public Gdk.Pixbuf pixbuf { set; get; }
 
-	private Retro.Core core;
+	private Core core;
 	private VideoFilter filter;
 	private ulong on_video_output_id;
 	private float aspect_ratio;
@@ -18,9 +18,9 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 	}
 
 	[CCode (cname = "gdk_pixbuf_new_from_video")]
-	static extern Gdk.Pixbuf gdk_pixbuf_new_from_video ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format);
+	static extern Gdk.Pixbuf gdk_pixbuf_new_from_video ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format);
 
-	public void set_core (Retro.Core core) {
+	public void set_core (Core core) {
 		if (this.core != null)
 			this.core.disconnect (on_video_output_id);
 
@@ -33,7 +33,7 @@ public class RetroGtk.CairoDisplay : Gtk.DrawingArea {
 		queue_draw ();
 	}
 
-	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, Retro.PixelFormat pixel_format, float aspect_ratio) {
+	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio) {
 		this.aspect_ratio = aspect_ratio;
 		pixbuf = gdk_pixbuf_new_from_video (data, width, height, pitch, pixel_format);
 	}

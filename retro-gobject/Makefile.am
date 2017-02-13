@@ -33,11 +33,15 @@ libretro_gobject_la_SOURCES = \
 	input/input-device.vala \
 	input/input-device-manager.vala \
 	input/keyboard.vala \
+	\
 	log/file-stream-log.vala \
 	log/log.vala \
+	\
 	loop/main-loop.vala \
+	\
 	variable/options.vala \
 	variable/variables.vala \
+	\
 	av-info.vala \
 	core.vala \
 	core-error.vala \
@@ -55,6 +59,10 @@ libretro_gobject_la_SOURCES = \
 	retro-core.c \
 	retro-environment.c \
 	libretro-environment.h \
+	\
+	video/cairo-display.vala \
+	video/retro-video-converter.c \
+	video/video-filter.vala \
 	$(NULL)
 
 retro-core.c: retro-gobject-internal.h
@@ -64,11 +72,13 @@ retro-environment.c: retro-gobject-internal.h libretro-environment.h
 libretro_gobject_la_LDFLAGS =
 
 libretro_gobject_la_VALAFLAGS = \
+	--pkg cairo \
 	--pkg config \
-	--pkg glib-2.0 \
-	--pkg gobject-2.0 \
-	--pkg gmodule-2.0 \
 	--pkg gio-2.0  \
+	--pkg glib-2.0 \
+	--pkg gmodule-2.0 \
+	--pkg gobject-2.0 \
+	--pkg gtk+-3.0 \
 	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \

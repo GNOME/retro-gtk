@@ -33,10 +33,6 @@ libretro_gtk_la_SOURCES = \
 	input/keyboard-state.vala \
 	input/mouse.vala \
 	input/virtual-gamepad.vala \
-	\
-	video/cairo-display.vala \
-	video/retro-video-converter.c \
-	video/video-filter.vala \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =
@@ -46,7 +42,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg glib-2.0 \
 	--pkg gobject-2.0 \
 	--pkg gtk+-3.0 \
-	--pkg cairo \
 	--pkg libpulse \
 	--pkg libpulse-simple \
 	--pkg retro-gobject-0.8 \

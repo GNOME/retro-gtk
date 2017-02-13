@@ -1,4 +1,4 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "config.h")]
 namespace Config {

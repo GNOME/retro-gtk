@@ -1,6 +1,6 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
-#include "retro-gobject-internal.h"
+#include "retro-gtk-internal.h"
 #include "libretro-environment.h"
 
 void retro_core_set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_av_info);

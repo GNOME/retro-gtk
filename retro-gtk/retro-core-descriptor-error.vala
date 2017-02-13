@@ -1,4 +1,4 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 public errordomain Retro.CoreDescriptorError {
 	REQUIRED_GROUP_NOT_FOUND,

@@ -3,11 +3,11 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/retro-gobject-0.8
+includedir=@includedir@/retro-gtk-0.8
 
 Name: Retro
-Description: GObject based libretro wrapper
+Description: GTK+ based libretro wrapper
 Version: @VERSION@
-Requires: @retro_gobject_pkg_modules@
-Libs: -L${libdir} -lretro-gobject
+Requires: @retro_gtk_pkg_modules@
+Libs: -L${libdir} -lretro-gtk
 Cflags: -I${includedir}

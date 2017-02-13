@@ -1,4 +1,4 @@
-// This file is part of RetroGtk. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 private class Retro.MotionParser : Object {
 	private Gdk.Screen screen;

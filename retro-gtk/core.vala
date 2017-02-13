@@ -1,4 +1,4 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 namespace Retro {
 
@@ -238,7 +238,7 @@ public class Core : Object {
 
 		module = new Module (libretro_path);
 		set_callbacks ();
-		variables_interface = new Retro.Options ();
+		variables_interface = new Options ();
 	}
 
 	~Core () {

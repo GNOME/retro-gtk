@@ -1,4 +1,4 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 [CCode (gir_namespace = "Retro", gir_version = "0.8")]
 namespace Retro {

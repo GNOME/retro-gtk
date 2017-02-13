@@ -11,7 +11,7 @@ AM_CPPFLAGS = \
 	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
 	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
 	-DRETRO_PLUGIN_PATH=\""$(libdir)/retro-1.0/plugins:$(libdir)/libretro:$(libdir)"\" \
-	$(retro_gtk_CFLAGS) \
+	$(RETRO_GTK_CFLAGS) \
 	$(NULL)
 
 AM_CFLAGS =\
@@ -98,7 +98,7 @@ libretro_gtk_la_VALAFLAGS = \
 	-X -fPIC -X -shared \
 	$(NULL)
 
-libretro_gtk_la_LIBADD = $(retro_gtk_LIBS)
+libretro_gtk_la_LIBADD = $(RETRO_GTK_LIBS)
 
 retro_gtkincludedir = $(includedir)/retro-gtk-0.8
 retro_gtkinclude_HEADERS = \
@@ -107,7 +107,7 @@ retro_gtkinclude_HEADERS = \
 
 # Add unstable API guard
 $(outdir)/retro-gtk.h:
-	sed -i "s/#define __retro_gtk_H__/#define __retro_gtk_H__\n\n#ifndef retro_gtk_USE_UNSTABLE_API\n#error    Retro is unstable API. You must define retro_gtk_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
+	sed -i "s/#define __RETRO_GTK_H__/#define __RETRO_GTK_H__\n\n#ifndef RETRO_GTK_USE_UNSTABLE_API\n#error    retro-gtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
 
 # Introspection
 -include $(INTROSPECTION_MAKEFILE)
@@ -129,9 +129,9 @@ introspection_sources = $(retro_gtkinclude_HEADERS)
 BUILT_SOURCES += libretro-gtk.la Retro-0.8.gir
 
 Retro-0.8.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
-Retro_0_8_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0
+Retro_0_8_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0 Gtk-3.0 cairo-1.0
 Retro_0_8_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.8
-Retro_0_8_gir_CFLAGS = -Dretro_gtk_USE_UNSTABLE_API $(retro_gtk_CFLAGS)
+Retro_0_8_gir_CFLAGS = -DRETRO_GTK_USE_UNSTABLE_API $(retro_gtk_CFLAGS)
 Retro_0_8_gir_LIBS = libretro-gtk.la
 Retro_0_8_gir_FILES = $(introspection_sources)
 Retro_0_8_gir_EXPORT_PACKAGES = retro-gtk-0.8

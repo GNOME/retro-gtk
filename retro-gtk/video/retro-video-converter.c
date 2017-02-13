@@ -1,7 +1,8 @@
-// This file is part of RetroGtk. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <retro-gobject.h>
+
+#include "retro-gtk-internal.h"
 
 typedef struct _xrgb1555 xrgb1555;
 struct _xrgb1555 {

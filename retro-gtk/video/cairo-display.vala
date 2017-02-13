@@ -1,4 +1,4 @@
-// This file is part of RetroGtk. License: GPLv3
+// This file is part of retro-gtk. License: GPLv3
 
 public class Retro.CairoDisplay : Gtk.DrawingArea {
 	public Gdk.Pixbuf pixbuf { set; get; }

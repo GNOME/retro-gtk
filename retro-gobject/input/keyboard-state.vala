@@ -1,8 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-public class KeyboardState : Object {
+public class Retro.KeyboardState : Object {
 	public Gtk.Widget widget { get; construct; }
 
 	private HashTable<uint?, bool?> key_state;
@@ -78,6 +76,3 @@ public class KeyboardState : Object {
 		return false;
 	}
 }
-
-}
-

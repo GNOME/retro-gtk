@@ -39,7 +39,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--vapidir $(top_builddir)/retro-gobject \
 	--pkg glib-2.0 \
 	--pkg gobject-2.0 \
-	--pkg gtk+-3.0 \
 	--pkg retro-gobject-0.8 \
 	--thread \
 	--target-glib 2.32 \

@@ -1,8 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-private class MotionParser : Object {
+private class Retro.MotionParser : Object {
 	private Gdk.Screen screen;
 
 	private bool _grab_pointer;
@@ -67,7 +65,7 @@ private class MotionParser : Object {
 	}
 }
 
-public class Mouse : Object, Retro.InputDevice {
+public class Retro.Mouse : Object, InputDevice {
 	public Gtk.Widget widget { get; construct; }
 
 	public bool parse {
@@ -114,33 +112,33 @@ public class Mouse : Object, Retro.InputDevice {
 
 	public void poll () {}
 
-	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
-		if (device != Retro.DeviceType.MOUSE) return 0;
+	public int16 get_input_state (DeviceType device, uint index, uint id) {
+		if (device != DeviceType.MOUSE) return 0;
 
-		switch ((Retro.MouseId) id) {
-			case Retro.MouseId.X:
+		switch ((MouseId) id) {
+			case MouseId.X:
 				int16 result = x_delta;
 				x_delta = 0;
 				return result;
-			case Retro.MouseId.Y:
+			case MouseId.Y:
 				int16 result = y_delta;
 				y_delta = 0;
 				return result;
-			case Retro.MouseId.LEFT:
+			case MouseId.LEFT:
 				return get_button_state (1) ? int16.MAX : 0;
-			case Retro.MouseId.RIGHT:
+			case MouseId.RIGHT:
 				return get_button_state (3) ? int16.MAX : 0;
 			default:
 				return 0;
 		}
 	}
 
-	public Retro.DeviceType get_device_type () {
-		return Retro.DeviceType.MOUSE;
+	public DeviceType get_device_type () {
+		return DeviceType.MOUSE;
 	}
 
 	public uint64 get_device_capabilities () {
-		return 1 << Retro.DeviceType.MOUSE;
+		return 1 << DeviceType.MOUSE;
 	}
 
 	private bool on_button_press_event (Gtk.Widget source, Gdk.EventButton event) {
@@ -222,6 +220,3 @@ public class Mouse : Object, Retro.InputDevice {
 		});
 	}
 }
-
-}
-

@@ -2,7 +2,7 @@
 
 NULL =
 
-SUBDIRS = retro-gobject retro-gtk po
+SUBDIRS = retro-gobject po
 
 dist_doc_DATA = \
 	README \

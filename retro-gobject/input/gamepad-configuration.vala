@@ -1,8 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-public class GamepadConfiguration : Object {
+public class Retro.GamepadConfiguration : Object {
 	private uint16[] gamepad_keys;
 
 	construct {
@@ -37,6 +35,3 @@ public class GamepadConfiguration : Object {
 		return gamepad_keys[button];
 	}
 }
-
-}
-

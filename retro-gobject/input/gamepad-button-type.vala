@@ -1,8 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-public enum GamepadButtonType {
+public enum Retro.GamepadButtonType {
 	ACTION_DOWN,
 	ACTION_LEFT,
 	SELECT,
@@ -25,6 +23,3 @@ public enum GamepadButtonType {
 		return 1 + (size_t) GamepadButtonType.HOME;
 	}
 }
-
-}
-

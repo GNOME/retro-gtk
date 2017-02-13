@@ -1,8 +1,6 @@
 // This file is part of RetroGtk. License: GPLv3
 
-namespace RetroGtk {
-
-public class VirtualGamepad : Object, Retro.InputDevice {
+public class Retro.VirtualGamepad : Object, InputDevice {
 	public Gtk.Widget widget { get; construct; }
 	public GamepadConfiguration configuration { get; construct set; }
 
@@ -27,24 +25,21 @@ public class VirtualGamepad : Object, Retro.InputDevice {
 
 	public void poll () {}
 
-	public int16 get_input_state (Retro.DeviceType device, uint index, uint id) {
-		if ((Retro.DeviceType) device != Retro.DeviceType.JOYPAD) return 0;
+	public int16 get_input_state (DeviceType device, uint index, uint id) {
+		if ((DeviceType) device != DeviceType.JOYPAD) return 0;
 
 		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
 	}
 
-	public Retro.DeviceType get_device_type () {
-		return Retro.DeviceType.JOYPAD;
+	public DeviceType get_device_type () {
+		return DeviceType.JOYPAD;
 	}
 
 	public uint64 get_device_capabilities () {
-		return 1 << Retro.DeviceType.JOYPAD;
+		return 1 << DeviceType.JOYPAD;
 	}
 
 	public bool get_button_pressed (GamepadButtonType button) {
 		return keyboard.get_key_state (configuration.get_button_key (button));
 	}
 }
-
-}
-

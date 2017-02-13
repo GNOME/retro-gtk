@@ -46,7 +46,7 @@ AC_SUBST(retro_gobject_pkg_modules)
 # retro-gtk
 ###########
 
-retro_gtk_pkg_modules="gobject-2.0 glib-2.0 gtk+-3.0"
+retro_gtk_pkg_modules="gobject-2.0 glib-2.0"
 PKG_CHECK_MODULES(RETRO_GTK, $retro_gtk_pkg_modules)
 retro_gtk_pkg_modules="$retro_gtk_pkg_modules retro-gobject-0.8"
 AC_SUBST(retro_gtk_pkg_modules)

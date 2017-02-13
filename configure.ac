@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(retro-gtk, 0.8.1)
+AC_INIT(retro-gtk, 0.9.90)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -48,6 +48,6 @@ AC_SUBST(retro_gtk_pkg_modules)
 
 AC_OUTPUT([
 Makefile
-retro-gtk/retro-gtk-0.8.pc
+retro-gtk/retro-gtk-0.10.pc
 retro-gtk/Makefile
 po/Makefile.in])

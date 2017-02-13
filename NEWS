@@ -1,3 +1,28 @@
+==============
+Version 0.9.90
+==============
+
+* Ongoing refactoring:
+ - Merge the retro-gobject module into retro-gtk
+ - Merge the RetroGtk namespace into Retro
+ - Remove many unused types and functions
+ - Refactor many types and functions
+ - Make the API overall simpler
+
+* Libretro module query:
+ - Search modules from their Libretro Core Descriptor
+ - Search Libretro modules in paths from the LIBRETRO_PLUGIN_PATH env variable
+ - Drop the ancient module query mechanisms
+ - Drop the ancient Libretro core path env variable
+
+* Allow to set a smooth or sharp rendering to CairoDisplay
+
+* Bugs fixed:
+ 777482: retro-gobject: Remove unused private code
+ 777987: Allow to have a sharp video output
+ 778446: Support the Libretro Core Descriptor format
+
+
 =============
 Version 0.8.1
 =============

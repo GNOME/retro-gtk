@@ -72,6 +72,8 @@ libretro_gtk_la_SOURCES = \
 	video/video-filter.vala \
 	$(NULL)
 
+video/retro-video-converter.c: retro-gtk-internal.h
+
 retro-core.c: retro-gtk-internal.h
 
 retro-environment.c: retro-gtk-internal.h libretro-environment.h

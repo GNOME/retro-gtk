@@ -41,19 +41,19 @@ static void on_log (guint level, const gchar *format, ...) {
 
 	switch (level) {
 	case RETRO_LOG_LEVEL_DEBUG:
-		g_debug (message);
+		g_debug ("%s", message);
 
 		break;
 	case RETRO_LOG_LEVEL_INFO:
-		g_info (message);
+		g_info ("%s", message);
 
 		break;
 	case RETRO_LOG_LEVEL_WARN:
-		g_warning (message);
+		g_warning ("%s", message);
 
 		break;
 	case RETRO_LOG_LEVEL_ERROR:
-		g_critical (message);
+		g_critical ("%s", message);
 
 		break;
 	}

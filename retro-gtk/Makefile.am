@@ -145,6 +145,14 @@ pkgconfig_DATA = retro-gtk-0.10.pc
 
 EXTRA_DIST = \
 	retro-gtk-0.10.pc.in \
+	update-from-retroarch.sh \
 	$(NULL)
+
+INPUTDIR=$(top_srcdir)/../RetroArch/libretro-common/include/
+INPUTFILES = libretro.h
+update-from-retroarch:
+	SRCDIR="$(srcdir)" FILES="$(INPUTFILES)" DIR="$(INPUTDIR)" $(srcdir)/update-from-retroarch.sh && changed=true ; \
+	cd $(srcdir) && git commit -m "retro-gtk: Update libretro header" $(INPUTFILES)
+
 
 -include $(top_srcdir)/git.mk

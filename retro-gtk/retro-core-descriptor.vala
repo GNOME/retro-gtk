@@ -72,6 +72,10 @@ public class Retro.CoreDescriptor : Object {
 		return key_file.has_group (PLATFORM_GROUP_PREFIX + platform);
 	}
 
+	public bool has_firmwares (string platform) throws KeyFileError {
+		return key_file.has_key (PLATFORM_GROUP_PREFIX + platform, PLATFORM_FIRMWARES_KEY);
+	}
+
 	public bool has_firmware_md5 (string firmware) throws KeyFileError {
 		return key_file.has_key (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_MD5_KEY);
 	}

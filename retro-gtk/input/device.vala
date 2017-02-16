@@ -15,7 +15,7 @@ public enum DeviceType {
 	KEYBOARD = 3,
 	LIGHTGUN = 4,
 	ANALOG = 5,
-	POINTER = 6,
+	POINTER = 6;
 
 	/**
 	 * Gets the basic type of a device type.

@@ -25,6 +25,8 @@ public class Retro.CoreDescriptor : Object {
 	private const string PLATFORM_FIRMWARES_KEY = "Firmwares";
 
 	private const string FIRMWARE_PATH_KEY = "Path";
+	private const string FIRMWARE_MD5_KEY = "MD5";
+	private const string FIRMWARE_SHA512_KEY = "SHA-512";
 	private const string FIRMWARE_MANDATORY_KEY = "Mandatory";
 
 	private const string TYPE_EMULATOR = "Emulator";
@@ -70,12 +72,36 @@ public class Retro.CoreDescriptor : Object {
 		return key_file.has_group (PLATFORM_GROUP_PREFIX + platform);
 	}
 
+	public bool has_firmware_md5 (string firmware) throws KeyFileError {
+		return key_file.has_key (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_MD5_KEY);
+	}
+
+	public bool has_firmware_sha512 (string firmware) throws KeyFileError {
+		return key_file.has_key (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_SHA512_KEY);
+	}
+
 	public string[] get_mime_type (string platform) throws KeyFileError {
 		return key_file.get_string_list (PLATFORM_GROUP_PREFIX + platform, PLATFORM_MIME_TYPE_KEY);
 	}
 
 	public string[] get_firmwares (string platform) throws KeyFileError {
 		return key_file.get_string_list (PLATFORM_GROUP_PREFIX + platform, PLATFORM_FIRMWARES_KEY);
+	}
+
+	public string get_firmware_path (string firmware) throws KeyFileError {
+		return key_file.get_string (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_PATH_KEY);
+	}
+
+	public string get_firmware_md5 (string firmware) throws KeyFileError {
+		return key_file.get_string (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_MD5_KEY);
+	}
+
+	public string get_firmware_sha512 (string firmware) throws KeyFileError {
+		return key_file.get_string (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_SHA512_KEY);
+	}
+
+	public bool get_is_firmware_mandatory (string firmware) throws KeyFileError {
+		return key_file.get_boolean (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_MANDATORY_KEY);
 	}
 
 	private void check_libretro_group () {

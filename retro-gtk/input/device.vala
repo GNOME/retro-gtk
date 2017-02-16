@@ -164,7 +164,9 @@ public enum MouseId {
 	RIGHT,
 	WHEELUP,
 	WHEELDOWN,
-	MIDDLE
+	MIDDLE,
+	HORIZ_WHEELUP,
+	HORIZ_WHEELDOWN,
 }
 
 /**

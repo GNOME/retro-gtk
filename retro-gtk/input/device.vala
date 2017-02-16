@@ -100,54 +100,6 @@ public enum DeviceType {
 	POINTER = 6,
 
 	/**
-	 * A joypad multitap.
-	 *
-	 * It is a specialization of the {@link DeviceType.JOYPAD}.
-	 *
-	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
-	 * implementations about use of a joypad multitap.
-	 *
-	 * In input state callback, however, the device will be {@link DeviceType.JOYPAD}.
-	 */
-	JOYPAD_MULTITAP = (1 << 8) | DeviceType.JOYPAD,
-
-	/**
-	 * A Super Nintendo Super Scope.
-	 *
-	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
-	 *
-	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
-	 * implementations about use of a Super Nintendo Super Scope.
-	 *
-	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
-	 */
-	LIGHTGUN_SUPER_SCOPE = (1 << 8) | DeviceType.LIGHTGUN,
-
-	/**
-	 * A Konami Justifier.
-	 *
-	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
-	 *
-	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
-	 * implementations about use of a Konami Justifier.
-	 *
-	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
-	 */
-	LIGHTGUN_JUSTIFIER = (2 << 8) | DeviceType.LIGHTGUN,
-
-	/**
-	 * Konami Justifiers.
-	 *
-	 * It is a specialization of the {@link DeviceType.LIGHTGUN}.
-	 *
-	 * It should only be used in {@link Core.set_controller_port_device} to inform Libretro
-	 * implementations about use of Konami Justifiers.
-	 *
-	 * In input state callback, however, the device will be {@link DeviceType.LIGHTGUN}.
-	 */
-	LIGHTGUN_JUSTIFIERS = (3 << 8) | DeviceType.LIGHTGUN;
-
-	/**
 	 * Gets the basic type of a device type.
 	 *
 	 * Applies the type mask on a DeviceType to get its basic type.

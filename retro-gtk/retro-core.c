@@ -69,8 +69,8 @@ void retro_core_deserialize_state (RetroCore *self, guint8 *data, gsize length, 
 	gsize size;
 	gboolean success;
 
-	g_return_val_if_fail (self != NULL, NULL);
-	g_return_val_if_fail (data != NULL, NULL);
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (data != NULL);
 
 	serialize_size = retro_module_get_serialize_size (self->module);
 
@@ -84,7 +84,7 @@ void retro_core_deserialize_state (RetroCore *self, guint8 *data, gsize length, 
 		             RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
 		             "Couldn't deserialize the internal state: serialization not supported.");
 
-		return NULL;
+		return;
 	}
 
 	if (length > size) {
@@ -93,7 +93,7 @@ void retro_core_deserialize_state (RetroCore *self, guint8 *data, gsize length, 
 		             RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
 		             "Couldn't deserialize the internal state: expected at most %llu bytes, got %llu.", size, length);
 
-		return NULL;
+		return;
 	}
 
 	unserialize = retro_module_get_unserialize (self->module);
@@ -107,8 +107,6 @@ void retro_core_deserialize_state (RetroCore *self, guint8 *data, gsize length, 
 		             RETRO_CORE_ERROR,
 		             RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
 		             "Couldn't deserialize the internal state: deserialization failed.");
-
-		return NULL;
 	}
 }
 

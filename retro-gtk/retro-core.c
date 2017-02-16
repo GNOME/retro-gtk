@@ -91,7 +91,7 @@ void retro_core_deserialize_state (RetroCore *self, guint8 *data, gsize length, 
 		g_set_error (error,
 		             RETRO_CORE_ERROR,
 		             RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-		             "Couldn't deserialize the internal state: expected at most %llu bytes, got %llu.", size, length);
+		             "Couldn't deserialize the internal state: expected at most %"G_GSIZE_FORMAT" bytes, got %"G_GSIZE_FORMAT".", size, length);
 
 		return;
 	}

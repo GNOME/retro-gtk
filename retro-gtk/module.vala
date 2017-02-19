@@ -35,7 +35,7 @@ private delegate bool Unserialize ([CCode (array_length_type = "gsize")] uint8[]
 
 
 [CCode (has_target = false)]
-private delegate bool LoadGame (GameInfo game);
+private delegate bool LoadGame (GameInfo? game);
 [CCode (has_target = false)]
 private delegate void UnloadGame ();
 

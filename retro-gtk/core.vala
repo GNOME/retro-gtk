@@ -337,6 +337,24 @@ public class Core : Object {
 	}
 
 	/**
+	 * Prepare the standalone core.
+	 *
+	 * This should be used instead of load_game() for standalone cores.
+	 *
+	 * @return false if the preparation failed, true otherwise
+	 */
+	public bool prepare () {
+		push_cb_data ();
+		game_loaded = module.load_game (null);
+		SystemAvInfo info;
+		module.get_system_av_info (out info);
+		set_system_av_info (info);
+		pop_cb_data ();
+
+		return game_loaded;
+	}
+
+	/**
 	 * Gets the size of a region of memory.
 	 *
 	 * @param id the region of memory

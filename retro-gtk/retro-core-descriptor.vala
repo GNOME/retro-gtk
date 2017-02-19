@@ -18,6 +18,7 @@ public class Retro.CoreDescriptor : Object {
 
 	private const string TYPE_KEY = "Type";
 	private const string NAME_KEY = "Name";
+	private const string ICON_KEY = "Icon";
 	private const string MODULE_KEY = "Module";
 	private const string LIBRETRO_VERSION_KEY = "LibretroVersion";
 
@@ -29,6 +30,7 @@ public class Retro.CoreDescriptor : Object {
 	private const string FIRMWARE_SHA512_KEY = "SHA-512";
 	private const string FIRMWARE_MANDATORY_KEY = "Mandatory";
 
+	private const string TYPE_GAME = "Game";
 	private const string TYPE_EMULATOR = "Emulator";
 
 	private string filename;
@@ -49,8 +51,30 @@ public class Retro.CoreDescriptor : Object {
 		}
 	}
 
+	public bool has_icon () {
+		return key_file.has_key (LIBRETRO_GROUP, ICON_KEY);
+	}
+
+	public string get_id () {
+		return Path.get_basename (filename);
+	}
+
+	public bool get_is_game () throws KeyFileError {
+		return key_file.get_string (LIBRETRO_GROUP, TYPE_KEY) == TYPE_GAME;
+	}
+
 	public bool get_is_emulator () throws KeyFileError {
 		return key_file.get_string (LIBRETRO_GROUP, TYPE_KEY) == TYPE_EMULATOR;
+	}
+
+	public string get_name () throws KeyFileError {
+		return key_file.get_string (LIBRETRO_GROUP, NAME_KEY);
+	}
+
+	public GLib.Icon get_icon () throws KeyFileError {
+		var icon_name = key_file.get_string (LIBRETRO_GROUP, ICON_KEY);
+
+		return new ThemedIcon (icon_name);
 	}
 
 	public string get_module () throws KeyFileError {

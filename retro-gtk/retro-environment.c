@@ -432,7 +432,7 @@ void retro_core_set_system_av_info (RetroCore *self, RetroSystemAvInfo *system_a
 	if (system_av_info->geometry.aspect_ratio > 0.f)
 		self->aspect_ratio = system_av_info->geometry.aspect_ratio;
 	else
-		self->aspect_ratio = system_av_info->geometry.base_width / system_av_info->geometry.base_height;
+		self->aspect_ratio = (float) system_av_info->geometry.base_width / (float) system_av_info->geometry.base_height;
 	self->sample_rate = system_av_info->timing.sample_rate;
 }
 

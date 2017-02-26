@@ -60,6 +60,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
 	retro-module-query.vala \
+	retro-module-iterator.vala \
 	rumble.vala \
 	system-info.vala \
 	video.vala \

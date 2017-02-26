@@ -132,6 +132,15 @@ public class Retro.CoreDescriptor : Object {
 		return key_file.get_boolean (FIRMWARE_GROUP_PREFIX + firmware, FIRMWARE_MANDATORY_KEY);
 	}
 
+	public bool get_platform_supports_mime_types (string platform, string[] mime_types) throws KeyFileError {
+		var supported_mime_types = get_mime_type (platform);
+		foreach (var mime_type in mime_types)
+			if (!(mime_type in supported_mime_types))
+				return false;
+
+		return true;
+	}
+
 	private void check_libretro_group () {
 		check_has_required_key (LIBRETRO_GROUP, TYPE_KEY);
 		check_has_required_key (LIBRETRO_GROUP, NAME_KEY);

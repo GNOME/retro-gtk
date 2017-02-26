@@ -51,7 +51,7 @@ public class Retro.CoreDescriptor : Object {
 		}
 	}
 
-	public bool has_icon () {
+	public bool has_icon () throws KeyFileError {
 		return key_file.has_key (LIBRETRO_GROUP, ICON_KEY);
 	}
 
@@ -141,14 +141,14 @@ public class Retro.CoreDescriptor : Object {
 		return true;
 	}
 
-	private void check_libretro_group () {
+	private void check_libretro_group () throws CoreDescriptorError, KeyFileError {
 		check_has_required_key (LIBRETRO_GROUP, TYPE_KEY);
 		check_has_required_key (LIBRETRO_GROUP, NAME_KEY);
 		check_has_required_key (LIBRETRO_GROUP, MODULE_KEY);
 		check_has_required_key (LIBRETRO_GROUP, LIBRETRO_VERSION_KEY);
 	}
 
-	private void check_platform_group (string group) {
+	private void check_platform_group (string group) throws CoreDescriptorError, KeyFileError {
 		check_has_required_key (group, PLATFORM_MIME_TYPE_KEY);
 		if (key_file.has_key (group, PLATFORM_FIRMWARES_KEY))
 			foreach (var firmware in key_file.get_string_list (group, PLATFORM_FIRMWARES_KEY))
@@ -156,7 +156,7 @@ public class Retro.CoreDescriptor : Object {
 					throw new CoreDescriptorError.FIRMWARE_NOT_FOUND ("%s isn't a valid Libretro core descriptor: [%s] mentioned in [%s] not found.", filename, FIRMWARE_GROUP_PREFIX + firmware, group);
 	}
 
-	private void check_firmware_group (string group) {
+	private void check_firmware_group (string group) throws CoreDescriptorError, KeyFileError {
 		check_has_required_key (group, FIRMWARE_PATH_KEY);
 		check_has_required_key (group, FIRMWARE_MANDATORY_KEY);
 	}

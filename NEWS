@@ -1,4 +1,32 @@
 ==============
+Version 0.9.91
+==============
+
+* Ongoing refactoring:
+ - Deduplicate documentation
+ - Add missing MouseId values
+ - Remove deprecated input device types
+
+* Libretro module query:
+ - Allow to check the firmwares
+ - Add an helper method to chek the supported MIME types
+ - Add a module iterator, allowing sync and async browsing
+ - Remove the now useless foreach function
+
+* Core:
+ - Add methods to handle standalone cores more easily
+
+* Fix an integer division when computing the aspect ratio
+
+* Add a script to update libretro.h
+
+* Bugs fixed:
+ 777371 Support standalone Libretro games
+ 777987 Allow to have a sharp video output
+ 778744 Check required firmwares are present
+
+
+==============
 Version 0.9.90
 ==============
 

@@ -34,34 +34,34 @@ public class Retro.ModuleIterator {
 	}
 
 	private bool next_in_current_path () throws Error {
-			var directory = File.new_for_path (directories[current_directory]);
+		var directory = File.new_for_path (directories[current_directory]);
 
-			if (file_enumerator == null)
-				file_enumerator = directory.enumerate_children ("", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
+		if (file_enumerator == null)
+			file_enumerator = directory.enumerate_children ("", FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
 
-			if (file_enumerator == null)
-				return false;
-
-			for (var info = file_enumerator.next_file () ; info != null ; info = file_enumerator.next_file ()) {
-				var core_descriptor_basename = info.get_name ();
-				if (!core_descriptor_basename.has_suffix (".libretro"))
-					continue;
-
-				var core_descriptor_file = directory.get_child (core_descriptor_basename);
-				var core_descriptor_path = core_descriptor_file.get_path ();
-				try {
-					core_descriptor = new CoreDescriptor (core_descriptor_path);
-
-					return true;
-				}
-				catch (Error e) {
-					debug (e.message);
-				}
-			}
-
-			file_enumerator = null;
-
+		if (file_enumerator == null)
 			return false;
+
+		for (var info = file_enumerator.next_file () ; info != null ; info = file_enumerator.next_file ()) {
+			var core_descriptor_basename = info.get_name ();
+			if (!core_descriptor_basename.has_suffix (".libretro"))
+				continue;
+
+			var core_descriptor_file = directory.get_child (core_descriptor_basename);
+			var core_descriptor_path = core_descriptor_file.get_path ();
+			try {
+				core_descriptor = new CoreDescriptor (core_descriptor_path);
+
+				return true;
+			}
+			catch (Error e) {
+				debug (e.message);
+			}
+		}
+
+		file_enumerator = null;
+
+		return false;
 	}
 }
 

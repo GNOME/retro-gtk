@@ -3,10 +3,16 @@
 public class Retro.ModuleQuery {
 	private const string ENV_PLUGIN_PATH = "LIBRETRO_PLUGIN_PATH";
 
+	private bool recursive;
+
+	public ModuleQuery (bool recursive) {
+		this.recursive = recursive;
+	}
+
 	public ModuleIterator iterator () {
 		var paths = get_plugin_lookup_paths ();
 
-		return new ModuleIterator (paths);
+		return new ModuleIterator (paths, recursive);
 	}
 
 	private static string[] get_plugin_lookup_paths () {

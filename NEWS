@@ -1,4 +1,11 @@
 ==============
+Version 0.9.92
+==============
+
+* Allow recursive iteration through Libretro cores of a directory
+
+
+==============
 Version 0.9.91
 ==============
 

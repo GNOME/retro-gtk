@@ -88,8 +88,11 @@ public class Retro.CoreDescriptor : Object {
 			return null;
 
 		var module = get_module ();
+		var module_file = dir.get_child (module);
+		if (!module_file.query_exists ())
+			return null;
 
-		return dir.get_child (module);
+		return module_file;
 	}
 
 	public bool has_platform (string platform) {

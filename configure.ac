@@ -4,7 +4,7 @@ AC_INIT(retro-gtk, 0.9.91)
 
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11 foreign subdir-objects tar-ustar no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 subdir-objects tar-ustar no-dist-gzip dist-xz])
 
 AM_SILENT_RULES([yes])
 

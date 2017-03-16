@@ -1,6 +1,10 @@
 // This file is part of retro-gtk. License: GPLv3
 
 public class Retro.CairoDisplay : Gtk.DrawingArea {
+	// Because gdk-pixbuf saves dpi as integer we have to multiply it by big
+	// enough number to represent aspect ratio precisely.
+	private const float Y_DPI = 1000000.0f;
+
 	public Gdk.Pixbuf pixbuf { set; get; }
 
 	private Core core;
@@ -36,6 +40,13 @@ public class Retro.CairoDisplay : Gtk.DrawingArea {
 	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio) {
 		this.aspect_ratio = aspect_ratio;
 		pixbuf = gdk_pixbuf_new_from_video (data, width, height, pitch, pixel_format);
+
+		var x_dpi = aspect_ratio * Y_DPI;
+		var x_dpi_string = x_dpi.to_string ();
+		var y_dpi_string = Y_DPI.to_string ();
+
+		pixbuf.set_option ("x-dpi", x_dpi_string);
+		pixbuf.set_option ("y-dpi", y_dpi_string);
 	}
 
 	public void show_video () {

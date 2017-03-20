@@ -5,10 +5,12 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">RetroGtk</name>
-  <shortdesc xml:lang="en">Toolkit to write Gtk+ 3 based libretro frontends</shortdesc>
-  <download-page rdf:resource="https://github.com/Kekun/retro-gtk/releases" />
-  <bug-database rdf:resource="https://github.com/Kekun/retro-gtk/issues" />
+  <name xml:lang="en">retro-gtk</name>
+  <shortdesc xml:lang="en">Toolkit to write GTK+ 3 based Libretro frontends</shortdesc>
+  <description xml:lang="en">retro-gtk is a toolkit allowing to easily write GTK+ 3 based Libretro frontends.</description>
+  <homepage rdf:resource="https://git.gnome.org/browse/retro-gtk" />
+  <download-page rdf:resource="http://download.gnome.org/sources/retro-gtk/" />
+  <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=gnome-games" />
 
   <programming-language>C</programming-language>
   <programming-language>Vala</programming-language>

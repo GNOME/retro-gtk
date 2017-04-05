@@ -29,6 +29,11 @@ DISTCLEANFILES = intltool-extract \
 	po/.intltool-merge-cache \
 	$(NULL)
 
+MAINTAINERCLEANFILES = \
+	$(GITIGNORE_MAINTAINERCLEANFILES_TOPLEVEL) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_MAKEFILE_IN) \
+	.flatpak-builder \
+	$(NULL)
 
 # Remove doc directory on uninstall
 uninstall-local:

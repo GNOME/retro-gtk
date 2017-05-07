@@ -56,7 +56,7 @@ public class Retro.CoreDescriptor : Object {
 	}
 
 	public string get_uri () {
-		var file = File.new_for_path ();
+		var file = File.new_for_path (filename);
 
 		return file.get_uri ();
 	}

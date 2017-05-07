@@ -55,6 +55,12 @@ public class Retro.CoreDescriptor : Object {
 		return key_file.has_key (LIBRETRO_GROUP, ICON_KEY);
 	}
 
+	public string get_uri () {
+		var file = File.new_for_path ();
+
+		return file.get_uri ();
+	}
+
 	public string get_id () {
 		return Path.get_basename (filename);
 	}

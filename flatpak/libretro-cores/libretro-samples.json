@@ -1,0 +1,23 @@
+        {
+            "name": "libretro-samples",
+            "no-autogen": true,
+            "make-args": [
+                "--makefile=Makefile",
+                "prefix=/app"
+            ],
+            "make-install-args": [
+                "--makefile=Makefile",
+                "prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/libretro/libretro-samples.git"
+                },
+                {
+                    "type": "file",
+                    "path": "libretro-cores/samples-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        }

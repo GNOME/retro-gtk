@@ -1,0 +1,2 @@
+#!/bin/sh
+retro-demo /app/lib/libretro/test_libretro.so

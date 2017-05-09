@@ -1,0 +1,13 @@
+NULL=
+
+CORES= \
+	tests/test/test_libretro.so \
+	$(NULL)
+
+all: tests/test/test_libretro.so
+
+tests/test/test_libretro.so:
+	make -C $(@D)
+
+install: $(CORES)
+	install -Dp -m755 tests/test/test_libretro.so $(DESTDIR)$(prefix)/lib/libretro/test_libretro.so

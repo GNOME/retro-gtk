@@ -1,0 +1,68 @@
+{
+    "app-id": "org.gnome.Retro.DemoSamplesTest",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "master",
+    "sdk": "org.gnome.Sdk",
+    "command": "retro-demo-samples-test",
+    "tags": ["nightly"],
+    "desktop-file-name-prefix": "(Nightly) ",
+    "finish-args": [
+        /* X11 + XShm access */
+        "--share=ipc", "--socket=x11",
+        /* Wayland access */
+        "--socket=wayland",
+        /* PulseAudio access */
+        "--device=dri", "--socket=pulseaudio"
+    ],
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g"
+    },
+    "cleanup": ["/include", "/lib/pkgconfig",
+                "/share/pkgconfig", "/share/aclocal",
+                "/man", "/share/man", "/share/gtk-doc",
+                "*.la", "*.a",
+                "/lib/girepository-1.0",
+                "/share/dbus-1", "/share/doc", "/share/gir-1.0"
+    ],
+    "modules": [
+        "libretro-cores/libretro-samples.json",
+        /*
+         * TODO Move this module after retro-gtk once GNOME Builder support
+         * building modules after the one being edited.
+         */
+        {
+            "name": "retro-demo-samples-test",
+            "buildsystem": "simple",
+            "build-commands": [
+                "mkdir -p /app/bin/",
+                "install -m755 -pD retro-demo-samples-test /app/bin/retro-demo-samples-test",
+                "install -m755 -pD org.gnome.Retro.DemoSamplesTest.desktop /app/share/applications/org.gnome.Retro.DemoSamplesTest.desktop"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "retro-demo-samples-test",
+                    "dest-filename": "retro-demo-samples-test"
+                },
+                {
+                    "type": "file",
+                    "path": "org.gnome.Retro.DemoSamplesTest.desktop",
+                    "dest-filename": "org.gnome.Retro.DemoSamplesTest.desktop"
+                }
+            ]
+        },
+        {
+            "name": "retro-gtk",
+            "config-opts": [
+                "--disable-static"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.gnome.org/browse/retro-gtk"
+                }
+            ]
+        }
+    ]
+}

@@ -14,6 +14,9 @@ AM_PROG_AR
 
 AM_PROG_VALAC
 
+# GResource
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
+
 GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 dnl ***************************************************************************
@@ -48,6 +51,7 @@ AC_SUBST(retro_gtk_pkg_modules)
 
 AC_OUTPUT([
 Makefile
+demos/Makefile
 retro-gtk/retro-gtk-0.10.pc
 retro-gtk/Makefile
 po/Makefile.in])

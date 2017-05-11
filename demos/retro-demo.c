@@ -67,9 +67,6 @@ retro_demo_application_finalize (GObject *object)
   if (self->loop != NULL)
     g_object_unref (self->loop);
 
-  if (self->display != NULL)
-    g_object_unref (self->display);
-
   if (self->pa_player != NULL)
     g_object_unref (self->pa_player);
 

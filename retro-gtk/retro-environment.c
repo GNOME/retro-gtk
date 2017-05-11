@@ -102,7 +102,8 @@ get_input_device_capabilities (RetroCore *self,
 
   input = retro_core_get_input_interface (self);
 
-  g_return_val_if_fail (input != NULL, FALSE);
+  if (input == NULL)
+    return FALSE;
 
   *capabilities = retro_input_get_device_capabilities (input);
 
@@ -208,7 +209,8 @@ set_input_descriptors (RetroCore            *self,
 
   input = retro_core_get_input_interface (self);
 
-  g_return_val_if_fail (input != NULL, FALSE);
+  if (input == NULL)
+    return FALSE;
 
   for (length = 0 ; descriptors[length].description ; length++);
   retro_input_set_descriptors (input, descriptors, length);
@@ -472,7 +474,7 @@ on_input_poll ()
   input = retro_core_get_input_interface (self);
 
   if (input == NULL)
-    g_return_if_reached ();
+    return;
 
   retro_input_poll (input);
 }
@@ -494,7 +496,7 @@ on_input_state (guint port,
   input = retro_core_get_input_interface (self);
 
   if (input == NULL)
-    g_return_val_if_reached (0);
+    return 0;
 
   return retro_input_get_state (input, port, device, index, id);
 }

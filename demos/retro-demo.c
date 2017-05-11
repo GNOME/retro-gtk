@@ -91,7 +91,7 @@ retro_demo_activate (GApplication *application)
   self->pa_player = retro_pa_player_new ();
   retro_pa_player_set_core (self->pa_player, self->core);
 
-  window = gtk_window_new (GTK_WIN_POS_NONE);
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (self->display));
 

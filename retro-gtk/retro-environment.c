@@ -6,6 +6,13 @@
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
 
+enum RetroLogLevel {
+  RETRO_LOG_LEVEL_DEBUG = 0,
+  RETRO_LOG_LEVEL_INFO,
+  RETRO_LOG_LEVEL_WARN,
+  RETRO_LOG_LEVEL_ERROR,
+};
+
 typedef struct {
   gpointer log;
 } RetroLogCallback;

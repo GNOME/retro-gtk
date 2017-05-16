@@ -44,32 +44,48 @@ rumble_callback_set_rumble_state (guint             port,
 static void
 on_log (guint level, const gchar *format, ...)
 {
+  RetroCore *self;
+  RetroSystemInfo info = { 0 };
+  GLogLevelFlags log_level;
   gchar *message;
   va_list args;
 
-  // Get the arguments, set up the formatted message,
-  // pass it to the logging method and free it.
-  va_start (args, format);
-  message = g_strdup_vprintf (format, args);
+
+  self = retro_core_get_cb_data ();
+  if (!self)
+    g_return_if_reached ();
 
   switch (level) {
   case RETRO_LOG_LEVEL_DEBUG:
-    g_debug ("%s", message);
+    log_level = G_LOG_LEVEL_DEBUG;
 
     break;
   case RETRO_LOG_LEVEL_INFO:
-    g_info ("%s", message);
+    log_level = G_LOG_LEVEL_INFO;
 
     break;
   case RETRO_LOG_LEVEL_WARN:
-    g_warning ("%s", message);
+    log_level = G_LOG_LEVEL_WARNING;
 
     break;
   case RETRO_LOG_LEVEL_ERROR:
-    g_critical ("%s", message);
+    log_level = G_LOG_LEVEL_CRITICAL;
 
     break;
+  default:
+    g_debug ("Unexpected log level: %d", level);
+
+    return;
   }
+
+  // Get the arguments, set up the formatted message, pass it to the logging
+  // method and free it.
+  va_start (args, format);
+  message = g_strdup_vprintf (format, args);
+
+  retro_core_get_system_info (self, &info);
+
+  g_signal_emit_by_name (self, "log", info.library_name, log_level, message);
 
   g_free (message);
 }

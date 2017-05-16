@@ -82,6 +82,8 @@ retro_demo_activate (GApplication *application)
 
   self = RETRO_DEMO_APPLICATION (application);
 
+  g_signal_connect (self->core, "log", (GCallback) retro_g_log, NULL);
+
   self->display = retro_cairo_display_new ();
   retro_cairo_display_set_core (self->display, self->core);
 

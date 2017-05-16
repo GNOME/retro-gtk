@@ -13,6 +13,7 @@ public class Core : Object {
 
 	public signal void video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio);
 	public signal void audio_output (int16[] frames, double sample_rate);
+	public signal void log (string log_domain, LogLevelFlags log_level, string message);
 
 	/**
 	 * Stores the current Core instance in a stack.

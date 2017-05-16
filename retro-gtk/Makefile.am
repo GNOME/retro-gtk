@@ -59,6 +59,7 @@ libretro_gtk_la_SOURCES = \
 	retro.vala \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
+	retro-log.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \
 	rumble.vala \
@@ -78,6 +79,8 @@ video/retro-video-converter.c: retro-gtk-internal.h
 retro-core.c: retro-gtk-internal.h
 
 retro-environment.c: retro-gtk-internal.h libretro-environment.h
+
+retro-log.c: retro-gtk-internal.h
 
 libretro_gtk_la_LDFLAGS =
 

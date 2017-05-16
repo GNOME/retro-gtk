@@ -40,5 +40,7 @@ public SystemInfo? get_system_info (string module_name) {
 	return info;
 }
 
+public extern void g_log (Core core, string log_domain, LogLevelFlags log_level, string message);
+
 }
 

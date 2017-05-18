@@ -6,12 +6,15 @@ public class Retro.PaPlayer : GLib.Object {
 	private double sample_rate;
 	private PulseAudio.Simple simple;
 
-	public void set_core (Core core) {
+	public void set_core (Core? core) {
 		if (this.core != null)
 			this.core.disconnect (on_audio_output_id);
 
 		this.core = core;
-		on_audio_output_id = core.audio_output.connect (on_audio_output);
+
+		if (this.core != null)
+			on_audio_output_id = core.audio_output.connect (on_audio_output);
+
 		simple = null;
 	}
 

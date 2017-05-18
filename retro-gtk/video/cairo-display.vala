@@ -24,12 +24,14 @@ public class Retro.CairoDisplay : Gtk.DrawingArea {
 	[CCode (cname = "gdk_pixbuf_new_from_video")]
 	static extern Gdk.Pixbuf gdk_pixbuf_new_from_video ([CCode (array_length = false)] uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format);
 
-	public void set_core (Core core) {
+	public void set_core (Core? core) {
 		if (this.core != null)
 			this.core.disconnect (on_video_output_id);
 
 		this.core = core;
-		on_video_output_id = core.video_output.connect (on_video_output);
+
+		if (this.core != null)
+			on_video_output_id = core.video_output.connect (on_video_output);
 	}
 
 	public void set_filter (VideoFilter filter) {

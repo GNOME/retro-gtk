@@ -138,8 +138,6 @@ public class Core : Object {
 	 */
 	public signal bool message (string message, uint frames);
 
-	internal Variables variables_interface;
-
 	internal void *environment_internal;
 
 	/**

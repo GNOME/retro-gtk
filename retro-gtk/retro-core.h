@@ -6,6 +6,7 @@
 #include "retro-disk-control-callback.h"
 #include "retro-gtk-internal.h"
 #include "retro-module.h"
+#include "retro-options.h"
 #include "retro-rotation.h"
 
 G_BEGIN_DECLS
@@ -30,6 +31,7 @@ struct _RetroCoreEnvironmentInternal {
   gdouble sample_rate;
 
   RetroKeyboardCallback keyboard_callback;
+  RetroOptions *options;
 };
 
 gchar *retro_core_get_name (RetroCore *self);

@@ -668,7 +668,7 @@ retro_core_constructor (RetroCore   *self,
   g_free (libretro_path);
 
   retro_core_set_callbacks (self);
-  self->variables_interface = RETRO_VARIABLES (retro_options_new ());
+  internal->options = retro_options_new ();
 }
 
 // FIXME Make static as soon as possible.

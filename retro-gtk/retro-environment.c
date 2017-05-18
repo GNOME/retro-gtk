@@ -195,20 +195,29 @@ static gboolean
 get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
-  gchar *result;
+  RetroCoreEnvironmentInternal *internal;
+  const gchar *value;
 
-  result = retro_variables_get_variable (self->variables_interface,
-                                         variable->key);
-  variable->value = result ? result : "";
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
 
-  return !!result;
+  if (!retro_options_contains (internal->options, variable->key))
+    return FALSE;
+
+  value = retro_options_get_option_value (internal->options, variable->key);
+  variable->value = g_strdup (value); // FIXME Is that a memory leak?
+
+  return TRUE;
 }
 
 static gboolean
 get_variable_update (RetroCore *self,
                      gboolean  *update)
 {
-  *update = retro_variables_get_variable_update (self->variables_interface);
+  RetroCoreEnvironmentInternal *internal;
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  *update = retro_options_get_variable_update (internal->options);
 
   return TRUE;
 }
@@ -299,13 +308,13 @@ static gboolean
 set_variables (RetroCore     *self,
                RetroVariable *variable_array)
 {
-  int length;
+  RetroCoreEnvironmentInternal *internal;
+  int i;
 
-  for (length = 0 ;
-       variable_array[length].key && variable_array[length].value ;
-       length++);
-  retro_variables_set_variable (self->variables_interface,
-                                variable_array, length);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
+    retro_options_insert_variable (internal->options, &variable_array[i]);
 
   return TRUE;
 }

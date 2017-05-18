@@ -38,9 +38,6 @@ libretro_gtk_la_SOURCES = \
 	\
 	loop/main-loop.vala \
 	\
-	variable/options.vala \
-	variable/variables.vala \
-	\
 	core.vala \
 	core-error.vala \
 	memory.vala \
@@ -55,6 +52,8 @@ libretro_gtk_la_SOURCES = \
 	retro-module.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \
+	retro-option.c \
+	retro-options.c \
 	rumble.vala \
 	video.vala \
 	retro-core.c \
@@ -107,6 +106,9 @@ libretro_gtk_la_LIBADD = $(RETRO_GTK_LIBS)
 retro_gtkincludedir = $(includedir)/retro-gtk-0.12
 retro_gtkinclude_HEADERS = \
 	retro-gtk.h \
+	retro-option.h \
+	retro-options.h \
+	retro-variable.h \
 	$(NULL)
 
 # Add unstable API guard

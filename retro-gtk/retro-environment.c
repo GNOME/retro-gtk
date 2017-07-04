@@ -243,6 +243,15 @@ set_input_descriptors (RetroCore            *self,
 }
 
 static gboolean
+set_keyboard_callback (RetroCore             *self,
+                       RetroKeyboardCallback *callback)
+{
+  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->keyboard_callback = *callback;
+
+  return TRUE;
+}
+
+static gboolean
 set_message (RetroCore          *self,
              const RetroMessage *message)
 {
@@ -360,6 +369,9 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
     return set_input_descriptors (self, (RetroInputDescriptor *) data);
 
+  case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
+    return set_keyboard_callback (self, (RetroKeyboardCallback *) data);
+
   case RETRO_ENVIRONMENT_SET_MESSAGE:
     return set_message (self, (RetroMessage *) data);
 
@@ -392,7 +404,6 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
   case RETRO_ENVIRONMENT_SET_GEOMETRY:
   case RETRO_ENVIRONMENT_SET_HW_RENDER:
-  case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
   case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
   case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
   case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:

@@ -180,6 +180,25 @@ retro_core_set_memory (RetroCore       *self,
 }
 
 void
+retro_core_send_input_key_event (RetroCore                *self,
+                                 gboolean                  down,
+                                 RetroKeyboardKey          keycode,
+                                 guint32                   character,
+                                 RetroKeyboardModifierKey  key_modifiers)
+{
+  RetroCoreEnvironmentInternal *environment_internal;
+
+  g_return_if_fail (self != NULL);
+
+  environment_internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (environment_internal->keyboard_callback.callback == NULL)
+    return;
+
+  environment_internal->keyboard_callback.callback (down, keycode, character, key_modifiers);
+}
+
+void
 retro_core_environment_internal_setup (RetroCore *self)
 {
   self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);

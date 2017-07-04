@@ -422,8 +422,12 @@ public class Core : Object {
 		if (!is_initiated)
 			return;
 
-		// TODO Handle the key event.
+		push_cb_data ();
+		send_input_key_event (down, keycode, character, key_modifiers);
+		pop_cb_data ();
 	}
+
+	private extern void send_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
 

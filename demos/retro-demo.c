@@ -14,7 +14,7 @@ struct _RetroDemoApplication
 
   RetroCore *core;
   RetroMainLoop *loop;
-  RetroCairoDisplay *display;
+  RetroCoreView *view;
   RetroPaPlayer *pa_player;
 };
 
@@ -84,15 +84,15 @@ retro_demo_activate (GApplication *application)
 
   g_signal_connect (self->core, "log", (GCallback) retro_g_log, NULL);
 
-  self->display = retro_cairo_display_new ();
-  retro_cairo_display_set_core (self->display, self->core);
+  self->view = retro_core_view_new ();
+  retro_core_view_set_core (self->view, self->core);
 
   self->pa_player = retro_pa_player_new ();
   retro_pa_player_set_core (self->pa_player, self->core);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
-  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (self->display));
+  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (self->view));
 
   gtk_widget_show_all (GTK_WIDGET (window));
   gtk_application_add_window (GTK_APPLICATION (application), GTK_WINDOW (window));

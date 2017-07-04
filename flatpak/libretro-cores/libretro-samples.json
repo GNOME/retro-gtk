@@ -16,7 +16,7 @@
                 },
                 {
                     "type": "file",
-                    "path": "libretro-cores/samples-Makefile",
+                    "path": "samples-Makefile",
                     "dest-filename": "Makefile"
                 }
             ]

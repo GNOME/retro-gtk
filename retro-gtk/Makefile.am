@@ -56,6 +56,7 @@ libretro_gtk_la_SOURCES = \
 	retro.vala \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
+	retro-core-view.vala \
 	retro-log.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \

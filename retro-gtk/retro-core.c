@@ -1,5 +1,7 @@
 // This file is part of Retro. License: GPLv3
 
+#include "retro-core.h"
+
 #include "retro-gtk-internal.h"
 
 gboolean
@@ -175,4 +177,16 @@ retro_core_set_memory (RetroCore       *self,
   g_return_if_fail (memory_region_size == length);
 
   memcpy (memory_region, data, length);
+}
+
+void
+retro_core_environment_internal_setup (RetroCore *self)
+{
+  self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);
+}
+
+void
+retro_core_environment_internal_release (RetroCore *self)
+{
+  g_free (self->environment_internal);
 }

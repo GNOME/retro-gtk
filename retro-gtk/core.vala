@@ -222,6 +222,8 @@ public class Core : Object {
 	internal Rotation rotation;
 	internal double sample_rate;
 
+	internal void *environment_internal;
+
 	/**
 	 * Creates a Core from the file name of a Libretro implementation.
 	 *
@@ -235,6 +237,8 @@ public class Core : Object {
 	}
 
 	construct {
+		environment_internal_setup ();
+
 		libretro_path = File.new_for_path (file_name).resolve_relative_path ("").get_path ();
 
 		module = new Module (libretro_path);
@@ -248,6 +252,8 @@ public class Core : Object {
 			module.unload_game ();
 		module.deinit ();
 		pop_cb_data ();
+
+		environment_internal_release ();
 	}
 
 	/**
@@ -420,6 +426,9 @@ public class Core : Object {
 	}
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
+
+	private extern void environment_internal_setup ();
+	private extern void environment_internal_release ();
 }
 
 }

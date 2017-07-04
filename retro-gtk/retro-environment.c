@@ -68,7 +68,7 @@ on_log (guint level, const gchar *format, ...)
 
     break;
   case RETRO_LOG_LEVEL_INFO:
-    log_level = G_LOG_LEVEL_INFO;
+    log_level = G_LOG_LEVEL_MESSAGE;
 
     break;
   case RETRO_LOG_LEVEL_WARN:

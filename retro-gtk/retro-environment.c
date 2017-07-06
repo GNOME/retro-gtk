@@ -156,7 +156,7 @@ static gboolean
 get_overscan (RetroCore *self,
               gboolean  *overscan)
 {
-  *overscan = FALSE;
+  *overscan = RETRO_CORE_ENVIRONMENT_INTERNAL (self)->overscan;
 
   return TRUE;
 }
@@ -265,7 +265,7 @@ static gboolean
 set_pixel_format (RetroCore              *self,
                   const RetroPixelFormat *pixel_format)
 {
-  self->pixel_format = *pixel_format;
+  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->pixel_format = *pixel_format;
 
   return TRUE;
 }
@@ -274,7 +274,7 @@ static gboolean
 set_rotation (RetroCore           *self,
               const RetroRotation *rotation)
 {
-  self->rotation = *rotation;
+  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->rotation = *rotation;
 
   return TRUE;
 }
@@ -436,6 +436,7 @@ on_video_refresh (guint8 *data,
                   gsize   pitch)
 {
   RetroCore *self;
+  RetroCoreEnvironmentInternal *internal;
 
   if (data == NULL)
     return;
@@ -445,9 +446,11 @@ on_video_refresh (guint8 *data,
   if (self == NULL)
     g_return_if_reached ();
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   g_signal_emit_by_name (self, "video_output", data, pitch * height,
-                         width, height, pitch, self->pixel_format,
-                         self->aspect_ratio);
+                         width, height, pitch, internal->pixel_format,
+                         internal->aspect_ratio);
 }
 
 // TODO This is internal, make it private as soon as possible.
@@ -462,6 +465,7 @@ on_audio_sample (gint16 left,
                  gint16 right)
 {
   RetroCore *self;
+  RetroCoreEnvironmentInternal *internal;
   gint16 samples[] = { left, right };
 
   self = retro_core_get_cb_data ();
@@ -469,10 +473,12 @@ on_audio_sample (gint16 left,
   if (self == NULL)
     g_return_if_reached ();
 
-  if (self->sample_rate <= 0.0)
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (internal->sample_rate <= 0.0)
     return;
 
-  g_signal_emit_by_name (self, "audio_output", samples, 2, self->sample_rate);
+  g_signal_emit_by_name (self, "audio_output", samples, 2, internal->sample_rate);
 }
 
 static gsize
@@ -480,16 +486,19 @@ on_audio_sample_batch (gint16 *data,
                        int     frames)
 {
   RetroCore *self;
+  RetroCoreEnvironmentInternal *internal;
 
   self = retro_core_get_cb_data ();
 
   if (self == NULL)
     g_return_val_if_reached (0);
 
-  if (self->sample_rate <= 0.0)
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (internal->sample_rate <= 0.0)
     return 0;
 
-  g_signal_emit_by_name (self, "audio_output", data, frames * 2, self->sample_rate);
+  g_signal_emit_by_name (self, "audio_output", data, frames * 2, internal->sample_rate);
 
   // FIXME What should be returned?
   return 0;
@@ -583,14 +592,18 @@ void
 retro_core_set_system_av_info (RetroCore         *self,
                                RetroSystemAvInfo *system_av_info)
 {
+  RetroCoreEnvironmentInternal *internal;
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   if (self->_frames_per_second != system_av_info->timing.fps) {
     self->_frames_per_second = system_av_info->timing.fps;
     g_object_notify (G_OBJECT (self), "frames-per-second");
   }
   if (system_av_info->geometry.aspect_ratio > 0.f)
-    self->aspect_ratio = system_av_info->geometry.aspect_ratio;
+    internal->aspect_ratio = system_av_info->geometry.aspect_ratio;
   else
-    self->aspect_ratio = (float) system_av_info->geometry.base_width /
-                         (float) system_av_info->geometry.base_height;
-  self->sample_rate = system_av_info->timing.sample_rate;
+    internal->aspect_ratio = (float) system_av_info->geometry.base_width /
+                             (float) system_av_info->geometry.base_height;
+  internal->sample_rate = system_av_info->timing.sample_rate;
 }

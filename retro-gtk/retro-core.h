@@ -3,7 +3,7 @@
 #ifndef RETRO_CORE_H
 #define RETRO_CORE_H
 
-#include <glib-object.h>
+#include "retro-gtk-internal.h"
 
 G_BEGIN_DECLS
 
@@ -16,6 +16,12 @@ typedef struct {
 typedef struct _RetroCoreEnvironmentInternal RetroCoreEnvironmentInternal;
 
 struct _RetroCoreEnvironmentInternal {
+  gfloat aspect_ratio;
+  gboolean overscan;
+  RetroPixelFormat pixel_format;
+  RetroRotation rotation;
+  gdouble sample_rate;
+
   RetroKeyboardCallback keyboard_callback;
 };
 

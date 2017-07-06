@@ -216,12 +216,6 @@ public class Core : Object {
 	internal Module module;
 	internal Variables variables_interface;
 
-	internal float aspect_ratio;
-	internal bool overscan;
-	internal PixelFormat pixel_format;
-	internal Rotation rotation;
-	internal double sample_rate;
-
 	internal void *environment_internal;
 
 	/**

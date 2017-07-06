@@ -6,6 +6,38 @@
 
 /* Private */
 
+static void
+init_controller_device (guint             port,
+                        RetroInputDevice *device,
+                        gpointer          data)
+{
+  RetroCore *self;
+  RetroDeviceType device_type;
+
+  self = RETRO_CORE (data);
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (device != NULL);
+
+  device_type = retro_input_device_get_device_type (device);
+  retro_core_set_controller_port_device (self, port, device_type);
+}
+
+// FIXME Make static as soon as possible.
+void
+retro_core_init_input (RetroCore* self)
+{
+  RetroInput* input_interface;
+
+  g_return_if_fail (self != NULL);
+
+  input_interface = retro_core_get_input_interface (self);
+  if (input_interface == NULL)
+    return;
+
+  retro_input_foreach_controller (input_interface, init_controller_device, self);
+}
+
 // FIXME Make static as soon as possible.
 void
 retro_core_on_input_controller_connected (RetroCore        *self,

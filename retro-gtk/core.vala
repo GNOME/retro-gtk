@@ -375,18 +375,7 @@ public class Core : Object {
 	 */
 	public extern void set_memory (MemoryType id, uint8[] data);
 
-	private void init_input () {
-		if (input_interface == null)
-			return;
-
-		input_interface.foreach_controller (init_controller_device);
-	}
-
-	private void init_controller_device (uint port, InputDevice device) {
-		var device_type = device.get_device_type ();
-		set_controller_port_device (port, device_type);
-	}
-
+	private extern void init_input ();
 	private extern void on_input_controller_connected (uint port, InputDevice device);
 	private extern void on_input_controller_disconnected (uint port);
 	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);

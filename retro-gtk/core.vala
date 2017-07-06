@@ -395,13 +395,7 @@ public class Core : Object {
 		set_controller_port_device (port, device_type);
 	}
 
-	private void on_input_controller_disconnected (uint port) {
-		if (!is_initiated)
-			return;
-
-		set_controller_port_device (port, DeviceType.NONE);
-	}
-
+	private extern void on_input_controller_disconnected (uint port);
 	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);

@@ -6,6 +6,19 @@
 
 /* Private */
 
+// FIXME Make static as soon as possible.
+void
+retro_core_on_input_controller_disconnected (RetroCore *self,
+                                             guint      port)
+{
+  g_return_if_fail (self != NULL);
+
+  if (!retro_core_get_is_initiated (self))
+    return;
+
+  retro_core_set_controller_port_device (self, port, RETRO_DEVICE_TYPE_NONE);
+}
+
 static void
 retro_core_send_input_key_event (RetroCore                *self,
                                  gboolean                  down,

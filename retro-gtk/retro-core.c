@@ -123,6 +123,19 @@ retro_core_set_controller_port_device (RetroCore       *self,
   retro_core_pop_cb_data ();
 }
 
+void
+retro_core_run (RetroCore* self)
+{
+  RetroRun run;
+
+  g_return_if_fail (self != NULL);
+
+  retro_core_push_cb_data (self);
+  run = retro_module_get_run (self->module);
+  run ();
+  retro_core_pop_cb_data ();
+}
+
 gboolean
 retro_core_supports_serialization (RetroCore *self)
 {

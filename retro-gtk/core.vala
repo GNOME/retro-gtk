@@ -291,11 +291,7 @@ public class Core : Object {
 	 * frame if the can_dupe property of {@link video_interface} is set to true.
 	 * In this case, the video callback can take a null argument for data.
 	 */
-	public void run () {
-		push_cb_data ();
-		module.run ();
-		pop_cb_data ();
-	}
+	public extern void run ();
 
 	public extern bool supports_serialization ();
 

@@ -138,7 +138,7 @@ public class Core : Object {
 	/**
 	 * Whether or not the a game is loaded.
 	 */
-	public bool game_loaded { private set; get; default = false; }
+	public bool game_loaded { internal set; get; default = false; }
 
 	/**
 	 * Whether or not the core supports games.
@@ -334,16 +334,7 @@ public class Core : Object {
 	 *
 	 * @return false if the preparation failed, true otherwise
 	 */
-	public bool prepare () {
-		push_cb_data ();
-		game_loaded = module.load_game (null);
-		SystemAvInfo info;
-		module.get_system_av_info (out info);
-		set_system_av_info (info);
-		pop_cb_data ();
-
-		return game_loaded;
-	}
+	public extern bool prepare ();
 
 	/**
 	 * Gets the size of a region of memory.

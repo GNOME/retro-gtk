@@ -242,6 +242,27 @@ retro_core_deserialize_state (RetroCore  *self,
   }
 }
 
+gboolean
+retro_core_prepare (RetroCore* self) {
+  RetroLoadGame load_game;
+  RetroGetSystemAvInfo get_system_av_info;
+  gboolean game_loaded;
+  RetroSystemAvInfo info = {{ 0 }};
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  retro_core_push_cb_data (self);
+  load_game = retro_module_get_load_game (self->module);
+  game_loaded = load_game (NULL);
+  retro_core_set_game_loaded (self, game_loaded);
+  get_system_av_info = retro_module_get_get_system_av_info (self->module);
+  get_system_av_info (&info);
+  retro_core_set_system_av_info (self, &info);
+  retro_core_pop_cb_data ();
+
+  return game_loaded;
+}
+
 gsize
 retro_core_get_memory_size (RetroCore       *self,
                             RetroMemoryType  id)

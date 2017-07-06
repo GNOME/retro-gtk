@@ -310,22 +310,7 @@ public class Core : Object {
 	 * @param game information to load the game
 	 * @return false if the loading failed, true otherwise
 	 */
-	public bool load_game (GameInfo game) {
-		if (game_loaded) {
-			push_cb_data ();
-			module.unload_game ();
-			pop_cb_data ();
-		}
-
-		push_cb_data ();
-		game_loaded = module.load_game (game);
-		SystemAvInfo info;
-		module.get_system_av_info (out info);
-		set_system_av_info (info);
-		pop_cb_data ();
-
-		return game_loaded;
-	}
+	public extern bool load_game (GameInfo game);
 
 	/**
 	 * Prepare the standalone core.

@@ -243,6 +243,38 @@ retro_core_deserialize_state (RetroCore  *self,
 }
 
 gboolean
+retro_core_load_game (RetroCore     *self,
+                      RetroGameInfo *game)
+{
+  RetroUnloadGame unload_game;
+  RetroLoadGame load_game;
+  RetroGetSystemAvInfo get_system_av_info;
+  gboolean game_loaded;
+  RetroSystemAvInfo info = {{ 0 }};
+
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (game != NULL, FALSE);
+
+  if (retro_core_get_game_loaded (self)) {
+    retro_core_push_cb_data (self);
+    unload_game = retro_module_get_unload_game (self->module);
+    unload_game ();
+    retro_core_pop_cb_data ();
+  }
+
+  retro_core_push_cb_data (self);
+  load_game = retro_module_get_load_game (self->module);
+  game_loaded = load_game (game);
+  retro_core_set_game_loaded (self, game_loaded);
+  get_system_av_info = retro_module_get_get_system_av_info (self->module);
+  get_system_av_info (&info);
+  retro_core_set_system_av_info (self, &info);
+  retro_core_pop_cb_data ();
+
+  return game_loaded;
+}
+
+gboolean
 retro_core_prepare (RetroCore* self) {
   RetroLoadGame load_game;
   RetroGetSystemAvInfo get_system_av_info;

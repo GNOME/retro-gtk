@@ -4,6 +4,47 @@
 
 #include "retro-gtk-internal.h"
 
+/* Private */
+
+static void
+retro_core_send_input_key_event (RetroCore                *self,
+                                 gboolean                  down,
+                                 RetroKeyboardKey          keycode,
+                                 guint32                   character,
+                                 RetroKeyboardModifierKey  key_modifiers)
+{
+  RetroCoreEnvironmentInternal *environment_internal;
+
+  g_return_if_fail (self != NULL);
+
+  environment_internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (environment_internal->keyboard_callback.callback == NULL)
+    return;
+
+  environment_internal->keyboard_callback.callback (down, keycode, character, key_modifiers);
+}
+
+// FIXME Make static as soon as possible.
+void
+retro_core_on_input_key_event (RetroCore                *self,
+                               gboolean                  down,
+                               RetroKeyboardKey          keycode,
+                               guint32                   character,
+                               RetroKeyboardModifierKey  key_modifiers)
+{
+  g_return_if_fail (self != NULL);
+
+  if (!retro_core_get_is_initiated (self))
+    return;
+
+  retro_core_push_cb_data (self);
+  retro_core_send_input_key_event (self, down, keycode, character, key_modifiers);
+  retro_core_pop_cb_data ();
+}
+
+/* Public */
+
 gboolean
 retro_core_supports_serialization (RetroCore *self)
 {
@@ -177,25 +218,6 @@ retro_core_set_memory (RetroCore       *self,
   g_return_if_fail (memory_region_size == length);
 
   memcpy (memory_region, data, length);
-}
-
-void
-retro_core_send_input_key_event (RetroCore                *self,
-                                 gboolean                  down,
-                                 RetroKeyboardKey          keycode,
-                                 guint32                   character,
-                                 RetroKeyboardModifierKey  key_modifiers)
-{
-  RetroCoreEnvironmentInternal *environment_internal;
-
-  g_return_if_fail (self != NULL);
-
-  environment_internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (environment_internal->keyboard_callback.callback == NULL)
-    return;
-
-  environment_internal->keyboard_callback.callback (down, keycode, character, key_modifiers);
 }
 
 void

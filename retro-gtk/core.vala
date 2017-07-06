@@ -412,16 +412,7 @@ public class Core : Object {
 		set_controller_port_device (port, DeviceType.NONE);
 	}
 
-	private void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers) {
-		if (!is_initiated)
-			return;
-
-		push_cb_data ();
-		send_input_key_event (down, keycode, character, key_modifiers);
-		pop_cb_data ();
-	}
-
-	private extern void send_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
 

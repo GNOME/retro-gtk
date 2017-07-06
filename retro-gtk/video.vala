@@ -3,16 +3,6 @@
 namespace Retro {
 
 /**
- * The rotation type of a display.
- */
-public enum Rotation {
-	NONE,
-	COUNTERCLOCKWISE,
-	UPSIDEDOWN,
-	CLOCKWISE
-}
-
-/**
  * Pixel formats used by Libretro.
  */
 public enum PixelFormat {

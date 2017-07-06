@@ -4,6 +4,7 @@
 #define RETRO_CORE_H
 
 #include "retro-gtk-internal.h"
+#include "retro-rotation.h"
 
 G_BEGIN_DECLS
 

@@ -17,6 +17,7 @@ typedef struct {
 typedef struct _RetroCoreEnvironmentInternal RetroCoreEnvironmentInternal;
 
 struct _RetroCoreEnvironmentInternal {
+  gchar **media_uris;
   gfloat aspect_ratio;
   gboolean overscan;
   RetroPixelFormat pixel_format;

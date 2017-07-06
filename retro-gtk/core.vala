@@ -266,6 +266,8 @@ public class Core : Object {
 		is_initiated = true;
 	}
 
+	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);
+
 	public extern void set_controller_port_device (uint port, DeviceType device);
 
 	/**

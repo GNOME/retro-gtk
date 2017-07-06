@@ -109,6 +109,23 @@ retro_core_on_input_key_event (RetroCore                *self,
 /* Public */
 
 void
+retro_core_set_medias (RetroCore  *self,
+                       gchar     **uris)
+{
+  RetroCoreEnvironmentInternal *internal;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (!retro_core_get_is_initiated (self));
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (internal->media_uris != NULL)
+    g_strfreev (internal->media_uris);
+
+  internal->media_uris = g_strdupv (uris);
+}
+
+void
 retro_core_set_controller_port_device (RetroCore       *self,
                                        guint            port,
                                        RetroDeviceType  device)
@@ -403,5 +420,14 @@ retro_core_environment_internal_setup (RetroCore *self)
 void
 retro_core_environment_internal_release (RetroCore *self)
 {
+  RetroCoreEnvironmentInternal *internal;
+
+  g_return_if_fail (self != NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (internal->media_uris != NULL)
+    g_strfreev (internal->media_uris);
+
   g_free (self->environment_internal);
 }

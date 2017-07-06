@@ -25,6 +25,10 @@ struct _RetroCoreEnvironmentInternal {
   RetroKeyboardCallback keyboard_callback;
 };
 
+void retro_core_set_controller_port_device (RetroCore       *self,
+                                            guint            port,
+                                            RetroDeviceType  device);
+
 G_END_DECLS
 
 #endif /* RETRO_CORE_H */

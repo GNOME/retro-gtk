@@ -45,6 +45,21 @@ retro_core_on_input_key_event (RetroCore                *self,
 
 /* Public */
 
+void
+retro_core_set_controller_port_device (RetroCore       *self,
+                                       guint            port,
+                                       RetroDeviceType  device)
+{
+  RetroSetControllerPortDevice set_controller_port_device;
+
+  g_return_if_fail (self != NULL);
+
+  retro_core_push_cb_data (self);
+  set_controller_port_device = retro_module_get_set_controller_port_device (self->module);
+  set_controller_port_device (port, device);
+  retro_core_pop_cb_data ();
+}
+
 gboolean
 retro_core_supports_serialization (RetroCore *self)
 {

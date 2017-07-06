@@ -266,17 +266,7 @@ public class Core : Object {
 		is_initiated = true;
 	}
 
-	/**
-	 * Sets device to be used for player 'port'.
-	 *
-	 * @param port the port on wich to connect a device
-	 * @param device the type of the device connected
-	 */
-	public void set_controller_port_device (uint port, DeviceType device) {
-		push_cb_data ();
-		module.set_controller_port_device (port, device);
-		pop_cb_data ();
-	}
+	public extern void set_controller_port_device (uint port, DeviceType device);
 
 	/**
 	 * Resets the current game.

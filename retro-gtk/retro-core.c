@@ -8,6 +8,24 @@
 
 // FIXME Make static as soon as possible.
 void
+retro_core_on_input_controller_connected (RetroCore        *self,
+                                          guint             port,
+                                          RetroInputDevice *device)
+{
+  RetroDeviceType device_type;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (device != NULL);
+
+  if (!retro_core_get_is_initiated (self))
+    return;
+
+  device_type = retro_input_device_get_device_type (device);
+  retro_core_set_controller_port_device (self, port, device_type);
+}
+
+// FIXME Make static as soon as possible.
+void
 retro_core_on_input_controller_disconnected (RetroCore *self,
                                              guint      port)
 {

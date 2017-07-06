@@ -387,14 +387,7 @@ public class Core : Object {
 		set_controller_port_device (port, device_type);
 	}
 
-	private void on_input_controller_connected (uint port, InputDevice device) {
-		if (!is_initiated)
-			return;
-
-		var device_type = device.get_device_type ();
-		set_controller_port_device (port, device_type);
-	}
-
+	private extern void on_input_controller_connected (uint port, InputDevice device);
 	private extern void on_input_controller_disconnected (uint port);
 	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 

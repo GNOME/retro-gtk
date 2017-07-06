@@ -124,6 +124,19 @@ retro_core_set_controller_port_device (RetroCore       *self,
 }
 
 void
+retro_core_reset (RetroCore* self)
+{
+  RetroReset reset;
+
+  g_return_if_fail (self != NULL);
+
+  retro_core_push_cb_data (self);
+  reset = retro_module_get_reset (self->module);
+  reset ();
+  retro_core_pop_cb_data ();
+}
+
+void
 retro_core_run (RetroCore* self)
 {
   RetroRun run;

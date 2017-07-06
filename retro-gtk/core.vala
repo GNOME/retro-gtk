@@ -271,11 +271,7 @@ public class Core : Object {
 	/**
 	 * Resets the current game.
 	 */
-	public void reset () {
-		push_cb_data ();
-		module.reset ();
-		pop_cb_data ();
-	}
+	public extern void reset ();
 
 	/**
 	 * Runs the game for one video frame.

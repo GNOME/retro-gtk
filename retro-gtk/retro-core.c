@@ -242,6 +242,23 @@ retro_core_deserialize_state (RetroCore  *self,
   }
 }
 
+gsize
+retro_core_get_memory_size (RetroCore       *self,
+                            RetroMemoryType  id)
+{
+  gsize size;
+  RetroGetMemorySize get_memory_size;
+
+  g_return_val_if_fail (self != NULL, 0UL);
+
+  retro_core_push_cb_data (self);
+  get_memory_size = retro_module_get_get_memory_size (self->module);
+  size = get_memory_size (id);
+  retro_core_pop_cb_data ();
+
+  return size;
+}
+
 guint8 *
 retro_core_get_memory (RetroCore       *self,
                        RetroMemoryType  id,

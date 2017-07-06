@@ -351,13 +351,7 @@ public class Core : Object {
 	 * @param id the region of memory
 	 * @return the size of the region of memory
 	 */
-	public size_t get_memory_size (MemoryType id) {
-		push_cb_data ();
-		var result = module.get_memory_size (id);
-		pop_cb_data ();
-
-		return result;
-	}
+	public extern size_t get_memory_size (MemoryType id);
 
 	/**
 	 * Gets a region of memory.

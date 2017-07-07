@@ -155,7 +155,7 @@ public class Core : Object {
 	 *
 	 * The Core can set it to let the frontend insert and eject disks images.
 	 */
-	public DiskControl disk_control_interface { internal set; get; }
+	internal DiskControl disk_control_interface { set; get; }
 
 	private weak Input _input_interface;
 	private ulong input_controller_connected_id;
@@ -264,6 +264,13 @@ public class Core : Object {
 		init_input ();
 
 		is_initiated = true;
+
+		try {
+			load_medias ();
+		}
+		catch (Error e) {
+			debug (e.message);
+		}
 	}
 
 	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);
@@ -308,7 +315,7 @@ public class Core : Object {
 	 * @param game information to load the game
 	 * @return false if the loading failed, true otherwise
 	 */
-	public extern bool load_game (GameInfo game);
+	private extern bool load_game (GameInfo game);
 
 	/**
 	 * Prepare the standalone core.
@@ -317,7 +324,7 @@ public class Core : Object {
 	 *
 	 * @return false if the preparation failed, true otherwise
 	 */
-	public extern bool prepare ();
+	private extern bool prepare ();
 
 	/**
 	 * Gets the size of a region of memory.

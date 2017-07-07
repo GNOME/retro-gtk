@@ -268,6 +268,10 @@ public class Core : Object {
 
 	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);
 
+	public extern void set_current_media (uint media_index) throws Error;
+
+	private extern void load_medias () throws Error;
+
 	public extern void set_controller_port_device (uint port, DeviceType device);
 
 	/**

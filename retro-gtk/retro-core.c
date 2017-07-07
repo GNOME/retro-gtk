@@ -106,6 +106,171 @@ retro_core_on_input_key_event (RetroCore                *self,
   retro_core_pop_cb_data ();
 }
 
+static void
+retro_core_load_discs (RetroCore  *self,
+                       GError    **error)
+{
+  RetroDiskControl *disk_control;
+  RetroCoreEnvironmentInternal *internal;
+  guint length;
+  gboolean fullpath;
+  GFile *file;
+  gchar *path;
+  RetroSystemInfo system_info = { 0 };
+  guint index;
+  RetroGameInfo game_info = { 0 };
+  GError *tmp_error = NULL;
+
+  g_return_if_fail (self != NULL);
+
+  disk_control = retro_core_get_disk_control_interface (self);
+
+  retro_disk_control_set_eject_state (disk_control, TRUE, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+  length = g_strv_length (internal->media_uris);
+  while (retro_disk_control_get_num_images (disk_control, &tmp_error) < length &&
+         (tmp_error != NULL)) {
+    retro_disk_control_add_image_index (disk_control, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
+
+      return;
+    }
+  }
+
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+
+  retro_core_get_system_info (self, &system_info);
+  fullpath = system_info.need_fullpath;
+  for (index = 0; index < length; index++) {
+    file = g_file_new_for_uri (internal->media_uris[index]);
+    path = g_file_get_path (file);
+
+    if (fullpath) {
+      retro_game_info_destroy (&game_info);
+      retro_game_info_init (&game_info, path);
+    }
+    else {
+      retro_game_info_destroy (&game_info);
+      retro_game_info_init_with_data (&game_info, path, &tmp_error);
+      if (G_UNLIKELY (tmp_error != NULL)) {
+        g_propagate_error (error, tmp_error);
+
+        retro_game_info_destroy (&game_info);
+        g_free (path);
+        g_object_unref (file);
+        return;
+      }
+    }
+
+    retro_disk_control_replace_image_index (disk_control, index, &game_info, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
+
+      retro_game_info_destroy (&game_info);
+      g_free (path);
+      g_object_unref (file);
+
+      return;
+    }
+
+    retro_game_info_destroy (&game_info);
+    g_free (path);
+    g_object_unref (file);
+  }
+
+  retro_disk_control_set_eject_state (disk_control, FALSE, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+}
+
+// FIXME Make static as soon as possible.
+void
+retro_core_load_medias (RetroCore* self,
+                        GError** error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  guint length;
+  gchar *uri;
+  GFile *file;
+  gchar *path;
+  gboolean fullpath;
+  RetroSystemInfo system_info = { 0 };
+  RetroGameInfo game_info = { 0 };
+  GError *tmp_error = NULL;
+
+  g_return_if_fail (self != NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+  length = g_strv_length (internal->media_uris);
+
+  if (length == 0) {
+    retro_core_prepare (self);
+
+    return;
+  }
+
+  uri = g_strdup (internal->media_uris[0]);
+  file = g_file_new_for_uri (uri);
+  path = g_file_get_path (file);
+  retro_core_get_system_info (self, &system_info);
+  fullpath = system_info.need_fullpath;
+  if (fullpath) {
+    retro_game_info_destroy (&game_info);
+    retro_game_info_init (&game_info, path);
+  }
+  else {
+    retro_game_info_destroy (&game_info);
+    retro_game_info_init_with_data (&game_info, path, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
+      retro_game_info_destroy (&game_info);
+      g_free (path);
+      g_object_unref (file);
+      g_free (uri);
+
+      return;
+    }
+  }
+  if (!retro_core_load_game (self, &game_info)) {
+    retro_game_info_destroy (&game_info);
+    g_free (path);
+    g_object_unref (file);
+    g_free (uri);
+
+    return;
+  }
+  if (retro_core_get_disk_control_interface (self) != NULL) {
+    retro_core_load_discs (self, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
+      retro_game_info_destroy (&game_info);
+      g_free (path);
+      g_object_unref (file);
+      g_free (uri);
+
+      return;
+    }
+  }
+  retro_game_info_destroy (&game_info);
+  g_free (path);
+  g_object_unref (file);
+  g_free (uri);
+}
+
 /* Public */
 
 void
@@ -123,6 +288,50 @@ retro_core_set_medias (RetroCore  *self,
     g_strfreev (internal->media_uris);
 
   internal->media_uris = g_strdupv (uris);
+}
+
+void
+retro_core_set_current_media (RetroCore  *self,
+                              guint       media_index,
+                              GError    **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControl *disk_control;
+  guint length;
+  GError *tmp_error = NULL;
+
+  g_return_if_fail (self != NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+  length = g_strv_length (internal->media_uris);
+
+  g_return_if_fail (media_index < length);
+
+  disk_control = retro_core_get_disk_control_interface (self);
+
+  if (disk_control == NULL)
+    return;
+
+  retro_disk_control_set_eject_state (disk_control, TRUE, &tmp_error);
+  if (tmp_error != NULL) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+
+  retro_disk_control_set_image_index (disk_control, media_index, &tmp_error);
+  if (tmp_error != NULL) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+
+  retro_disk_control_set_eject_state (disk_control, FALSE, &tmp_error);
+  if (tmp_error != NULL) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
 }
 
 void

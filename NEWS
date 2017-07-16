@@ -1,4 +1,44 @@
 ==============
+Version 0.11.4
+==============
+
+* A demo application has been added, it allows to directly test the
+  without the need of an external tool.
+
+* Loading games:
+ - Add the set_medias(), load_medias() and set_current_media() methods
+   to Core and load the given medias (if any) in Core.init().
+ - Remove load_game() and prepare() Core methods from the public API as
+   they are now used indirectly.
+ - This should simplify loading games for the users of the library.
+
+* Logging:
+ - Add the Core.log() signal which will emit a GLib compatible logging
+   message with the Libretro core's name as the log domain.
+ - Add retro_g_log() to simply handle Core.log() by outputing the logs
+   in the expected unstructured GLib fashion.
+ - Remove LogLevel, Log and FileStreamLog as they are now useless.
+
+* Add CoreView as a prototype of a single widget to handle most inputs
+  and outputs of a core and use it in the demo.
+
+* Add CoreDescriptor.get_uri().
+
+* Make CairoDisplay.set_core() and Make PaPlayer.set_core() accept null.
+
+* Fix the transmission of keyboard events to the Libretro core.
+
+* Rotation and many methods of Core are ported to C.
+
+* Bugs fixed:
+ 777489 Refactor the whole API
+ 780919 Add a demo application
+ 782501 retro-gtk: Port to C
+ 782504 retro-gtk: Improve Libretro core logging
+ 782505 retro-gtk: (on_input_state): should not be reached
+ 782772 retro: Libretro cores should have an appropriate save directory
+
+==============
 Version 0.10.0
 ==============
 

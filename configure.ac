@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(retro-gtk, 0.11.4)
+AC_INIT(retro-gtk, 0.11.4.1)
 
 AC_CONFIG_HEADERS([config.h])
 

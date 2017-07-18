@@ -146,6 +146,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.12.pc
 
 EXTRA_DIST = \
+	retro-core.h \
+	retro-rotation.h \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \
 	$(NULL)

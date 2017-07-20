@@ -133,7 +133,7 @@ public class Core : Object {
 
 			input_interface.controller_connected.connect (on_input_controller_connected);
 			input_interface.controller_disconnected.connect (on_input_controller_disconnected);
-			input_interface.key_event.connect (on_input_key_event);
+			input_interface.key_event.connect (on_key_event);
 
 			if (is_initiated)
 				init_input ();
@@ -250,7 +250,7 @@ public class Core : Object {
 	private extern void init_input ();
 	private extern void on_input_controller_connected (uint port, InputDevice device);
 	private extern void on_input_controller_disconnected (uint port);
-	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+	private extern bool on_key_event (Gdk.EventKey event);
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
 }

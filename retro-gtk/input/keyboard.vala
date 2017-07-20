@@ -3,7 +3,7 @@
 /**
  * Key types to feed to a {@link Core} via {@link Input.key_event}.
  */
-public enum Retro.KeyboardKey {
+private enum Retro.KeyboardKey {
 	UNKNOWN        = 0,
 	FIRST          = 0,
 	BACKSPACE      = 8,
@@ -154,7 +154,7 @@ public enum Retro.KeyboardKey {
  * Modifier key types to feed to a {@link Core} via {@link Input.key_event}.
  */
 [Flags]
-public enum Retro.KeyboardModifierKey {
+private enum Retro.KeyboardModifierKey {
 	NONE       = 0x0000,
 
 	SHIFT      = 0x01,
@@ -170,18 +170,18 @@ public enum Retro.KeyboardModifierKey {
 public class Retro.Keyboard : Object {
 	public Gtk.Widget widget { get; construct; }
 
-	public signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+	public signal bool key_event (Gdk.EventKey event);
 
 	public Keyboard (Gtk.Widget widget) {
 		Object (widget: widget);
 	}
 
 	construct {
-		widget.key_press_event.connect ((w, e) => on_key_event (e, true));
-		widget.key_release_event.connect ((w, e) => on_key_event (e, false));
+		widget.key_press_event.connect ((w, e) => key_event (e));
+		widget.key_release_event.connect ((w, e) => key_event (e));
 	}
 
-	private KeyboardModifierKey modifier_key_converter (uint keyval, Gdk.ModifierType modifiers) {
+	internal static KeyboardModifierKey modifier_key_converter (uint keyval, Gdk.ModifierType modifiers) {
 		var retro_modifiers = KeyboardModifierKey.NONE;
 		if ((bool) (modifiers & Gdk.ModifierType.SHIFT_MASK))
 			retro_modifiers |= KeyboardModifierKey.SHIFT;
@@ -200,7 +200,7 @@ public class Retro.Keyboard : Object {
 		return retro_modifiers;
 	}
 
-	private KeyboardKey key_converter (uint keyval) {
+	internal static KeyboardKey key_converter (uint keyval) {
 		// Common keys (0x0020 to 0x00fe)
 		if (keyval < 0x80) {
 			var key = (0x7f & keyval);
@@ -317,16 +317,5 @@ public class Retro.Keyboard : Object {
 			default:
 				return KeyboardKey.UNKNOWN;
 		}
-	}
-
-	private bool on_key_event (Gdk.EventKey event, bool pressed) {
-		key_event (
-			pressed,
-			key_converter (event.keyval),
-			event.str.to_utf8 ()[0],
-			modifier_key_converter (event.keyval, event.state)
-		);
-
-		return false;
 	}
 }

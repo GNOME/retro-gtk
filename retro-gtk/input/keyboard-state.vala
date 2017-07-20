@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-public class Retro.KeyboardState : Object {
+private class Retro.KeyboardState : Object {
 	public Gtk.Widget widget { get; construct; }
 
 	private HashTable<uint?, bool?> key_state;

@@ -11,15 +11,7 @@ public interface Input : Object {
 	public signal void controller_connected (uint port, InputDevice device);
 	public signal void controller_disconnected (uint port);
 
-	/**
-	 * Warns of keyboard events.
-	 *
-	 * @param down whether the key has been pressed or released
-	 * @param keycode the core of the key
-	 * @param character the character of the key
-	 * @param key_modifiers the modifier key which are held
-	 */
-	public signal void key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
+	public signal bool key_event (Gdk.EventKey event);
 
 	/**
 	 * Asks the frontend to poll inputs.

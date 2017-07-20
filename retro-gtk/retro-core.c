@@ -160,21 +160,35 @@ retro_core_send_input_key_event (RetroCore                *self,
 }
 
 // FIXME Make static as soon as possible.
-void
-retro_core_on_input_key_event (RetroCore                *self,
-                               gboolean                  down,
-                               RetroKeyboardKey          keycode,
-                               guint32                   character,
-                               RetroKeyboardModifierKey  key_modifiers)
+gboolean
+retro_core_on_key_event (RetroCore   *self,
+                         GdkEventKey *event)
 {
-  g_return_if_fail (self != NULL);
+  gboolean pressed;
+  RetroKeyboardKey retro_key;
+  RetroKeyboardModifierKey retro_modifier_key;
+  guint32 character;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
 
   if (!retro_core_get_is_initiated (self))
-    return;
+    return FALSE;
+
+  pressed = event->type == GDK_KEY_PRESS;
+  retro_key = retro_keyboard_key_converter (event->keyval);
+  retro_modifier_key = retro_keyboard_modifier_key_converter (event->keyval, event->state);
+  character = gdk_keyval_to_unicode (event->keyval);
 
   retro_core_push_cb_data (self);
-  retro_core_send_input_key_event (self, down, keycode, character, key_modifiers);
+  retro_core_send_input_key_event (self,
+                                   pressed,
+                                   retro_key,
+                                   character,
+                                   retro_modifier_key);
   retro_core_pop_cb_data ();
+
+  return FALSE;
 }
 
 static void

@@ -49,9 +49,7 @@ public class InputDeviceManager : Object, Input {
 	public void set_keyboard (Keyboard keyboard) {
 		this.keyboard = keyboard;
 
-		keyboard.key_event.connect ((p, k, c, m) => {
-			key_event (p, k, c, m);
-		});
+		keyboard.key_event.connect ((k, e) => key_event (e));
 	}
 
 	public void remove_controller_device (uint port) {

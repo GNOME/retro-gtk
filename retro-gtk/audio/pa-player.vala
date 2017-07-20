@@ -1,4 +1,4 @@
-// This file is part of retro-gtk. License: GPLv3
+// This file is part of retro-gtk. License: GPL-3.0+.
 
 public class Retro.PaPlayer : GLib.Object {
 	private Core core;

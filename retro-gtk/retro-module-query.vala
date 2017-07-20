@@ -1,4 +1,4 @@
-// This file is part of retro-gtk. License: GPLv3
+// This file is part of retro-gtk. License: GPL-3.0+.
 
 public class Retro.ModuleQuery {
 	private const string ENV_PLUGIN_PATH = "LIBRETRO_PLUGIN_PATH";

@@ -1,4 +1,4 @@
-// This file is part of retro-gtk. License: GPLv3
+// This file is part of retro-gtk. License: GPL-3.0+.
 
 /**
  * Key types to feed to a {@link Core} via {@link Input.key_event}.

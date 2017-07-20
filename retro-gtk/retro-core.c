@@ -1,4 +1,4 @@
-// This file is part of Retro. License: GPLv3
+// This file is part of retro-gtk. License: GPL-3.0+.
 
 #include "retro-core.h"
 

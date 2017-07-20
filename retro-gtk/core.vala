@@ -89,15 +89,14 @@ public class Core : Object {
 	}
 
 
+	private extern SystemInfo get_system_info_real (out unowned SystemInfo system_info);
 	/**
 	 * The system informations.
 	 */
 	public SystemInfo system_info {
 		get {
-			push_cb_data ();
 			unowned SystemInfo info;
-			module.get_system_info (out info);
-			pop_cb_data ();
+			get_system_info_real (out info);
 			return info;
 		}
 	}

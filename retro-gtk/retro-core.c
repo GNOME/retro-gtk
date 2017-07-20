@@ -340,6 +340,22 @@ retro_core_get_api_version_real (RetroCore *self)
   return result;
 }
 
+// FIXME Make static as soon as possible.
+void
+retro_core_get_system_info_real (RetroCore       *self,
+                                 RetroSystemInfo *system_info)
+{
+  RetroGetSystemInfo get_system_info;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (system_info != NULL);
+
+  retro_core_push_cb_data (self);
+  get_system_info = retro_module_get_get_system_info (self->module);
+  get_system_info (system_info);
+  retro_core_pop_cb_data ();
+}
+
 void retro_core_set_environment_interface (RetroCore *self);
 void retro_core_set_callbacks (RetroCore *self);
 

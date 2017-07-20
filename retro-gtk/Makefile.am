@@ -39,6 +39,7 @@ libretro_gtk_la_SOURCES = \
 	input/keyboard.vala \
 	input/keyboard-state.vala \
 	input/mouse.vala \
+	input/retro-keyboard-key.c \
 	input/virtual-gamepad.vala \
 	\
 	loop/main-loop.vala \
@@ -146,6 +147,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.12.pc
 
 EXTRA_DIST = \
+	input/retro-keyboard-key.h \
 	retro-core.h \
 	retro-rotation.h \
 	retro-gtk-0.12.pc.in \

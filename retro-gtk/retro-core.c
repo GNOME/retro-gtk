@@ -3,6 +3,7 @@
 #include "retro-core.h"
 
 #include "retro-gtk-internal.h"
+#include "input/retro-keyboard-key.h"
 
 /* Private */
 

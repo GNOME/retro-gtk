@@ -310,23 +310,6 @@ public class Core : Object {
 	public extern void deserialize_state ([CCode (array_length_type = "gsize")] uint8[] data) throws Error;
 
 	/**
-	 * Load. a game.
-	 *
-	 * @param game information to load the game
-	 * @return false if the loading failed, true otherwise
-	 */
-	private extern bool load_game (GameInfo game);
-
-	/**
-	 * Prepare the standalone core.
-	 *
-	 * This should be used instead of load_game() for standalone cores.
-	 *
-	 * @return false if the preparation failed, true otherwise
-	 */
-	private extern bool prepare ();
-
-	/**
 	 * Gets the size of a region of memory.
 	 *
 	 * @param id the region of memory

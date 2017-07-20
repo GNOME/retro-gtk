@@ -77,6 +77,7 @@ public class Core : Object {
 		return result;
 	}
 
+	private extern uint get_api_version_real ();
 	/**
 	 * The version of Libretro used by the module.
 	 *
@@ -84,13 +85,9 @@ public class Core : Object {
 	 * compatibility.
 	 */
 	public uint api_version {
-		get {
-			push_cb_data ();
-			var result = module.api_version ();
-			pop_cb_data ();
-			return result;
-		}
+		get { return get_api_version_real (); }
 	}
+
 
 	/**
 	 * The system informations.

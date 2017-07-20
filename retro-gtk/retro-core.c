@@ -323,6 +323,23 @@ retro_core_load_medias (RetroCore* self,
   g_free (uri);
 }
 
+// FIXME Make static as soon as possible.
+guint
+retro_core_get_api_version_real (RetroCore *self)
+{
+  guint result;
+  RetroApiVersion api_version;
+
+  g_return_val_if_fail (self != NULL, 0U);
+
+  retro_core_push_cb_data (self);
+  api_version = retro_module_get_api_version (self->module);
+  result = api_version ();
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
 void retro_core_set_environment_interface (RetroCore *self);
 void retro_core_set_callbacks (RetroCore *self);
 

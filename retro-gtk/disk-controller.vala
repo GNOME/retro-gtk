@@ -39,9 +39,9 @@ public class DiskControl: Object {
 	 *
 	 * @param ejected the desired eject state
 	 * @return //true// on successfully changed eject state, //false// otherwise
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool set_eject_state (bool ejected) throws CbError {
+	public bool set_eject_state (bool ejected) throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -60,9 +60,9 @@ public class DiskControl: Object {
 	 * See {@link set_eject_state} for more informations.
 	 *
 	 * @return the current eject state
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool get_eject_state () throws CbError {
+	public bool get_eject_state () throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -85,9 +85,9 @@ public class DiskControl: Object {
 	 *
 	 * @param image_index the desired image index
 	 * @return //true// on successfully changed image index, //false// otherwise
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool set_image_index (uint image_index) throws CbError {
+	public bool set_image_index (uint image_index) throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -104,9 +104,9 @@ public class DiskControl: Object {
 	 * Gets the current disk index.
 	 *
 	 * @return the current image index
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public uint get_image_index () throws CbError {
+	public uint get_image_index () throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -123,9 +123,9 @@ public class DiskControl: Object {
 	 * Gets the total number of images which are available to use.
 	 *
 	 * @return total number of images available to use
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public uint get_num_images () throws CbError {
+	public uint get_num_images () throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -149,9 +149,9 @@ public class DiskControl: Object {
 	 * @param index index of the disk image to replace
 	 * @param info information on the disk image to use
 	 * @return //true// on successfully replaced image, //false// otherwise
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool replace_image_index (uint index, GameInfo info) throws CbError {
+	public bool replace_image_index (uint index, GameInfo info) throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -178,9 +178,9 @@ public class DiskControl: Object {
 	 *
 	 * @param index index of the disk image to remove
 	 * @return //true// on successfully removed index, //false// otherwise
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool remove_image_index (uint index) throws CbError {
+	public bool remove_image_index (uint index) throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 
@@ -205,9 +205,9 @@ public class DiskControl: Object {
 	 * {@link replace_image_index}.
 	 *
 	 * @return //true// on successfully added index, //false// otherwise
-	 * @throws CbError the core or its callback couldn't be found
+	 * @throws Error the core or its callback couldn't be found
 	 */
-	public bool add_image_index () throws CbError {
+	public bool add_image_index () throws Error {
 		if (core == null)
 			throw new CbError.NO_CORE ("DiskControl has no core");
 

@@ -14,7 +14,7 @@ private const string ENV_PLUGIN_PATH = "RETRO_PLUGIN_PATH_1_0";
  * Error type thrown by interfaces when accessing one of their Core's
  * callback.
  */
-public errordomain CbError {
+private errordomain CbError {
 	NO_CORE,
 	NO_CALLBACK
 }

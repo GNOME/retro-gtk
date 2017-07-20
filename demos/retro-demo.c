@@ -44,7 +44,7 @@ retro_demo_open (GApplication  *application,
   if (self->core == NULL)
     return;
 
-  g_signal_emit_by_name (self->core, "init");
+  retro_core_init (self->core);
 
   g_application_activate (application);
 }

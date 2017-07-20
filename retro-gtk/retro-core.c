@@ -323,6 +323,33 @@ retro_core_load_medias (RetroCore* self,
   g_free (uri);
 }
 
+// FIXME Make static as soon as possible.
+void
+retro_core_destructor (RetroCore *self)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroUnloadGame unload_game;
+  RetroDeinit deinit;
+
+  g_return_if_fail (self != NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  retro_core_push_cb_data (self);
+  if (retro_core_get_game_loaded (self)) {
+    unload_game = retro_module_get_unload_game (self->module);
+    unload_game ();
+  }
+  deinit = retro_module_get_deinit (self->module);
+  deinit ();
+  retro_core_pop_cb_data ();
+
+  if (internal->media_uris != NULL)
+    g_strfreev (internal->media_uris);
+
+  g_free (self->environment_internal);
+}
+
 /* Public */
 
 void
@@ -651,19 +678,4 @@ void
 retro_core_environment_internal_setup (RetroCore *self)
 {
   self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);
-}
-
-void
-retro_core_environment_internal_release (RetroCore *self)
-{
-  RetroCoreEnvironmentInternal *internal;
-
-  g_return_if_fail (self != NULL);
-
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (internal->media_uris != NULL)
-    g_strfreev (internal->media_uris);
-
-  g_free (self->environment_internal);
 }

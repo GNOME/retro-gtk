@@ -241,14 +241,10 @@ public class Core : Object {
 	}
 
 	~Core () {
-		push_cb_data ();
-		if (game_loaded)
-			module.unload_game ();
-		module.deinit ();
-		pop_cb_data ();
-
-		environment_internal_release ();
+		destructor ();
 	}
+
+	private extern void destructor ();
 
 	/**
 	 * Initializes the module.
@@ -323,7 +319,6 @@ public class Core : Object {
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
 
 	private extern void environment_internal_setup ();
-	private extern void environment_internal_release ();
 }
 
 }

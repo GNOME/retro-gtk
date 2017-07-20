@@ -323,6 +323,42 @@ retro_core_load_medias (RetroCore* self,
   g_free (uri);
 }
 
+void retro_core_set_environment_interface (RetroCore *self);
+void retro_core_set_callbacks (RetroCore *self);
+
+// FIXME Make static as soon as possible.
+void
+retro_core_constructor (RetroCore   *self,
+                        const gchar *file_name)
+{
+  GFile *file;
+  GFile *relative_path_file;
+  gchar *libretro_path;
+
+  g_return_if_fail (file_name != NULL);
+
+  retro_core_set_file_name (self, file_name);
+
+  self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);
+
+  file = g_file_new_for_path (file_name);
+  relative_path_file = g_file_resolve_relative_path (file, "");
+
+  g_object_unref (file);
+
+  libretro_path = g_file_get_path (relative_path_file);
+
+  g_object_unref (relative_path_file);
+
+  retro_core_set_libretro_path (self, libretro_path);
+  self->module = retro_module_new (libretro_path);
+
+  g_free (libretro_path);
+
+  retro_core_set_callbacks (self);
+  self->variables_interface = RETRO_VARIABLES (retro_options_new ());
+}
+
 // FIXME Make static as soon as possible.
 void
 retro_core_destructor (RetroCore *self)
@@ -672,10 +708,4 @@ retro_core_set_memory (RetroCore       *self,
   g_return_if_fail (memory_region_size == length);
 
   memcpy (memory_region, data, length);
-}
-
-void
-retro_core_environment_internal_setup (RetroCore *self)
-{
-  self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);
 }

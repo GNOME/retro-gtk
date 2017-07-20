@@ -108,7 +108,7 @@ public class Core : Object {
 	/**
 	 * The file name of the module.
 	 */
-	public string file_name { construct; get; }
+	public string file_name { internal set; get; }
 
 	/**
 	 * The directory the core will use to look for for additional data.
@@ -210,9 +210,6 @@ public class Core : Object {
 	 */
 	public signal bool message (string message, uint frames);
 
-	private extern void set_environment_interface ();
-	private extern void set_callbacks ();
-
 	internal Module module;
 	internal Variables variables_interface;
 
@@ -227,23 +224,14 @@ public class Core : Object {
 	 * @param file_name the file name of the Libretro implementation to load
 	 */
 	public Core (string file_name) {
-		Object (file_name: file_name);
-	}
-
-	construct {
-		environment_internal_setup ();
-
-		libretro_path = File.new_for_path (file_name).resolve_relative_path ("").get_path ();
-
-		module = new Module (libretro_path);
-		set_callbacks ();
-		variables_interface = new Options ();
+		constructor (file_name);
 	}
 
 	~Core () {
 		destructor ();
 	}
 
+	private extern void constructor (string file_name);
 	private extern void destructor ();
 
 	/**
@@ -317,8 +305,6 @@ public class Core : Object {
 	private extern void on_input_key_event (bool down, KeyboardKey keycode, uint32 character, KeyboardModifierKey key_modifiers);
 
 	private extern void set_system_av_info (SystemAvInfo system_av_info);
-
-	private extern void environment_internal_setup ();
 }
 
 }

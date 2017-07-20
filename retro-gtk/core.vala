@@ -6,11 +6,6 @@ namespace Retro {
  * Handles a Libretro module.
  */
 public class Core : Object {
-	private static RecMutex r_mutex = RecMutex ();
-	private static RecMutex w_mutex = RecMutex ();
-	private static (unowned Core)[] objects = new (unowned Core)[32];
-	private static int i = 0;
-
 	public signal void video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio);
 	public signal void audio_output (int16[] frames, double sample_rate);
 	public signal void log (string log_domain, LogLevelFlags log_level, string message);
@@ -23,59 +18,16 @@ public class Core : Object {
 	 *
 	 * Must be called before any call to a function from the module.
 	 */
-	internal void push_cb_data () {
-		w_mutex.lock ();
-		r_mutex.lock ();
-
-		if (i == objects.length) {
-			stderr.printf ("Error: Callback data stack overflow.\n");
-
-			r_mutex.unlock ();
-			assert_not_reached ();
-		}
-
-		objects[i] = this;
-		i++;
-
-		r_mutex.unlock ();
-	}
+	internal extern void push_cb_data ();
 
 	/**
 	 * Removes the Core at the head of the stack.
 	 *
 	 * Must be called after any call to {@link push_cb_data()}.
 	 */
-	internal static void pop_cb_data () {
-		r_mutex.lock ();
-		if (i == 0) {
-			stderr.printf ("Error: Callback data stack underflow.\n");
+	internal extern static void pop_cb_data ();
 
-			r_mutex.unlock ();
-			w_mutex.unlock ();
-			assert_not_reached ();
-		}
-
-		i--;
-		objects[i] = null;
-
-		r_mutex.unlock ();
-		w_mutex.unlock ();
-	}
-
-	internal static unowned Core get_cb_data () {
-		r_mutex.lock ();
-		if (i == 0) {
-			stderr.printf ("Error: Callback data segmentation fault.\n");
-
-			r_mutex.unlock ();
-			assert_not_reached ();
-		}
-
-		unowned Core result =  objects[i - 1];
-		r_mutex.unlock ();
-
-		return result;
-	}
+	internal extern static unowned Core get_cb_data ();
 
 	private extern uint get_api_version_real ();
 	/**

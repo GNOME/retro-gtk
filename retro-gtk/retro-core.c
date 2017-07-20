@@ -6,6 +6,77 @@
 
 /* Private */
 
+#define RETRO_CORE_OBJECTS_LENGTH 32
+
+static GRecMutex retro_core_r_mutex = { 0 };
+static GRecMutex retro_core_w_mutex = { 0 };
+static RetroCore *retro_core_objects[32];
+static gint retro_core_i = 0;
+
+// FIXME Make static as soon as possible.
+void
+retro_core_push_cb_data (RetroCore *self)
+{
+  g_return_if_fail (self != NULL);
+
+  g_rec_mutex_lock (&retro_core_w_mutex);
+  g_rec_mutex_lock (&retro_core_r_mutex);
+
+  if (G_UNLIKELY (retro_core_i == RETRO_CORE_OBJECTS_LENGTH)) {
+    g_critical ("RetroCore callback data stack overflow.");
+
+    g_rec_mutex_unlock (&retro_core_r_mutex);
+    g_assert_not_reached ();
+  }
+
+  retro_core_objects[retro_core_i] = self;
+  retro_core_i++;
+
+  g_rec_mutex_unlock (&retro_core_r_mutex);
+}
+
+// FIXME Make static as soon as possible.
+void
+retro_core_pop_cb_data (void)
+{
+  g_rec_mutex_lock (&retro_core_r_mutex);
+
+  if (G_UNLIKELY (retro_core_i == 0)) {
+    g_critical ("RetroCore callback data stack underflow.");
+
+    g_rec_mutex_unlock (&retro_core_r_mutex);
+    g_rec_mutex_unlock (&retro_core_w_mutex);
+    g_assert_not_reached ();
+  }
+  retro_core_i--;
+
+  retro_core_objects[retro_core_i] = NULL;
+
+  g_rec_mutex_unlock (&retro_core_r_mutex);
+  g_rec_mutex_unlock (&retro_core_w_mutex);
+}
+
+// FIXME Make static as soon as possible.
+RetroCore *
+retro_core_get_cb_data (void)
+{
+  RetroCore *result;
+
+  g_rec_mutex_lock (&retro_core_r_mutex);
+
+  if (retro_core_i == 0) {
+    g_critical ("RetroCore callback data segmentation fault.");
+
+    g_rec_mutex_unlock (&retro_core_r_mutex);
+    g_assert_not_reached ();
+  }
+
+  result = retro_core_objects[retro_core_i - 1];
+  g_rec_mutex_unlock (&retro_core_r_mutex);
+
+  return result;
+}
+
 static void
 init_controller_device (guint             port,
                         RetroInputDevice *device,

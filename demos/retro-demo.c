@@ -28,6 +28,7 @@ retro_demo_open (GApplication  *application,
 {
   RetroDemoApplication *self;
   char *module_path;
+  GError *error = NULL;
 
   self = RETRO_DEMO_APPLICATION (application);
 
@@ -44,7 +45,13 @@ retro_demo_open (GApplication  *application,
   if (self->core == NULL)
     return;
 
-  retro_core_init (self->core);
+  retro_core_init (self->core, &error);
+  if (error != NULL) {
+    g_debug ("Couldn't initialize the Libretro core: %s", error->message);
+    g_error_free (error);
+
+    return;
+  }
 
   g_application_activate (application);
 }

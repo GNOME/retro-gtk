@@ -255,7 +255,7 @@ public class Core : Object {
 	 *
 	 * Must be called before loading a game and running the core.
 	 */
-	public void init () {
+	public void init () throws Error {
 		set_environment_interface ();
 		push_cb_data ();
 		module.init ();
@@ -265,12 +265,7 @@ public class Core : Object {
 
 		is_initiated = true;
 
-		try {
-			load_medias ();
-		}
-		catch (Error e) {
-			debug (e.message);
-		}
+		load_medias ();
 	}
 
 	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);

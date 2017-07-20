@@ -250,8 +250,7 @@ retro_core_prepare (RetroCore* self) {
   return game_loaded;
 }
 
-// FIXME Make static as soon as possible.
-void
+static void
 retro_core_load_medias (RetroCore* self,
                         GError** error)
 {
@@ -325,6 +324,34 @@ retro_core_load_medias (RetroCore* self,
 }
 
 /* Public */
+
+void
+retro_core_init (RetroCore  *self,
+                 GError    **error)
+{
+  RetroInit init;
+  GError *tmp_error = NULL;
+
+  g_return_if_fail (self != NULL);
+
+  retro_core_set_environment_interface (self);
+
+  retro_core_push_cb_data (self);
+  init = retro_module_get_init (self->module);
+  init ();
+  retro_core_pop_cb_data ();
+
+  retro_core_init_input (self);
+
+  retro_core_set_is_initiated (self, TRUE);
+
+  retro_core_load_medias (self, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
+}
 
 void
 retro_core_set_medias (RetroCore  *self,

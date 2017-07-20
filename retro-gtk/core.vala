@@ -133,7 +133,7 @@ public class Core : Object {
 	/**
 	 * Whether or not the a game is loaded.
 	 */
-	public bool is_initiated { private set; get; default = false; }
+	public bool is_initiated { internal set; get; default = false; }
 
 	/**
 	 * Whether or not the a game is loaded.
@@ -255,24 +255,11 @@ public class Core : Object {
 	 *
 	 * Must be called before loading a game and running the core.
 	 */
-	public void init () throws Error {
-		set_environment_interface ();
-		push_cb_data ();
-		module.init ();
-		pop_cb_data ();
-
-		init_input ();
-
-		is_initiated = true;
-
-		load_medias ();
-	}
+	public extern void init () throws Error;
 
 	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);
 
 	public extern void set_current_media (uint media_index) throws Error;
-
-	private extern void load_medias () throws Error;
 
 	public extern void set_controller_port_device (uint port, DeviceType device);
 

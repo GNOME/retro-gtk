@@ -36,7 +36,7 @@ public class Retro.CoreDescriptor : Object {
 	private string filename;
 	private KeyFile key_file;
 
-	public CoreDescriptor (string filename) throws CoreDescriptorError, KeyFileError, FileError {
+	public CoreDescriptor (string filename) throws Error, KeyFileError, FileError {
 		this.filename = filename;
 		key_file = new KeyFile ();
 		key_file.load_from_file (filename, KeyFileFlags.NONE);

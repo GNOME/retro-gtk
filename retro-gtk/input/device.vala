@@ -75,7 +75,7 @@ public enum AnalogId {
 /**
  * The input types of a mouse.
  */
-public enum MouseId {
+private enum MouseId {
 	X,
 	Y,
 	LEFT,
@@ -90,7 +90,7 @@ public enum MouseId {
 /**
  * The input types of a lightgun.
  */
-public enum LightgunId {
+private enum LightgunId {
 	X,
 	Y,
 	TRIGGER,
@@ -103,7 +103,7 @@ public enum LightgunId {
 /**
  * The input types of a pointer.
  */
-public enum PointerId {
+private enum PointerId {
 	X,
 	Y,
 	PRESSED

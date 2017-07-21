@@ -36,7 +36,6 @@ libretro_gtk_la_SOURCES = \
 	input/input.vala \
 	input/input-device.vala \
 	input/input-device-manager.vala \
-	input/keyboard.vala \
 	input/keyboard-state.vala \
 	input/mouse.vala \
 	input/retro-keyboard-key.c \

@@ -4,7 +4,6 @@ namespace Retro {
 
 public class InputDeviceManager : Object, Input {
 	private HashTable<uint?, InputDevice> controller_devices;
-	private Keyboard keyboard;
 
 	construct {
 		controller_devices = new HashTable<int?, InputDevice> (int_hash, int_equal);
@@ -46,10 +45,9 @@ public class InputDeviceManager : Object, Input {
 		controller_connected (port, device);
 	}
 
-	public void set_keyboard (Keyboard keyboard) {
-		this.keyboard = keyboard;
-
-		keyboard.key_event.connect ((k, e) => key_event (e));
+	public void set_keyboard (Gtk.Widget widget) {
+		widget.key_press_event.connect ((w, e) => key_event (e));
+		widget.key_release_event.connect ((w, e) => key_event (e));
 	}
 
 	public void remove_controller_device (uint port) {

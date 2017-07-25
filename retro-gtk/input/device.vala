@@ -63,6 +63,7 @@ public enum JoypadId {
 public enum AnalogIndex {
 	LEFT,
 	RIGHT,
+	COUNT,
 }
 
 /**

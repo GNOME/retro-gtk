@@ -31,12 +31,14 @@ libretro_gtk_la_SOURCES = \
 	\
 	input/controller.vala \
 	input/device.vala \
+	input/gamepad.vala \
 	input/gamepad-configuration.vala \
 	input/input.vala \
 	input/input-device.vala \
 	input/input-device-manager.vala \
 	input/keyboard-state.vala \
 	input/mouse.vala \
+	input/retro-gamepad.c \
 	input/retro-gamepad-input.c \
 	input/retro-gamepad-configuration.c \
 	input/retro-keyboard-key.c \
@@ -73,6 +75,8 @@ libretro_gtk_la_SOURCES = \
 	video/retro-video-converter.c \
 	video/video-filter.vala \
 	$(NULL)
+
+input/retro-gamepad.c: retro-gtk-internal.h
 
 input/retro-gamepad-input.c: retro-gtk-internal.h
 

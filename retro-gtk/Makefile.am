@@ -37,6 +37,7 @@ libretro_gtk_la_SOURCES = \
 	input/input-device-manager.vala \
 	input/keyboard-state.vala \
 	input/mouse.vala \
+	input/retro-gamepad-input.c \
 	input/retro-keyboard-key.c \
 	input/virtual-gamepad.vala \
 	\
@@ -71,6 +72,8 @@ libretro_gtk_la_SOURCES = \
 	video/retro-video-converter.c \
 	video/video-filter.vala \
 	$(NULL)
+
+input/retro-gamepad-input.c: retro-gtk-internal.h
 
 video/retro-video-converter.c: retro-gtk-internal.h
 
@@ -152,6 +155,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.12.pc
 
 EXTRA_DIST = \
+	input/retro-gamepad-input.h \
 	input/retro-keyboard-key.h \
 	retro-core.h \
 	retro-module.h \

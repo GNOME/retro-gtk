@@ -53,7 +53,8 @@ public enum JoypadId {
 	L2,
 	R2,
 	L3,
-	R3
+	R3,
+	COUNT,
 }
 
 /**

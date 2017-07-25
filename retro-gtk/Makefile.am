@@ -31,7 +31,6 @@ libretro_gtk_la_SOURCES = \
 	\
 	input/controller.vala \
 	input/device.vala \
-	input/gamepad-button-type.vala \
 	input/gamepad-configuration.vala \
 	input/input.vala \
 	input/input-device.vala \

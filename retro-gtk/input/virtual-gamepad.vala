@@ -28,7 +28,7 @@ public class Retro.VirtualGamepad : Object, InputDevice {
 	public int16 get_input_state (DeviceType device, uint index, uint id) {
 		if ((DeviceType) device != DeviceType.JOYPAD) return 0;
 
-		return get_button_pressed ((GamepadButtonType) id) ? int16.MAX : 0;
+		return get_button_pressed ((JoypadId) id) ? int16.MAX : 0;
 	}
 
 	public DeviceType get_device_type () {
@@ -39,7 +39,7 @@ public class Retro.VirtualGamepad : Object, InputDevice {
 		return 1 << DeviceType.JOYPAD;
 	}
 
-	public bool get_button_pressed (GamepadButtonType button) {
+	public bool get_button_pressed (JoypadId button) {
 		return keyboard.get_key_state (configuration.get_button_key (button));
 	}
 }

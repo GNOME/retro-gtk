@@ -22,4 +22,7 @@ public class Retro.CoreView : Gtk.EventBox {
 		if (core != null)
 			display.set_core (core);
 	}
+
+	internal extern int16 get_input_state (DeviceType device, uint index, uint id);
+	internal extern uint64 get_device_capabilities ();
 }

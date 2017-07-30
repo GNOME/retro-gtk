@@ -13,6 +13,7 @@ struct _RetroDemoApplication
   GtkApplicationWindow *window;
 
   RetroCore *core;
+  RetroInputDeviceManager *input;
   RetroMainLoop *loop;
   RetroCoreView *view;
   RetroPaPlayer *pa_player;
@@ -53,6 +54,9 @@ retro_demo_open (GApplication  *application,
     return;
   }
 
+  self->input = retro_input_device_manager_new ();
+  retro_core_set_input_interface (self->core, RETRO_INPUT (self->input));
+
   g_application_activate (application);
 }
 
@@ -70,6 +74,9 @@ retro_demo_application_finalize (GObject *object)
   if (self->core != NULL)
     g_object_unref (self->core);
 
+  if (self->input != NULL)
+    g_object_unref (self->input);
+
   if (self->loop != NULL)
     g_object_unref (self->loop);
 
@@ -85,6 +92,7 @@ retro_demo_activate (GApplication *application)
 {
   RetroDemoApplication *self;
   GtkWidget *window;
+  RetroInputDevice *input_device;
 
   self = RETRO_DEMO_APPLICATION (application);
 
@@ -92,6 +100,11 @@ retro_demo_activate (GApplication *application)
 
   self->view = retro_core_view_new ();
   retro_core_view_set_core (self->view, self->core);
+
+  retro_input_device_manager_set_keyboard (self->input, GTK_WIDGET (self->view));
+  input_device = retro_core_view_as_input_device (self->view, RETRO_DEVICE_TYPE_POINTER);
+  retro_input_device_manager_set_controller_device (self->input, 0, input_device);
+  g_object_unref (input_device);
 
   self->pa_player = retro_pa_player_new ();
   retro_pa_player_set_core (self->pa_player, self->core);

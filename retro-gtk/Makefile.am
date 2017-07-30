@@ -56,6 +56,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-descriptor-error.vala \
 	retro-core-view.vala \
 	retro-core-view-extern.c \
+	retro-core-view-input-device.c \
 	retro-log.c \
 	retro-module.c \
 	retro-module-query.vala \
@@ -76,6 +77,8 @@ video/retro-video-converter.c: retro-gtk-internal.h
 retro-core.c: retro-gtk-internal.h
 
 retro-core-view-extern.c: retro-gtk-internal.h
+
+retro-core-view-input-device.c: retro-gtk-internal.h
 
 retro-environment.c: retro-gtk-internal.h libretro-environment.h
 

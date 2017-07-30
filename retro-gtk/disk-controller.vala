@@ -17,7 +17,7 @@ namespace Retro {
  *  * set the image index to the one you want to use.
  *  * insert the disk again by setting the eject state to false.
  */
-public class DiskControl: Object {
+private class DiskControl: Object {
 	private weak Core core;
 
 	private DiskControlCallback callback_struct;

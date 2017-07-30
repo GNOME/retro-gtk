@@ -37,7 +37,7 @@ public enum DeviceType {
 /**
  * The input types of a joypad.
  */
-public enum JoypadId {
+private enum JoypadId {
 	B,
 	Y,
 	SELECT,
@@ -60,7 +60,7 @@ public enum JoypadId {
 /**
  * The analog sticks of an analog joypad.
  */
-public enum AnalogIndex {
+private enum AnalogIndex {
 	LEFT,
 	RIGHT,
 	COUNT,
@@ -69,7 +69,7 @@ public enum AnalogIndex {
 /**
  * The axes of an analog stick.
  */
-public enum AnalogId {
+private enum AnalogId {
 	X,
 	Y,
 	COUNT,

@@ -10,7 +10,7 @@ public class Retro.GamepadConfiguration : Object {
 	public extern void set_to_default ();
 	public extern void set_button_key (uint16 button, uint16 key);
 
-	public uint16 get_button_key (JoypadId button) {
+	internal uint16 get_button_key (JoypadId button) {
 		return gamepad_keys[button];
 	}
 }

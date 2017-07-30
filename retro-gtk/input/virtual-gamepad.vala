@@ -39,7 +39,7 @@ public class Retro.VirtualGamepad : Object, InputDevice {
 		return 1 << DeviceType.JOYPAD;
 	}
 
-	public bool get_button_pressed (JoypadId button) {
+	private bool get_button_pressed (JoypadId button) {
 		return keyboard.get_key_state (configuration.get_button_key (button));
 	}
 }

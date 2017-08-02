@@ -19,27 +19,6 @@ private errordomain CbError {
 	NO_CALLBACK
 }
 
-/**
- * Gets a module's system informations in a simple and light way.
- *
- * @param module_name the file name of the module to get the system
- * informations
- * @return the system infos of the module or //null//
- */
-public SystemInfo? get_system_info (string module_name) {
-	var module = GLib.Module.open (module_name, ModuleFlags.BIND_LAZY | ModuleFlags.BIND_LOCAL);
-
-	void *function;
-	module.symbol ("retro_get_system_info", out function);
-
-	if (function == null) return null;
-
-	unowned SystemInfo info;
-	((GetSystemInfo) function) (out info);
-
-	return info;
-}
-
 public extern void g_log (Core core, string log_domain, LogLevelFlags log_level, string message);
 
 }

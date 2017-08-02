@@ -51,12 +51,12 @@ libretro_gtk_la_SOURCES = \
 	disk-controller.vala \
 	game-info.vala \
 	memory.vala \
-	module.vala \
 	retro.vala \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
 	retro-core-view.vala \
 	retro-log.c \
+	retro-module.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \
 	rumble.vala \
@@ -78,6 +78,8 @@ retro-core.c: retro-gtk-internal.h
 retro-environment.c: retro-gtk-internal.h libretro-environment.h
 
 retro-log.c: retro-gtk-internal.h
+
+retro-module.c: retro-gtk-internal.h
 
 libretro_gtk_la_LDFLAGS =
 
@@ -147,6 +149,7 @@ pkgconfig_DATA = retro-gtk-0.12.pc
 EXTRA_DIST = \
 	input/retro-keyboard-key.h \
 	retro-core.h \
+	retro-module.h \
 	retro-rotation.h \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \

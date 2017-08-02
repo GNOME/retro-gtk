@@ -549,10 +549,13 @@ on_input_state (guint port,
 void
 retro_core_set_environment_interface (RetroCore *self)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroModule *module;
   RetroCallbackSetter set_environment;
 
-  module = self->module;
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  module = internal->module;
   set_environment = retro_module_get_set_environment (module);
 
   retro_core_push_cb_data (self);
@@ -564,6 +567,7 @@ retro_core_set_environment_interface (RetroCore *self)
 void
 retro_core_set_callbacks (RetroCore *self)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroModule *module;
   RetroCallbackSetter set_video_refresh;
   RetroCallbackSetter set_audio_sample;
@@ -571,7 +575,9 @@ retro_core_set_callbacks (RetroCore *self)
   RetroCallbackSetter set_input_poll;
   RetroCallbackSetter set_input_state;
 
-  module = self->module;
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  module = internal->module;
   set_video_refresh = retro_module_get_set_video_refresh (module);
   set_audio_sample = retro_module_get_set_audio_sample (module);
   set_audio_sample_batch = retro_module_get_set_audio_sample_batch (module);

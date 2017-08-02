@@ -287,6 +287,7 @@ static gboolean
 retro_core_load_game (RetroCore     *self,
                       RetroGameInfo *game)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroUnloadGame unload_game;
   RetroLoadGame load_game;
   RetroGetSystemAvInfo get_system_av_info;
@@ -296,18 +297,20 @@ retro_core_load_game (RetroCore     *self,
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (game != NULL, FALSE);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   if (retro_core_get_game_loaded (self)) {
     retro_core_push_cb_data (self);
-    unload_game = retro_module_get_unload_game (self->module);
+    unload_game = retro_module_get_unload_game (internal->module);
     unload_game ();
     retro_core_pop_cb_data ();
   }
 
   retro_core_push_cb_data (self);
-  load_game = retro_module_get_load_game (self->module);
+  load_game = retro_module_get_load_game (internal->module);
   game_loaded = load_game (game);
   retro_core_set_game_loaded (self, game_loaded);
-  get_system_av_info = retro_module_get_get_system_av_info (self->module);
+  get_system_av_info = retro_module_get_get_system_av_info (internal->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
   retro_core_pop_cb_data ();
@@ -317,6 +320,7 @@ retro_core_load_game (RetroCore     *self,
 
 static gboolean
 retro_core_prepare (RetroCore* self) {
+  RetroCoreEnvironmentInternal *internal;
   RetroLoadGame load_game;
   RetroGetSystemAvInfo get_system_av_info;
   gboolean game_loaded;
@@ -324,11 +328,13 @@ retro_core_prepare (RetroCore* self) {
 
   g_return_val_if_fail (self != NULL, FALSE);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  load_game = retro_module_get_load_game (self->module);
+  load_game = retro_module_get_load_game (internal->module);
   game_loaded = load_game (NULL);
   retro_core_set_game_loaded (self, game_loaded);
-  get_system_av_info = retro_module_get_get_system_av_info (self->module);
+  get_system_av_info = retro_module_get_get_system_av_info (internal->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
   retro_core_pop_cb_data ();
@@ -413,13 +419,16 @@ retro_core_load_medias (RetroCore* self,
 guint
 retro_core_get_api_version_real (RetroCore *self)
 {
+  RetroCoreEnvironmentInternal *internal;
   guint result;
   RetroApiVersion api_version;
 
   g_return_val_if_fail (self != NULL, 0U);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  api_version = retro_module_get_api_version (self->module);
+  api_version = retro_module_get_api_version (internal->module);
   result = api_version ();
   retro_core_pop_cb_data ();
 
@@ -431,13 +440,16 @@ void
 retro_core_get_system_info_real (RetroCore       *self,
                                  RetroSystemInfo *system_info)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroGetSystemInfo get_system_info;
 
   g_return_if_fail (self != NULL);
   g_return_if_fail (system_info != NULL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  get_system_info = retro_module_get_get_system_info (self->module);
+  get_system_info = retro_module_get_get_system_info (internal->module);
   get_system_info (system_info);
   retro_core_pop_cb_data ();
 }
@@ -450,6 +462,7 @@ void
 retro_core_constructor (RetroCore   *self,
                         const gchar *file_name)
 {
+  RetroCoreEnvironmentInternal *internal;
   GFile *file;
   GFile *relative_path_file;
   gchar *libretro_path;
@@ -458,7 +471,8 @@ retro_core_constructor (RetroCore   *self,
 
   retro_core_set_file_name (self, file_name);
 
-  self->environment_internal = g_new0 (RetroCoreEnvironmentInternal, 1);
+  internal = g_new0 (RetroCoreEnvironmentInternal, 1);
+  self->environment_internal = internal;
 
   file = g_file_new_for_path (file_name);
   relative_path_file = g_file_resolve_relative_path (file, "");
@@ -470,7 +484,7 @@ retro_core_constructor (RetroCore   *self,
   g_object_unref (relative_path_file);
 
   retro_core_set_libretro_path (self, libretro_path);
-  self->module = retro_module_new (libretro_path);
+  internal->module = retro_module_new (libretro_path);
 
   g_free (libretro_path);
 
@@ -492,10 +506,10 @@ retro_core_destructor (RetroCore *self)
 
   retro_core_push_cb_data (self);
   if (retro_core_get_game_loaded (self)) {
-    unload_game = retro_module_get_unload_game (self->module);
+    unload_game = retro_module_get_unload_game (internal->module);
     unload_game ();
   }
-  deinit = retro_module_get_deinit (self->module);
+  deinit = retro_module_get_deinit (internal->module);
   deinit ();
   retro_core_pop_cb_data ();
 
@@ -511,15 +525,18 @@ void
 retro_core_init (RetroCore  *self,
                  GError    **error)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroInit init;
   GError *tmp_error = NULL;
 
   g_return_if_fail (self != NULL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_set_environment_interface (self);
 
   retro_core_push_cb_data (self);
-  init = retro_module_get_init (self->module);
+  init = retro_module_get_init (internal->module);
   init ();
   retro_core_pop_cb_data ();
 
@@ -601,12 +618,15 @@ retro_core_set_controller_port_device (RetroCore       *self,
                                        guint            port,
                                        RetroDeviceType  device)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroSetControllerPortDevice set_controller_port_device;
 
   g_return_if_fail (self != NULL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  set_controller_port_device = retro_module_get_set_controller_port_device (self->module);
+  set_controller_port_device = retro_module_get_set_controller_port_device (internal->module);
   set_controller_port_device (port, device);
   retro_core_pop_cb_data ();
 }
@@ -614,12 +634,15 @@ retro_core_set_controller_port_device (RetroCore       *self,
 void
 retro_core_reset (RetroCore* self)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroReset reset;
 
   g_return_if_fail (self != NULL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  reset = retro_module_get_reset (self->module);
+  reset = retro_module_get_reset (internal->module);
   reset ();
   retro_core_pop_cb_data ();
 }
@@ -627,12 +650,15 @@ retro_core_reset (RetroCore* self)
 void
 retro_core_run (RetroCore* self)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroRun run;
 
   g_return_if_fail (self != NULL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  run = retro_module_get_run (self->module);
+  run = retro_module_get_run (internal->module);
   run ();
   retro_core_pop_cb_data ();
 }
@@ -640,13 +666,16 @@ retro_core_run (RetroCore* self)
 gboolean
 retro_core_supports_serialization (RetroCore *self)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroSerializeSize serialize_size = NULL;
   gsize size;
 
   g_return_val_if_fail (self != NULL, FALSE);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  serialize_size = retro_module_get_serialize_size (self->module);
+  serialize_size = retro_module_get_serialize_size (internal->module);
   size = serialize_size ();
   retro_core_pop_cb_data ();
 
@@ -658,6 +687,7 @@ retro_core_serialize_state (RetroCore  *self,
                             gsize      *length,
                             GError    **error)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroSerializeSize serialize_size = NULL;
   RetroSerialize serialize = NULL;
   guint8 *data;
@@ -667,7 +697,9 @@ retro_core_serialize_state (RetroCore  *self,
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (length != NULL, NULL);
 
-  serialize_size = retro_module_get_serialize_size (self->module);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  serialize_size = retro_module_get_serialize_size (internal->module);
 
   retro_core_push_cb_data (self);
   size = serialize_size ();
@@ -682,7 +714,7 @@ retro_core_serialize_state (RetroCore  *self,
     return NULL;
   }
 
-  serialize = retro_module_get_serialize (self->module);
+  serialize = retro_module_get_serialize (internal->module);
   data = g_new0 (guint8, size);
 
   retro_core_push_cb_data (self);
@@ -710,6 +742,7 @@ retro_core_deserialize_state (RetroCore  *self,
                               gsize       length,
                               GError    **error)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroSerializeSize serialize_size = NULL;
   RetroUnserialize unserialize = NULL;
   gsize size;
@@ -718,7 +751,9 @@ retro_core_deserialize_state (RetroCore  *self,
   g_return_if_fail (self != NULL);
   g_return_if_fail (data != NULL);
 
-  serialize_size = retro_module_get_serialize_size (self->module);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  serialize_size = retro_module_get_serialize_size (internal->module);
 
   retro_core_push_cb_data (self);
   size = serialize_size ();
@@ -742,7 +777,7 @@ retro_core_deserialize_state (RetroCore  *self,
     return;
   }
 
-  unserialize = retro_module_get_unserialize (self->module);
+  unserialize = retro_module_get_unserialize (internal->module);
 
   retro_core_push_cb_data (self);
   success = unserialize (data, length);
@@ -760,13 +795,16 @@ gsize
 retro_core_get_memory_size (RetroCore       *self,
                             RetroMemoryType  id)
 {
+  RetroCoreEnvironmentInternal *internal;
   gsize size;
   RetroGetMemorySize get_memory_size;
 
   g_return_val_if_fail (self != NULL, 0UL);
 
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
   retro_core_push_cb_data (self);
-  get_memory_size = retro_module_get_get_memory_size (self->module);
+  get_memory_size = retro_module_get_get_memory_size (internal->module);
   size = get_memory_size (id);
   retro_core_pop_cb_data ();
 
@@ -778,6 +816,7 @@ retro_core_get_memory (RetroCore       *self,
                        RetroMemoryType  id,
                        gint            *length)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroGetMemoryData get_mem_data;
   RetroGetMemorySize get_mem_size;
   guint8 *data;
@@ -786,8 +825,10 @@ retro_core_get_memory (RetroCore       *self,
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (length != NULL, NULL);
 
-  get_mem_data = retro_module_get_get_memory_data (self->module);
-  get_mem_size = retro_module_get_get_memory_size (self->module);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  get_mem_data = retro_module_get_get_memory_data (internal->module);
+  get_mem_size = retro_module_get_get_memory_size (internal->module);
 
   retro_core_push_cb_data (self);
   data = get_mem_data (id);
@@ -806,6 +847,7 @@ retro_core_set_memory (RetroCore       *self,
                        guint8          *data,
                        gint             length)
 {
+  RetroCoreEnvironmentInternal *internal;
   RetroGetMemoryData get_mem_region;
   RetroGetMemorySize get_mem_region_size;
   guint8 *memory_region;
@@ -815,8 +857,10 @@ retro_core_set_memory (RetroCore       *self,
   g_return_if_fail (data != NULL);
   g_return_if_fail (length > 0);
 
-  get_mem_region = retro_module_get_get_memory_data (self->module);
-  get_mem_region_size = retro_module_get_get_memory_size (self->module);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  get_mem_region = retro_module_get_get_memory_data (internal->module);
+  get_mem_region_size = retro_module_get_get_memory_size (internal->module);
 
   retro_core_push_cb_data (self);
   memory_region = get_mem_region (id);

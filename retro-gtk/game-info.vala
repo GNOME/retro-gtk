@@ -14,7 +14,7 @@ namespace Retro {
  * implementations still need it, and the file will be read and stored into the
  * data field.
  */
-public struct GameInfo {
+private struct GameInfo {
 	/**
 	 * Path to game, UTF-8 encoded.
 	 *

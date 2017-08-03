@@ -40,19 +40,6 @@ public class Core : Object {
 		get { return get_api_version_real (); }
 	}
 
-
-	private extern SystemInfo get_system_info_real (out unowned SystemInfo system_info);
-	/**
-	 * The system informations.
-	 */
-	public SystemInfo system_info {
-		get {
-			unowned SystemInfo info;
-			get_system_info_real (out info);
-			return info;
-		}
-	}
-
 	/**
 	 * The file name of the module.
 	 */

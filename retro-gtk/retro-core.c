@@ -78,6 +78,58 @@ retro_core_get_cb_data (void)
   return result;
 }
 
+/**
+ * retro_core_get_system_info:
+ * @self: A #RetroCore
+ * @system_info: (out) (transfer none): A location for a #RetroSystemInfo
+ *
+ * Gives basic informations on how to handle the Libretro core.
+ */
+static void
+retro_core_get_system_info (RetroCore       *self,
+                            RetroSystemInfo *system_info)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroGetSystemInfo get_system_info;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (system_info != NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  retro_core_push_cb_data (self);
+  get_system_info = retro_module_get_get_system_info (internal->module);
+  get_system_info (system_info);
+  retro_core_pop_cb_data ();
+}
+
+static gboolean
+retro_core_get_needs_full_path (RetroCore *self)
+{
+  RetroSystemInfo system_info = { 0 };
+
+  retro_core_get_system_info (self, &system_info);
+
+  return system_info.need_fullpath;
+}
+
+// FIXME Make static as soon as possible.
+/**
+ * retro_core_get_name:
+ * @self: A #RetroCore
+ *
+ * Returns: (transfer none): The name of the Libretro core.
+ */
+gchar *
+retro_core_get_name (RetroCore *self)
+{
+  RetroSystemInfo system_info = { 0 };
+
+  retro_core_get_system_info (self, &system_info);
+
+  return system_info.library_name;
+}
+
 static void
 init_controller_device (guint             port,
                         RetroInputDevice *device,
@@ -236,8 +288,7 @@ retro_core_load_discs (RetroCore  *self,
     return;
   }
 
-  retro_core_get_system_info (self, &system_info);
-  fullpath = system_info.need_fullpath;
+  fullpath = retro_core_get_needs_full_path (self);
   for (index = 0; index < length; index++) {
     file = g_file_new_for_uri (internal->media_uris[index]);
     path = g_file_get_path (file);
@@ -370,8 +421,7 @@ retro_core_load_medias (RetroCore* self,
   uri = g_strdup (internal->media_uris[0]);
   file = g_file_new_for_uri (uri);
   path = g_file_get_path (file);
-  retro_core_get_system_info (self, &system_info);
-  fullpath = system_info.need_fullpath;
+  fullpath = retro_core_get_needs_full_path (self);
   if (fullpath) {
     retro_game_info_destroy (&game_info);
     retro_game_info_init (&game_info, path);
@@ -433,25 +483,6 @@ retro_core_get_api_version_real (RetroCore *self)
   retro_core_pop_cb_data ();
 
   return result;
-}
-
-// FIXME Make static as soon as possible.
-void
-retro_core_get_system_info_real (RetroCore       *self,
-                                 RetroSystemInfo *system_info)
-{
-  RetroCoreEnvironmentInternal *internal;
-  RetroGetSystemInfo get_system_info;
-
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (system_info != NULL);
-
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  retro_core_push_cb_data (self);
-  get_system_info = retro_module_get_get_system_info (internal->module);
-  get_system_info (system_info);
-  retro_core_pop_cb_data ();
 }
 
 void retro_core_set_environment_interface (RetroCore *self);

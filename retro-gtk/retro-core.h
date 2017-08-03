@@ -29,6 +29,7 @@ struct _RetroCoreEnvironmentInternal {
   RetroKeyboardCallback keyboard_callback;
 };
 
+gchar *retro_core_get_name (RetroCore *self);
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
 void retro_core_set_controller_port_device (RetroCore       *self,

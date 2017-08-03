@@ -54,6 +54,7 @@ on_log (guint level, const gchar *format, ...)
 {
   RetroCore *self;
   RetroSystemInfo info = { 0 };
+  const gchar *log_domain;
   GLogLevelFlags log_level;
   gchar *message;
   va_list args;
@@ -91,9 +92,8 @@ on_log (guint level, const gchar *format, ...)
   va_start (args, format);
   message = g_strdup_vprintf (format, args);
 
-  retro_core_get_system_info (self, &info);
-
-  g_signal_emit_by_name (self, "log", info.library_name, log_level, message);
+  log_domain = retro_core_get_name (self);
+  g_signal_emit_by_name (self, "log", log_domain, log_level, message);
 
   g_free (message);
 }

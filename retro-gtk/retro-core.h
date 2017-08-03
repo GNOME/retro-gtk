@@ -20,6 +20,7 @@ typedef struct _RetroCoreEnvironmentInternal RetroCoreEnvironmentInternal;
 struct _RetroCoreEnvironmentInternal {
   RetroModule *module;
   gchar **media_uris;
+  RetroSystemInfo *system_info;
   gfloat aspect_ratio;
   gboolean overscan;
   RetroPixelFormat pixel_format;

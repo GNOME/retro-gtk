@@ -60,7 +60,6 @@ libretro_gtk_la_SOURCES = \
 	retro-module-query.vala \
 	retro-module-iterator.vala \
 	rumble.vala \
-	system-info.vala \
 	video.vala \
 	retro-core.c \
 	retro-environment.c \

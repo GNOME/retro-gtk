@@ -1,3 +1,5 @@
+// This file is part of retro-gtk. License: GPL-3.0+.
+
 #include "retro-gtk-internal.h"
 
 void

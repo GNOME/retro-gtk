@@ -44,3 +44,36 @@ retro_gamepad_button_converter (guint16 button)
 
   return RETRO_JOYPAD_ID_COUNT;
 }
+
+gboolean
+retro_gamepad_axis_converter (guint16           axis,
+                              RetroAnalogIndex *index,
+                              RetroAnalogId    *id)
+{
+  switch (axis) {
+  case ABS_X:
+    *index = RETRO_ANALOG_INDEX_LEFT;
+    *id = RETRO_ANALOG_ID_X;
+
+    return TRUE;
+  case ABS_Y:
+    *index = RETRO_ANALOG_INDEX_LEFT;
+    *id = RETRO_ANALOG_ID_Y;
+
+    return TRUE;
+  case ABS_RX:
+    *index = RETRO_ANALOG_INDEX_RIGHT;
+    *id = RETRO_ANALOG_ID_X;
+
+    return TRUE;
+  case ABS_RY:
+    *index = RETRO_ANALOG_INDEX_RIGHT;
+    *id = RETRO_ANALOG_ID_Y;
+
+    return TRUE;
+  default:
+    return FALSE;
+  }
+
+  return FALSE;
+}

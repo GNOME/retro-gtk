@@ -9,6 +9,9 @@
 G_BEGIN_DECLS
 
 RetroJoypadId retro_gamepad_button_converter (guint16 button);
+gboolean retro_gamepad_axis_converter (guint16           axis,
+                                       RetroAnalogIndex *index,
+                                       RetroAnalogId    *id);
 
 G_END_DECLS
 

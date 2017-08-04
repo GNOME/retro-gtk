@@ -31,14 +31,10 @@ libretro_gtk_la_SOURCES = \
 	\
 	input/controller.vala \
 	input/device.vala \
-	input/gamepad-configuration.vala \
 	input/input.vala \
 	input/input-device.vala \
 	input/input-device-manager.vala \
-	input/keyboard-state.vala \
-	input/mouse.vala \
 	input/retro-keyboard-key.c \
-	input/virtual-gamepad.vala \
 	\
 	loop/main-loop.vala \
 	\

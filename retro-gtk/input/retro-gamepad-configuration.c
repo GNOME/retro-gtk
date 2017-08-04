@@ -36,9 +36,29 @@ retro_gamepad_configuration_set_button_key (RetroGamepadConfiguration *self,
 
   retro_button = retro_gamepad_button_converter (button);
 
-  if (retro_button == RETRO_JOYPAD_ID_COUNT)
+  if (retro_button == RETRO_JOYPAD_ID_COUNT) {
+    self->gamepad_keys[retro_button] = 0;
+
     return;
+  }
 
   // GDK adds 8 to the Linux input event codes to create the hardware keycode.
   self->gamepad_keys[retro_button] = key + 8;
+}
+
+guint16
+retro_gamepad_configuration_get_button_key (RetroGamepadConfiguration *self,
+                                            guint16                    button)
+{
+  RetroJoypadId retro_button;
+
+  g_return_val_if_fail (self != NULL, 0);
+
+  retro_button = retro_gamepad_button_converter (button);
+
+  if (retro_button == RETRO_JOYPAD_ID_COUNT)
+    return 0;
+
+  return self->gamepad_keys[retro_button];
+
 }

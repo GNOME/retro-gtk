@@ -16,9 +16,10 @@ public class Retro.CoreView : Gtk.EventBox {
 		default = false;
 	}
 
+	public bool snap_pointer_to_borders { set; get; }
 
 	private Core core;
-	private CairoDisplay display;
+	internal CairoDisplay display;
 
 	internal HashTable<uint?, bool?> key_state;
 	internal HashTable<uint?, bool?> mouse_button_state;
@@ -30,6 +31,9 @@ public class Retro.CoreView : Gtk.EventBox {
 	internal int screen_center_y;
 	internal int position_on_grab_x;
 	internal int position_on_grab_y;
+	internal bool pointer_is_on_display;
+	internal double pointer_x;
+	internal double pointer_y;
 
 	construct {
 		can_focus = true;

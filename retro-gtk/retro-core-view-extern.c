@@ -55,6 +55,18 @@ get_input_state (GHashTable *table,
   return g_hash_table_contains (table, &input);
 }
 
+static gint16
+axis_to_retro_axis (gdouble value)
+{
+  if (value <= -1.0)
+    return -G_MAXINT16;
+
+  if (value >= 1.0)
+    return G_MAXINT16;
+
+  return (gint16) (value * G_MAXINT16);
+}
+
 static void
 recenter_pointer (RetroCoreView *self)
 {
@@ -184,6 +196,15 @@ retro_core_view_on_button_press_event (RetroCoreView  *self,
                             event->window,
                             (GdkEvent *) event);
   }
+  else {
+    set_input_pressed (self->mouse_button_state, event->button);
+    self->pointer_is_on_display =
+      retro_cairo_display_get_coordinates_on_display (self->display,
+                                                      event->x,
+                                                      event->y,
+                                                      &self->pointer_x,
+                                                      &self->pointer_y);
+  }
 
   return FALSE;
 }
@@ -234,6 +255,15 @@ retro_core_view_on_motion_notify_event (RetroCoreView  *self,
 
       recenter_pointer (self);
     }
+  }
+  else {
+    self->pointer_is_on_display =
+      retro_cairo_display_get_coordinates_on_display (self->display,
+                                                      event->x,
+                                                      event->y,
+                                                      &self->pointer_x,
+                                                      &self->pointer_y);
+
   }
 
   return FALSE;
@@ -310,6 +340,21 @@ retro_core_view_get_input_state (RetroCoreView   *self,
     default:
       return 0;
     }
+  case RETRO_DEVICE_TYPE_POINTER:
+    switch (id) {
+    case RETRO_POINTER_ID_X:
+      return axis_to_retro_axis (self->pointer_x);
+    case RETRO_POINTER_ID_Y:
+      return axis_to_retro_axis (self->pointer_y);
+    case RETRO_POINTER_ID_PRESSED:
+      if (!self->pointer_is_on_display ||
+          retro_core_view_get_snap_pointer_to_borders (self))
+        return 0;
+
+      return retro_core_view_get_mouse_button_state (self, 1) ? 1 : 0;
+    default:
+      return 0;
+    }
   default:
     return 0;
   }
@@ -322,7 +367,8 @@ retro_core_view_get_device_capabilities (RetroCoreView *self)
   g_return_val_if_fail (self != NULL, 0);
 
   return 1 << RETRO_DEVICE_TYPE_JOYPAD |
-         1 << RETRO_DEVICE_TYPE_MOUSE;
+         1 << RETRO_DEVICE_TYPE_MOUSE |
+         1 << RETRO_DEVICE_TYPE_POINTER;
 }
 
 /* Public */

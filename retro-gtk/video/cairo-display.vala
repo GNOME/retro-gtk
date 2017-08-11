@@ -39,6 +39,17 @@ public class Retro.CairoDisplay : Gtk.DrawingArea {
 		queue_draw ();
 	}
 
+	public bool get_coordinates_on_display (double widget_x, double widget_y, out double display_x, out double display_y) {
+		double w, h, x, y;
+		get_video_box (out w, out h, out x, out y);
+
+		// Return coordinates as a [-1.0,1.0] scale, (0.0,0.0) is the center.
+		display_x = ((widget_x-x) * 2.0 - w) / w;
+		display_y = ((widget_y-y) * 2.0 - h) / h;
+
+		return (-1.0 <= display_x <= 1.0) && (-1.0 <= display_y <= 1.0);
+	}
+
 	private void on_video_output (uint8[] data, uint width, uint height, size_t pitch, PixelFormat pixel_format, float aspect_ratio) {
 		this.aspect_ratio = aspect_ratio;
 		pixbuf = gdk_pixbuf_new_from_video (data, width, height, pitch, pixel_format);

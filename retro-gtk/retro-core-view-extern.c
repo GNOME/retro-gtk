@@ -55,6 +55,84 @@ get_input_state (GHashTable *table,
   return g_hash_table_contains (table, &input);
 }
 
+static void
+recenter_pointer (RetroCoreView *self)
+{
+  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
+                   self->screen_center_x, self->screen_center_y);
+}
+
+// FIXME Make static as soon as possible.
+gboolean
+retro_core_view_get_is_pointer_grabbed (RetroCoreView *self)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  return self->grabbed_device != NULL;
+}
+
+static void
+retro_core_view_grab (RetroCoreView *self,
+                      GdkDevice     *device,
+                      GdkWindow     *window,
+                      GdkEvent      *event)
+{
+  GdkSeat *seat;
+  GdkDisplay *display;
+  GdkCursor *cursor;
+  GdkScreen *screen = NULL;
+  GdkMonitor *monitor;
+  GdkRectangle monitor_geometry;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (device != NULL);
+  g_return_if_fail (window != NULL);
+  g_return_if_fail (event != NULL);
+
+  if (self->grabbed_device != NULL)
+    g_object_unref (self->grabbed_device);
+
+  if (self->grabbed_screen != NULL)
+    g_object_unref (self->grabbed_screen);
+
+  self->grabbed_device = g_object_ref (device);
+  seat = gdk_device_get_seat (device);
+  display = gdk_device_get_display (device);
+  cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
+  gdk_seat_grab (seat, window, GDK_SEAT_CAPABILITY_ALL_POINTING, FALSE, cursor, event, NULL, NULL);
+  monitor = gdk_display_get_monitor_at_window (display, window);
+  gdk_monitor_get_geometry (monitor, &monitor_geometry);
+
+  gdk_device_get_position (device, &screen, &self->position_on_grab_x, &self->position_on_grab_y);
+  self->grabbed_screen = g_object_ref (screen);
+  self->screen_center_x = monitor_geometry.x + monitor_geometry.width / 2;
+  self->screen_center_y = monitor_geometry.y + monitor_geometry.height / 2;
+  self->mouse_x_delta = 0;
+  self->mouse_y_delta = 0;
+
+  recenter_pointer (self);
+
+  g_object_unref (cursor);
+}
+
+// FIXME Make static as soon as possible.
+void
+retro_core_view_ungrab (RetroCoreView *self)
+{
+  GdkSeat *seat;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (self->grabbed_device != NULL);
+
+  seat = gdk_device_get_seat (self->grabbed_device);
+  gdk_seat_ungrab (seat);
+  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
+                   self->position_on_grab_x, self->position_on_grab_y);
+
+  g_clear_object (&self->grabbed_device);
+  g_clear_object (&self->grabbed_screen);
+}
+
 // FIXME Make static as soon as possible.
 gboolean
 retro_core_view_on_key_press_event (RetroCoreView *self,
@@ -63,6 +141,11 @@ retro_core_view_on_key_press_event (RetroCoreView *self,
 {
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
+
+  if (event->keyval == GDK_KEY_Escape &&
+      (event->state & GDK_CONTROL_MASK) &&
+      retro_core_view_get_is_pointer_grabbed (self))
+    retro_core_view_ungrab (self);
 
   set_input_pressed (self->key_state, event->hardware_keycode);
 
@@ -79,6 +162,79 @@ retro_core_view_on_key_release_event (RetroCoreView *self,
   g_return_val_if_fail (event != NULL, FALSE);
 
   set_input_released (self->key_state, event->hardware_keycode);
+
+  return FALSE;
+}
+
+// FIXME Make static as soon as possible.
+gboolean
+retro_core_view_on_button_press_event (RetroCoreView  *self,
+                                       GtkWidget      *source,
+                                       GdkEventButton *event)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+
+  if (retro_core_view_get_can_grab_pointer (self)) {
+    if (retro_core_view_get_is_pointer_grabbed (self))
+      set_input_pressed (self->mouse_button_state, event->button);
+    else
+      retro_core_view_grab (self,
+                            event->device,
+                            event->window,
+                            (GdkEvent *) event);
+  }
+
+  return FALSE;
+}
+
+// FIXME Make static as soon as possible.
+gboolean
+retro_core_view_on_button_release_event (RetroCoreView  *self,
+                                         GtkWidget      *source,
+                                         GdkEventButton *event)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+
+  set_input_released (self->mouse_button_state, event->button);
+
+  return FALSE;
+}
+
+// FIXME Make static as soon as possible.
+gboolean
+retro_core_view_on_focus_out_event (RetroCoreView *self,
+                                    GtkWidget     *source,
+                                    GdkEventFocus *event)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+
+  if (retro_core_view_get_is_pointer_grabbed (self))
+    retro_core_view_ungrab (self);
+
+  return FALSE;
+}
+
+// FIXME Make static as soon as possible.
+gboolean
+retro_core_view_on_motion_notify_event (RetroCoreView  *self,
+                                        GtkWidget      *source,
+                                        GdkEventMotion *event)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+
+  if (retro_core_view_get_can_grab_pointer (self)) {
+    if (retro_core_view_get_is_pointer_grabbed (self) &&
+        event->device == self->grabbed_device) {
+      self->mouse_x_delta += event->x_root - (double) self->screen_center_x;
+      self->mouse_y_delta += event->y_root - (double) self->screen_center_y;
+
+      recenter_pointer (self);
+    }
+  }
 
   return FALSE;
 }
@@ -109,6 +265,15 @@ retro_core_view_get_joypad_button_state (RetroCoreView *self,
   return retro_core_view_get_key_state (self, hardware_keycode);
 }
 
+static gboolean
+retro_core_view_get_mouse_button_state (RetroCoreView *self,
+                                        guint16        button)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  return get_input_state (self->mouse_button_state, button);
+}
+
 // FIXME Make static as soon as possible.
 gint16
 retro_core_view_get_input_state (RetroCoreView   *self,
@@ -116,6 +281,8 @@ retro_core_view_get_input_state (RetroCoreView   *self,
                                  guint            index,
                                  guint            id)
 {
+  gint16 result;
+
   g_return_val_if_fail (self != NULL, 0);
 
   switch (device) {
@@ -124,6 +291,25 @@ retro_core_view_get_input_state (RetroCoreView   *self,
       return 0;
 
     return retro_core_view_get_joypad_button_state (self, id) ? G_MAXINT16 : 0;
+  case RETRO_DEVICE_TYPE_MOUSE:
+    switch (id) {
+    case RETRO_MOUSE_ID_X:
+      result = (gint16) self->mouse_x_delta;
+      self->mouse_x_delta = 0;
+
+      return result;
+    case RETRO_MOUSE_ID_Y:
+      result = self->mouse_y_delta;
+      self->mouse_y_delta = 0;
+
+      return result;
+    case RETRO_MOUSE_ID_LEFT:
+      return retro_core_view_get_mouse_button_state (self, 1) ? G_MAXINT16 : 0;
+    case RETRO_MOUSE_ID_RIGHT:
+      return retro_core_view_get_mouse_button_state (self, 3) ? G_MAXINT16 : 0;
+    default:
+      return 0;
+    }
   default:
     return 0;
   }
@@ -135,7 +321,8 @@ retro_core_view_get_device_capabilities (RetroCoreView *self)
 {
   g_return_val_if_fail (self != NULL, 0);
 
-  return 1 << RETRO_DEVICE_TYPE_JOYPAD;
+  return 1 << RETRO_DEVICE_TYPE_JOYPAD |
+         1 << RETRO_DEVICE_TYPE_MOUSE;
 }
 
 /* Public */

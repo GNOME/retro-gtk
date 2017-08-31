@@ -244,11 +244,164 @@ retro_core_on_key_event (RetroCore   *self,
   return FALSE;
 }
 
+static gboolean
+retro_core_set_disk_ejected (RetroCore  *self,
+                             gboolean    ejected,
+                             GError    **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControlCallbackSetEjectState set_eject_state;
+  gboolean result;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  set_eject_state = internal->disk_control_callback->set_eject_state;
+
+  if (set_eject_state == NULL) {
+    g_set_error_literal (error,
+                         RETRO_CB_ERROR,
+                         RETRO_CB_ERROR_NO_CALLBACK,
+                         "DiskControl has no callback for this operation.");
+
+    return FALSE;
+  }
+
+  retro_core_push_cb_data (self);
+  result = set_eject_state (ejected);
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
+static gboolean
+retro_core_set_disk_image_index (RetroCore  *self,
+                                 guint       index,
+                                 GError    **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControlCallbackSetImageIndex set_image_index;
+  gboolean result;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  set_image_index = internal->disk_control_callback->set_image_index;
+
+  if (set_image_index == NULL) {
+    g_set_error_literal (error,
+                         RETRO_CB_ERROR,
+                         RETRO_CB_ERROR_NO_CALLBACK,
+                         "DiskControl has no callback for this operation.");
+
+    return FALSE;
+  }
+
+  retro_core_push_cb_data (self);
+  result = set_image_index (index);
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
+static guint
+retro_core_get_disk_images_number (RetroCore  *self,
+                                   GError    **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControlCallbackGetNumImages get_num_images;
+  guint result;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  get_num_images = internal->disk_control_callback->get_num_images;
+
+  if (get_num_images == NULL) {
+    g_set_error_literal (error,
+                         RETRO_CB_ERROR,
+                         RETRO_CB_ERROR_NO_CALLBACK,
+                         "DiskControl has no callback for this operation.");
+
+    return FALSE;
+  }
+
+  retro_core_push_cb_data (self);
+  result = get_num_images ();
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
+static gboolean
+retro_core_replace_disk_image_index (RetroCore     *self,
+                                     guint          index,
+                                     RetroGameInfo *info,
+                                     GError        **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControlCallbackReplaceImageIndex replace_image_index;
+  gboolean result;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  replace_image_index = internal->disk_control_callback->replace_image_index;
+
+  if (replace_image_index == NULL) {
+    g_set_error_literal (error,
+                         RETRO_CB_ERROR,
+                         RETRO_CB_ERROR_NO_CALLBACK,
+                         "DiskControl has no callback for this operation.");
+
+    return FALSE;
+  }
+
+  retro_core_push_cb_data (self);
+  result = replace_image_index (index, info);
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
+static gboolean
+retro_core_add_disk_image_index (RetroCore  *self,
+                                 GError    **error)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroDiskControlCallbackAddImageIndex add_image_index;
+  gboolean result;
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  add_image_index = internal->disk_control_callback->add_image_index;
+
+  if (add_image_index == NULL) {
+    g_set_error_literal (error,
+                         RETRO_CB_ERROR,
+                         RETRO_CB_ERROR_NO_CALLBACK,
+                         "DiskControl has no callback for this operation.");
+
+    return FALSE;
+  }
+
+  retro_core_push_cb_data (self);
+  result = add_image_index ();
+  retro_core_pop_cb_data ();
+
+  return result;
+}
+
 static void
 retro_core_load_discs (RetroCore  *self,
                        GError    **error)
 {
-  RetroDiskControl *disk_control;
   RetroCoreEnvironmentInternal *internal;
   guint length;
   gboolean fullpath;
@@ -261,20 +414,19 @@ retro_core_load_discs (RetroCore  *self,
 
   g_return_if_fail (self != NULL);
 
-  disk_control = retro_core_get_disk_control_interface (self);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
 
-  retro_disk_control_set_eject_state (disk_control, TRUE, &tmp_error);
+  retro_core_set_disk_ejected (self, TRUE, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
     return;
   }
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
   length = g_strv_length (internal->media_uris);
-  while (retro_disk_control_get_num_images (disk_control, &tmp_error) < length &&
+  while (retro_core_get_disk_images_number (self, &tmp_error) < length &&
          (tmp_error != NULL)) {
-    retro_disk_control_add_image_index (disk_control, &tmp_error);
+    retro_core_add_disk_image_index (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
@@ -310,7 +462,7 @@ retro_core_load_discs (RetroCore  *self,
       }
     }
 
-    retro_disk_control_replace_image_index (disk_control, index, &game_info, &tmp_error);
+    retro_core_replace_disk_image_index (self, index, &game_info, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
@@ -326,7 +478,7 @@ retro_core_load_discs (RetroCore  *self,
     g_object_unref (file);
   }
 
-  retro_disk_control_set_eject_state (disk_control, FALSE, &tmp_error);
+  retro_core_set_disk_ejected (self, FALSE, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
@@ -447,7 +599,7 @@ retro_core_load_medias (RetroCore* self,
 
     return;
   }
-  if (retro_core_get_disk_control_interface (self) != NULL) {
+  if (internal->disk_control_callback != NULL) {
     retro_core_load_discs (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
@@ -606,7 +758,6 @@ retro_core_set_current_media (RetroCore  *self,
                               GError    **error)
 {
   RetroCoreEnvironmentInternal *internal;
-  RetroDiskControl *disk_control;
   guint length;
   GError *tmp_error = NULL;
 
@@ -617,26 +768,24 @@ retro_core_set_current_media (RetroCore  *self,
 
   g_return_if_fail (media_index < length);
 
-  disk_control = retro_core_get_disk_control_interface (self);
-
-  if (disk_control == NULL)
+  if (internal->disk_control_callback == NULL)
     return;
 
-  retro_disk_control_set_eject_state (disk_control, TRUE, &tmp_error);
+  retro_core_set_disk_ejected (self, TRUE, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 
     return;
   }
 
-  retro_disk_control_set_image_index (disk_control, media_index, &tmp_error);
+  retro_core_set_disk_image_index (self, media_index, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 
     return;
   }
 
-  retro_disk_control_set_eject_state (disk_control, FALSE, &tmp_error);
+  retro_core_set_disk_ejected (self, FALSE, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 

@@ -3,6 +3,7 @@
 #ifndef RETRO_CORE_H
 #define RETRO_CORE_H
 
+#include "retro-disk-control-callback.h"
 #include "retro-gtk-internal.h"
 #include "retro-module.h"
 #include "retro-rotation.h"
@@ -19,6 +20,7 @@ typedef struct _RetroCoreEnvironmentInternal RetroCoreEnvironmentInternal;
 
 struct _RetroCoreEnvironmentInternal {
   RetroModule *module;
+  RetroDiskControlCallback *disk_control_callback;
   gchar **media_uris;
   RetroSystemInfo *system_info;
   gfloat aspect_ratio;

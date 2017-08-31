@@ -44,7 +44,6 @@ libretro_gtk_la_SOURCES = \
 	av-info.vala \
 	core.vala \
 	core-error.vala \
-	disk-controller.vala \
 	game-info.vala \
 	memory.vala \
 	retro.vala \

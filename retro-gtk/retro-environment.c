@@ -218,8 +218,7 @@ static gboolean
 set_disk_control_interface (RetroCore                *self,
                             RetroDiskControlCallback *callback)
 {
-  // TODO Split this in two lines.
-  retro_core_set_disk_control_interface (self, RETRO_DISK_CONTROL (retro_disk_control_new (self, callback)));
+  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->disk_control_callback = callback;
 
   return TRUE;
 }

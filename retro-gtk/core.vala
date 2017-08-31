@@ -85,13 +85,6 @@ public class Core : Object {
 		get { return _frames_per_second; }
 	}
 
-	/**
-	 * The disk controlling interface.
-	 *
-	 * The Core can set it to let the frontend insert and eject disks images.
-	 */
-	internal DiskControl disk_control_interface { set; get; }
-
 	private weak Input _input_interface;
 	private ulong input_controller_connected_id;
 	private ulong input_controller_disconnected_id;

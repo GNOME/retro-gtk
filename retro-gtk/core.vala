@@ -230,8 +230,6 @@ public class Core : Object {
 	private extern void on_input_controller_connected (uint port, InputDevice device);
 	private extern void on_input_controller_disconnected (uint port);
 	private extern bool on_key_event (Gdk.EventKey event);
-
-	private extern void set_system_av_info (SystemAvInfo system_av_info);
 }
 
 }

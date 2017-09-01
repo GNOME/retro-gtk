@@ -41,7 +41,6 @@ libretro_gtk_la_SOURCES = \
 	variable/options.vala \
 	variable/variables.vala \
 	\
-	av-info.vala \
 	core.vala \
 	core-error.vala \
 	memory.vala \

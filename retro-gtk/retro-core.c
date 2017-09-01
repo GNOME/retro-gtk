@@ -407,7 +407,6 @@ retro_core_load_discs (RetroCore  *self,
   gboolean fullpath;
   GFile *file;
   gchar *path;
-  RetroSystemInfo system_info = { 0 };
   guint index;
   RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
@@ -559,7 +558,6 @@ retro_core_load_medias (RetroCore* self,
   GFile *file;
   gchar *path;
   gboolean fullpath;
-  RetroSystemInfo system_info = { 0 };
   RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 

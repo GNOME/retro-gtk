@@ -3,7 +3,7 @@
 #ifndef RETRO_DISK_CONTROL_CALLBACK_H
 #define RETRO_DISK_CONTROL_CALLBACK_H
 
-#include "retro-gtk-internal.h"
+#include "retro-game-info.h"
 
 G_BEGIN_DECLS
 

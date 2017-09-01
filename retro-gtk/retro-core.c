@@ -409,7 +409,7 @@ retro_core_load_discs (RetroCore  *self,
   gchar *path;
   RetroSystemInfo system_info = { 0 };
   guint index;
-  RetroGameInfo game_info = { 0 };
+  RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 
   g_return_if_fail (self != NULL);
@@ -446,34 +446,38 @@ retro_core_load_discs (RetroCore  *self,
     path = g_file_get_path (file);
 
     if (fullpath) {
-      retro_game_info_destroy (&game_info);
-      retro_game_info_init (&game_info, path);
+      if (game_info != NULL)
+        retro_game_info_free (game_info);
+      game_info = retro_game_info_new (path);
     }
     else {
-      retro_game_info_destroy (&game_info);
-      retro_game_info_init_with_data (&game_info, path, &tmp_error);
+      if (game_info != NULL)
+        retro_game_info_free (game_info);
+      game_info = retro_game_info_new_with_data (path, &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
         g_propagate_error (error, tmp_error);
 
-        retro_game_info_destroy (&game_info);
+        if (game_info != NULL)
+          retro_game_info_free (game_info);
         g_free (path);
         g_object_unref (file);
+
         return;
       }
     }
 
-    retro_core_replace_disk_image_index (self, index, &game_info, &tmp_error);
+    retro_core_replace_disk_image_index (self, index, game_info, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
-      retro_game_info_destroy (&game_info);
+      retro_game_info_free (game_info);
       g_free (path);
       g_object_unref (file);
 
       return;
     }
 
-    retro_game_info_destroy (&game_info);
+    retro_game_info_free (game_info);
     g_free (path);
     g_object_unref (file);
   }
@@ -556,7 +560,7 @@ retro_core_load_medias (RetroCore* self,
   gchar *path;
   gboolean fullpath;
   RetroSystemInfo system_info = { 0 };
-  RetroGameInfo game_info = { 0 };
+  RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 
   g_return_if_fail (self != NULL);
@@ -575,15 +579,13 @@ retro_core_load_medias (RetroCore* self,
   path = g_file_get_path (file);
   fullpath = retro_core_get_needs_full_path (self);
   if (fullpath) {
-    retro_game_info_destroy (&game_info);
-    retro_game_info_init (&game_info, path);
+    game_info = retro_game_info_new (path);
   }
   else {
-    retro_game_info_destroy (&game_info);
-    retro_game_info_init_with_data (&game_info, path, &tmp_error);
+    game_info = retro_game_info_new_with_data (path, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
-      retro_game_info_destroy (&game_info);
+      retro_game_info_free (game_info);
       g_free (path);
       g_object_unref (file);
       g_free (uri);
@@ -591,8 +593,8 @@ retro_core_load_medias (RetroCore* self,
       return;
     }
   }
-  if (!retro_core_load_game (self, &game_info)) {
-    retro_game_info_destroy (&game_info);
+  if (!retro_core_load_game (self, game_info)) {
+    retro_game_info_free (game_info);
     g_free (path);
     g_object_unref (file);
     g_free (uri);
@@ -603,7 +605,7 @@ retro_core_load_medias (RetroCore* self,
     retro_core_load_discs (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
-      retro_game_info_destroy (&game_info);
+      retro_game_info_free (game_info);
       g_free (path);
       g_object_unref (file);
       g_free (uri);
@@ -611,7 +613,7 @@ retro_core_load_medias (RetroCore* self,
       return;
     }
   }
-  retro_game_info_destroy (&game_info);
+  retro_game_info_free (game_info);
   g_free (path);
   g_object_unref (file);
   g_free (uri);

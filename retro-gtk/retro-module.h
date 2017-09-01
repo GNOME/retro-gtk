@@ -5,6 +5,7 @@
 
 #include <glib-object.h>
 #include "retro-gtk-internal.h"
+#include "retro-game-info.h"
 #include "retro-system-info.h"
 
 G_BEGIN_DECLS

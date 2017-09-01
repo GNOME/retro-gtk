@@ -44,7 +44,6 @@ libretro_gtk_la_SOURCES = \
 	av-info.vala \
 	core.vala \
 	core-error.vala \
-	game-info.vala \
 	memory.vala \
 	retro.vala \
 	retro-core-descriptor.vala \
@@ -52,6 +51,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view.vala \
 	retro-core-view-extern.c \
 	retro-core-view-input-device.c \
+	retro-game-info.c \
 	retro-log.c \
 	retro-module.c \
 	retro-module-query.vala \

@@ -16,7 +16,6 @@ struct _RetroDemoApplication
   RetroInputDeviceManager *input;
   RetroMainLoop *loop;
   RetroCoreView *view;
-  RetroPaPlayer *pa_player;
 };
 
 G_DEFINE_TYPE (RetroDemoApplication, retro_demo_application, GTK_TYPE_APPLICATION)
@@ -80,9 +79,6 @@ retro_demo_application_finalize (GObject *object)
   if (self->loop != NULL)
     g_object_unref (self->loop);
 
-  if (self->pa_player != NULL)
-    g_object_unref (self->pa_player);
-
   G_OBJECT_CLASS (retro_demo_application_parent_class)->finalize (object);
 }
 
@@ -105,9 +101,6 @@ retro_demo_activate (GApplication *application)
   input_device = retro_core_view_as_input_device (self->view, RETRO_DEVICE_TYPE_POINTER);
   retro_input_device_manager_set_controller_device (self->input, 0, input_device);
   g_object_unref (input_device);
-
-  self->pa_player = retro_pa_player_new ();
-  retro_pa_player_set_core (self->pa_player, self->core);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);

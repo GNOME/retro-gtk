@@ -20,6 +20,7 @@ public class Retro.CoreView : Gtk.EventBox {
 
 	private Core core;
 	internal CairoDisplay display;
+	internal PaPlayer audio_player;
 
 	internal HashTable<uint?, bool?> key_state;
 	internal HashTable<uint?, bool?> mouse_button_state;
@@ -43,6 +44,8 @@ public class Retro.CoreView : Gtk.EventBox {
 		display.can_focus = false;
 		add (display);
 
+		audio_player = new PaPlayer ();
+
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 		mouse_button_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 
@@ -55,13 +58,17 @@ public class Retro.CoreView : Gtk.EventBox {
 	}
 
 	public void set_core (Core? core) {
-		if (this.core != null)
+		if (this.core != null) {
 			display.set_core (null);
+			audio_player.set_core (null);
+		}
 
 		this.core = core;
 
-		if (core != null)
+		if (core != null) {
 			display.set_core (core);
+			audio_player.set_core (core);
+		}
 	}
 
 	public CairoDisplay get_display () {

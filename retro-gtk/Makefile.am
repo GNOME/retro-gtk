@@ -148,8 +148,13 @@ pkgconfig_DATA = retro-gtk-0.12.pc
 EXTRA_DIST = \
 	input/retro-keyboard-key.h \
 	retro-core.h \
+	retro-core-view-input-device.h \
+	retro-disk-control-callback.h \
+	retro-game-info.h \
 	retro-module.h \
 	retro-rotation.h \
+	retro-system-av-info.h \
+	retro-system-info.h \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \
 	$(NULL)

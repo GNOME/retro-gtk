@@ -1,3 +1,46 @@
+===============
+Version 0.11.92
+===============
+
+* Core:
+ - Remove the barely used system-info property.
+ - Use Gdk.EventKey for keyboard inputs.
+ - Make the init singal an error-throwing method.
+ - Implement disk handling directly.
+
+* CoreView can be exposed as a joypad, a mouse or a pointer.
+
+* retro-demo:
+ - Add pointer support from CoreView.
+
+* Make all error domains internal.
+
+* Make internal and port to C:
+ - GameInfo.
+ - Module.
+ - SystemAvInfo.
+ - SystemInfo.
+ - most of Core.
+ - keyboard keys.
+
+* Remove unused symbols:
+ - DiskControl.
+ - GamepadConfiguration.
+ - GamepadButtonType.
+ - Keyboard.
+ - KeyboardState.
+ - MemDesc.
+ - MemoryDescriptor.
+ - MemoryMap.
+ - Mouse.
+ - VirtualGamepad.
+ - get_system_info ().
+ - SNES specific memory types from MemoryType.
+
+* Bugs fixed:
+ 777489 Refactor the whole API
+
+
 ================
 Version 0.11.4.1
 ================

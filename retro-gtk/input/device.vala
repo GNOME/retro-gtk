@@ -3,15 +3,6 @@
 namespace Retro {
 
 /**
- * The input types of a pointer.
- */
-private enum PointerId {
-	X,
-	Y,
-	PRESSED
-}
-
-/**
  * Describes an input source.
  */
 public struct InputDescriptor {

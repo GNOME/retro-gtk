@@ -38,6 +38,7 @@ retro_gtk_public_h_sources = \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
 	retro-mouse-id.h \
+	retro-pointer-id.h \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
@@ -90,6 +91,7 @@ libretro_gtk_la_SOURCES = \
 	retro-mouse-id.c \
 	retro-option.c \
 	retro-options.c \
+	retro-pointer-id.c \
 	rumble.vala \
 	video.vala \
 	retro-core.c \

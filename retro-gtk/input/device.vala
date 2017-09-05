@@ -3,14 +3,6 @@
 namespace Retro {
 
 /**
- * The axes of an analog stick.
- */
-public enum AnalogId {
-	X,
-	Y
-}
-
-/**
  * The input types of a mouse.
  */
 private enum MouseId {

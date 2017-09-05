@@ -24,7 +24,8 @@ AM_CFLAGS =\
 lib_LTLIBRARIES = libretro-gtk.la
 
 vapidir = $(datadir)/vala/vapi
-dist_vapi_DATA = retro-gtk-0.12.vapi retro-gtk-0.12.deps
+vapi_DATA = retro-gtk-0.12.vapi
+dist_vapi_DATA = retro-gtk-0.12.deps
 
 BUILT_SOURCES = retro-gtk-internal.h
 
@@ -117,7 +118,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--thread \
 	--target-glib 2.32 \
 	--library retro-gtk-0.12 \
-	--vapi retro-gtk-0.12.vapi \
 	-H retro-gtk-vala.h \
 	-h retro-gtk-internal.h \
 	-X -fPIC -X -shared \
@@ -152,12 +152,26 @@ BUILT_SOURCES += libretro-gtk.la Retro-0.12.gir
 Retro-0.12.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
 Retro_0_12_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0 Gtk-3.0 cairo-1.0
 Retro_0_12_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.12
-Retro_0_12_gir_CFLAGS = -DRETRO_GTK_USE_UNSTABLE_API $(retro_gtk_CFLAGS)
+Retro_0_12_gir_CFLAGS = -I$(srcdir) -DRETRO_GTK_USE_UNSTABLE_API -DRETRO_GTK_COMPILATION $(retro_gtk_CFLAGS)
 Retro_0_12_gir_LIBS = libretro-gtk.la
 Retro_0_12_gir_FILES = $(introspection_sources)
 Retro_0_12_gir_EXPORT_PACKAGES = retro-gtk-0.12
 
-CLEANFILES = $(gir_DATA) $(typelib_DATA)
+retro-gtk-0.12.vapi: Retro-0.12.gir
+	vapigen \
+		--library retro-gtk-0.12 \
+		--pkg cairo \
+		--pkg gio-2.0  \
+		--pkg glib-2.0 \
+		--pkg gmodule-2.0 \
+		--pkg gobject-2.0 \
+		--pkg gtk+-3.0 \
+		--pkg libpulse \
+		--pkg libpulse-simple \
+		$< \
+		$(NULL)
+
+CLEANFILES = $(gir_DATA) $(typelib_DATA) $(vapi_DATA)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.12.pc

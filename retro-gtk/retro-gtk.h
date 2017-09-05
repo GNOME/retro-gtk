@@ -18,6 +18,7 @@
 #include "retro-lightgun-id.h"
 #include "retro-mouse-id.h"
 #include "retro-pointer-id.h"
+#include "retro-video-filter.h"
 
 #undef __RETRO_GTK_INSIDE__
 

@@ -40,6 +40,7 @@ retro_gtk_public_h_sources = \
 	retro-lightgun-id.h \
 	retro-mouse-id.h \
 	retro-pointer-id.h \
+	retro-video-filter.h \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
@@ -94,6 +95,7 @@ libretro_gtk_la_SOURCES = \
 	retro-option.c \
 	retro-options.c \
 	retro-pointer-id.c \
+	retro-video-filter.c \
 	rumble.vala \
 	video.vala \
 	retro-core.c \
@@ -101,7 +103,6 @@ libretro_gtk_la_SOURCES = \
 	\
 	video/cairo-display.vala \
 	video/retro-video-converter.c \
-	video/video-filter.vala \
 	$(NULL)
 
 video/retro-video-converter.c: retro-gtk-internal.h

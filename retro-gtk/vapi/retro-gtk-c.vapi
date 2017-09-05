@@ -12,6 +12,14 @@ public enum Retro.DeviceType {
 	POINTER = 6,
 }
 
+[CCode (cheader_filename = "retro-video-filter.h")]
+public enum Retro.VideoFilter {
+	SMOOTH,
+	SHARP;
+
+	public static VideoFilter from_string (string filter);
+}
+
 [CCode (cheader_filename = "retro-input-device.h")]
 public interface Retro.InputDevice : GLib.Object {
 	public abstract void  poll ();

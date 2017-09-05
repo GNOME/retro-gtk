@@ -14,6 +14,7 @@
 #include "retro-device-type.h"
 #include "retro-gtk-vala.h"
 #include "retro-joypad-id.h"
+#include "retro-lightgun-id.h"
 #include "retro-mouse-id.h"
 
 #undef __RETRO_GTK_INSIDE__

@@ -3,19 +3,6 @@
 namespace Retro {
 
 /**
- * The input types of a lightgun.
- */
-private enum LightgunId {
-	X,
-	Y,
-	TRIGGER,
-	CURSOR,
-	TURBO,
-	PAUSE,
-	START
-}
-
-/**
  * The input types of a pointer.
  */
 private enum PointerId {

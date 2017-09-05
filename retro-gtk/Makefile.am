@@ -36,6 +36,7 @@ retro_gtk_public_h_sources = \
 	retro-gtk.h \
 	retro-gtk-vala.h \
 	retro-joypad-id.h \
+	retro-lightgun-id.h \
 	retro-mouse-id.h \
 	$(NULL)
 
@@ -81,6 +82,7 @@ libretro_gtk_la_SOURCES = \
 	retro-device-type.c \
 	retro-game-info.c \
 	retro-joypad-id.c \
+	retro-lightgun-id.c \
 	retro-log.c \
 	retro-module.c \
 	retro-module-query.vala \

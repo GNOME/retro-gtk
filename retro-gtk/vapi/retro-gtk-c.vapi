@@ -11,3 +11,12 @@ public enum Retro.DeviceType {
 	ANALOG = 5,
 	POINTER = 6,
 }
+
+[CCode (cheader_filename = "retro-input-descriptor.h")]
+public struct Retro.InputDescriptor {
+	uint port;
+	DeviceType device;
+	uint index;
+	uint id;
+	string description;
+}

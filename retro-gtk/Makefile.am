@@ -48,6 +48,7 @@ retro_gtk_private_h_sources = \
 	retro-core-view-input-device.h \
 	retro-disk-control-callback.h \
 	retro-game-info.h \
+	retro-input-descriptor.h \
 	retro-module.h \
 	retro-option.h \
 	retro-options.h \
@@ -61,7 +62,6 @@ libretro_gtk_la_SOURCES = \
 	audio/pa-player.vala \
 	\
 	input/controller.vala \
-	input/device.vala \
 	input/input.vala \
 	input/input-device.vala \
 	input/input-device-manager.vala \
@@ -82,6 +82,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view-input-device.c \
 	retro-device-type.c \
 	retro-game-info.c \
+	retro-input-descriptor.c \
 	retro-joypad-id.c \
 	retro-lightgun-id.c \
 	retro-log.c \

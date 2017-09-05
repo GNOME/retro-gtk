@@ -3,21 +3,6 @@
 namespace Retro {
 
 /**
- * The input types of a mouse.
- */
-private enum MouseId {
-	X,
-	Y,
-	LEFT,
-	RIGHT,
-	WHEELUP,
-	WHEELDOWN,
-	MIDDLE,
-	HORIZ_WHEELUP,
-	HORIZ_WHEELDOWN,
-}
-
-/**
  * The input types of a lightgun.
  */
 private enum LightgunId {

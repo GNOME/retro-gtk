@@ -36,6 +36,7 @@ retro_gtk_public_h_sources = \
 	retro-gtk.h \
 	retro-gtk-vala.h \
 	retro-joypad-id.h \
+	retro-mouse-id.h \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
@@ -84,6 +85,7 @@ libretro_gtk_la_SOURCES = \
 	retro-module.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \
+	retro-mouse-id.c \
 	retro-option.c \
 	retro-options.c \
 	rumble.vala \

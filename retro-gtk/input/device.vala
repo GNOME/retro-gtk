@@ -3,14 +3,6 @@
 namespace Retro {
 
 /**
- * The analog sticks of an analog joypad.
- */
-public enum AnalogIndex {
-	LEFT,
-	RIGHT
-}
-
-/**
  * The axes of an analog stick.
  */
 public enum AnalogId {

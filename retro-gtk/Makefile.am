@@ -30,6 +30,7 @@ dist_vapi_DATA = retro-gtk-0.12.deps
 BUILT_SOURCES = retro-gtk-internal.h
 
 retro_gtk_public_h_sources = \
+	retro-analog-index.h \
 	retro-device-type.h \
 	retro-gtk.h \
 	retro-gtk-vala.h \
@@ -68,6 +69,7 @@ libretro_gtk_la_SOURCES = \
 	core-error.vala \
 	memory.vala \
 	retro.vala \
+	retro-analog-index.c \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
 	retro-core-view.vala \

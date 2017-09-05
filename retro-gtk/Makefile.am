@@ -32,6 +32,7 @@ BUILT_SOURCES = retro-gtk-internal.h
 retro_gtk_public_h_sources = \
 	retro-analog-id.h \
 	retro-analog-index.h \
+	retro-core-view.h \
 	retro-device-type.h \
 	retro-gtk.h \
 	retro-gtk-vala.h \
@@ -79,8 +80,7 @@ libretro_gtk_la_SOURCES = \
 	retro-analog-index.c \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
-	retro-core-view.vala \
-	retro-core-view-extern.c \
+	retro-core-view.c \
 	retro-core-view-input-device.c \
 	retro-device-type.c \
 	retro-game-info.c \
@@ -110,7 +110,7 @@ video/retro-video-converter.c: retro-gtk-internal.h
 
 retro-core.c: retro-gtk-internal.h
 
-retro-core-view-extern.c: retro-gtk-internal.h
+retro-core-view.c: retro-gtk-internal.h
 
 retro-core-view-input-device.c: retro-gtk-internal.h
 

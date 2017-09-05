@@ -1,6 +1,7 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
 #include <retro-gtk/retro-gtk.h>
+#include <retro-gtk/retro-core-view.h>
 
 #define RETRO_TYPE_DEMO_APPLICATION (retro_demo_application_get_type())
 

@@ -12,6 +12,14 @@ public enum Retro.DeviceType {
 	POINTER = 6,
 }
 
+[CCode (cheader_filename = "retro-input-device.h")]
+public interface Retro.InputDevice : GLib.Object {
+	public abstract void  poll ();
+	public abstract int16 get_input_state (DeviceType device, uint index, uint id);
+	public abstract DeviceType get_device_type ();
+	public abstract uint64 get_device_capabilities ();
+}
+
 [CCode (cheader_filename = "retro-input-descriptor.h")]
 public struct Retro.InputDescriptor {
 	uint port;

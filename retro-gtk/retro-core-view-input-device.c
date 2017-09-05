@@ -2,6 +2,8 @@
 
 #include "retro-core-view-input-device.h"
 
+#include "retro-input-device.h"
+
 struct _RetroCoreViewInputDevice
 {
   GObject parent_instance;
@@ -9,7 +11,7 @@ struct _RetroCoreViewInputDevice
   RetroDeviceType device_type;
 };
 
-static void retro_input_device_interface_init (RetroInputDeviceIface   *iface);
+static void retro_input_device_interface_init (RetroInputDeviceInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (RetroCoreViewInputDevice, retro_core_view_input_device, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (RETRO_TYPE_INPUT_DEVICE,
@@ -106,7 +108,7 @@ retro_core_view_input_device_init (RetroCoreViewInputDevice *self)
 }
 
 static void
-retro_input_device_interface_init (RetroInputDeviceIface *iface)
+retro_input_device_interface_init (RetroInputDeviceInterface *iface)
 {
   iface->poll = retro_core_view_input_device_poll;
   iface->get_input_state =  retro_core_view_input_device_get_input_state;

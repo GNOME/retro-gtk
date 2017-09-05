@@ -35,6 +35,7 @@ retro_gtk_public_h_sources = \
 	retro-device-type.h \
 	retro-gtk.h \
 	retro-gtk-vala.h \
+	retro-input-device.h \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
 	retro-mouse-id.h \
@@ -63,7 +64,6 @@ libretro_gtk_la_SOURCES = \
 	\
 	input/controller.vala \
 	input/input.vala \
-	input/input-device.vala \
 	input/input-device-manager.vala \
 	input/retro-keyboard-key.c \
 	\
@@ -83,6 +83,7 @@ libretro_gtk_la_SOURCES = \
 	retro-device-type.c \
 	retro-game-info.c \
 	retro-input-descriptor.c \
+	retro-input-device.c \
 	retro-joypad-id.c \
 	retro-lightgun-id.c \
 	retro-log.c \

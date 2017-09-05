@@ -3,6 +3,7 @@
 #include <linux/input-event-codes.h>
 #include "retro-gtk-internal.h"
 #include "retro-core-view-input-device.h"
+#include "retro-joypad-id.h"
 
 static guint16 DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
   KEY_S,

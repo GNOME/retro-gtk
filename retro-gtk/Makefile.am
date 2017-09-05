@@ -33,6 +33,7 @@ retro_gtk_public_h_sources = \
 	retro-device-type.h \
 	retro-gtk.h \
 	retro-gtk-vala.h \
+	retro-joypad-id.h \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
@@ -74,6 +75,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view-input-device.c \
 	retro-device-type.c \
 	retro-game-info.c \
+	retro-joypad-id.c \
 	retro-log.c \
 	retro-module.c \
 	retro-module-query.vala \

@@ -3,29 +3,6 @@
 namespace Retro {
 
 /**
- * The input types of a joypad.
- */
-public enum JoypadId {
-	B,
-	Y,
-	SELECT,
-	START,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	A,
-	X,
-	L,
-	R,
-	L2,
-	R2,
-	L3,
-	R3,
-	COUNT,
-}
-
-/**
  * The analog sticks of an analog joypad.
  */
 public enum AnalogIndex {

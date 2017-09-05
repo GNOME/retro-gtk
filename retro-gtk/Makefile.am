@@ -30,6 +30,7 @@ dist_vapi_DATA = retro-gtk-0.12.deps
 BUILT_SOURCES = retro-gtk-internal.h
 
 retro_gtk_public_h_sources = \
+	retro-device-type.h \
 	retro-gtk.h \
 	retro-gtk-vala.h \
 	$(NULL)
@@ -71,6 +72,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view.vala \
 	retro-core-view-extern.c \
 	retro-core-view-input-device.c \
+	retro-device-type.c \
 	retro-game-info.c \
 	retro-log.c \
 	retro-module.c \
@@ -114,6 +116,7 @@ libretro_gtk_la_VALAFLAGS = \
 	--pkg gtk+-3.0 \
 	--pkg libpulse \
 	--pkg libpulse-simple \
+	--pkg retro-gtk-c \
 	--vapidir=vapi \
 	--thread \
 	--target-glib 2.32 \
@@ -180,6 +183,7 @@ EXTRA_DIST = \
 	$(retro_gtk_private_h_sources) \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \
+	vapi/retro-gtk-c.vapi \
 	$(NULL)
 
 INPUTDIR=$(top_srcdir)/../RetroArch/libretro-common/include/

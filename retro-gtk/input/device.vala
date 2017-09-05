@@ -3,38 +3,6 @@
 namespace Retro {
 
 /**
- * The device types.
- */
-public enum DeviceType {
-	TYPE_MASK = 0xff,
-
-	/* See RETRO_DEVICE_NONE and below in libretro.h for docs */
-	NONE = 0,
-	JOYPAD = 1,
-	MOUSE = 2,
-	KEYBOARD = 3,
-	LIGHTGUN = 4,
-	ANALOG = 5,
-	POINTER = 6;
-
-	/**
-	 * Gets the basic type of a device type.
-	 *
-	 * Applies the type mask on a DeviceType to get its basic type.
-	 * If the device type is already basic, it will return the same type.
-	 *
-	 * E.g DeviceType.JOYPAD_MULTITAP.get_basic_type () returns
-	 * DeviceType.JOYPAD, and DeviceType.JOYPAD.get_basic_type () also
-	 * returns Type.JOYPAD.
-	 *
-	 * @return the basic type of a device type
-	 */
-	public DeviceType get_basic_type () {
-		return this & DeviceType.TYPE_MASK;
-	}
-}
-
-/**
  * The input types of a joypad.
  */
 public enum JoypadId {

@@ -9,6 +9,7 @@
 #error    retro-gtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h
 #endif
 
+#include "retro-device-type.h"
 #include "retro-gtk-vala.h"
 
 #undef __RETRO_GTK_INSIDE__

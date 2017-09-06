@@ -29,6 +29,7 @@ BUILT_SOURCES = retro-gtk-internal.h
 
 retro_gtk_public_h_sources = \
 	retro-gtk.h \
+	retro-gtk-vala.h \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
@@ -116,7 +117,7 @@ libretro_gtk_la_VALAFLAGS = \
 	--target-glib 2.32 \
 	--library retro-gtk-0.12 \
 	--vapi retro-gtk-0.12.vapi \
-	-H retro-gtk.h \
+	-H retro-gtk-vala.h \
 	-h retro-gtk-internal.h \
 	-X -fPIC -X -shared \
 	$(NULL)
@@ -127,10 +128,6 @@ retro_gtkincludedir = $(includedir)/retro-gtk-0.12
 retro_gtkinclude_HEADERS = \
 	$(retro_gtk_public_h_sources) \
 	$(NULL)
-
-# Add unstable API guard
-$(outdir)/retro-gtk.h:
-	sed -i "s/#define __RETRO_GTK_H__/#define __RETRO_GTK_H__\n\n#ifndef RETRO_GTK_USE_UNSTABLE_API\n#error    retro-gtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h\n#endif/" $@
 
 # Introspection
 -include $(INTROSPECTION_MAKEFILE)

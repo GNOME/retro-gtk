@@ -1,0 +1,16 @@
+// This file is part of retro-gtk. License: GPL-3.0+.
+
+#ifndef __RETRO_GTK_H__
+#define __RETRO_GTK_H__
+
+#define __RETRO_GTK_INSIDE__
+
+#ifndef RETRO_GTK_USE_UNSTABLE_API
+#error    retro-gtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h
+#endif
+
+#include "retro-gtk-vala.h"
+
+#undef __RETRO_GTK_INSIDE__
+
+#endif

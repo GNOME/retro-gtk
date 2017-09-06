@@ -48,6 +48,7 @@ retro_gtk_public_h_sources = \
 retro_gtk_private_h_sources = \
 	input/retro-keyboard-key.h \
 	libretro-environment.h \
+	retro-cairo-display.h \
 	retro-core-private.h \
 	retro-core-view-input-device.h \
 	retro-disk-control-callback.h \
@@ -78,6 +79,7 @@ libretro_gtk_la_SOURCES = \
 	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \
+	retro-cairo-display.c \
 	retro-core-descriptor.vala \
 	retro-core-descriptor-error.vala \
 	retro-core-view.c \
@@ -102,7 +104,6 @@ libretro_gtk_la_SOURCES = \
 	retro-core.c \
 	retro-environment.c \
 	\
-	video/cairo-display.vala \
 	video/retro-video-converter.c \
 	$(NULL)
 

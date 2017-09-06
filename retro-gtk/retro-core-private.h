@@ -11,6 +11,7 @@
 #include "retro-gtk-internal.h"
 #include "retro-module.h"
 #include "retro-options.h"
+#include "retro-pixel-format.h"
 #include "retro-rotation.h"
 
 G_BEGIN_DECLS

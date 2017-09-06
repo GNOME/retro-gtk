@@ -2,7 +2,7 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "retro-gtk-internal.h"
+#include "retro-pixel-format.h"
 
 typedef struct _xrgb1555 {
   guint16 b: 5;

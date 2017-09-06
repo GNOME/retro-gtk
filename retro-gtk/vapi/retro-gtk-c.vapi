@@ -12,6 +12,14 @@ public enum Retro.DeviceType {
 	POINTER = 6,
 }
 
+[CCode (cheader_filename = "retro-pixel-format.h")]
+public enum Retro.PixelFormat {
+	XRGB1555,
+	XRGB8888,
+	RGB565,
+	UNKNOWN = -1,
+}
+
 [CCode (cheader_filename = "retro-video-filter.h")]
 public enum Retro.VideoFilter {
 	SMOOTH,

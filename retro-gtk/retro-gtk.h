@@ -17,6 +17,7 @@
 #include "retro-joypad-id.h"
 #include "retro-lightgun-id.h"
 #include "retro-mouse-id.h"
+#include "retro-pixel-format.h"
 #include "retro-pointer-id.h"
 #include "retro-video-filter.h"
 

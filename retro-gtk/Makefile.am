@@ -39,6 +39,7 @@ retro_gtk_public_h_sources = \
 	retro-input-device.h \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
+	retro-log.h \
 	retro-memory-type.h \
 	retro-mouse-id.h \
 	retro-pixel-format.h \

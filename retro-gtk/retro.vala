@@ -19,7 +19,5 @@ private errordomain CbError {
 	NO_CALLBACK
 }
 
-public extern void g_log (Core core, string log_domain, LogLevelFlags log_level, string message);
-
 }
 

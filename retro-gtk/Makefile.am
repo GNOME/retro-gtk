@@ -82,8 +82,7 @@ libretro_gtk_la_SOURCES = \
 	retro-analog-id.c \
 	retro-analog-index.c \
 	retro-cairo-display.c \
-	retro-core-descriptor.vala \
-	retro-core-descriptor-error.vala \
+	retro-core-descriptor.c \
 	retro-core-view.c \
 	retro-core-view-input-device.c \
 	retro-device-type.c \
@@ -114,6 +113,8 @@ libretro_gtk_la_SOURCES = \
 video/retro-video-converter.c: retro-gtk-internal.h
 
 retro-core.c: retro-gtk-internal.h
+
+# retro-core-descriptor.c: retro-gtk-internal.h
 
 retro-core-view.c: retro-gtk-internal.h
 

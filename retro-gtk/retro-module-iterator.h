@@ -8,11 +8,9 @@
 #endif
 
 #include <glib-object.h>
+#include "retro-core-descriptor.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroCoreDescriptor RetroCoreDescriptor;
 
 #define RETRO_TYPE_MODULE_ITERATOR (retro_module_iterator_get_type())
 

@@ -39,6 +39,7 @@ retro_gtk_public_h_sources = \
 	retro-input-device.h \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
+	retro-memory-type.h \
 	retro-mouse-id.h \
 	retro-pixel-format.h \
 	retro-pointer-id.h \
@@ -74,7 +75,6 @@ libretro_gtk_la_SOURCES = \
 	\
 	core.vala \
 	core-error.vala \
-	memory.vala \
 	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \
@@ -90,6 +90,7 @@ libretro_gtk_la_SOURCES = \
 	retro-joypad-id.c \
 	retro-lightgun-id.c \
 	retro-log.c \
+	retro-memory-type.c \
 	retro-module.c \
 	retro-module-query.vala \
 	retro-module-iterator.vala \

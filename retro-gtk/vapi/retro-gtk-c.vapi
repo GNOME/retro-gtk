@@ -12,6 +12,14 @@ public enum Retro.DeviceType {
 	POINTER = 6,
 }
 
+[CCode (cheader_filename = "retro-memory-type.h")]
+public enum Retro.MemoryType {
+	SAVE_RAM,
+	RTC,
+	SYSTEM_RAM,
+	VIDEO_RAM,
+}
+
 [CCode (cheader_filename = "retro-pixel-format.h")]
 public enum Retro.PixelFormat {
 	XRGB1555,

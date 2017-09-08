@@ -60,7 +60,9 @@ retro_core_view_input_device_get_device_type (RetroInputDevice *base)
   return self->device_type;
 }
 
-static guint64 retro_core_view_input_device_get_device_capabilities (RetroInputDevice *base) {
+static guint64
+retro_core_view_input_device_get_device_capabilities (RetroInputDevice *base)
+{
   RetroCoreViewInputDevice *self = RETRO_CORE_VIEW_INPUT_DEVICE (base);
   gpointer view;
   guint64 result;

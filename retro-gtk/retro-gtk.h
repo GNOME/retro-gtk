@@ -19,6 +19,7 @@
 #include "retro-joypad-id.h"
 #include "retro-lightgun-id.h"
 #include "retro-log.h"
+#include "retro-main-loop.h"
 #include "retro-memory-type.h"
 #include "retro-module-iterator.h"
 #include "retro-module-query.h"

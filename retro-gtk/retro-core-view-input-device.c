@@ -39,7 +39,8 @@ retro_core_view_input_device_get_input_state (RetroInputDevice *base,
 
   view = g_weak_ref_get (&self->view);
 
-  g_return_val_if_fail (view != NULL, 0);
+  if (view == NULL)
+    return 0;
 
   result = retro_core_view_get_input_state (RETRO_CORE_VIEW (view),
                                           self->device_type,
@@ -71,7 +72,8 @@ retro_core_view_input_device_get_device_capabilities (RetroInputDevice *base)
 
   view = g_weak_ref_get (&self->view);
 
-  g_return_val_if_fail (view != NULL, 0);
+  if (view == NULL)
+    return 0;
 
   result = retro_core_view_get_device_capabilities (RETRO_CORE_VIEW (view));
 

@@ -1,3 +1,15 @@
+==============
+Version 0.12.0
+==============
+
+* Core: avoid a double free when loading multiple discs.
+
+* CoreViewInputDevice: don't throw errors when the view is NULL.
+
+* Bugs fixed:
+ 787492 retro-gtk: SIGABRT in retro_game_info_free
+
+
 ===============
 Version 0.11.92
 ===============

@@ -445,13 +445,9 @@ retro_core_load_discs (RetroCore  *self,
     path = g_file_get_path (file);
 
     if (fullpath) {
-      if (game_info != NULL)
-        retro_game_info_free (game_info);
       game_info = retro_game_info_new (path);
     }
     else {
-      if (game_info != NULL)
-        retro_game_info_free (game_info);
       game_info = retro_game_info_new_with_data (path, &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
         g_propagate_error (error, tmp_error);

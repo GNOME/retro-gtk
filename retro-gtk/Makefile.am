@@ -57,6 +57,7 @@ retro_gtk_private_h_sources = \
 	retro-module.h \
 	retro-option.h \
 	retro-options.h \
+	retro-pa-player.h \
 	retro-rotation.h \
 	retro-system-av-info.h \
 	retro-system-info.h \
@@ -64,8 +65,6 @@ retro_gtk_private_h_sources = \
 	$(NULL)
 
 libretro_gtk_la_SOURCES = \
-	audio/pa-player.vala \
-	\
 	input/controller.vala \
 	input/input.vala \
 	input/input-device-manager.vala \
@@ -97,6 +96,7 @@ libretro_gtk_la_SOURCES = \
 	retro-mouse-id.c \
 	retro-option.c \
 	retro-options.c \
+	retro-pa-player.c \
 	retro-pixel-format.c \
 	retro-pointer-id.c \
 	retro-video-filter.c \
@@ -120,6 +120,8 @@ retro-environment.c: retro-gtk-internal.h libretro-environment.h
 retro-log.c: retro-gtk-internal.h
 
 retro-module.c: retro-gtk-internal.h
+
+retro-pa-player.c: retro-gtk-internal.h
 
 libretro_gtk_la_LDFLAGS =
 

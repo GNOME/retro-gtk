@@ -7,6 +7,7 @@
 #include "retro-core-view-input-device.h"
 #include "retro-joypad-id.h"
 #include "retro-mouse-id.h"
+#include "retro-pa-player.h"
 #include "retro-pointer-id.h"
 
 static guint16 DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[RETRO_JOYPAD_ID_COUNT] = {

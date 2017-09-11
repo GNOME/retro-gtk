@@ -1,6 +1,10 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
 public class Retro.CoreView : Gtk.EventBox {
+	private Binding pixbuf_binding;
+	private Binding sensitive_binding;
+	public Gdk.Pixbuf pixbuf { set; get; }
+
 	private bool _can_grab_pointer;
 	public bool can_grab_pointer {
 		set {
@@ -46,6 +50,13 @@ public class Retro.CoreView : Gtk.EventBox {
 
 		audio_player = new PaPlayer ();
 
+		pixbuf_binding = display.bind_property ("pixbuf", this, "pixbuf",
+		                                        BindingFlags.BIDIRECTIONAL |
+		                                        BindingFlags.SYNC_CREATE);
+		sensitive_binding = bind_property ("sensitive", display, "sensitive",
+		                                   BindingFlags.BIDIRECTIONAL |
+		                                   BindingFlags.SYNC_CREATE);
+
 		key_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 		mouse_button_state = new HashTable<uint?, bool?> (int_hash, int_equal);
 
@@ -71,10 +82,9 @@ public class Retro.CoreView : Gtk.EventBox {
 		}
 	}
 
-	public CairoDisplay get_display () {
-		return display;
-	}
-
+	public extern void set_filter (VideoFilter filter) ;
+	public extern void show_video ();
+	public extern void hide_video ();
 	public extern InputDevice as_input_device (DeviceType device_type);
 	internal extern int16 get_input_state (DeviceType device, uint index, uint id);
 	internal extern uint64 get_device_capabilities ();

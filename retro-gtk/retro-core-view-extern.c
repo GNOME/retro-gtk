@@ -390,3 +390,28 @@ retro_core_view_as_input_device (RetroCoreView   *self,
 
   return RETRO_INPUT_DEVICE (retro_core_view_input_device_new (self, device_type));
 }
+
+void
+retro_core_view_set_filter (RetroCoreView    *self,
+                            RetroVideoFilter  filter)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+
+  retro_cairo_display_set_filter (self->display, filter);
+}
+
+void
+retro_core_view_show_video (RetroCoreView *self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+
+  retro_cairo_display_show_video (self->display);
+}
+
+void
+retro_core_view_hide_video (RetroCoreView *self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+
+  retro_cairo_display_hide_video (self->display);
+}

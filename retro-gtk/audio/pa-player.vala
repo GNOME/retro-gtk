@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-public class Retro.PaPlayer : GLib.Object {
+private class Retro.PaPlayer : GLib.Object {
 	private Core core;
 	private ulong on_audio_output_id;
 	private double sample_rate;

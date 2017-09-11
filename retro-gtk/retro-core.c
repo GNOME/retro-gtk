@@ -1044,7 +1044,16 @@ retro_core_set_memory (RetroCore       *self,
   retro_core_pop_cb_data ();
 
   g_return_if_fail (memory_region != NULL);
-  g_return_if_fail (memory_region_size == length);
+  g_return_if_fail (memory_region_size >= length);
+
+  if (memory_region_size != length)
+    g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %d bytes"
+             " were passed. The excess will be filled with zeros.",
+             retro_core_get_name (self),
+             memory_region_size,
+             id,
+             length);
 
   memcpy (memory_region, data, length);
+  memset (memory_region + length, 0, memory_region_size - length);
 }

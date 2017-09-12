@@ -53,7 +53,6 @@ static void
 on_log (guint level, const gchar *format, ...)
 {
   RetroCore *self;
-  RetroSystemInfo info = { 0 };
   const gchar *log_domain;
   GLogLevelFlags log_level;
   gchar *message;

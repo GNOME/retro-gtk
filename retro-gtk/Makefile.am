@@ -41,6 +41,7 @@ retro_gtk_public_h_sources = \
 	retro-lightgun-id.h \
 	retro-log.h \
 	retro-memory-type.h \
+	retro-module-iterator.h \
 	retro-module-query.h \
 	retro-mouse-id.h \
 	retro-pixel-format.h \
@@ -94,8 +95,8 @@ libretro_gtk_la_SOURCES = \
 	retro-log.c \
 	retro-memory-type.c \
 	retro-module.c \
+	retro-module-iterator.c \
 	retro-module-query.c \
-	retro-module-iterator.vala \
 	retro-mouse-id.c \
 	retro-option.c \
 	retro-options.c \
@@ -123,6 +124,8 @@ retro-environment.c: retro-gtk-internal.h libretro-environment.h
 retro-log.c: retro-gtk-internal.h
 
 retro-module.c: retro-gtk-internal.h
+
+retro-module-iterator.c: retro-gtk-internal.h
 
 retro-module-query.c: retro-gtk-internal.h
 

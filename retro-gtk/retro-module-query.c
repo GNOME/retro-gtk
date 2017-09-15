@@ -19,8 +19,6 @@ G_DEFINE_TYPE (RetroModuleQuery, retro_module_query, G_TYPE_OBJECT)
 static void
 retro_module_query_finalize (GObject *object)
 {
-  RetroModuleQuery *self = RETRO_MODULE_QUERY (object);
-
   G_OBJECT_CLASS (retro_module_query_parent_class)->finalize (object);
 }
 
@@ -41,7 +39,7 @@ static gchar **
 retro_module_query_get_plugin_lookup_paths ()
 {
   gchar **envp;
-  gchar *env_plugin_path;
+  const gchar *env_plugin_path;
   gchar *full_plugin_path;
   gchar **result;
 
@@ -80,7 +78,8 @@ retro_module_query_iterator (RetroModuleQuery *self)
   g_return_val_if_fail (RETRO_IS_MODULE_QUERY (self), NULL);
 
   paths = retro_module_query_get_plugin_lookup_paths ();
-  result = retro_module_iterator_new (paths, g_strv_length (paths), self->recursive);
+  result = retro_module_iterator_new ((const gchar * const *) paths,
+                                      self->recursive);
   g_strfreev (paths);
 
   return result;

@@ -8,11 +8,9 @@
 #endif
 
 #include <glib-object.h>
+#include "retro-module-iterator.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroModuleIterator RetroModuleIterator;
 
 #define RETRO_TYPE_MODULE_QUERY (retro_module_query_get_type())
 

@@ -19,6 +19,7 @@
 #include "retro-lightgun-id.h"
 #include "retro-log.h"
 #include "retro-memory-type.h"
+#include "retro-module-query.h"
 #include "retro-mouse-id.h"
 #include "retro-pixel-format.h"
 #include "retro-pointer-id.h"

@@ -48,6 +48,12 @@ set_input_released (GHashTable *table,
   g_hash_table_remove (table, &input);
 }
 
+static void
+reset_input (GHashTable *table)
+{
+  g_hash_table_remove_all (table);
+}
+
 static gboolean
 get_input_state (GHashTable *table,
                  guint       input)
@@ -234,6 +240,9 @@ retro_core_view_on_focus_out_event (RetroCoreView *self,
 
   if (retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
+
+  reset_input (self->key_state);
+  reset_input (self->mouse_button_state);
 
   return FALSE;
 }

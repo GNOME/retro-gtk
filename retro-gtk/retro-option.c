@@ -78,7 +78,7 @@ retro_option_get_values (RetroOption *self)
 {
   g_return_val_if_fail (RETRO_IS_OPTION (self), NULL);
 
-  return self->values;
+  return (const gchar **) self->values;
 }
 
 const gchar *

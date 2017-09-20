@@ -77,8 +77,8 @@ retro_options_get_option_value (RetroOptions *self,
 {
   RetroOption *option;
 
-  g_return_val_if_fail (RETRO_IS_OPTIONS (self), FALSE);
-  g_return_val_if_fail (key != NULL, FALSE);
+  g_return_val_if_fail (RETRO_IS_OPTIONS (self), NULL);
+  g_return_val_if_fail (key != NULL, NULL);
 
   option = RETRO_OPTION (g_hash_table_lookup (self->options, key));
 
@@ -116,8 +116,8 @@ retro_options_get_option_description (RetroOptions *self,
 {
   RetroOption *option;
 
-  g_return_val_if_fail (RETRO_IS_OPTIONS (self), FALSE);
-  g_return_val_if_fail (key != NULL, FALSE);
+  g_return_val_if_fail (RETRO_IS_OPTIONS (self), NULL);
+  g_return_val_if_fail (key != NULL, NULL);
 
   option = RETRO_OPTION (g_hash_table_lookup (self->options, key));
 
@@ -130,8 +130,8 @@ retro_options_get_option_values (RetroOptions *self,
 {
   RetroOption *option;
 
-  g_return_val_if_fail (RETRO_IS_OPTIONS (self), FALSE);
-  g_return_val_if_fail (key != NULL, FALSE);
+  g_return_val_if_fail (RETRO_IS_OPTIONS (self), NULL);
+  g_return_val_if_fail (key != NULL, NULL);
 
   option = RETRO_OPTION (g_hash_table_lookup (self->options, key));
 

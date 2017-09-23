@@ -85,41 +85,6 @@ public class Core : Object {
 		get { return _frames_per_second; }
 	}
 
-	private weak Input _input_interface;
-	private ulong input_controller_connected_id;
-	private ulong input_controller_disconnected_id;
-	private ulong input_key_event_id;
-	/**
-	 * The input interface.
-	 *
-	 * It must be set before {@link init} is called.
-	 */
-	public Input input_interface {
-		get { return _input_interface; }
-		construct set {
-			if (value == input_interface)
-				return;
-
-			if (input_interface != null) {
-				input_interface.disconnect (input_controller_connected_id);
-				input_interface.disconnect (input_controller_disconnected_id);
-				input_interface.disconnect (input_key_event_id);
-			}
-
-			_input_interface = value;
-
-			if (input_interface == null)
-				return;
-
-			input_interface.controller_connected.connect (on_input_controller_connected);
-			input_interface.controller_disconnected.connect (on_input_controller_disconnected);
-			input_interface.key_event.connect (on_key_event);
-
-			if (is_initiated)
-				init_input ();
-		}
-	}
-
 	/**
 	 * The rumble interface.
 	 *
@@ -139,6 +104,9 @@ public class Core : Object {
 	public signal bool message (string message, uint frames);
 
 	internal void *environment_internal;
+	internal Gtk.Widget keyboard_widget;
+	internal ulong key_press_event_id;
+	internal ulong key_release_event_id;
 
 	/**
 	 * Creates a Core from the file name of a Libretro implementation.
@@ -224,10 +192,17 @@ public class Core : Object {
 	 */
 	public extern void set_memory (MemoryType id, uint8[] data);
 
-	private extern void init_input ();
-	private extern void on_input_controller_connected (uint port, InputDevice device);
-	private extern void on_input_controller_disconnected (uint port);
-	private extern bool on_key_event (Gdk.EventKey event);
+	public extern void poll_controllers ();
+	public extern int16 get_controller_input_state (uint port, DeviceType device, uint index, uint id);
+	public extern void set_controller_descriptors ([CCode (array_length_type = "gsize")] InputDescriptor[] input_descriptors);
+	public extern uint64 get_controller_capabilities ();
+	public extern void set_controller (uint port, InputDevice device);
+	public extern void set_keyboard (Gtk.Widget widget);
+	public extern void remove_controller (uint port);
+	public extern ControllerIterator iterate_controllers ();
+	private extern void controller_connected (uint port, InputDevice device);
+	private extern void controller_disconnected (uint port);
+	private extern bool key_event (Gdk.EventKey event);
 }
 
 }

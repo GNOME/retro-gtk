@@ -52,3 +52,8 @@ public struct Retro.InputDescriptor {
 	uint id;
 	string description;
 }
+
+[CCode (cheader_filename = "retro-controller-iterator.h")]
+public class Retro.ControllerIterator : GLib.Object {
+	public extern bool next (out unowned uint? port, out unowned InputDevice controller);
+}

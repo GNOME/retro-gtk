@@ -2,6 +2,7 @@
 
 #include "retro-core-private.h"
 
+#include "retro-controller-iterator-private.h"
 #include "retro-gtk-internal.h"
 #include "input/retro-keyboard-key.h"
 
@@ -130,43 +131,11 @@ retro_core_get_name (RetroCore *self)
   return system_info.library_name;
 }
 
-static void
-init_controller_device (guint             port,
-                        RetroInputDevice *device,
-                        gpointer          data)
-{
-  RetroCore *self;
-  RetroDeviceType device_type;
-
-  self = RETRO_CORE (data);
-
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (device != NULL);
-
-  device_type = retro_input_device_get_device_type (device);
-  retro_core_set_controller_port_device (self, port, device_type);
-}
-
 // FIXME Make static as soon as possible.
 void
-retro_core_init_input (RetroCore* self)
-{
-  RetroInput* input_interface;
-
-  g_return_if_fail (self != NULL);
-
-  input_interface = retro_core_get_input_interface (self);
-  if (input_interface == NULL)
-    return;
-
-  retro_input_foreach_controller (input_interface, init_controller_device, self);
-}
-
-// FIXME Make static as soon as possible.
-void
-retro_core_on_input_controller_connected (RetroCore        *self,
-                                          guint             port,
-                                          RetroInputDevice *device)
+retro_core_controller_connected (RetroCore        *self,
+                                 guint             port,
+                                 RetroInputDevice *device)
 {
   RetroDeviceType device_type;
 
@@ -182,8 +151,8 @@ retro_core_on_input_controller_connected (RetroCore        *self,
 
 // FIXME Make static as soon as possible.
 void
-retro_core_on_input_controller_disconnected (RetroCore *self,
-                                             guint      port)
+retro_core_controller_disconnected (RetroCore *self,
+                                    guint      port)
 {
   g_return_if_fail (self != NULL);
 
@@ -214,8 +183,8 @@ retro_core_send_input_key_event (RetroCore                *self,
 
 // FIXME Make static as soon as possible.
 gboolean
-retro_core_on_key_event (RetroCore   *self,
-                         GdkEventKey *event)
+retro_core_key_event (RetroCore   *self,
+                      GdkEventKey *event)
 {
   gboolean pressed;
   RetroKeyboardKey retro_key;
@@ -668,6 +637,8 @@ retro_core_constructor (RetroCore   *self,
   g_free (libretro_path);
 
   retro_core_set_callbacks (self);
+  internal->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
+                                                        g_free, g_object_unref);
   internal->options = retro_options_new ();
 }
 
@@ -696,9 +667,22 @@ retro_core_destructor (RetroCore *self)
     g_strfreev (internal->media_uris);
 
   g_object_unref (internal->module);
+  g_hash_table_unref (internal->controllers);
   g_object_unref (internal->options);
 
   g_free (self->environment_internal);
+}
+
+static gboolean
+on_key_event (GtkWidget   *widget,
+              GdkEventKey *event,
+              gpointer     self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+
+  return retro_core_key_event (RETRO_CORE (self), event);
 }
 
 /* Public */
@@ -709,6 +693,10 @@ retro_core_init (RetroCore  *self,
 {
   RetroCoreEnvironmentInternal *internal;
   RetroInit init;
+  RetroControllerIterator *controller_iterator;
+  guint *port;
+  RetroInputDevice *controller;
+  RetroDeviceType device_type;
   GError *tmp_error = NULL;
 
   g_return_if_fail (self != NULL);
@@ -722,7 +710,14 @@ retro_core_init (RetroCore  *self,
   init ();
   retro_core_pop_cb_data ();
 
-  retro_core_init_input (self);
+  controller_iterator = retro_core_iterate_controllers (self);
+  while (retro_controller_iterator_next (controller_iterator,
+                                         &port,
+                                         &controller)) {
+    device_type = retro_input_device_get_device_type (controller);
+    retro_core_set_controller_port_device (self, *port, device_type);
+  }
+  g_object_unref (controller_iterator);
 
   retro_core_set_is_initiated (self, TRUE);
 
@@ -1059,4 +1054,198 @@ retro_core_set_memory (RetroCore       *self,
 
   memcpy (memory_region, data, length);
   memset (memory_region + length, 0, memory_region_size - length);
+}
+
+/**
+ * retro_core_poll_controllers:
+ * @self: a #RetroCore
+ *
+ * Polls the pending input events for the controllers plugged into @self.
+ */
+void
+retro_core_poll_controllers (RetroCore *self)
+{
+  RetroControllerIterator *iterator;
+  guint *port;
+  RetroInputDevice *controller;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  iterator = retro_core_iterate_controllers (self);
+  while (retro_controller_iterator_next (iterator, &port, &controller))
+    if (controller != NULL)
+      retro_input_device_poll (controller);
+  g_object_unref (iterator);
+}
+
+/**
+ * retro_core_get_controller_input_state:
+ * @self: a #RetroCore
+ * @port: the port number
+ * @controller_type: a #RetroDeviceType to query @self
+ * @index: an input index to interpret depending on @controller_type
+ * @id: an input id to interpret depending on @controller_type
+ *
+ * Gets the state of an input of the controller plugged into the given port of
+ * @self.
+ *
+ * Returns: the input's state
+ */
+gint16
+retro_core_get_controller_input_state (RetroCore       *self,
+                                       guint            port,
+                                       RetroDeviceType  controller_type,
+                                       guint            index,
+                                       guint            id)
+{
+  RetroCoreEnvironmentInternal *internal;
+  RetroInputDevice *controller;
+
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (!g_hash_table_contains (internal->controllers, &port))
+    return 0;
+
+  controller = g_hash_table_lookup (internal->controllers, &port);
+
+  if (controller == NULL)
+    return 0;
+
+  if ((retro_input_device_get_device_capabilities (controller) & (1 << controller_type)) == 0)
+    return 0;
+
+  return retro_input_device_get_input_state (controller,
+                                             controller_type,
+                                             index,
+                                             id);
+}
+
+void
+retro_core_set_controller_descriptors (RetroCore            *self,
+                                       RetroInputDescriptor *input_descriptors,
+                                       gsize                 input_descriptors_length)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  // TODO
+}
+
+guint64
+retro_core_get_controller_capabilities (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  // TODO
+
+  return 0;
+}
+
+/**
+ * retro_core_set_controller:
+ * @self: a #RetroCore
+ * @port: the port number
+ * @controller: (nullable): a #RetroInputDevice
+ *
+ * Plugs @controller into the specified port number of @self.
+ */
+void
+retro_core_set_controller (RetroCore        *self,
+                           guint             port,
+                           RetroInputDevice *controller)
+{
+  RetroCoreEnvironmentInternal *internal;
+  guint *port_copy;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (RETRO_IS_INPUT_DEVICE (controller));
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  port_copy = g_new (guint, 1);
+  *port_copy = port;
+  g_hash_table_insert (internal->controllers,
+                       port_copy,
+                       g_object_ref (controller));
+  retro_core_controller_connected (self, port, controller);
+}
+
+/**
+ * retro_core_set_keyboard:
+ * @self: a #RetroCore
+ * @widget: (nullable): a #GtkWidget, or %NULL
+ *
+ * Sets the widget whose key events will be forwarded to @self.
+ */
+void
+retro_core_set_keyboard (RetroCore *self,
+                         GtkWidget *widget)
+{
+  g_return_if_fail (self != NULL);
+
+  if (self->keyboard_widget != NULL) {
+    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_press_event_id);
+    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_release_event_id);
+    g_clear_object (&self->keyboard_widget);
+  }
+
+  if (widget != NULL) {
+    self->key_press_event_id =
+      g_signal_connect_object (widget,
+                               "key-press-event",
+                               G_CALLBACK (on_key_event),
+                               self,
+                               0);
+    self->key_release_event_id =
+      g_signal_connect_object (widget,
+                               "key-release-event",
+                               G_CALLBACK (on_key_event),
+                               self,
+                               0);
+    self->keyboard_widget = g_object_ref (widget);
+  }
+}
+
+/**
+ * retro_core_remove_controller:
+ * @self: a #RetroCore
+ * @port: the port number
+ *
+ * Removes the controller plugged into @self at port @port, if any.
+ */
+void
+retro_core_remove_controller (RetroCore *self,
+                              guint      port)
+{
+  RetroCoreEnvironmentInternal *internal;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  // FIXME Do that only if a controller is plugged into that port.
+  g_hash_table_remove (internal->controllers, &port);
+  retro_core_controller_disconnected (self, port);
+}
+
+/**
+ * retro_core_iterate_controllers:
+ * @self: a #RetroCore
+ *
+ * Creates a new #RetroControllerIterator which can be used to iterate through
+ * the controllers plugged into @self.
+ *
+ * Returns: (transfer full): a new #RetroControllerIterator
+ */
+RetroControllerIterator *
+retro_core_iterate_controllers (RetroCore *self)
+{
+  RetroCoreEnvironmentInternal *internal;
+
+  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  return retro_controller_iterator_new (internal->controllers);
 }

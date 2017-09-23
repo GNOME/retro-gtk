@@ -32,6 +32,8 @@ BUILT_SOURCES = retro-gtk-internal.h
 retro_gtk_public_h_sources = \
 	retro-analog-id.h \
 	retro-analog-index.h \
+	retro-controller-iterator.h \
+	retro-core-descriptor.h \
 	retro-core-view.h \
 	retro-device-type.h \
 	retro-gtk.h \
@@ -54,6 +56,7 @@ retro_gtk_private_h_sources = \
 	input/retro-keyboard-key.h \
 	libretro-environment.h \
 	retro-cairo-display.h \
+	retro-controller-iterator-private.h \
 	retro-core-private.h \
 	retro-core-view-input-device.h \
 	retro-disk-control-callback.h \
@@ -71,8 +74,6 @@ retro_gtk_private_h_sources = \
 
 libretro_gtk_la_SOURCES = \
 	input/controller.vala \
-	input/input.vala \
-	input/input-device-manager.vala \
 	input/retro-keyboard-key.c \
 	\
 	core.vala \
@@ -81,6 +82,7 @@ libretro_gtk_la_SOURCES = \
 	retro-analog-id.c \
 	retro-analog-index.c \
 	retro-cairo-display.c \
+	retro-controller-iterator.c \
 	retro-core-descriptor.c \
 	retro-core-view.c \
 	retro-core-view-input-device.c \

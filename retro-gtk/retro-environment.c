@@ -121,14 +121,7 @@ static gboolean
 get_input_device_capabilities (RetroCore *self,
                                guint64   *capabilities)
 {
-  RetroInput *input;
-
-  input = retro_core_get_input_interface (self);
-
-  if (input == NULL)
-    return FALSE;
-
-  *capabilities = retro_input_get_device_capabilities (input);
+  *capabilities = retro_core_get_controller_capabilities (self);
 
   return TRUE;
 }
@@ -235,16 +228,10 @@ static gboolean
 set_input_descriptors (RetroCore            *self,
                        RetroInputDescriptor *descriptors)
 {
-  RetroInput *input;
   int length;
 
-  input = retro_core_get_input_interface (self);
-
-  if (input == NULL)
-    return FALSE;
-
   for (length = 0 ; descriptors[length].description ; length++);
-  retro_input_set_descriptors (input, descriptors, length);
+  retro_core_set_controller_descriptors (self, descriptors, length);
 
   return TRUE;
 }
@@ -515,19 +502,13 @@ static void
 on_input_poll ()
 {
   RetroCore *self;
-  RetroInput *input;
 
   self = retro_core_get_cb_data ();
 
   if (self == NULL)
     g_return_if_reached ();
 
-  input = retro_core_get_input_interface (self);
-
-  if (input == NULL)
-    return;
-
-  retro_input_poll (input);
+  retro_core_poll_controllers (self);
 }
 
 static gint16
@@ -537,19 +518,13 @@ on_input_state (guint port,
                 guint id)
 {
   RetroCore *self;
-  RetroInput *input;
 
   self = retro_core_get_cb_data ();
 
   if (self == NULL)
     g_return_val_if_reached (0);
 
-  input = retro_core_get_input_interface (self);
-
-  if (input == NULL)
-    return 0;
-
-  return retro_input_get_state (input, port, device, index, id);
+  return retro_core_get_controller_input_state (self, port, device, index, id);
 }
 
 // TODO This is internal, make it private as soon as possible.

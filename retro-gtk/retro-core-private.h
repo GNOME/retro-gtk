@@ -36,6 +36,7 @@ struct _RetroCoreEnvironmentInternal {
   gdouble sample_rate;
 
   RetroKeyboardCallback keyboard_callback;
+  GHashTable *controllers;
   RetroOptions *options;
 };
 

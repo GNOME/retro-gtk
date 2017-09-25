@@ -73,7 +73,6 @@ retro_gtk_private_h_sources = \
 	$(NULL)
 
 libretro_gtk_la_SOURCES = \
-	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \
 	retro-cairo-display.c \

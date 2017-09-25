@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-core.h"
+#include "retro-core-private.h"
 
 #include "retro-gtk-internal.h"
 #include "input/retro-keyboard-key.h"

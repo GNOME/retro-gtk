@@ -2,7 +2,7 @@
 
 #include "retro-gtk-internal.h"
 #include "libretro-environment.h"
-#include "retro-core.h"
+#include "retro-core-private.h"
 
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);

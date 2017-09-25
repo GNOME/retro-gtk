@@ -1,7 +1,7 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_CORE_H
-#define RETRO_CORE_H
+#ifndef RETRO_CORE_PRIVATE_H
+#define RETRO_CORE_PRIVATE_H
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -47,4 +47,4 @@ void retro_core_set_controller_port_device (RetroCore       *self,
 
 G_END_DECLS
 
-#endif /* RETRO_CORE_H */
+#endif /* RETRO_CORE_PRIVATE_H */

@@ -36,7 +36,7 @@ retro_gtk_public_h_sources = \
 retro_gtk_private_h_sources = \
 	input/retro-keyboard-key.h \
 	libretro-environment.h \
-	retro-core.h \
+	retro-core-private.h \
 	retro-core-view-input-device.h \
 	retro-disk-control-callback.h \
 	retro-game-info.h \

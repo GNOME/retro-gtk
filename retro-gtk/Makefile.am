@@ -27,8 +27,6 @@ vapidir = $(datadir)/vala/vapi
 vapi_DATA = retro-gtk-0.12.vapi
 dist_vapi_DATA = retro-gtk-0.12.deps
 
-BUILT_SOURCES = retro-gtk-internal.h
-
 retro_gtk_public_h_sources = \
 	retro-analog-id.h \
 	retro-analog-index.h \
@@ -111,30 +109,6 @@ libretro_gtk_la_SOURCES = \
 	video/retro-video-converter.c \
 	$(NULL)
 
-video/retro-video-converter.c: retro-gtk-internal.h
-
-retro-core.c: retro-gtk-internal.h
-
-# retro-core-descriptor.c: retro-gtk-internal.h
-
-retro-core-view.c: retro-gtk-internal.h
-
-retro-core-view-input-device.c: retro-gtk-internal.h
-
-retro-environment.c: retro-gtk-internal.h libretro-environment.h
-
-retro-log.c: retro-gtk-internal.h
-
-retro-main-loop.c: retro-gtk-internal.h
-
-retro-module.c: retro-gtk-internal.h
-
-retro-module-iterator.c: retro-gtk-internal.h
-
-retro-module-query.c: retro-gtk-internal.h
-
-retro-pa-player.c: retro-gtk-internal.h
-
 libretro_gtk_la_LDFLAGS =
 
 libretro_gtk_la_VALAFLAGS = \
@@ -152,8 +126,6 @@ libretro_gtk_la_VALAFLAGS = \
 	--thread \
 	--target-glib 2.32 \
 	--library retro-gtk-0.12 \
-	-H retro-gtk-vala.h \
-	-h retro-gtk-internal.h \
 	-X -fPIC -X -shared \
 	$(NULL)
 
@@ -181,7 +153,7 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 introspection_sources = $(retro_gtkinclude_HEADERS) $(libretro_gtk_la_SOURCES)
 
-BUILT_SOURCES += libretro-gtk.la Retro-0.12.gir
+BUILT_SOURCES = libretro-gtk.la Retro-0.12.gir
 
 Retro-0.12.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
 Retro_0_12_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0 Gtk-3.0 cairo-1.0

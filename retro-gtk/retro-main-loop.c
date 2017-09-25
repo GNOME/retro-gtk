@@ -2,8 +2,6 @@
 
 #include "retro-main-loop.h"
 
-#include "retro-gtk-internal.h"
-
 struct _RetroMainLoop
 {
   GObject parent_instance;

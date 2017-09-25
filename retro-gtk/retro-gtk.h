@@ -15,7 +15,6 @@
 #include "retro-core-descriptor.h"
 #include "retro-core-view.h"
 #include "retro-device-type.h"
-#include "retro-gtk-vala.h"
 #include "retro-input-device.h"
 #include "retro-joypad-id.h"
 #include "retro-lightgun-id.h"

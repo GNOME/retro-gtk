@@ -4,7 +4,6 @@
 
 #include <pulse/simple.h>
 #include <pulse/pulseaudio.h>
-#include "retro-gtk-internal.h"
 
 struct _RetroPaPlayer
 {

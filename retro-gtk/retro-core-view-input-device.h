@@ -10,7 +10,6 @@
 #include <glib-object.h>
 #include "retro-core-view.h"
 #include "retro-device-type.h"
-#include "retro-gtk-internal.h"
 
 G_BEGIN_DECLS
 

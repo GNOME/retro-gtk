@@ -9,7 +9,6 @@
 
 #include "retro-core.h"
 #include "retro-disk-control-callback.h"
-#include "retro-gtk-internal.h"
 #include "retro-input-descriptor.h"
 #include "retro-module.h"
 #include "retro-options.h"

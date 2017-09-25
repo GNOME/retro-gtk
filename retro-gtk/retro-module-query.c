@@ -2,8 +2,6 @@
 
 #include "retro-module-query.h"
 
-#include "retro-gtk-internal.h"
-
 struct _RetroModuleQuery
 {
   GObject parent_instance;

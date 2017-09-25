@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
 #include <linux/input-event-codes.h>
-#include "retro-gtk-internal.h"
 #include "retro-cairo-display.h"
 #include "retro-core-view.h"
 #include "retro-core-view-input-device.h"

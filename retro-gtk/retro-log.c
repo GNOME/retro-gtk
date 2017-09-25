@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-gtk-internal.h"
+#include "retro-core.h"
 
 /**
  * retro_g_log:

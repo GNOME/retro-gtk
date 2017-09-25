@@ -6,14 +6,12 @@
 #endif
 
 #include <gtk/gtk.h>
+#include "retro-core.h"
 #include "retro-device-type.h"
 #include "retro-input-device.h"
 #include "retro-video-filter.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroCore RetroCore;
 
 #define RETRO_TYPE_CORE_VIEW (retro_core_view_get_type())
 

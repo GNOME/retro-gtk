@@ -8,12 +8,10 @@
 #endif
 
 #include <gtk/gtk.h>
+#include "retro-core.h"
 #include "retro-video-filter.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroCore RetroCore;
 
 #define RETRO_TYPE_CAIRO_DISPLAY (retro_cairo_display_get_type())
 

@@ -11,6 +11,7 @@
 
 #include "retro-analog-id.h"
 #include "retro-analog-index.h"
+#include "retro-core.h"
 #include "retro-core-descriptor.h"
 #include "retro-core-view.h"
 #include "retro-device-type.h"

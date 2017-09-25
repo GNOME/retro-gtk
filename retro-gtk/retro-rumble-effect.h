@@ -7,7 +7,7 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
-#include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 

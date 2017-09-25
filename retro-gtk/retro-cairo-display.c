@@ -261,7 +261,7 @@ retro_cairo_display_init (RetroCairoDisplay *self)
 static void
 retro_cairo_display_on_video_output (RetroCore        *sender,
                                      guint8           *data,
-                                     int               data_length1,
+                                     gsize             length,
                                      guint             width,
                                      guint             height,
                                      gsize             pitch,

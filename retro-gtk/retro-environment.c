@@ -33,19 +33,16 @@ rumble_callback_set_rumble_state (guint             port,
                                   guint16           strength)
 {
   RetroCore *self;
-  RetroCoreEnvironmentInternal *internal;
   RetroInputDevice *controller;
 
   self = retro_core_get_cb_data ();
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (!g_hash_table_contains (internal->controllers, &port))
+  if (!g_hash_table_contains (self->controllers, &port))
     return FALSE;
 
-  controller = g_hash_table_lookup (internal->controllers, &port);
+  controller = g_hash_table_lookup (self->controllers, &port);
 
   if (controller == NULL)
     return FALSE;
@@ -63,7 +60,6 @@ on_log (guint level, const gchar *format, ...)
   GLogLevelFlags log_level;
   gchar *message;
   va_list args;
-
 
   self = retro_core_get_cb_data ();
   if (!self)
@@ -154,7 +150,7 @@ static gboolean
 get_overscan (RetroCore *self,
               gboolean  *overscan)
 {
-  *overscan = RETRO_CORE_ENVIRONMENT_INTERNAL (self)->overscan;
+  *overscan = self->overscan;
 
   return TRUE;
 }
@@ -190,15 +186,12 @@ static gboolean
 get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
-  RetroCoreEnvironmentInternal *internal;
   const gchar *value;
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (!retro_options_contains (internal->options, variable->key))
+  if (!retro_options_contains (self->options, variable->key))
     return FALSE;
 
-  value = retro_options_get_option_value (internal->options, variable->key);
+  value = retro_options_get_option_value (self->options, variable->key);
   variable->value = g_strdup (value); // FIXME Is that a memory leak?
 
   return TRUE;
@@ -208,11 +201,7 @@ static gboolean
 get_variable_update (RetroCore *self,
                      gboolean  *update)
 {
-  RetroCoreEnvironmentInternal *internal;
-
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  *update = retro_options_get_variable_update (internal->options);
+  *update = retro_options_get_variable_update (self->options);
 
   return TRUE;
 }
@@ -221,7 +210,7 @@ static gboolean
 set_disk_control_interface (RetroCore                *self,
                             RetroDiskControlCallback *callback)
 {
-  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->disk_control_callback = callback;
+  self->disk_control_callback = callback;
 
   return TRUE;
 }
@@ -242,7 +231,7 @@ static gboolean
 set_keyboard_callback (RetroCore             *self,
                        RetroKeyboardCallback *callback)
 {
-  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->keyboard_callback = *callback;
+  self->keyboard_callback = *callback;
 
   return TRUE;
 }
@@ -261,7 +250,7 @@ static gboolean
 set_pixel_format (RetroCore              *self,
                   const RetroPixelFormat *pixel_format)
 {
-  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->pixel_format = *pixel_format;
+  self->pixel_format = *pixel_format;
 
   return TRUE;
 }
@@ -270,7 +259,7 @@ static gboolean
 set_rotation (RetroCore           *self,
               const RetroRotation *rotation)
 {
-  RETRO_CORE_ENVIRONMENT_INTERNAL (self)->rotation = *rotation;
+  self->rotation = *rotation;
 
   return TRUE;
 }
@@ -297,13 +286,10 @@ static gboolean
 set_variables (RetroCore     *self,
                RetroVariable *variable_array)
 {
-  RetroCoreEnvironmentInternal *internal;
   int i;
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
   for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
-    retro_options_insert_variable (internal->options, &variable_array[i]);
+    retro_options_insert_variable (self->options, &variable_array[i]);
 
   return TRUE;
 }
@@ -432,7 +418,6 @@ on_video_refresh (guint8 *data,
                   gsize   pitch)
 {
   RetroCore *self;
-  RetroCoreEnvironmentInternal *internal;
 
   if (data == NULL)
     return;
@@ -442,11 +427,9 @@ on_video_refresh (guint8 *data,
   if (self == NULL)
     g_return_if_reached ();
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
   g_signal_emit_by_name (self, "video_output", data, pitch * height,
-                         width, height, pitch, internal->pixel_format,
-                         internal->aspect_ratio);
+                         width, height, pitch, self->pixel_format,
+                         self->aspect_ratio);
 }
 
 // TODO This is internal, make it private as soon as possible.
@@ -461,7 +444,6 @@ on_audio_sample (gint16 left,
                  gint16 right)
 {
   RetroCore *self;
-  RetroCoreEnvironmentInternal *internal;
   gint16 samples[] = { left, right };
 
   self = retro_core_get_cb_data ();
@@ -469,12 +451,10 @@ on_audio_sample (gint16 left,
   if (self == NULL)
     g_return_if_reached ();
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (internal->sample_rate <= 0.0)
+  if (self->sample_rate <= 0.0)
     return;
 
-  g_signal_emit_by_name (self, "audio_output", samples, 2, internal->sample_rate);
+  g_signal_emit_by_name (self, "audio_output", samples, 2, self->sample_rate);
 }
 
 static gsize
@@ -482,19 +462,16 @@ on_audio_sample_batch (gint16 *data,
                        int     frames)
 {
   RetroCore *self;
-  RetroCoreEnvironmentInternal *internal;
 
   self = retro_core_get_cb_data ();
 
   if (self == NULL)
     g_return_val_if_reached (0);
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (internal->sample_rate <= 0.0)
+  if (self->sample_rate <= 0.0)
     return 0;
 
-  g_signal_emit_by_name (self, "audio_output", data, frames * 2, internal->sample_rate);
+  g_signal_emit_by_name (self, "audio_output", data, frames * 2, self->sample_rate);
 
   // FIXME What should be returned?
   return 0;
@@ -533,13 +510,10 @@ on_input_state (guint port,
 void
 retro_core_set_environment_interface (RetroCore *self)
 {
-  RetroCoreEnvironmentInternal *internal;
   RetroModule *module;
   RetroCallbackSetter set_environment;
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  module = internal->module;
+  module = self->module;
   set_environment = retro_module_get_set_environment (module);
 
   retro_core_push_cb_data (self);
@@ -551,7 +525,6 @@ retro_core_set_environment_interface (RetroCore *self)
 void
 retro_core_set_callbacks (RetroCore *self)
 {
-  RetroCoreEnvironmentInternal *internal;
   RetroModule *module;
   RetroCallbackSetter set_video_refresh;
   RetroCallbackSetter set_audio_sample;
@@ -559,9 +532,7 @@ retro_core_set_callbacks (RetroCore *self)
   RetroCallbackSetter set_input_poll;
   RetroCallbackSetter set_input_state;
 
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  module = internal->module;
+  module = self->module;
   set_video_refresh = retro_module_get_set_video_refresh (module);
   set_audio_sample = retro_module_get_set_audio_sample (module);
   set_audio_sample_batch = retro_module_get_set_audio_sample_batch (module);
@@ -582,18 +553,14 @@ void
 retro_core_set_system_av_info (RetroCore         *self,
                                RetroSystemAvInfo *system_av_info)
 {
-  RetroCoreEnvironmentInternal *internal;
-
-  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
-
-  if (self->_frames_per_second != system_av_info->timing.fps) {
-    self->_frames_per_second = system_av_info->timing.fps;
+  if (self->frames_per_second != system_av_info->timing.fps) {
+    self->frames_per_second = system_av_info->timing.fps;
     g_object_notify (G_OBJECT (self), "frames-per-second");
   }
   if (system_av_info->geometry.aspect_ratio > 0.f)
-    internal->aspect_ratio = system_av_info->geometry.aspect_ratio;
+    self->aspect_ratio = system_av_info->geometry.aspect_ratio;
   else
-    internal->aspect_ratio = (float) system_av_info->geometry.base_width /
+    self->aspect_ratio = (float) system_av_info->geometry.base_width /
                              (float) system_av_info->geometry.base_height;
-  internal->sample_rate = system_av_info->timing.sample_rate;
+  self->sample_rate = system_av_info->timing.sample_rate;
 }

@@ -34,6 +34,7 @@ retro_gtk_public_h_sources = \
 	retro-analog-index.h \
 	retro-controller-iterator.h \
 	retro-core-descriptor.h \
+	retro-core.h \
 	retro-core-view.h \
 	retro-device-type.h \
 	retro-gtk.h \
@@ -76,7 +77,6 @@ retro_gtk_private_h_sources = \
 libretro_gtk_la_SOURCES = \
 	input/retro-keyboard-key.c \
 	\
-	core.vala \
 	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \

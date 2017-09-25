@@ -8,11 +8,9 @@
 #endif
 
 #include <glib-object.h>
+#include "retro-core.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroCore RetroCore;
 
 void retro_g_log (RetroCore      *self,
                   const gchar    *log_domain,

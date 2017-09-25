@@ -7,12 +7,9 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
-#include <glib-object.h>
+#include "retro-core.h"
 
 G_BEGIN_DECLS
-
-// FIXME Remove as soon as possible.
-typedef struct _RetroCore RetroCore;
 
 #define RETRO_TYPE_MAIN_LOOP (retro_main_loop_get_type())
 

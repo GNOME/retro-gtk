@@ -74,7 +74,6 @@ retro_gtk_private_h_sources = \
 	$(NULL)
 
 libretro_gtk_la_SOURCES = \
-	input/controller.vala \
 	input/retro-keyboard-key.c \
 	\
 	core.vala \

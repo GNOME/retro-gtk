@@ -124,7 +124,7 @@ public class Core : Object {
 	 *
 	 * Must be called before loading a game and running the core.
 	 */
-	public extern void init () throws Error;
+	public extern void boot () throws Error;
 
 	public extern void set_medias ([CCode (array_null_terminated = true, array_length = false)] string[] uris);
 

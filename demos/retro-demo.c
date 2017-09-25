@@ -45,7 +45,7 @@ retro_demo_open (GApplication  *application,
   if (self->core == NULL)
     return;
 
-  retro_core_init (self->core, &error);
+  retro_core_boot (self->core, &error);
   if (error != NULL) {
     g_debug ("Couldn't initialize the Libretro core: %s", error->message);
     g_error_free (error);

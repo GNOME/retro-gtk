@@ -702,8 +702,16 @@ on_key_event (GtkWidget   *widget,
 
 /* Public */
 
+/**
+ * retro_core_boot:
+ * @self: a #RetroCore
+ * @error: return location for a #GError, or %NULL
+ *
+ * This initializes @self, loads its available options and loads the medias. You
+ * need to boot @self before using some of its methods.
+ */
 void
-retro_core_init (RetroCore  *self,
+retro_core_boot (RetroCore  *self,
                  GError    **error)
 {
   RetroCoreEnvironmentInternal *internal;

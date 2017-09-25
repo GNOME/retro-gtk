@@ -77,7 +77,6 @@ libretro_gtk_la_SOURCES = \
 	input/retro-keyboard-key.c \
 	\
 	core.vala \
-	core-error.vala \
 	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \

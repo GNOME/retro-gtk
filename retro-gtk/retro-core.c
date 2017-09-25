@@ -6,6 +6,14 @@
 #include "retro-gtk-internal.h"
 #include "input/retro-keyboard-key.h"
 
+#define RETRO_CORE_ERROR (retro_core_error_quark ())
+
+enum {
+  RETRO_CORE_ERROR_COULDNT_SERIALIZE,
+  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
+  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+};
+
 /* Private */
 
 #define RETRO_CORE_OBJECTS_LENGTH 32
@@ -14,6 +22,12 @@ static GRecMutex retro_core_r_mutex = { 0 };
 static GRecMutex retro_core_w_mutex = { 0 };
 static RetroCore *retro_core_objects[32];
 static gint retro_core_i = 0;
+
+static GQuark
+retro_core_error_quark (void)
+{
+  return g_quark_from_static_string ("retro-core-error-quark");
+}
 
 // FIXME Make static as soon as possible.
 void

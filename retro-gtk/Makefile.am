@@ -49,6 +49,7 @@ retro_gtk_public_h_sources = \
 	retro-mouse-id.h \
 	retro-pixel-format.h \
 	retro-pointer-id.h \
+	retro-rumble-effect.h \
 	retro-video-filter.h \
 	$(NULL)
 
@@ -104,8 +105,8 @@ libretro_gtk_la_SOURCES = \
 	retro-pa-player.c \
 	retro-pixel-format.c \
 	retro-pointer-id.c \
+	retro-rumble-effect.c \
 	retro-video-filter.c \
-	rumble.vala \
 	retro-core.c \
 	retro-environment.c \
 	\

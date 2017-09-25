@@ -32,21 +32,27 @@ rumble_callback_set_rumble_state (guint             port,
                                   RetroRumbleEffect effect,
                                   guint16           strength)
 {
-  RetroCore *cb_data;
-  RetroRumble *interface;
+  RetroCore *self;
+  RetroCoreEnvironmentInternal *internal;
+  RetroInputDevice *controller;
 
-  cb_data = retro_core_get_cb_data ();
-  if (!cb_data)
-    g_return_val_if_reached (FALSE);
+  self = retro_core_get_cb_data ();
 
-  interface = retro_core_get_rumble_interface (cb_data);
-  if (!interface)
-    g_return_val_if_reached (FALSE);
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
-  return RETRO_RUMBLE_GET_INTERFACE (interface)->set_rumble_state (interface,
-                                                                   port,
-                                                                   effect,
-                                                                   strength);
+  internal = RETRO_CORE_ENVIRONMENT_INTERNAL (self);
+
+  if (!g_hash_table_contains (internal->controllers, &port))
+    return FALSE;
+
+  controller = g_hash_table_lookup (internal->controllers, &port);
+
+  if (controller == NULL)
+    return FALSE;
+
+  return retro_input_device_set_rumble_state (controller,
+                                              effect,
+                                              strength);
 }
 
 static void
@@ -157,10 +163,6 @@ static gboolean
 get_rumble_callback (RetroCore           *self,
                      RetroRumbleCallback *cb)
 {
-  gpointer interface_exists = retro_core_get_rumble_interface (self);
-  if (!interface_exists)
-    return FALSE;
-
   cb->set_rumble_state = rumble_callback_set_rumble_state;
 
   return TRUE;

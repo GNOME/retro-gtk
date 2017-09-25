@@ -86,14 +86,6 @@ public class Core : Object {
 	}
 
 	/**
-	 * The rumble interface.
-	 *
-	 * Optional.
-	 * If set, it must be set before {@link init} is called.
-	 */
-	public Rumble rumble_interface { set; get; }
-
-	/**
 	 * Asks the frontend to shut down.
 	 */
 	public signal bool shutdown ();

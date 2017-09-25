@@ -106,3 +106,25 @@ retro_input_device_get_device_capabilities (RetroInputDevice *self)
 
   return iface->get_device_capabilities (self);
 }
+
+/**
+ * retro_input_device_set_rumble_state:
+ * @self: a #RetroInputDevice
+ * @effect: the rumble effect
+ * @strength: the rumble effect strength
+ *
+ * Sets the rumble state of @self.
+ *
+ * Returns: whether the rumble state has been successfully set.
+ */
+gboolean
+retro_input_device_set_rumble_state (RetroInputDevice  *self,
+                                     RetroRumbleEffect  effect,
+                                     guint16            strength)
+{
+  g_return_val_if_fail (RETRO_IS_INPUT_DEVICE (self), FALSE);
+
+  // TODO
+
+  return FALSE;
+}

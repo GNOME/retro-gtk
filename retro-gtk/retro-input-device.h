@@ -9,6 +9,7 @@
 
 #include <glib-object.h>
 #include "retro-device-type.h"
+#include "retro-rumble-effect.h"
 
 G_BEGIN_DECLS
 
@@ -36,6 +37,9 @@ gint16 retro_input_device_get_input_state (RetroInputDevice *self,
                                            guint             id);
 RetroDeviceType retro_input_device_get_device_type (RetroInputDevice *self);
 guint64 retro_input_device_get_device_capabilities (RetroInputDevice *self);
+gboolean retro_input_device_set_rumble_state (RetroInputDevice  *self,
+                                              RetroRumbleEffect  effect,
+                                              guint16            strength);
 
 G_END_DECLS
 

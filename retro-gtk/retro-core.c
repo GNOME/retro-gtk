@@ -12,6 +12,7 @@ enum {
   RETRO_CORE_ERROR_COULDNT_SERIALIZE,
   RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
   RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+  RETRO_CORE_ERROR_NO_CALLBACK,
 };
 
 /* Private */
@@ -244,8 +245,8 @@ retro_core_set_disk_ejected (RetroCore  *self,
 
   if (set_eject_state == NULL) {
     g_set_error_literal (error,
-                         RETRO_CB_ERROR,
-                         RETRO_CB_ERROR_NO_CALLBACK,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_NO_CALLBACK,
                          "DiskControl has no callback for this operation.");
 
     return FALSE;
@@ -275,8 +276,8 @@ retro_core_set_disk_image_index (RetroCore  *self,
 
   if (set_image_index == NULL) {
     g_set_error_literal (error,
-                         RETRO_CB_ERROR,
-                         RETRO_CB_ERROR_NO_CALLBACK,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_NO_CALLBACK,
                          "DiskControl has no callback for this operation.");
 
     return FALSE;
@@ -305,8 +306,8 @@ retro_core_get_disk_images_number (RetroCore  *self,
 
   if (get_num_images == NULL) {
     g_set_error_literal (error,
-                         RETRO_CB_ERROR,
-                         RETRO_CB_ERROR_NO_CALLBACK,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_NO_CALLBACK,
                          "DiskControl has no callback for this operation.");
 
     return FALSE;
@@ -337,8 +338,8 @@ retro_core_replace_disk_image_index (RetroCore     *self,
 
   if (replace_image_index == NULL) {
     g_set_error_literal (error,
-                         RETRO_CB_ERROR,
-                         RETRO_CB_ERROR_NO_CALLBACK,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_NO_CALLBACK,
                          "DiskControl has no callback for this operation.");
 
     return FALSE;
@@ -367,8 +368,8 @@ retro_core_add_disk_image_index (RetroCore  *self,
 
   if (add_image_index == NULL) {
     g_set_error_literal (error,
-                         RETRO_CB_ERROR,
-                         RETRO_CB_ERROR_NO_CALLBACK,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_NO_CALLBACK,
                          "DiskControl has no callback for this operation.");
 
     return FALSE;

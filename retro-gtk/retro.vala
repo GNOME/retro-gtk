@@ -10,14 +10,5 @@ public const uint API_VERSION = 1;
 
 private const string ENV_PLUGIN_PATH = "RETRO_PLUGIN_PATH_1_0";
 
-/**
- * Error type thrown by interfaces when accessing one of their Core's
- * callback.
- */
-private errordomain CbError {
-	NO_CORE,
-	NO_CALLBACK
-}
-
 }
 

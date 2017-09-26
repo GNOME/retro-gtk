@@ -36,7 +36,6 @@ retro_gtk_public_h_sources = \
 	retro-core-view.h \
 	retro-device-type.h \
 	retro-gtk.h \
-	retro-gtk-vala.h \
 	retro-input-device.h \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
@@ -108,24 +107,6 @@ libretro_gtk_la_SOURCES = \
 
 libretro_gtk_la_LDFLAGS =
 
-libretro_gtk_la_VALAFLAGS = \
-	--pkg cairo \
-	--pkg config \
-	--pkg gio-2.0  \
-	--pkg glib-2.0 \
-	--pkg gmodule-2.0 \
-	--pkg gobject-2.0 \
-	--pkg gtk+-3.0 \
-	--pkg libpulse \
-	--pkg libpulse-simple \
-	--pkg retro-gtk-c \
-	--vapidir=vapi \
-	--thread \
-	--target-glib 2.32 \
-	--library retro-gtk-0.12 \
-	-X -fPIC -X -shared \
-	$(NULL)
-
 libretro_gtk_la_LIBADD = $(RETRO_GTK_LIBS)
 
 retro_gtkincludedir = $(includedir)/retro-gtk-0.12
@@ -183,7 +164,6 @@ EXTRA_DIST = \
 	$(retro_gtk_private_h_sources) \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \
-	vapi/retro-gtk-c.vapi \
 	$(NULL)
 
 INPUTDIR=$(top_srcdir)/../RetroArch/libretro-common/include/

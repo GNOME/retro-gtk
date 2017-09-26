@@ -12,8 +12,6 @@ AC_PROG_CC
 
 AM_PROG_AR
 
-AM_PROG_VALAC
-
 # GResource
 AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
 

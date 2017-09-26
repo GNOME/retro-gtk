@@ -53,7 +53,6 @@ retro_gtk_public_h_sources = \
 	$(NULL)
 
 retro_gtk_private_h_sources = \
-	input/retro-keyboard-key.h \
 	libretro-environment.h \
 	retro-cairo-display.h \
 	retro-controller-iterator-private.h \
@@ -62,6 +61,7 @@ retro_gtk_private_h_sources = \
 	retro-disk-control-callback.h \
 	retro-game-info.h \
 	retro-input-descriptor.h \
+	retro-keyboard-key.h \
 	retro-module.h \
 	retro-option.h \
 	retro-options.h \
@@ -73,8 +73,6 @@ retro_gtk_private_h_sources = \
 	$(NULL)
 
 libretro_gtk_la_SOURCES = \
-	input/retro-keyboard-key.c \
-	\
 	retro.vala \
 	retro-analog-id.c \
 	retro-analog-index.c \
@@ -88,6 +86,7 @@ libretro_gtk_la_SOURCES = \
 	retro-input-descriptor.c \
 	retro-input-device.c \
 	retro-joypad-id.c \
+	retro-keyboard-key.c \
 	retro-lightgun-id.c \
 	retro-log.c \
 	retro-main-loop.c \
@@ -102,11 +101,10 @@ libretro_gtk_la_SOURCES = \
 	retro-pixel-format.c \
 	retro-pointer-id.c \
 	retro-rumble-effect.c \
+	retro-video-converter.c \
 	retro-video-filter.c \
 	retro-core.c \
 	retro-environment.c \
-	\
-	video/retro-video-converter.c \
 	$(NULL)
 
 libretro_gtk_la_LDFLAGS =

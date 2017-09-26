@@ -4,7 +4,7 @@
 
 #include <string.h>
 #include "retro-controller-iterator-private.h"
-#include "input/retro-keyboard-key.h"
+#include "retro-keyboard-key.h"
 
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
 

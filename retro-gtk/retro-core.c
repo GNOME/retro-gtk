@@ -695,6 +695,8 @@ retro_core_destructor (RetroCore *self)
   if (internal->media_uris != NULL)
     g_strfreev (internal->media_uris);
 
+  g_object_unref (internal->module);
+
   g_free (self->environment_internal);
 }
 

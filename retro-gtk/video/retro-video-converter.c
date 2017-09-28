@@ -98,7 +98,7 @@ get_interface_for_pixel_format (gint         pixel_format,
   }
 }
 
-/**
+/*
  * The destination buffer must be at least `height * width * sizeof (rgba8888)`
  * bytes long.
  */

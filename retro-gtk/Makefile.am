@@ -27,6 +27,26 @@ dist_vapi_DATA = retro-gtk-0.12.vapi retro-gtk-0.12.deps
 
 BUILT_SOURCES = retro-gtk-internal.h
 
+retro_gtk_public_h_sources = \
+	retro-gtk.h \
+	$(NULL)
+
+retro_gtk_private_h_sources = \
+	input/retro-keyboard-key.h \
+	libretro-environment.h \
+	retro-core.h \
+	retro-core-view-input-device.h \
+	retro-disk-control-callback.h \
+	retro-game-info.h \
+	retro-module.h \
+	retro-option.h \
+	retro-options.h \
+	retro-rotation.h \
+	retro-system-av-info.h \
+	retro-system-info.h \
+	retro-variable.h \
+	$(NULL)
+
 libretro_gtk_la_SOURCES = \
 	audio/pa-player.vala \
 	\
@@ -59,7 +79,6 @@ libretro_gtk_la_SOURCES = \
 	video.vala \
 	retro-core.c \
 	retro-environment.c \
-	libretro-environment.h \
 	\
 	video/cairo-display.vala \
 	video/retro-video-converter.c \
@@ -106,10 +125,7 @@ libretro_gtk_la_LIBADD = $(RETRO_GTK_LIBS)
 
 retro_gtkincludedir = $(includedir)/retro-gtk-0.12
 retro_gtkinclude_HEADERS = \
-	retro-gtk.h \
-	retro-option.h \
-	retro-options.h \
-	retro-variable.h \
+	$(retro_gtk_public_h_sources) \
 	$(NULL)
 
 # Add unstable API guard
@@ -149,15 +165,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = retro-gtk-0.12.pc
 
 EXTRA_DIST = \
-	input/retro-keyboard-key.h \
-	retro-core.h \
-	retro-core-view-input-device.h \
-	retro-disk-control-callback.h \
-	retro-game-info.h \
-	retro-module.h \
-	retro-rotation.h \
-	retro-system-av-info.h \
-	retro-system-info.h \
+	$(retro_gtk_private_h_sources) \
 	retro-gtk-0.12.pc.in \
 	update-from-retroarch.sh \
 	$(NULL)

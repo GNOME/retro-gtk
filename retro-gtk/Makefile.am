@@ -131,7 +131,7 @@ gir_DATA = $(INTROSPECTION_GIRS)
 typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-introspection_sources = $(retro_gtkinclude_HEADERS)
+introspection_sources = $(retro_gtkinclude_HEADERS) $(libretro_gtk_la_SOURCES)
 
 BUILT_SOURCES += libretro-gtk.la Retro-0.12.gir
 

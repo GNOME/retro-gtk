@@ -31,5 +31,10 @@ indent_size = 8
 tab_size = 8
 indent_style = space
 
+[meson.build]
+indent_size = 2
+tab_size = 2
+indent_style = space
+
 [NEWS]
 max_line_length = 72

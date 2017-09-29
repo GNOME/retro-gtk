@@ -41,8 +41,10 @@
             ],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "retro-demo-samples-test",
+                    "type": "script",
+                    "commands": [
+                        "retro-demo /app/lib/libretro/test_libretro.so"
+                    ],
                     "dest-filename": "retro-demo-samples-test"
                 },
                 {

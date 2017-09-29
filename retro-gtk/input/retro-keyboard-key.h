@@ -3,6 +3,10 @@
 #ifndef RETRO_KEYBOARD_KEY_H
 #define RETRO_KEYBOARD_KEY_H
 
+#if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
+# error "Only <retro-gtk.h> can be included directly."
+#endif
+
 #include <gdk/gdk.h>
 
 G_BEGIN_DECLS

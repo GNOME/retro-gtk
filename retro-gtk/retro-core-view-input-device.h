@@ -3,6 +3,10 @@
 #ifndef RETRO_CORE_VIEW_INPUT_DEVICE_H
 #define RETRO_CORE_VIEW_INPUT_DEVICE_H
 
+#if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
+# error "Only <retro-gtk.h> can be included directly."
+#endif
+
 #include <glib-object.h>
 #include "retro-gtk-internal.h"
 

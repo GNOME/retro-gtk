@@ -3,6 +3,10 @@
 #ifndef RETRO_CORE_H
 #define RETRO_CORE_H
 
+#if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
+# error "Only <retro-gtk.h> can be included directly."
+#endif
+
 #include "retro-disk-control-callback.h"
 #include "retro-gtk-internal.h"
 #include "retro-module.h"

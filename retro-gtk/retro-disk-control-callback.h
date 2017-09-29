@@ -3,6 +3,10 @@
 #ifndef RETRO_DISK_CONTROL_CALLBACK_H
 #define RETRO_DISK_CONTROL_CALLBACK_H
 
+#if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
+# error "Only <retro-gtk.h> can be included directly."
+#endif
+
 #include "retro-game-info.h"
 
 G_BEGIN_DECLS

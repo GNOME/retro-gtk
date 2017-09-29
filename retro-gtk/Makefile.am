@@ -3,6 +3,7 @@
 NULL =
 
 AM_CPPFLAGS = \
+	-DG_LOG_DOMAIN=\""Retro"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \

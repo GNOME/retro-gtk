@@ -1,4 +1,19 @@
 ==============
+Version 0.12.1
+==============
+
+* Core:
+ - Fix a memory leak in the destructor.
+ - Support partially setting memory regions.
+
+* CoreView: Reset inputs when losing focus.
+
+* Bugs fixed:
+ 787769 retro-gtk: Keyboard keys can be stuck
+ 787548 mGBA fails to save memory
+
+
+==============
 Version 0.12.0
 ==============
 

@@ -55,6 +55,7 @@ struct _RetroCore
 void retro_core_push_cb_data (RetroCore *self);
 void retro_core_pop_cb_data (void);
 RetroCore *retro_core_get_cb_data (void);
+const gchar *retro_core_get_libretro_path (RetroCore *self);
 void retro_core_set_support_no_game (RetroCore *self,
                                      gboolean   support_no_game);
 gchar *retro_core_get_name (RetroCore *self);

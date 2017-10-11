@@ -24,9 +24,6 @@ const gchar *retro_core_get_filename (RetroCore *self);
 const gchar *retro_core_get_system_directory (RetroCore *self);
 void retro_core_set_system_directory (RetroCore   *self,
                                       const gchar *system_directory);
-const gchar *retro_core_get_libretro_path (RetroCore *self);
-void retro_core_set_libretro_path (RetroCore   *self,
-                                   const gchar *libretro_path);
 const gchar *retro_core_get_content_directory (RetroCore *self);
 void retro_core_set_content_directory (RetroCore   *self,
                                        const gchar *content_directory);

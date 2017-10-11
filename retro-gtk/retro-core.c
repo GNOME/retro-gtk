@@ -22,7 +22,6 @@ enum {
   PROP_API_VERSION,
   PROP_FILENAME,
   PROP_SYSTEM_DIRECTORY,
-  PROP_LIBRETRO_PATH,
   PROP_CONTENT_DIRECTORY,
   PROP_SAVE_DIRECTORY,
   PROP_IS_INITIATED,
@@ -184,10 +183,6 @@ retro_core_get_property (GObject    *object,
     g_value_set_string (value, retro_core_get_system_directory (self));
 
     break;
-  case PROP_LIBRETRO_PATH:
-    g_value_set_string (value, retro_core_get_libretro_path (self));
-
-    break;
   case PROP_CONTENT_DIRECTORY:
     g_value_set_string (value, retro_core_get_content_directory (self));
 
@@ -234,10 +229,6 @@ retro_core_set_property (GObject      *object,
     break;
   case PROP_SYSTEM_DIRECTORY:
     retro_core_set_system_directory (self, g_value_get_string (value));
-
-    break;
-  case PROP_LIBRETRO_PATH:
-    retro_core_set_libretro_path (self, g_value_get_string (value));
 
     break;
   case PROP_CONTENT_DIRECTORY:
@@ -320,18 +311,6 @@ retro_core_class_init (RetroCoreClass *klass)
     g_param_spec_string ("system-directory",
                          "System directory",
                          "The system directory",
-                         NULL,
-                         G_PARAM_READWRITE |
-                         G_PARAM_STATIC_NAME |
-                         G_PARAM_STATIC_NICK |
-                         G_PARAM_STATIC_BLURB);
-
-  // FIXME This should be removed as it is useful only to the core and it is
-  // computable from the filename.
-  properties[PROP_LIBRETRO_PATH] =
-    g_param_spec_string ("libretro-path",
-                         "Libretro path",
-                         "The Libretro path",
                          NULL,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
@@ -1147,30 +1126,12 @@ retro_core_set_system_directory (RetroCore   *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYSTEM_DIRECTORY]);
 }
 
-// FIXME This should be removed as it is useful only to the core and it is
-// computable from the filename.
 const gchar *
 retro_core_get_libretro_path (RetroCore *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
   return self->libretro_path;
-}
-
-// FIXME This should be removed as it is useful only to the core and it is
-// computable from the filename.
-void
-retro_core_set_libretro_path (RetroCore   *self,
-                              const gchar *libretro_path)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  if (g_strcmp0 (libretro_path, retro_core_get_libretro_path (self)) == 0)
-    return;
-
-  g_free (self->libretro_path);
-  self->libretro_path = g_strdup (libretro_path);
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LIBRETRO_PATH]);
 }
 
 // FIXME This should be removed as it is deprecated by Libretro.
@@ -1953,7 +1914,6 @@ retro_core_new (const gchar *filename)
   RetroCore *self;
   GFile *file;
   GFile *relative_path_file;
-  gchar *libretro_path;
 
   g_return_val_if_fail (filename != NULL, NULL);
 
@@ -1966,14 +1926,11 @@ retro_core_new (const gchar *filename)
 
   g_object_unref (file);
 
-  libretro_path = g_file_get_path (relative_path_file);
+  self->libretro_path = g_file_get_path (relative_path_file);
 
   g_object_unref (relative_path_file);
 
-  retro_core_set_libretro_path (self, libretro_path);
-  self->module = retro_module_new (libretro_path);
-
-  g_free (libretro_path);
+  self->module = retro_module_new (self->libretro_path);
 
   retro_core_set_callbacks (self);
   self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,

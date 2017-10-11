@@ -12,7 +12,7 @@
 
 G_BEGIN_DECLS
 
-void retro_g_log (RetroCore      *self,
+void retro_g_log (RetroCore      *sender,
                   const gchar    *log_domain,
                   GLogLevelFlags  log_level,
                   const gchar    *message);

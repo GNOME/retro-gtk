@@ -53,13 +53,11 @@ void retro_core_set_state (RetroCore     *self,
                            GError       **error);
 gsize retro_core_get_memory_size (RetroCore       *self,
                                   RetroMemoryType  memory_type);
-guint8 *retro_core_get_memory (RetroCore       *self,
-                              RetroMemoryType  memory_type,
-                              gsize           *length);
+GBytes *retro_core_get_memory (RetroCore       *self,
+                               RetroMemoryType  memory_type);
 void retro_core_set_memory (RetroCore       *self,
                             RetroMemoryType  memory_type,
-                            guint8          *data,
-                            gsize            length);
+                            GBytes          *bytes);
 void retro_core_poll_controllers (RetroCore *self);
 gint16 retro_core_get_controller_input_state (RetroCore           *self,
                                               uint                 port,

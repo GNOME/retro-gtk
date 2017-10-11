@@ -1619,16 +1619,14 @@ retro_core_get_memory_size (RetroCore       *self,
  * retro_core_get_memory:
  * @self: a #RetroCore
  * @memory_type: the type of memory
- * @length: return location for the length of the returned data
  *
  * Gets a memory region of @self.
  *
- * Returns: (array length=length): the content of the memory region
+ * Returns: (transfer full): a #GBytes, or %NULL
  */
-guint8 *
+GBytes *
 retro_core_get_memory (RetroCore       *self,
-                       RetroMemoryType  memory_type,
-                       gsize           *length)
+                       RetroMemoryType  memory_type)
 {
   RetroGetMemoryData get_mem_data;
   RetroGetMemorySize get_mem_size;
@@ -1636,7 +1634,6 @@ retro_core_get_memory (RetroCore       *self,
   gsize size;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
-  g_return_val_if_fail (length != NULL, NULL);
 
   get_mem_data = retro_module_get_get_memory_data (self->module);
   get_mem_size = retro_module_get_get_memory_size (self->module);
@@ -1646,35 +1643,31 @@ retro_core_get_memory (RetroCore       *self,
   size = get_mem_size (memory_type);
   retro_core_pop_cb_data ();
 
-  data = g_memdup (data, size);
-  *length = (gint) (data != NULL ? size : 0);
-
-  return data;
+  return g_bytes_new (data, size);
 }
 
 /**
  * retro_core_set_memory:
  * @self: a #RetroCore
  * @memory_type: the type of memory
- * @data: (array length=length): the data to set
- * @length: the length of @data
+ * @bytes: a #GBytes
  *
  * Sets a memory region of @self.
  */
 void
 retro_core_set_memory (RetroCore       *self,
                        RetroMemoryType  memory_type,
-                       guint8          *data,
-                       gsize            length)
+                       GBytes          *bytes)
 {
   RetroGetMemoryData get_mem_region;
   RetroGetMemorySize get_mem_region_size;
   guint8 *memory_region;
   gsize memory_region_size;
+  gconstpointer data;
+  gsize size;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (data != NULL);
-  g_return_if_fail (length > 0);
+  g_return_if_fail (bytes != NULL);
 
   get_mem_region = retro_module_get_get_memory_data (self->module);
   get_mem_region_size = retro_module_get_get_memory_size (self->module);
@@ -1684,20 +1677,48 @@ retro_core_set_memory (RetroCore       *self,
   memory_region_size = get_mem_region_size (memory_type);
   retro_core_pop_cb_data ();
 
-  g_return_if_fail (memory_region != NULL);
-  g_return_if_fail (memory_region_size >= length);
+  data = g_bytes_get_data (bytes, &size);
 
-  if (memory_region_size != length)
+  if (memory_region == NULL) {
+    g_debug ("%s doesn't have memory region %d.",
+             retro_core_get_name (self),
+             memory_type);
+
+    return;
+  }
+
+  if (memory_region_size == 0) {
+    g_debug ("%s has an unexpected 0-sized non-null memory region %d. Aborting "
+             "setting the memory region.",
+             retro_core_get_name (self),
+             memory_type);
+
+    return;
+  }
+
+  if (memory_region_size < size) {
+    g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %"
+             G_GSIZE_FORMAT" bytes were passed. Aborting setting the memory "
+             "region.",
+             retro_core_get_name (self),
+             memory_region_size,
+             memory_type,
+             size);
+
+    return;
+  }
+
+  if (memory_region_size != size)
     g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %"
              G_GSIZE_FORMAT" bytes were passed. The excess will be filled with"
              "zeros.",
              retro_core_get_name (self),
              memory_region_size,
              memory_type,
-             length);
+             size);
 
-  memcpy (memory_region, data, length);
-  memset (memory_region + length, 0, memory_region_size - length);
+  memcpy (memory_region, data, size);
+  memset (memory_region + size, 0, memory_region_size - size);
 }
 
 /**

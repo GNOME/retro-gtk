@@ -11,11 +11,11 @@
 
 #include "retro-analog-id.h"
 #include "retro-analog-index.h"
+#include "retro-controller.h"
+#include "retro-controller-type.h"
 #include "retro-core.h"
 #include "retro-core-descriptor.h"
 #include "retro-core-view.h"
-#include "retro-device-type.h"
-#include "retro-input-device.h"
 #include "retro-joypad-id.h"
 #include "retro-lightgun-id.h"
 #include "retro-log.h"

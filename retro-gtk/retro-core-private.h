@@ -60,9 +60,9 @@ void retro_core_set_support_no_game (RetroCore *self,
 gchar *retro_core_get_name (RetroCore *self);
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
-void retro_core_set_controller_port_device (RetroCore       *self,
-                                            guint            port,
-                                            RetroDeviceType  device);
+void retro_core_set_controller_port_device (RetroCore           *self,
+                                            guint                port,
+                                            RetroControllerType  controller_type);
 void retro_core_set_controller_descriptors (RetroCore            *self,
                                             RetroInputDescriptor *input_descriptors,
                                             gsize                 length);

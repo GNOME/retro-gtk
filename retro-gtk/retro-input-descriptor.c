@@ -40,7 +40,7 @@ retro_input_descriptor_copy (RetroInputDescriptor *self)
 
   copy = retro_input_descriptor_new ();
   copy->port = self->port;
-  copy->device = self->device;
+  copy->controller_type = self->controller_type;
   copy->index = self->index;
   copy->id = self->id;
   copy->description = g_strdup (self->description);

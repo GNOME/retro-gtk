@@ -39,14 +39,14 @@ retro_controller_iterator_init (RetroControllerIterator *self)
  * @port: (out) (optional): return location for the port
  * @controller: (out) (optional) (nullable): return location for the controller
  *
- * Fetch the next #RetroInputDevice and the port number it is plugged into.
+ * Fetch the next #RetroController and the port number it is plugged into.
  *
  * Returns: %FALSE if it reached the end, %TRUE otherwise
  */
 gboolean
 retro_controller_iterator_next (RetroControllerIterator  *self,
                                 guint                   **port,
-                                RetroInputDevice        **controller)
+                                RetroController         **controller)
 {
   g_return_val_if_fail (RETRO_IS_CONTROLLER_ITERATOR (self), FALSE);
   g_return_val_if_fail (port != NULL, FALSE);
@@ -57,7 +57,7 @@ retro_controller_iterator_next (RetroControllerIterator  *self,
 
 /**
  * retro_controller_iterator_new:
- * @controllers: (element-type guint RetroInputDevice): A #GHashTable
+ * @controllers: (element-type guint RetroController): A #GHashTable
  *
  * Creates a new #RetroControllerIterator.
  *

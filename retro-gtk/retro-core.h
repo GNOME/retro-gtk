@@ -9,8 +9,7 @@
 
 #include <gtk/gtk.h>
 #include "retro-controller-iterator.h"
-#include "retro-device-type.h"
-#include "retro-input-device.h"
+#include "retro-controller-type.h"
 #include "retro-memory-type.h"
 
 G_BEGIN_DECLS
@@ -45,9 +44,6 @@ void retro_core_set_medias (RetroCore    *self,
 void retro_core_set_current_media (RetroCore  *self,
                                    guint       media_index,
                                    GError    **error);
-void retro_core_set_controller_port_device (RetroCore       *self,
-                                            guint            port,
-                                            RetroDeviceType  controller);
 void retro_core_reset (RetroCore *self);
 void retro_core_run (RetroCore *self);
 gboolean retro_core_supports_serialization (RetroCore *self);
@@ -68,15 +64,15 @@ void retro_core_set_memory (RetroCore       *self,
                             guint8          *data,
                             gsize            length);
 void retro_core_poll_controllers (RetroCore *self);
-gint16 retro_core_get_controller_input_state (RetroCore       *self,
-                                              uint             port,
-                                              RetroDeviceType  controller_type,
-                                              guint            index,
-                                              guint            id);
+gint16 retro_core_get_controller_input_state (RetroCore           *self,
+                                              uint                 port,
+                                              RetroControllerType  controller_type,
+                                              guint                index,
+                                              guint                id);
 guint64 retro_core_get_controller_capabilities (RetroCore *self);
-void retro_core_set_controller (RetroCore        *self,
-                                guint             port,
-                                RetroInputDevice *controller);
+void retro_core_set_controller (RetroCore       *self,
+                                guint            port,
+                                RetroController *controller);
 void retro_core_set_keyboard (RetroCore *self,
                               GtkWidget *widget);
 void retro_core_remove_controller (RetroCore *self,

@@ -8,7 +8,7 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-input-device.h"
+#include "retro-controller.h"
 
 G_BEGIN_DECLS
 
@@ -18,7 +18,7 @@ G_DECLARE_FINAL_TYPE (RetroControllerIterator, retro_controller_iterator, RETRO,
 
 gboolean retro_controller_iterator_next (RetroControllerIterator  *self,
                                          guint                   **port,
-                                         RetroInputDevice        **controller);
+                                         RetroController         **controller);
 
 G_END_DECLS
 

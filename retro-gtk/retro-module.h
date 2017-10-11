@@ -8,7 +8,7 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-device-type.h"
+#include "retro-controller-type.h"
 #include "retro-game-info.h"
 #include "retro-memory-type.h"
 #include "retro-system-av-info.h"
@@ -30,7 +30,7 @@ typedef void (*RetroGetSystemInfo) (RetroSystemInfo *info);
 typedef void (*RetroInit) ();
 typedef void (*RetroReset) ();
 typedef void (*RetroRun) ();
-typedef void (*RetroSetControllerPortDevice) (guint port, RetroDeviceType device);
+typedef void (*RetroSetControllerPortDevice) (guint port, RetroControllerType controller_type);
 typedef void (*RetroUnloadGame) ();
 
 #define RETRO_TYPE_MODULE (retro_module_get_type())

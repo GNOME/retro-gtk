@@ -631,20 +631,20 @@ retro_core_get_name (RetroCore *self)
 }
 
 static void
-retro_core_controller_connected (RetroCore        *self,
-                                 guint             port,
-                                 RetroInputDevice *device)
+retro_core_controller_connected (RetroCore       *self,
+                                 guint            port,
+                                 RetroController *controller)
 {
-  RetroDeviceType device_type;
+  RetroControllerType controller_type;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (device != NULL);
+  g_return_if_fail (controller != NULL);
 
   if (!retro_core_get_is_initiated (self))
     return;
 
-  device_type = retro_input_device_get_device_type (device);
-  retro_core_set_controller_port_device (self, port, device_type);
+  controller_type = retro_controller_get_controller_type (controller);
+  retro_core_set_controller_port_device (self, port, controller_type);
 }
 
 static void
@@ -656,7 +656,7 @@ retro_core_controller_disconnected (RetroCore *self,
   if (!retro_core_get_is_initiated (self))
     return;
 
-  retro_core_set_controller_port_device (self, port, RETRO_DEVICE_TYPE_NONE);
+  retro_core_set_controller_port_device (self, port, RETRO_CONTROLLER_TYPE_NONE);
 }
 
 static void
@@ -1337,8 +1337,8 @@ retro_core_boot (RetroCore  *self,
   RetroInit init;
   RetroControllerIterator *controller_iterator;
   guint *port;
-  RetroInputDevice *controller;
-  RetroDeviceType device_type;
+  RetroController *controller;
+  RetroControllerType controller_type;
   GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
@@ -1354,8 +1354,8 @@ retro_core_boot (RetroCore  *self,
   while (retro_controller_iterator_next (controller_iterator,
                                          &port,
                                          &controller)) {
-    device_type = retro_input_device_get_device_type (controller);
-    retro_core_set_controller_port_device (self, *port, device_type);
+    controller_type = retro_controller_get_controller_type (controller);
+    retro_core_set_controller_port_device (self, *port, controller_type);
   }
   g_object_unref (controller_iterator);
 
@@ -1443,9 +1443,9 @@ retro_core_set_current_media (RetroCore  *self,
 
 // FIXME Merge this into retro_core_set_controller().
 void
-retro_core_set_controller_port_device (RetroCore       *self,
-                                       guint            port,
-                                       RetroDeviceType  device)
+retro_core_set_controller_port_device (RetroCore           *self,
+                                       guint                port,
+                                       RetroControllerType  controller_type)
 {
   RetroSetControllerPortDevice set_controller_port_device;
 
@@ -1453,7 +1453,7 @@ retro_core_set_controller_port_device (RetroCore       *self,
 
   retro_core_push_cb_data (self);
   set_controller_port_device = retro_module_get_set_controller_port_device (self->module);
-  set_controller_port_device (port, device);
+  set_controller_port_device (port, controller_type);
   retro_core_pop_cb_data ();
 }
 
@@ -1766,14 +1766,14 @@ retro_core_poll_controllers (RetroCore *self)
 {
   RetroControllerIterator *iterator;
   guint *port;
-  RetroInputDevice *controller;
+  RetroController *controller;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
   iterator = retro_core_iterate_controllers (self);
   while (retro_controller_iterator_next (iterator, &port, &controller))
     if (controller != NULL)
-      retro_input_device_poll (controller);
+      retro_controller_poll (controller);
   g_object_unref (iterator);
 }
 
@@ -1781,7 +1781,7 @@ retro_core_poll_controllers (RetroCore *self)
  * retro_core_get_controller_input_state:
  * @self: a #RetroCore
  * @port: the port number
- * @controller_type: a #RetroDeviceType to query @self
+ * @controller_type: a #RetroControllerType to query @self
  * @index: an input index to interpret depending on @controller_type
  * @id: an input id to interpret depending on @controller_type
  *
@@ -1791,13 +1791,13 @@ retro_core_poll_controllers (RetroCore *self)
  * Returns: the input's state
  */
 gint16
-retro_core_get_controller_input_state (RetroCore       *self,
-                                       guint            port,
-                                       RetroDeviceType  controller_type,
-                                       guint            index,
-                                       guint            id)
+retro_core_get_controller_input_state (RetroCore           *self,
+                                       guint                port,
+                                       RetroControllerType  controller_type,
+                                       guint                index,
+                                       guint                id)
 {
-  RetroInputDevice *controller;
+  RetroController *controller;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), 0);
 
@@ -1809,13 +1809,13 @@ retro_core_get_controller_input_state (RetroCore       *self,
   if (controller == NULL)
     return 0;
 
-  if ((retro_input_device_get_device_capabilities (controller) & (1 << controller_type)) == 0)
+  if ((retro_controller_get_capabilities (controller) & (1 << controller_type)) == 0)
     return 0;
 
-  return retro_input_device_get_input_state (controller,
-                                             controller_type,
-                                             index,
-                                             id);
+  return retro_controller_get_input_state (controller,
+                                           controller_type,
+                                           index,
+                                           id);
 }
 
 // FIXME documentation
@@ -1844,19 +1844,19 @@ retro_core_get_controller_capabilities (RetroCore *self)
  * retro_core_set_controller:
  * @self: a #RetroCore
  * @port: the port number
- * @controller: (nullable): a #RetroInputDevice
+ * @controller: (nullable): a #RetroController
  *
  * Plugs @controller into the specified port number of @self.
  */
 void
-retro_core_set_controller (RetroCore        *self,
-                           guint             port,
-                           RetroInputDevice *controller)
+retro_core_set_controller (RetroCore       *self,
+                           guint            port,
+                           RetroController *controller)
 {
   guint *port_copy;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (RETRO_IS_INPUT_DEVICE (controller));
+  g_return_if_fail (RETRO_IS_CONTROLLER (controller));
 
   port_copy = g_new (guint, 1);
   *port_copy = port;

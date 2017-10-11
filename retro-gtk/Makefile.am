@@ -30,13 +30,13 @@ dist_vapi_DATA = retro-gtk-0.12.deps
 retro_gtk_public_h_sources = \
 	retro-analog-id.h \
 	retro-analog-index.h \
+	retro-controller.h \
 	retro-controller-iterator.h \
+	retro-controller-type.h \
 	retro-core-descriptor.h \
 	retro-core.h \
 	retro-core-view.h \
-	retro-device-type.h \
 	retro-gtk.h \
-	retro-input-device.h \
 	retro-joypad-id.h \
 	retro-lightgun-id.h \
 	retro-log.h \
@@ -56,7 +56,7 @@ retro_gtk_private_h_sources = \
 	retro-cairo-display.h \
 	retro-controller-iterator-private.h \
 	retro-core-private.h \
-	retro-core-view-input-device.h \
+	retro-core-view-controller.h \
 	retro-disk-control-callback.h \
 	retro-game-info.h \
 	retro-input-descriptor.h \
@@ -75,14 +75,14 @@ libretro_gtk_la_SOURCES = \
 	retro-analog-id.c \
 	retro-analog-index.c \
 	retro-cairo-display.c \
+	retro-controller.c \
 	retro-controller-iterator.c \
+	retro-controller-type.c \
 	retro-core-descriptor.c \
 	retro-core-view.c \
-	retro-core-view-input-device.c \
-	retro-device-type.c \
+	retro-core-view-controller.c \
 	retro-game-info.c \
 	retro-input-descriptor.c \
-	retro-input-device.c \
 	retro-joypad-id.c \
 	retro-keyboard-key.c \
 	retro-lightgun-id.c \

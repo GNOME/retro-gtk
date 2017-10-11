@@ -32,7 +32,7 @@ rumble_callback_set_rumble_state (guint             port,
                                   guint16           strength)
 {
   RetroCore *self;
-  RetroInputDevice *controller;
+  RetroController *controller;
 
   self = retro_core_get_cb_data ();
 
@@ -46,9 +46,7 @@ rumble_callback_set_rumble_state (guint             port,
   if (controller == NULL)
     return FALSE;
 
-  return retro_input_device_set_rumble_state (controller,
-                                              effect,
-                                              strength);
+  return retro_controller_set_rumble_state (controller, effect, strength);
 }
 
 static void

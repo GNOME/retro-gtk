@@ -8,7 +8,7 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-device-type.h"
+#include "retro-controller-type.h"
 
 G_BEGIN_DECLS
 
@@ -19,7 +19,7 @@ typedef struct _RetroInputDescriptor RetroInputDescriptor;
 struct _RetroInputDescriptor
 {
   guint port;
-  RetroDeviceType device;
+  RetroControllerType controller_type;
   guint index;
   guint id;
   gchar *description;

@@ -82,7 +82,7 @@ retro_demo_activate (GApplication *application)
 {
   RetroDemoApplication *self;
   GtkWidget *window;
-  RetroInputDevice *input_device;
+  RetroController *controller;
 
   self = RETRO_DEMO_APPLICATION (application);
 
@@ -92,16 +92,18 @@ retro_demo_activate (GApplication *application)
   retro_core_view_set_core (self->view, self->core);
 
   retro_core_set_keyboard (self->core, GTK_WIDGET (self->view));
-  input_device = retro_core_view_as_input_device (self->view, RETRO_DEVICE_TYPE_POINTER);
-  retro_core_set_controller (self->core, 0, input_device);
-  g_object_unref (input_device);
+  controller = retro_core_view_as_controller (self->view,
+                                              RETRO_CONTROLLER_TYPE_POINTER);
+  retro_core_set_controller (self->core, 0, controller);
+  g_object_unref (controller);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (self->view));
 
   gtk_widget_show_all (GTK_WIDGET (window));
-  gtk_application_add_window (GTK_APPLICATION (application), GTK_WINDOW (window));
+  gtk_application_add_window (GTK_APPLICATION (application),
+                              GTK_WINDOW (window));
 
   self->loop = retro_main_loop_new (self->core);
   retro_main_loop_start (self->loop);

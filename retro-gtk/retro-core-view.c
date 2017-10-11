@@ -1,9 +1,10 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+#include "retro-core-view.h"
+
 #include <linux/input-event-codes.h>
 #include "retro-cairo-display.h"
-#include "retro-core-view.h"
-#include "retro-core-view-input-device.h"
+#include "retro-core-view-controller.h"
 #include "retro-joypad-id.h"
 #include "retro-mouse-id.h"
 #include "retro-pa-player.h"
@@ -628,29 +629,29 @@ retro_core_view_hide_video (RetroCoreView *self)
 }
 
 /**
- * retro_core_view_as_input_device:
+ * retro_core_view_as_controller:
  * @self: a #RetroCoreView
- * @device_type: the controller type to expose @self as
+ * @controller_type: the controller type to expose @self as
  *
- * Creates a new #RetroInputDevice exposing @self as the specified controller
- * type. The valid controller types are RETRO_DEVICE_TYPE_JOYPAD,
- * RETRO_DEVICE_TYPE_MOUSE and RETRO_DEVICE_TYPE_POINTER.
+ * Creates a new #RetroController exposing @self as the specified controller
+ * type. The valid controller types are RETRO_CONTROLLER_TYPE_JOYPAD,
+ * RETRO_CONTROLLER_TYPE_MOUSE and RETRO_CONTROLLER_TYPE_POINTER.
  *
- * Returns: (transfer full): a new #RetroInputDevice
+ * Returns: (transfer full): a new #RetroController
  */
-RetroInputDevice *
-retro_core_view_as_input_device (RetroCoreView   *self,
-                                 RetroDeviceType  device_type)
+RetroController *
+retro_core_view_as_controller (RetroCoreView       *self,
+                               RetroControllerType  controller_type)
 {
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), NULL);
 
-  return RETRO_INPUT_DEVICE (retro_core_view_input_device_new (self, device_type));
+  return RETRO_CONTROLLER (retro_core_view_controller_new (self, controller_type));
 }
 
 /**
  * retro_core_view_get_input_state:
  * @self: a #RetroCoreView
- * @device: an #RetroDeviceType to query @self
+ * @controller_type: a #RetroControllerType to query @self
  * @index: an input index to interpret depending on @device
  * @id: an input id to interpret depending on @device
  *
@@ -659,22 +660,22 @@ retro_core_view_as_input_device (RetroCoreView   *self,
  * Returns: the input's state
  */
 gint16
-retro_core_view_get_input_state (RetroCoreView   *self,
-                                 RetroDeviceType  device,
-                                 guint            index,
-                                 guint            id)
+retro_core_view_get_input_state (RetroCoreView       *self,
+                                 RetroControllerType  controller_type,
+                                 guint                index,
+                                 guint                id)
 {
   gint16 result;
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), 0);
 
-  switch (device) {
-  case RETRO_DEVICE_TYPE_JOYPAD:
+  switch (controller_type) {
+  case RETRO_CONTROLLER_TYPE_JOYPAD:
     if (id >= RETRO_JOYPAD_ID_COUNT)
       return 0;
 
     return retro_core_view_get_joypad_button_state (self, id) ? G_MAXINT16 : 0;
-  case RETRO_DEVICE_TYPE_MOUSE:
+  case RETRO_CONTROLLER_TYPE_MOUSE:
     switch (id) {
     case RETRO_MOUSE_ID_X:
       result = (gint16) self->mouse_x_delta;
@@ -693,7 +694,7 @@ retro_core_view_get_input_state (RetroCoreView   *self,
     default:
       return 0;
     }
-  case RETRO_DEVICE_TYPE_POINTER:
+  case RETRO_CONTROLLER_TYPE_POINTER:
     switch (id) {
     case RETRO_POINTER_ID_X:
       return axis_to_retro_axis (self->pointer_x);
@@ -714,26 +715,26 @@ retro_core_view_get_input_state (RetroCoreView   *self,
 }
 
 /**
- * retro_core_view_get_device_capabilities:
+ * retro_core_view_get_controller_capabilities:
  * @self: a #RetroCoreView
  *
  * Gets a flag representing the capabilities of @self when exposed as a
- * controller. See retro_input_device_get_device_capabilities() for more
- * information on the flag.
+ * controller. See retro_controller_get_capabilities() for more information on
+ * the flag.
  *
- * See retro_core_view_as_input_device() to know the capabilities of
+ * See retro_core_view_as_controller() to know the capabilities of
  * #RetroCoreView when exposed as a controller.
  *
  * Returns: the capabilities flag of @self when exposed as a controller
  */
 guint64
-retro_core_view_get_device_capabilities (RetroCoreView *self)
+retro_core_view_get_controller_capabilities (RetroCoreView *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), 0);
 
-  return 1 << RETRO_DEVICE_TYPE_JOYPAD |
-         1 << RETRO_DEVICE_TYPE_MOUSE |
-         1 << RETRO_DEVICE_TYPE_POINTER;
+  return 1 << RETRO_CONTROLLER_TYPE_JOYPAD |
+         1 << RETRO_CONTROLLER_TYPE_MOUSE |
+         1 << RETRO_CONTROLLER_TYPE_POINTER;
 }
 
 /**
@@ -741,8 +742,8 @@ retro_core_view_get_device_capabilities (RetroCoreView *self)
  * @self: a #RetroCoreView
  *
  * Gets whether the pointer should be grabbed when clicking on the view. This
- * allows @self to work as a RETRO_DEVICE_TYPE_MOUSE instead of a
- * RETRO_DEVICE_TYPE_POINTER.
+ * allows @self to work as a RETRO_CONTROLLER_TYPE_MOUSE instead of a
+ * RETRO_CONTROLLER_TYPE_POINTER.
  *
  * Returns: whether the pointer should snap to the borders
  */
@@ -761,8 +762,8 @@ retro_core_view_get_can_grab_pointer (RetroCoreView *self)
  * the view
  *
  * Sets whether the pointer should be grabbed when clicking on the view. This
- * allows @self to work as a RETRO_DEVICE_TYPE_MOUSE instead of a
- * RETRO_DEVICE_TYPE_POINTER.
+ * allows @self to work as a RETRO_CONTROLLER_TYPE_MOUSE instead of a
+ * RETRO_CONTROLLER_TYPE_POINTER.
  */
 void
 retro_core_view_set_can_grab_pointer (RetroCoreView *self,
@@ -788,7 +789,7 @@ retro_core_view_set_can_grab_pointer (RetroCoreView *self,
  *
  * Gets whether the pointer should be considered to be at the border of the
  * video display when it is outside of it. This is used when @self is exposed as
- * a RETRO_DEVICE_TYPE_POINTER.
+ * a RETRO_CONTROLLER_TYPE_POINTER.
  *
  * Returns: whether the pointer should snap to the borders
  */
@@ -807,7 +808,7 @@ retro_core_view_get_snap_pointer_to_borders (RetroCoreView *self)
  *
  * Sets whether the pointer should be considered to be at the border of the
  * video display when it is outside of it. This is used when @self is exposed as
- * a RETRO_DEVICE_TYPE_POINTER.
+ * a RETRO_CONTROLLER_TYPE_POINTER.
  */
 void
 retro_core_view_set_snap_pointer_to_borders (RetroCoreView *self,

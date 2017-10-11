@@ -17,8 +17,8 @@
 G_BEGIN_DECLS
 
 typedef gboolean (*RetroLoadGame) (RetroGameInfo *game);
-typedef gboolean (*RetroSerialize) (guint8 *data, gint length);
-typedef gboolean (*RetroUnserialize) (guint8 *data, gint length);
+typedef gboolean (*RetroSerialize) (guint8 *data, gsize size);
+typedef gboolean (*RetroUnserialize) (guint8 *data, gsize size);
 typedef gsize (*RetroGetMemorySize) (RetroMemoryType id);
 typedef gsize (*RetroSerializeSize) ();
 typedef guint (*RetroApiVersion) ();

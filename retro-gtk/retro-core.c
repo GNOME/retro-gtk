@@ -187,10 +187,6 @@ retro_core_get_property (GObject    *object,
     g_value_set_string (value, retro_core_get_save_directory (self));
 
     break;
-  case PROP_IS_INITIATED:
-    g_value_set_boolean (value, retro_core_get_is_initiated (self));
-
-    break;
   case PROP_GAME_LOADED:
     g_value_set_boolean (value, retro_core_get_game_loaded (self));
 
@@ -351,7 +347,7 @@ retro_core_class_init (RetroCoreClass *klass)
                           "Is initiated",
                           "Whether the core has been initiated",
                           FALSE,
-                          G_PARAM_READWRITE |
+                          G_PARAM_READABLE |
                           G_PARAM_STATIC_NAME |
                           G_PARAM_STATIC_NICK |
                           G_PARAM_STATIC_BLURB);

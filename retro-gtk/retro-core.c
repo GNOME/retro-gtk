@@ -1467,16 +1467,14 @@ retro_core_get_can_access_state (RetroCore *self)
 /**
  * retro_core_get_state:
  * @self: a #RetroCore
- * @length: return location for the length of the returned data
  * @error: return location for a #GError, or %NULL
  *
  * Gets the state of @self.
  *
- * Returns: (array length=length): the content of the memory region
+ * Returns: (transfer full): a #GBytes, or %NULL
  */
-guint8 *
+GBytes *
 retro_core_get_state (RetroCore  *self,
-                      gsize      *length,
                       GError    **error)
 {
   RetroSerializeSize serialize_size = NULL;
@@ -1486,7 +1484,6 @@ retro_core_get_state (RetroCore  *self,
   gboolean success;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
-  g_return_val_if_fail (length != NULL, NULL);
 
   serialize_size = retro_module_get_serialize_size (self->module);
 
@@ -1520,33 +1517,31 @@ retro_core_get_state (RetroCore  *self,
     return NULL;
   }
 
-  *length = size;
-
-  return data;
+  return g_bytes_new_take (data, size);
 }
 
 /**
  * retro_core_set_state:
  * @self: a #RetroCore
- * @data: (array length=length): the data to set
- * @length: the length of @data
+ * @bytes: a #GBytes
  * @error: return location for a #GError, or %NULL
  *
  * Sets the state of the @self.
  */
 void
-retro_core_set_state (RetroCore     *self,
-                      const guint8  *data,
-                      gsize          length,
-                      GError       **error)
+retro_core_set_state (RetroCore  *self,
+                      GBytes     *bytes,
+                      GError    **error)
 {
   RetroSerializeSize serialize_size = NULL;
   RetroUnserialize unserialize = NULL;
   gsize size;
+  gconstpointer bytes_data;
+  gsize bytes_size;
   gboolean success;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (data != NULL);
+  g_return_if_fail (bytes != NULL);
 
   serialize_size = retro_module_get_serialize_size (self->module);
 
@@ -1554,7 +1549,9 @@ retro_core_set_state (RetroCore     *self,
   size = serialize_size ();
   retro_core_pop_cb_data ();
 
-  if (size <= 0) {
+  bytes_data = g_bytes_get_data (bytes, &bytes_size);
+
+  if (size == 0) {
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
@@ -1563,14 +1560,14 @@ retro_core_set_state (RetroCore     *self,
     return;
   }
 
-  if (length > size) {
+  if (bytes_size > size) {
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
                  "Couldn't deserialize the internal state: expected at most %"
                  G_GSIZE_FORMAT" bytes, got %"G_GSIZE_FORMAT".",
                  size,
-                 length);
+                 bytes_size);
 
     return;
   }
@@ -1578,7 +1575,7 @@ retro_core_set_state (RetroCore     *self,
   unserialize = retro_module_get_unserialize (self->module);
 
   retro_core_push_cb_data (self);
-  success = unserialize ((guint8 *) data, length);
+  success = unserialize ((guint8 *) bytes_data, bytes_size);
   retro_core_pop_cb_data ();
 
   if (!success) {

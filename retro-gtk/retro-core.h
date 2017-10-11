@@ -44,13 +44,11 @@ void retro_core_set_current_media (RetroCore  *self,
 void retro_core_reset (RetroCore *self);
 void retro_core_run (RetroCore *self);
 gboolean retro_core_get_can_access_state (RetroCore *self);
-guint8 *retro_core_get_state (RetroCore  *self,
-                              gsize      *length,
+GBytes *retro_core_get_state (RetroCore  *self,
                               GError    **error);
-void retro_core_set_state (RetroCore     *self,
-                           const guint8  *data,
-                           gsize          length,
-                           GError       **error);
+void retro_core_set_state (RetroCore  *self,
+                           GBytes     *bytes,
+                           GError    **error);
 gsize retro_core_get_memory_size (RetroCore       *self,
                                   RetroMemoryType  memory_type);
 GBytes *retro_core_get_memory (RetroCore       *self,

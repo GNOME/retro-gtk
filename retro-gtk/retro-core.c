@@ -1457,7 +1457,7 @@ retro_core_run (RetroCore *self)
 }
 
 /**
- * retro_core_supports_serialization:
+ * retro_core_get_can_access_state:
  * @self: a #RetroCore
  *
  * Gets whether the state of @self can be accessed.
@@ -1465,7 +1465,7 @@ retro_core_run (RetroCore *self)
  * Returns: whether the state of @self can be accessed
  */
 gboolean
-retro_core_supports_serialization (RetroCore *self)
+retro_core_get_can_access_state (RetroCore *self)
 {
   RetroSerializeSize serialize_size = NULL;
   gsize size;

@@ -43,7 +43,7 @@ void retro_core_set_current_media (RetroCore  *self,
                                    GError    **error);
 void retro_core_reset (RetroCore *self);
 void retro_core_run (RetroCore *self);
-gboolean retro_core_supports_serialization (RetroCore *self);
+gboolean retro_core_get_can_access_state (RetroCore *self);
 guint8 *retro_core_get_state (RetroCore  *self,
                               gsize      *length,
                               GError    **error);

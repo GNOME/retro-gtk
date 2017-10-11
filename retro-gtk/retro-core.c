@@ -1057,7 +1057,7 @@ retro_core_get_api_version (RetroCore *self)
  *
  * Gets the filename of the core.
  *
- * Returns: the filename of the core
+ * Returns: (transfer none): the filename of the core
  */
 const gchar *
 retro_core_get_filename (RetroCore *self)

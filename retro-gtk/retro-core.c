@@ -175,10 +175,6 @@ retro_core_get_property (GObject    *object,
     g_value_set_uint (value, retro_core_get_api_version (self));
 
     break;
-  case PROP_FILENAME:
-    g_value_set_string (value, retro_core_get_filename (self));
-
-    break;
   case PROP_SYSTEM_DIRECTORY:
     g_value_set_string (value, retro_core_get_system_directory (self));
 
@@ -294,7 +290,7 @@ retro_core_class_init (RetroCoreClass *klass)
                          "Filename",
                          "The module filename",
                          NULL,
-                         G_PARAM_READWRITE |
+                         G_PARAM_READABLE |
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);

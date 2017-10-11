@@ -322,7 +322,7 @@ retro_core_descriptor_check_platform_group (RetroCoreDescriptor  *self,
     return;
   }
 
-  for (firmware_p = firmwares; firmware_p != NULL; firmware_p++) {
+  for (firmware_p = firmwares; *firmware_p != NULL; firmware_p++) {
     firmware_group = g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
     if (!g_key_file_has_group (self->key_file, firmware_group)) {
       g_set_error (error,

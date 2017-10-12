@@ -249,6 +249,8 @@ retro_pixdata_free (RetroPixdata *self)
 {
   g_return_if_fail (self != NULL);
 
+  g_free (self->data);
+
   g_slice_free (RetroPixdata, self);
 }
 

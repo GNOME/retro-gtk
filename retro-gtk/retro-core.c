@@ -5,6 +5,7 @@
 #include <string.h>
 #include "retro-controller-iterator-private.h"
 #include "retro-keyboard-key.h"
+#include "retro-pixdata.h"
 
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
 
@@ -396,30 +397,23 @@ retro_core_class_init (RetroCoreClass *klass)
   /**
    * RetroCore::video-output:
    * @self: the #RetroCore
-   * @data: (array length=length) (element-type guint8): the video frame data
-   * @length: the lentgh of @data
-   * @width: the width of the video frame
-   * @height: the height of the video frame
-   * @pitch: the distance in bytes between rows
-   * @pixel_format: the pixel format
-   * @aspect_ratio: the aspect ratio to render the frame
+   * @pixdata: (type RetroPixdata): the #RetroPixdata
    *
    * The ::video-output signal is emitted each time a new video frame is emitted
    * by the core.
+   *
+   * @pixdata will be invalid after the signal emission, copy it in some way if
+   * you want to keep it.
    */
   signals[SIG_VIDEO_OUTPUT_SIGNAL] =
     g_signal_new ("video-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
                   G_TYPE_NONE,
-                  7,
-                  G_TYPE_POINTER,
-                  G_TYPE_ULONG,
-                  G_TYPE_UINT,
-                  G_TYPE_UINT,
-                  G_TYPE_ULONG,
-                  RETRO_TYPE_PIXEL_FORMAT,
-                  G_TYPE_FLOAT);
+                  1,
+                  // G_TYPE_POINTER instead of RETRO_TYPE_PIXDATA to implicit
+                  // copy when sending the RetroPixdata.
+                  G_TYPE_POINTER);
 
   /**
    * RetroCore::audio-output:

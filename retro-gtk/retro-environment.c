@@ -1,7 +1,9 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "libretro-environment.h"
 #include "retro-core-private.h"
+
+#include "libretro-environment.h"
+#include "retro-pixdata-private.h"
 
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
@@ -415,6 +417,7 @@ on_video_refresh (guint8 *data,
                   gsize   pitch)
 {
   RetroCore *self;
+  RetroPixdata pixdata;
 
   if (data == NULL)
     return;
@@ -424,9 +427,12 @@ on_video_refresh (guint8 *data,
   if (self == NULL)
     g_return_if_reached ();
 
-  g_signal_emit_by_name (self, "video_output", data, pitch * height,
-                         width, height, pitch, self->pixel_format,
-                         self->aspect_ratio);
+  retro_pixdata_init (&pixdata,
+                      data, self->pixel_format,
+                      pitch, width, height,
+                      self->aspect_ratio);
+
+  g_signal_emit_by_name (self, "video-output", &pixdata);
 }
 
 // TODO This is internal, make it private as soon as possible.

@@ -2,21 +2,7 @@
 
 #include "retro-cairo-display.h"
 
-#include "retro-pixel-format.h"
-
-// FIXME Remove as soon as possible.
-GdkPixbuf *
-gdk_pixbuf_new_from_video (gconstpointer src,
-                           guint         width,
-                           guint         height,
-                           gsize         pitch,
-                           gint          pixel_format);
-
-/*
- * Because gdk-pixbuf saves dpi as integer we have to multiply it by big enough
- * number to represent aspect ratio precisely.
- */
-#define RETRO_CAIRO_DISPLAY_Y_DPI (1000000.0f)
+#include "retro-pixdata.h"
 
 struct _RetroCairoDisplay
 {
@@ -259,42 +245,22 @@ retro_cairo_display_init (RetroCairoDisplay *self)
 }
 
 static void
-retro_cairo_display_on_video_output (RetroCore        *sender,
-                                     guint8           *data,
-                                     gsize             length,
-                                     guint             width,
-                                     guint             height,
-                                     gsize             pitch,
-                                     RetroPixelFormat  pixel_format,
-                                     gfloat            aspect_ratio,
-                                     gpointer          user_data)
+retro_cairo_display_on_video_output (RetroCore    *sender,
+                                     RetroPixdata *pixdata,
+                                     gpointer      user_data)
 {
   RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (user_data);
 
   GdkPixbuf *pixbuf;
-  gfloat x_dpi;
-  gchar *x_dpi_string;
-  gchar *y_dpi_string;
 
   g_return_if_fail (self != NULL);
 
-  self->aspect_ratio = aspect_ratio;
-  pixbuf = gdk_pixbuf_new_from_video (data, width, height, pitch, pixel_format);
+  self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
+  pixbuf = retro_pixdata_to_pixbuf (pixdata);
   retro_cairo_display_set_pixbuf (self, pixbuf);
 
   if (pixbuf != NULL)
     g_object_unref (pixbuf);
-
-  if (self->pixbuf == NULL)
-    return;
-
-  x_dpi = aspect_ratio * RETRO_CAIRO_DISPLAY_Y_DPI;
-  x_dpi_string = g_strdup_printf ("%g", x_dpi);
-  y_dpi_string = g_strdup_printf ("%g", RETRO_CAIRO_DISPLAY_Y_DPI);
-  gdk_pixbuf_set_option (self->pixbuf, "x-dpi", x_dpi_string);
-  gdk_pixbuf_set_option (self->pixbuf, "y-dpi", y_dpi_string);
-  g_free (y_dpi_string);
-  g_free (x_dpi_string);
 }
 
 /* Public */

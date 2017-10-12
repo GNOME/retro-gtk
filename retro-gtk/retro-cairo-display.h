@@ -30,8 +30,6 @@ gboolean retro_cairo_display_get_coordinates_on_display (RetroCairoDisplay *self
                                                          gdouble            widget_y,
                                                          gdouble           *display_x,
                                                          gdouble           *display_y);
-void retro_cairo_display_show_video (RetroCairoDisplay *self);
-void retro_cairo_display_hide_video (RetroCairoDisplay *self);
 
 G_END_DECLS
 

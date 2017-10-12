@@ -11,7 +11,6 @@ struct _RetroCairoDisplay
   GdkPixbuf *pixbuf;
   RetroVideoFilter filter;
   gfloat aspect_ratio;
-  gboolean show_surface;
   gulong on_video_output_id;
 };
 
@@ -100,9 +99,6 @@ retro_cairo_display_real_draw (GtkWidget *base,
   g_return_val_if_fail (cr != NULL, FALSE);
 
   retro_cairo_display_draw_background (self, cr);
-
-  if (!self->show_surface)
-    return FALSE;
 
   if (self->pixbuf == NULL)
     return FALSE;
@@ -231,7 +227,6 @@ static void
 retro_cairo_display_init (RetroCairoDisplay *self)
 {
   self->filter = RETRO_VIDEO_FILTER_SMOOTH;
-  self->show_surface = TRUE;
   g_signal_connect_object (G_OBJECT (self),
                            "notify::sensitive",
                            (GCallback) queue_draw,
@@ -386,36 +381,6 @@ retro_cairo_display_get_coordinates_on_display (RetroCairoDisplay *self,
 
   return (-1.0 <= *display_x) && (*display_x <= 1.0) &&
          (-1.0 <= *display_y) && (*display_y <= 1.0);
-}
-
-/**
- * retro_cairo_display_show_video:
- * @self: a #RetroCairoDisplay
- *
- * Shows the video display of the core.
- */
-void
-retro_cairo_display_show_video (RetroCairoDisplay *self)
-{
-  g_return_if_fail (self != NULL);
-
-  self->show_surface = TRUE;
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-}
-
-/**
- * retro_cairo_display_hide_video:
- * @self: a #RetroCairoDisplay
- *
- * Hides the video display of the core.
- */
-void
-retro_cairo_display_hide_video (RetroCairoDisplay *self)
-{
-  g_return_if_fail (self != NULL);
-
-  self->show_surface = FALSE;
-  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 /**

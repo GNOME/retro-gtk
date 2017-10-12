@@ -102,7 +102,6 @@ libretro_gtk_la_SOURCES = \
 	retro-pixel-format.c \
 	retro-pointer-id.c \
 	retro-rumble-effect.c \
-	retro-video-converter.c \
 	retro-video-filter.c \
 	retro-core.c \
 	retro-environment.c \

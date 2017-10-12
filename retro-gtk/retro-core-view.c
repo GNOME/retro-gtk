@@ -601,34 +601,6 @@ retro_core_view_set_filter (RetroCoreView    *self,
 }
 
 /**
- * retro_core_view_show_video:
- * @self: a #RetroCoreView
- *
- * Shows the video display of the core.
- */
-void
-retro_core_view_show_video (RetroCoreView *self)
-{
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-
-  retro_cairo_display_show_video (self->display);
-}
-
-/**
- * retro_core_view_hide_video:
- * @self: a #RetroCoreView
- *
- * Hides the video display of the core.
- */
-void
-retro_core_view_hide_video (RetroCoreView *self)
-{
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-
-  retro_cairo_display_hide_video (self->display);
-}
-
-/**
  * retro_core_view_as_controller:
  * @self: a #RetroCoreView
  * @controller_type: the controller type to expose @self as

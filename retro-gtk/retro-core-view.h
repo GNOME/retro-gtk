@@ -28,8 +28,6 @@ void retro_core_view_set_pixbuf (RetroCoreView *self,
 GdkPixbuf *retro_core_view_get_pixbuf (RetroCoreView *self);
 void retro_core_view_set_filter (RetroCoreView    *self,
                                  RetroVideoFilter  filter);
-void retro_core_view_show_video (RetroCoreView *self);
-void retro_core_view_hide_video (RetroCoreView *self);
 RetroController *retro_core_view_as_controller (RetroCoreView       *self,
                                                 RetroControllerType  controller_type);
 gint16 retro_core_view_get_input_state (RetroCoreView       *self,

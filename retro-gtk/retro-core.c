@@ -1319,8 +1319,8 @@ retro_core_boot (RetroCore  *self,
  * You can use this before booting the core.
  */
 void
-retro_core_set_medias (RetroCore    *self,
-                       const gchar **uris)
+retro_core_set_medias (RetroCore           *self,
+                       const gchar * const *uris)
 {
 
   g_return_if_fail (RETRO_IS_CORE (self));

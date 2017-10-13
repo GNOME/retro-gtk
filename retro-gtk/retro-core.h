@@ -36,8 +36,8 @@ gboolean retro_core_get_support_no_game (RetroCore *self);
 gdouble retro_core_get_frames_per_second (RetroCore *self);
 void retro_core_boot (RetroCore  *self,
                       GError    **error);
-void retro_core_set_medias (RetroCore    *self,
-                            const gchar **uris);
+void retro_core_set_medias (RetroCore           *self,
+                            const gchar * const *uris);
 void retro_core_set_current_media (RetroCore  *self,
                                    guint       media_index,
                                    GError    **error);

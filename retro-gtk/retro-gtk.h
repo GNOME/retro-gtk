@@ -24,6 +24,7 @@
 #include "retro-module-iterator.h"
 #include "retro-module-query.h"
 #include "retro-mouse-id.h"
+#include "retro-pixdata.h"
 #include "retro-pixel-format.h"
 #include "retro-pointer-id.h"
 #include "retro-video-filter.h"

@@ -1,4 +1,25 @@
 ==============
+Version 0.13.1
+==============
+
+This version ports retro-gtk from Vala to C and simnplifies the API a
+lot. It comes with lots of API breaks, so many that it would be simpler
+to list what remained similar to the 0.12 branch than what changed.
+
+The API will keep changing during the 0.14 development cycle, but it is
+hoped to lead to less API breaks after that.
+
+Reviewers: given how much changed, consider this as a new librarby,
+don't review it in comparison with its previous versions.
+
+* Bugs fixed:
+ 782501 retro-gtk: Port to C
+ 787548 mGBA fails to save memory
+ 787769 retro-gtk: Keyboard keys can be stuck
+ 788826 Can't find libretro cores with firmwares
+
+
+==============
 Version 0.12.0
 ==============
 

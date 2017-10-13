@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/retro-gtk-0.12
+includedir=@includedir@/retro-gtk-0.14
 
 Name: Retro
 Description: GTK+ based libretro wrapper

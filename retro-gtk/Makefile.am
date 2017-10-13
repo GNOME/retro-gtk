@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
 	-DPROJECT_NAME=\""retro"\" \
-	-DPROJECT_API_VERSION=\""0.12"\" \
+	-DPROJECT_API_VERSION=\""0.14"\" \
 	-DPROJECT_DIR_NAME=\""retro-1.0"\" \
 	-DPROJECT_PLUGINS_DIR=\""$(libdir)/retro-1.0/plugins"\" \
 	-DRETRO_PLUGIN_PATH=\""$(libdir)/retro-1.0/plugins:$(libdir)/libretro:$(libdir)"\" \
@@ -24,8 +24,8 @@ AM_CFLAGS =\
 lib_LTLIBRARIES = libretro-gtk.la
 
 vapidir = $(datadir)/vala/vapi
-vapi_DATA = retro-gtk-0.12.vapi
-dist_vapi_DATA = retro-gtk-0.12.deps
+vapi_DATA = retro-gtk-0.14.vapi
+dist_vapi_DATA = retro-gtk-0.14.deps
 
 retro_gtk_public_h_sources = \
 	retro-analog-id.h \
@@ -111,7 +111,7 @@ libretro_gtk_la_LDFLAGS =
 
 libretro_gtk_la_LIBADD = $(RETRO_GTK_LIBS)
 
-retro_gtkincludedir = $(includedir)/retro-gtk-0.12
+retro_gtkincludedir = $(includedir)/retro-gtk-0.14
 retro_gtkinclude_HEADERS = \
 	$(retro_gtk_public_h_sources) \
 	$(NULL)
@@ -123,7 +123,7 @@ INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-INTROSPECTION_GIRS += Retro-0.12.gir
+INTROSPECTION_GIRS += Retro-0.14.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -133,19 +133,19 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 introspection_sources = $(retro_gtkinclude_HEADERS) $(libretro_gtk_la_SOURCES)
 
-BUILT_SOURCES = libretro-gtk.la Retro-0.12.gir
+BUILT_SOURCES = libretro-gtk.la Retro-0.14.gir
 
-Retro-0.12.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
-Retro_0_12_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0 Gtk-3.0 cairo-1.0
-Retro_0_12_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.12
-Retro_0_12_gir_CFLAGS = -I$(srcdir) -DRETRO_GTK_USE_UNSTABLE_API -DRETRO_GTK_COMPILATION $(retro_gtk_CFLAGS)
-Retro_0_12_gir_LIBS = libretro-gtk.la
-Retro_0_12_gir_FILES = $(introspection_sources)
-Retro_0_12_gir_EXPORT_PACKAGES = retro-gtk-0.12
+Retro-0.14.gir: $(INTROSPECTION_SCANNER) libretro-gtk.la
+Retro_0_14_gir_INCLUDES = GLib-2.0 GObject-2.0 Gio-2.0 Gtk-3.0 cairo-1.0
+Retro_0_14_gir_SCANNERFLAGS = --c-include=retro-gtk.h --pkg-export=retro-gtk-0.14
+Retro_0_14_gir_CFLAGS = -I$(srcdir) -DRETRO_GTK_USE_UNSTABLE_API -DRETRO_GTK_COMPILATION $(retro_gtk_CFLAGS)
+Retro_0_14_gir_LIBS = libretro-gtk.la
+Retro_0_14_gir_FILES = $(introspection_sources)
+Retro_0_14_gir_EXPORT_PACKAGES = retro-gtk-0.14
 
-retro-gtk-0.12.vapi: Retro-0.12.gir
+retro-gtk-0.14.vapi: Retro-0.14.gir
 	vapigen \
-		--library retro-gtk-0.12 \
+		--library retro-gtk-0.14 \
 		--pkg cairo \
 		--pkg gio-2.0  \
 		--pkg glib-2.0 \
@@ -160,11 +160,11 @@ retro-gtk-0.12.vapi: Retro-0.12.gir
 CLEANFILES = $(gir_DATA) $(typelib_DATA) $(vapi_DATA)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = retro-gtk-0.12.pc
+pkgconfig_DATA = retro-gtk-0.14.pc
 
 EXTRA_DIST = \
 	$(retro_gtk_private_h_sources) \
-	retro-gtk-0.12.pc.in \
+	retro-gtk-0.14.pc.in \
 	update-from-retroarch.sh \
 	$(NULL)
 

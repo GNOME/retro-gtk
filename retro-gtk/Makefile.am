@@ -46,7 +46,6 @@ retro_gtk_public_h_sources = \
 	retro-module-query.h \
 	retro-mouse-id.h \
 	retro-pixdata.h \
-	retro-pixel-format.h \
 	retro-pointer-id.h \
 	retro-rumble-effect.h \
 	retro-video-filter.h \
@@ -67,6 +66,7 @@ retro_gtk_private_h_sources = \
 	retro-options.h \
 	retro-pa-player.h \
 	retro-pixdata-private.h \
+	retro-pixel-format.h \
 	retro-rotation.h \
 	retro-system-av-info.h \
 	retro-system-info.h \

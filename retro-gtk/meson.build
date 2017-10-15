@@ -80,6 +80,7 @@ retro_gtk_c_args = [
 ]
 
 retro_gtk_deps = [
+  epoxy,
   gio,
   glib,
   gmodule,

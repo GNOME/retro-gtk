@@ -11,6 +11,12 @@ tab_size = 2
 indent_style = space
 max_line_length = 80
 
+[*.{glsl,vs,fs}]
+indent_size = 2
+tab_size = 2
+indent_style = space
+max_line_length = 80
+
 [*.{ui,xml,modules}]
 indent_size = 2
 tab_size = 2

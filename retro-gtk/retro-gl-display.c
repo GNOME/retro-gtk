@@ -3,6 +3,7 @@
 #include "retro-gl-display.h"
 
 #include <epoxy/gl.h>
+#include "retro-glsl-filter.h"
 #include "retro-pixdata.h"
 
 struct _RetroGLDisplay
@@ -14,7 +15,8 @@ struct _RetroGLDisplay
   gfloat aspect_ratio;
   gulong on_video_output_id;
 
-  GLuint framebuffer;
+  RetroGLSLFilter *glsl_filter[RETRO_VIDEO_FILTER_COUNT];
+  GLuint texture;
 };
 
 G_DEFINE_TYPE (RetroGLDisplay, retro_gl_display, GTK_TYPE_GL_AREA)
@@ -25,6 +27,32 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+
+typedef struct {
+  struct {
+    float x, y;
+  } position;
+  struct {
+    float x, y;
+  } texture_coordinates;
+} RetroVertex;
+
+static float vertices[] = {
+  -1.0f,  1.0f, 0.0f, 0.0f, // Top-left
+   1.0f,  1.0f, 1.0f, 0.0f, // Top-right
+   1.0f, -1.0f, 1.0f, 1.0f, // Bottom-right
+  -1.0f, -1.0f, 0.0f, 1.0f, // Bottom-left
+};
+
+static GLuint elements[] = {
+    0, 1, 2,
+    2, 3, 0,
+};
+
+static const gchar *filter_uris[] = {
+  "resource:///org/gnome/Retro/glsl-filters/bicubic.filter",
+  "resource:///org/gnome/Retro/glsl-filters/sharp.filter",
+};
 
 /* Private */
 
@@ -71,15 +99,68 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
 static void
 retro_gl_display_realize (RetroGLDisplay *self)
 {
+  GLuint vertex_buffer_object;
+  GLuint vertex_array_object;
+  GLuint element_buffer_object;
+  RetroVideoFilter filter;
+
   gtk_gl_area_make_current (GTK_GL_AREA (self));
+
+  glGenBuffers (1, &vertex_buffer_object);
+  glBindBuffer (GL_ARRAY_BUFFER, vertex_buffer_object);
+  glBufferData (GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
+
+  glGenVertexArrays (1, &vertex_array_object);
+  glBindVertexArray (vertex_array_object);
+
+  glGenBuffers (1, &element_buffer_object);
+  glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
+  glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (elements), elements, GL_STATIC_DRAW);
+
+  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
+    self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], NULL);
+    retro_glsl_filter_prepare_program (self->glsl_filter[filter]);
+
+    retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
+                                             "position",
+                                             sizeof (((RetroVertex *) NULL)->position) / sizeof (float),
+                                             GL_FLOAT,
+                                             GL_FALSE,
+                                             sizeof (RetroVertex),
+                                             offsetof (RetroVertex, position));
+
+    retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
+                                             "texCoord",
+                                             sizeof (((RetroVertex *) NULL)->texture_coordinates) / sizeof (float),
+                                             GL_FLOAT,
+                                             GL_FALSE,
+                                             sizeof (RetroVertex),
+                                             offsetof (RetroVertex, texture_coordinates));
+  }
+
+  glDeleteTextures (1, &self->texture);
+  self->texture = 0;
+  glGenTextures (1, &self->texture);
+  glBindTexture (GL_TEXTURE_2D, self->texture);
+
+  filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
+    RETRO_VIDEO_FILTER_SMOOTH :
+    self->filter;
+
+  retro_glsl_filter_use_program (self->glsl_filter[filter]);
 }
 
 static void
 retro_gl_display_unrealize (RetroGLDisplay *self)
 {
+  RetroVideoFilter filter;
+
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
-  glDeleteFramebuffers (1, &self->framebuffer);
+  glDeleteTextures (1, &self->texture);
+  self->texture = 0;
+  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
+    g_clear_object (&self->glsl_filter[filter]);
 }
 
 static gboolean
@@ -89,34 +170,62 @@ retro_gl_display_render (RetroGLDisplay *self)
   gdouble h = 0.0;
   gdouble x = 0.0;
   gdouble y = 0.0;
-  GLenum filter;
+  GLfloat source_width, source_height;
+  GLfloat target_width, target_height;
+  GLfloat output_width, output_height;
+  RetroVideoFilter filter;
 
   g_return_val_if_fail (self != NULL, FALSE);
 
   retro_gl_display_get_video_box (self, &w, &h, &x, &y);
 
-  switch (self->filter) {
-  case RETRO_VIDEO_FILTER_SHARP:
-    filter = GL_NEAREST;
+  filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
+    RETRO_VIDEO_FILTER_SMOOTH :
+    self->filter;
 
-    break;
-  default:
-  case RETRO_VIDEO_FILTER_SMOOTH:
-    filter = GL_LINEAR;
-
-    break;
-  }
+  retro_glsl_filter_use_program (self->glsl_filter[filter]);
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glBindFramebuffer (GL_READ_FRAMEBUFFER, self->framebuffer);
-  glBlitFramebuffer (0, 0,
-                     gdk_pixbuf_get_width (self->pixbuf),
-                     gdk_pixbuf_get_height (self->pixbuf),
-                     (GLint) x, (GLint) (y + h), (GLint) (x + w), (GLint) y,
-                     GL_COLOR_BUFFER_BIT,
-                     filter);
-  glBindFramebuffer (GL_READ_FRAMEBUFFER, 0);
+  if (self->pixbuf == NULL)
+    return FALSE;
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                gdk_pixbuf_get_width (self->pixbuf),
+                gdk_pixbuf_get_height (self->pixbuf),
+                0,
+                GL_RGBA, GL_UNSIGNED_BYTE,
+                gdk_pixbuf_get_pixels (self->pixbuf));
+
+  retro_glsl_filter_apply_texture_params (self->glsl_filter[filter]);
+
+  retro_glsl_filter_set_uniform_1f (self->glsl_filter[filter], "relative_aspect_ratio",
+    (gfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self)) /
+    (gfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self)) /
+    self->aspect_ratio);
+
+  source_width = (GLfloat) gdk_pixbuf_get_width (self->pixbuf);
+  source_height = (GLfloat) gdk_pixbuf_get_height (self->pixbuf);
+  target_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
+  target_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
+  output_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
+  output_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
+
+  retro_glsl_filter_set_uniform_4f (self->glsl_filter[filter], "sourceSize[0]",
+                                    source_width, source_height,
+                                    1.0f / source_width, 1.0f / source_height);
+
+  retro_glsl_filter_set_uniform_4f (self->glsl_filter[filter], "targetSize",
+                                    target_width, target_height,
+                                    1.0f / target_width, 1.0f / target_height);
+
+  retro_glsl_filter_set_uniform_4f (self->glsl_filter[filter], "outputSize",
+                                    output_width, output_height,
+                                    1.0f / output_width, 1.0f / output_height);
+
+  glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   return FALSE;
 }
@@ -125,7 +234,12 @@ static void
 retro_gl_display_finalize (GObject *object)
 {
   RetroGLDisplay *self = (RetroGLDisplay *) object;
+  RetroVideoFilter filter;
 
+  glDeleteTextures (1, &self->texture);
+  self->texture = 0;
+  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
+    g_clear_object (&self->glsl_filter[filter]);
   if (self->core != NULL)
     g_object_unref (self->core);
   if (self->pixbuf != NULL)
@@ -321,28 +435,8 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
 
   g_clear_object (&self->pixbuf);
 
-  if (pixbuf != NULL) {
+  if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
-
-    GLuint tex = 0;
-    glGenTextures (1, &tex);
-    glBindTexture (GL_TEXTURE_2D, tex);
-
-    glTexImage2D (GL_TEXTURE_2D,
-                  0,
-                  GL_RGB,
-                  gdk_pixbuf_get_width (self->pixbuf),
-                  gdk_pixbuf_get_height (self->pixbuf),
-                  0,
-                  GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV,
-                  gdk_pixbuf_get_pixels (self->pixbuf));
-
-    glGenFramebuffers(1, &self->framebuffer);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, self->framebuffer);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                           GL_TEXTURE_2D, tex, 0);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-  }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PIXBUF]);
 }

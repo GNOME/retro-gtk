@@ -1,0 +1,8 @@
+[GLSL Filter]
+Filter=Linear
+Wrap=Border
+Vertex=crt-simple.vs
+Fragment=crt-simple.fs
+Authors=hunterk;
+License=GPL-2.0+;
+URL=https://github.com/hizzlekizzle/quark-shaders/tree/master/CRT-Simple.shader

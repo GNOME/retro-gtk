@@ -14,6 +14,7 @@ retro_gtk_sources = [
   'retro-core-view-controller.c',
   'retro-environment.c',
   'retro-game-info.c',
+  'retro-gl-display.c',
   'retro-input.c',
   'retro-input-descriptor.c',
   'retro-keyboard-key.c',

@@ -2,7 +2,15 @@ api_version = '0.14'
 
 retro_gtk_module = 'retro-gtk-' + api_version
 
+retro_gtk_resources = gnome.compile_resources(
+  'retro_gtk_resources',
+  'retro-gtk.gresource.xml',
+  c_name: 'retro_gtk',
+  source_dir: '.',
+)
+
 retro_gtk_sources = [
+  retro_gtk_resources[0],
   'retro-cairo-display.c',
   'retro-controller.c',
   'retro-controller-codes.c',
@@ -15,6 +23,7 @@ retro_gtk_sources = [
   'retro-environment.c',
   'retro-game-info.c',
   'retro-gl-display.c',
+  'retro-glsl-filter.c',
   'retro-input.c',
   'retro-input-descriptor.c',
   'retro-keyboard-key.c',

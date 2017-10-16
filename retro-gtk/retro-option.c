@@ -21,13 +21,9 @@ enum {
   RETRO_OPTION_ERROR_INVALID_VALUE,
 };
 
-/* Private */
+G_DEFINE_QUARK (retro-option-error, retro_option_error)
 
-static GQuark
-retro_option_error_quark (void)
-{
-  return g_quark_from_static_string ("retro-option-error-quark");
-}
+/* Private */
 
 static void
 retro_option_finalize (GObject *object)

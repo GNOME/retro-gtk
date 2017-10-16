@@ -19,6 +19,8 @@ enum {
   RETRO_CORE_DESCRIPTOR_ERROR_FIRMWARE_NOT_FOUND
 };
 
+G_DEFINE_QUARK (retro-core-descriptor-error, retro_core_descriptor_error)
+
 #define RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP "Libretro"
 #define RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX "Platform:"
 #define RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX "Firmware:"
@@ -41,12 +43,6 @@ enum {
 #define RETRO_CORE_DESCRIPTOR_TYPE_EMULATOR "Emulator"
 
 /* Private */
-
-static GQuark
-retro_core_descriptor_error_quark (void)
-{
-  return g_quark_from_static_string ("retro-core-descriptor-error-quark");
-}
 
 static void
 retro_core_descriptor_finalize (GObject *object)

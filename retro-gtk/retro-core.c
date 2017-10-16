@@ -16,6 +16,8 @@ enum {
   RETRO_CORE_ERROR_NO_CALLBACK,
 };
 
+G_DEFINE_QUARK (retro-core-error, retro_core_error)
+
 G_DEFINE_TYPE (RetroCore, retro_core, G_TYPE_OBJECT)
 
 enum {
@@ -60,12 +62,6 @@ static void retro_core_set_game_loaded (RetroCore *self,
                                         gboolean   game_loaded);
 
 /* Private */
-
-static GQuark
-retro_core_error_quark (void)
-{
-  return g_quark_from_static_string ("retro-core-error-quark");
-}
 
 void
 retro_core_push_cb_data (RetroCore *self)

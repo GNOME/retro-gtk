@@ -621,31 +621,31 @@ retro_core_view_as_controller (RetroCoreView       *self,
 /**
  * retro_core_view_get_input_state:
  * @self: a #RetroCoreView
- * @controller_type: a #RetroControllerType to query @self
- * @index: an input index to interpret depending on @device
- * @id: an input id to interpret depending on @device
+ * @input: a #RetroInput to query @self
  *
  * Gets the state of an input of @self.
  *
  * Returns: the input's state
  */
 gint16
-retro_core_view_get_input_state (RetroCoreView       *self,
-                                 RetroControllerType  controller_type,
-                                 guint                index,
-                                 guint                id)
+retro_core_view_get_input_state (RetroCoreView *self,
+                                 RetroInput    *input)
 {
+  guint id;
   gint16 result;
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), 0);
 
-  switch (controller_type) {
+  switch (retro_input_get_controller_type (input)) {
   case RETRO_CONTROLLER_TYPE_JOYPAD:
-    if (id >= RETRO_JOYPAD_ID_COUNT)
+    if (!retro_input_get_joypad_id (input, &id))
       return 0;
 
     return retro_core_view_get_joypad_button_state (self, id) ? G_MAXINT16 : 0;
   case RETRO_CONTROLLER_TYPE_MOUSE:
+    if (!retro_input_get_mouse_id (input, &id))
+      return 0;
+
     switch (id) {
     case RETRO_MOUSE_ID_X:
       result = (gint16) self->mouse_x_delta;
@@ -665,6 +665,9 @@ retro_core_view_get_input_state (RetroCoreView       *self,
       return 0;
     }
   case RETRO_CONTROLLER_TYPE_POINTER:
+    if (!retro_input_get_pointer_id (input, &id))
+      return 0;
+
     switch (id) {
     case RETRO_POINTER_ID_X:
       return axis_to_retro_axis (self->pointer_x);

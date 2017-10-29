@@ -8,7 +8,6 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-controller-type.h"
 #include "retro-core-view.h"
 
 G_BEGIN_DECLS

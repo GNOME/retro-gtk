@@ -32,19 +32,15 @@ retro_controller_poll (RetroController *self)
 /**
  * retro_controller_get_input_state:
  * @self: a #RetroController
- * @controller_type: a #RetroControllerType to query @self
- * @index: an input index to interpret depending on @controller_type
- * @id: an input id to interpret depending on @controller_type
+ * @input: a #RetroInput to query @self
  *
  * Gets the state of an input of @self.
  *
  * Returns: the input's state
  */
 gint16
-retro_controller_get_input_state (RetroController     *self,
-                                  RetroControllerType  controller_type,
-                                  guint                index,
-                                  guint                id)
+retro_controller_get_input_state (RetroController *self,
+                                  RetroInput      *input)
 {
   RetroControllerInterface *iface;
 
@@ -54,7 +50,7 @@ retro_controller_get_input_state (RetroController     *self,
 
   g_return_val_if_fail (iface->get_input_state != NULL, 0);
 
-  return iface->get_input_state (self, controller_type, index, id);
+  return iface->get_input_state (self, input);
 }
 
 /**

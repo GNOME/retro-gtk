@@ -25,10 +25,8 @@ retro_core_view_controller_poll (RetroController *base)
 }
 
 static gint16
-retro_core_view_controller_get_input_state (RetroController     *base,
-                                            RetroControllerType  controller_type,
-                                            guint                index,
-                                            guint                id)
+retro_core_view_controller_get_input_state (RetroController *base,
+                                            RetroInput      *input)
 {
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
   gpointer view;
@@ -36,7 +34,7 @@ retro_core_view_controller_get_input_state (RetroController     *base,
 
   g_return_val_if_fail (self != NULL, 0);
 
-  if (controller_type != self->controller_type)
+  if (retro_input_get_controller_type (input) != self->controller_type)
     return 0;
 
   view = g_weak_ref_get (&self->view);
@@ -44,9 +42,7 @@ retro_core_view_controller_get_input_state (RetroController     *base,
   if (view == NULL)
     return 0;
 
-  result = retro_core_view_get_input_state (RETRO_CORE_VIEW (view),
-                                            self->controller_type,
-                                            index, id);
+  result = retro_core_view_get_input_state (RETRO_CORE_VIEW (view), input);
 
   g_object_unref (G_OBJECT (view));
 

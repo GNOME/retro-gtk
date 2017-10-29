@@ -3,6 +3,7 @@
 #include "retro-core-private.h"
 
 #include "libretro-environment.h"
+#include "retro-input-private.h"
 #include "retro-pixdata-private.h"
 
 void retro_core_set_system_av_info (RetroCore         *self,
@@ -500,13 +501,16 @@ on_input_state (guint port,
                 guint id)
 {
   RetroCore *self;
+  RetroInput input;
 
   self = retro_core_get_cb_data ();
 
   if (self == NULL)
     g_return_val_if_reached (0);
 
-  return retro_core_get_controller_input_state (self, port, device, index, id);
+  retro_input_init (&input, device, id, index);
+
+  return retro_core_get_controller_input_state (self, port, &input);
 }
 
 // TODO This is internal, make it private as soon as possible.

@@ -36,6 +36,7 @@ retro_gtk_public_h_sources = \
 	retro-core.h \
 	retro-core-view.h \
 	retro-gtk.h \
+	retro-input.h \
 	retro-log.h \
 	retro-main-loop.h \
 	retro-memory-type.h \
@@ -55,6 +56,7 @@ retro_gtk_private_h_sources = \
 	retro-disk-control-callback.h \
 	retro-game-info.h \
 	retro-input-descriptor.h \
+	retro-input-private.h \
 	retro-keyboard-key.h \
 	retro-module.h \
 	retro-option.h \
@@ -78,6 +80,7 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view.c \
 	retro-core-view-controller.c \
 	retro-game-info.c \
+	retro-input.c \
 	retro-input-descriptor.c \
 	retro-keyboard-key.c \
 	retro-log.c \

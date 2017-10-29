@@ -8,7 +8,7 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-controller-type.h"
+#include "retro-input.h"
 #include "retro-rumble-effect.h"
 
 G_BEGIN_DECLS
@@ -22,19 +22,15 @@ struct _RetroControllerInterface
   GTypeInterface parent_iface;
 
   void (*poll) (RetroController *self);
-  gint16 (*get_input_state) (RetroController     *self,
-                             RetroControllerType  controller_type,
-                             guint                index,
-                             guint                id);
+  gint16 (*get_input_state) (RetroController *self,
+                             RetroInput      *input);
   RetroControllerType (*get_controller_type) (RetroController *self);
   guint64 (*get_capabilities) (RetroController *self);
 };
 
 void retro_controller_poll (RetroController *self);
-gint16 retro_controller_get_input_state (RetroController     *self,
-                                         RetroControllerType  controller_type,
-                                         guint                index,
-                                         guint                id);
+gint16 retro_controller_get_input_state (RetroController *self,
+                                         RetroInput      *input);
 RetroControllerType retro_controller_get_controller_type (RetroController *self);
 guint64 retro_controller_get_capabilities (RetroController *self);
 gboolean retro_controller_set_rumble_state (RetroController   *self,

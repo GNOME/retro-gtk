@@ -10,7 +10,7 @@
 #include <gtk/gtk.h>
 #include "retro-core.h"
 #include "retro-controller.h"
-#include "retro-controller-type.h"
+#include "retro-input.h"
 #include "retro-video-filter.h"
 
 G_BEGIN_DECLS
@@ -30,10 +30,8 @@ void retro_core_view_set_filter (RetroCoreView    *self,
                                  RetroVideoFilter  filter);
 RetroController *retro_core_view_as_controller (RetroCoreView       *self,
                                                 RetroControllerType  controller_type);
-gint16 retro_core_view_get_input_state (RetroCoreView       *self,
-                                        RetroControllerType  controller_type,
-                                        guint                index,
-                                        guint                id);
+gint16 retro_core_view_get_input_state (RetroCoreView *self,
+                                        RetroInput    *input);
 guint64 retro_core_view_get_controller_capabilities (RetroCoreView *self);
 gboolean retro_core_view_get_can_grab_pointer (RetroCoreView *self);
 void retro_core_view_set_can_grab_pointer (RetroCoreView *self,

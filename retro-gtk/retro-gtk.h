@@ -15,6 +15,7 @@
 #include "retro-core.h"
 #include "retro-core-descriptor.h"
 #include "retro-core-view.h"
+#include "retro-input.h"
 #include "retro-log.h"
 #include "retro-main-loop.h"
 #include "retro-memory-type.h"

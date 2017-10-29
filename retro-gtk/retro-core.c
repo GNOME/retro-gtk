@@ -1734,9 +1734,7 @@ retro_core_poll_controllers (RetroCore *self)
  * retro_core_get_controller_input_state:
  * @self: a #RetroCore
  * @port: the port number
- * @controller_type: a #RetroControllerType to query @self
- * @index: an input index to interpret depending on @controller_type
- * @id: an input id to interpret depending on @controller_type
+ * @input: a #RetroInput
  *
  * Gets the state of an input of the controller plugged into the given port of
  * @self.
@@ -1744,11 +1742,9 @@ retro_core_poll_controllers (RetroCore *self)
  * Returns: the input's state
  */
 gint16
-retro_core_get_controller_input_state (RetroCore           *self,
-                                       guint                port,
-                                       RetroControllerType  controller_type,
-                                       guint                index,
-                                       guint                id)
+retro_core_get_controller_input_state (RetroCore  *self,
+                                       guint       port,
+                                       RetroInput *input)
 {
   RetroController *controller;
 
@@ -1762,13 +1758,11 @@ retro_core_get_controller_input_state (RetroCore           *self,
   if (controller == NULL)
     return 0;
 
-  if ((retro_controller_get_capabilities (controller) & (1 << controller_type)) == 0)
+  if ((retro_controller_get_capabilities (controller) &
+      (1 << retro_input_get_controller_type (input))) == 0)
     return 0;
 
-  return retro_controller_get_input_state (controller,
-                                           controller_type,
-                                           index,
-                                           id);
+  return retro_controller_get_input_state (controller, input);
 }
 
 // FIXME documentation

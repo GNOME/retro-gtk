@@ -9,7 +9,7 @@
 
 #include <gtk/gtk.h>
 #include "retro-controller-iterator.h"
-#include "retro-controller-type.h"
+#include "retro-input.h"
 #include "retro-memory-type.h"
 
 G_BEGIN_DECLS
@@ -57,11 +57,9 @@ void retro_core_set_memory (RetroCore       *self,
                             RetroMemoryType  memory_type,
                             GBytes          *bytes);
 void retro_core_poll_controllers (RetroCore *self);
-gint16 retro_core_get_controller_input_state (RetroCore           *self,
-                                              uint                 port,
-                                              RetroControllerType  controller_type,
-                                              guint                index,
-                                              guint                id);
+gint16 retro_core_get_controller_input_state (RetroCore  *self,
+                                              uint        port,
+                                              RetroInput *input);
 guint64 retro_core_get_controller_capabilities (RetroCore *self);
 void retro_core_set_controller (RetroCore       *self,
                                 guint            port,

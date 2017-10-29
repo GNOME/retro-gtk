@@ -103,19 +103,20 @@ retro_input_get_controller_type (RetroInput *self)
 }
 
 /**
- * retro_input_get_joypad_id:
+ * retro_input_get_joypad:
  * @self: a #RetroInput
- * @id: return location for the id
+ * @id: (out): return location for the id
  *
  * Gets the joypad id of %self, if any.
  *
  * Returns: whether the id was retrieved
  */
 gboolean
-retro_input_get_joypad_id (RetroInput    *self,
-                           RetroJoypadId *id)
+retro_input_get_joypad (RetroInput    *self,
+                        RetroJoypadId *id)
 {
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (id != NULL, FALSE);
 
   if (self->any.type != RETRO_CONTROLLER_TYPE_JOYPAD)
     return FALSE;
@@ -129,19 +130,20 @@ retro_input_get_joypad_id (RetroInput    *self,
 }
 
 /**
- * retro_input_get_mouse_id:
+ * retro_input_get_mouse:
  * @self: a #RetroInput
- * @id: return location for the id
+ * @id: (out): return location for the id
  *
  * Gets the mouse id of %self, if any.
  *
  * Returns: whether the id was retrieved
  */
 gboolean
-retro_input_get_mouse_id (RetroInput   *self,
-                          RetroMouseId *id)
+retro_input_get_mouse (RetroInput   *self,
+                       RetroMouseId *id)
 {
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (id != NULL, FALSE);
 
   if (self->any.type != RETRO_CONTROLLER_TYPE_MOUSE)
     return FALSE;
@@ -155,19 +157,20 @@ retro_input_get_mouse_id (RetroInput   *self,
 }
 
 /**
- * retro_input_get_lightgun_id:
+ * retro_input_get_lightgun:
  * @self: a #RetroInput
- * @id: return location for the id
+ * @id: (out): return location for the id
  *
  * Gets the lightgun id of %self, if any.
  *
  * Returns: whether the id was retrieved
  */
 gboolean
-retro_input_get_lightgun_id (RetroInput      *self,
-                             RetroLightgunId *id)
+retro_input_get_lightgun (RetroInput      *self,
+                          RetroLightgunId *id)
 {
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (id != NULL, FALSE);
 
   if (self->any.type != RETRO_CONTROLLER_TYPE_LIGHTGUN)
     return FALSE;
@@ -181,19 +184,23 @@ retro_input_get_lightgun_id (RetroInput      *self,
 }
 
 /**
- * retro_input_get_analog_id:
+ * retro_input_get_analog:
  * @self: a #RetroInput
- * @id: return location for the id
+ * @id: (out): return location for the id
+ * @index: (out): return location for the index
  *
- * Gets the analog id of %self, if any.
+ * Gets the analog id and index of %self, if any.
  *
- * Returns: whether the id was retrieved
+ * Returns: whether the id and the index were retrieved
  */
 gboolean
-retro_input_get_analog_id (RetroInput    *self,
-                           RetroAnalogId *id)
+retro_input_get_analog (RetroInput       *self,
+                        RetroAnalogId    *id,
+                        RetroAnalogIndex *index)
 {
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (id != NULL, FALSE);
+  g_return_val_if_fail (index != NULL, FALSE);
 
   if (self->any.type != RETRO_CONTROLLER_TYPE_ANALOG)
     return FALSE;
@@ -201,51 +208,30 @@ retro_input_get_analog_id (RetroInput    *self,
   if (self->analog.id >= RETRO_ANALOG_ID_COUNT)
     return FALSE;
 
-  *id = self->analog.id;
-
-  return TRUE;
-}
-
-/**
- * retro_input_get_analog_index:
- * @self: a #RetroInput
- * @index: return location for the index
- *
- * Gets the analog index of %self, if any.
- *
- * Returns: whether the index was retrieved
- */
-gboolean
-retro_input_get_analog_index (RetroInput       *self,
-                              RetroAnalogIndex *index)
-{
-  g_return_val_if_fail (self != NULL, FALSE);
-
-  if (self->any.type != RETRO_CONTROLLER_TYPE_ANALOG)
-    return FALSE;
-
   if (self->analog.index >= RETRO_ANALOG_INDEX_COUNT)
     return FALSE;
 
+  *id = self->analog.id;
   *index = self->analog.index;
 
   return TRUE;
 }
 
 /**
- * retro_input_get_pointer_id:
+ * retro_input_get_pointer:
  * @self: a #RetroInput
- * @id: return location for the id
+ * @id: (out): return location for the id
  *
  * Gets the pointer id of %self, if any.
  *
  * Returns: whether the id was retrieved
  */
 gboolean
-retro_input_get_pointer_id (RetroInput     *self,
-                            RetroPointerId *id)
+retro_input_get_pointer (RetroInput     *self,
+                         RetroPointerId *id)
 {
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (id != NULL, FALSE);
 
   if (self->any.type != RETRO_CONTROLLER_TYPE_POINTER)
     return FALSE;

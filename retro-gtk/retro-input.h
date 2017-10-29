@@ -23,18 +23,17 @@ RetroInput *retro_input_new (void);
 RetroInput *retro_input_copy (RetroInput *self);
 void retro_input_free (RetroInput *self);
 RetroControllerType retro_input_get_controller_type (RetroInput *self);
-gboolean retro_input_get_joypad_id (RetroInput    *self,
-                                    RetroJoypadId *id);
-gboolean retro_input_get_mouse_id (RetroInput   *self,
-                                   RetroMouseId *id);
-gboolean retro_input_get_lightgun_id (RetroInput      *self,
-                                      RetroLightgunId *id);
-gboolean retro_input_get_analog_id (RetroInput    *self,
-                                    RetroAnalogId *id);
-gboolean retro_input_get_analog_index (RetroInput       *self,
-                                       RetroAnalogIndex *index);
-gboolean retro_input_get_pointer_id (RetroInput     *self,
-                                     RetroPointerId *id);
+gboolean retro_input_get_joypad (RetroInput    *self,
+                                 RetroJoypadId *id);
+gboolean retro_input_get_mouse (RetroInput   *self,
+                                RetroMouseId *id);
+gboolean retro_input_get_lightgun (RetroInput      *self,
+                                   RetroLightgunId *id);
+gboolean retro_input_get_analog (RetroInput       *self,
+                                 RetroAnalogId    *id,
+                                 RetroAnalogIndex *index);
+gboolean retro_input_get_pointer (RetroInput     *self,
+                                  RetroPointerId *id);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroInput, retro_input_free)
 

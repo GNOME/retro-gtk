@@ -638,12 +638,12 @@ retro_core_view_get_input_state (RetroCoreView *self,
 
   switch (retro_input_get_controller_type (input)) {
   case RETRO_CONTROLLER_TYPE_JOYPAD:
-    if (!retro_input_get_joypad_id (input, &id))
+    if (!retro_input_get_joypad (input, &id))
       return 0;
 
     return retro_core_view_get_joypad_button_state (self, id) ? G_MAXINT16 : 0;
   case RETRO_CONTROLLER_TYPE_MOUSE:
-    if (!retro_input_get_mouse_id (input, &id))
+    if (!retro_input_get_mouse (input, &id))
       return 0;
 
     switch (id) {
@@ -665,7 +665,7 @@ retro_core_view_get_input_state (RetroCoreView *self,
       return 0;
     }
   case RETRO_CONTROLLER_TYPE_POINTER:
-    if (!retro_input_get_pointer_id (input, &id))
+    if (!retro_input_get_pointer (input, &id))
       return 0;
 
     switch (id) {

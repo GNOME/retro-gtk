@@ -4,11 +4,9 @@
 
 #include <linux/input-event-codes.h>
 #include "retro-cairo-display.h"
+#include "retro-controller-codes.h"
 #include "retro-core-view-controller.h"
-#include "retro-joypad-id.h"
-#include "retro-mouse-id.h"
 #include "retro-pa-player.h"
-#include "retro-pointer-id.h"
 
 static guint16 DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
   KEY_S,

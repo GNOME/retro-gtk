@@ -28,25 +28,20 @@ vapi_DATA = retro-gtk-0.14.vapi
 dist_vapi_DATA = retro-gtk-0.14.deps
 
 retro_gtk_public_h_sources = \
-	retro-analog-id.h \
-	retro-analog-index.h \
 	retro-controller.h \
+	retro-controller-codes.h \
 	retro-controller-iterator.h \
 	retro-controller-type.h \
 	retro-core-descriptor.h \
 	retro-core.h \
 	retro-core-view.h \
 	retro-gtk.h \
-	retro-joypad-id.h \
-	retro-lightgun-id.h \
 	retro-log.h \
 	retro-main-loop.h \
 	retro-memory-type.h \
 	retro-module-iterator.h \
 	retro-module-query.h \
-	retro-mouse-id.h \
 	retro-pixdata.h \
-	retro-pointer-id.h \
 	retro-rumble-effect.h \
 	retro-video-filter.h \
 	$(NULL)
@@ -74,10 +69,9 @@ retro_gtk_private_h_sources = \
 	$(NULL)
 
 libretro_gtk_la_SOURCES = \
-	retro-analog-id.c \
-	retro-analog-index.c \
 	retro-cairo-display.c \
 	retro-controller.c \
+	retro-controller-codes.c \
 	retro-controller-iterator.c \
 	retro-controller-type.c \
 	retro-core-descriptor.c \
@@ -85,22 +79,18 @@ libretro_gtk_la_SOURCES = \
 	retro-core-view-controller.c \
 	retro-game-info.c \
 	retro-input-descriptor.c \
-	retro-joypad-id.c \
 	retro-keyboard-key.c \
-	retro-lightgun-id.c \
 	retro-log.c \
 	retro-main-loop.c \
 	retro-memory-type.c \
 	retro-module.c \
 	retro-module-iterator.c \
 	retro-module-query.c \
-	retro-mouse-id.c \
 	retro-option.c \
 	retro-options.c \
 	retro-pa-player.c \
 	retro-pixdata.c \
 	retro-pixel-format.c \
-	retro-pointer-id.c \
 	retro-rumble-effect.c \
 	retro-video-filter.c \
 	retro-core.c \

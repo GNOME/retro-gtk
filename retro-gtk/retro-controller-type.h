@@ -24,6 +24,7 @@ GType retro_controller_type_get_type (void) G_GNUC_CONST;
  * @RETRO_CONTROLLER_TYPE_LIGHTGUN: a lightgun
  * @RETRO_CONTROLLER_TYPE_ANALOG: a gamepad with analog sticks
  * @RETRO_CONTROLLER_TYPE_POINTER: a screen pointer
+ * @RETRO_CONTROLLER_TYPE_COUNT: the number of types
  * @RETRO_CONTROLLER_TYPE_TYPE_MASK: a mask to get the super type of a derived one
  *
  * Represents the base types for Libretro controllers.
@@ -37,6 +38,7 @@ typedef enum
   RETRO_CONTROLLER_TYPE_LIGHTGUN,
   RETRO_CONTROLLER_TYPE_ANALOG,
   RETRO_CONTROLLER_TYPE_POINTER,
+  RETRO_CONTROLLER_TYPE_COUNT,
   RETRO_CONTROLLER_TYPE_TYPE_MASK = 0xff,
 } RetroControllerType;
 

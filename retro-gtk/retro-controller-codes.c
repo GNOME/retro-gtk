@@ -54,6 +54,7 @@ retro_mouse_id_get_type (void)
       { RETRO_MOUSE_ID_MIDDLE, "RETRO_MOUSE_ID_MIDDLE", "middle" },
       { RETRO_MOUSE_ID_HORIZ_WHEELUP, "RETRO_MOUSE_ID_HORIZ_WHEELUP", "horiz-wheelup" },
       { RETRO_MOUSE_ID_HORIZ_WHEELDOWN, "RETRO_MOUSE_ID_HORIZ_WHEELDOWN", "horiz-wheeldown" },
+      { RETRO_MOUSE_ID_COUNT, "RETRO_MOUSE_ID_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;
@@ -80,6 +81,7 @@ retro_lightgun_id_get_type (void)
       { RETRO_LIGHTGUN_ID_TURBO, "RETRO_LIGHTGUN_ID_TURBO", "turbo" },
       { RETRO_LIGHTGUN_ID_PAUSE, "RETRO_LIGHTGUN_ID_PAUSE", "pause" },
       { RETRO_LIGHTGUN_ID_START, "RETRO_LIGHTGUN_ID_START", "start" },
+      { RETRO_LIGHTGUN_ID_COUNT, "RETRO_LIGHTGUN_ID_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;
@@ -101,6 +103,7 @@ retro_analog_id_get_type (void)
     static const GEnumValue values[] = {
       { RETRO_ANALOG_ID_X, "RETRO_ANALOG_ID_X", "x" },
       { RETRO_ANALOG_ID_Y, "RETRO_ANALOG_ID_Y", "y" },
+      { RETRO_ANALOG_ID_COUNT, "RETRO_ANALOG_ID_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;
@@ -122,6 +125,7 @@ retro_analog_index_get_type (void)
     static const GEnumValue values[] = {
       { RETRO_ANALOG_INDEX_LEFT, "RETRO_ANALOG_INDEX_LEFT", "left" },
       { RETRO_ANALOG_INDEX_RIGHT, "RETRO_ANALOG_INDEX_RIGHT", "right" },
+      { RETRO_ANALOG_INDEX_COUNT, "RETRO_ANALOG_INDEX_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;
@@ -144,6 +148,7 @@ retro_pointer_id_get_type (void)
       { RETRO_POINTER_ID_X, "RETRO_POINTER_ID_X", "x" },
       { RETRO_POINTER_ID_Y, "RETRO_POINTER_ID_Y", "y" },
       { RETRO_POINTER_ID_PRESSED, "RETRO_POINTER_ID_PRESSED", "pressed" },
+      { RETRO_POINTER_ID_COUNT, "RETRO_POINTER_ID_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;

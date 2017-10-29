@@ -33,6 +33,8 @@ gint16 retro_controller_get_input_state (RetroController *self,
                                          RetroInput      *input);
 RetroControllerType retro_controller_get_controller_type (RetroController *self);
 guint64 retro_controller_get_capabilities (RetroController *self);
+gboolean retro_controller_has_capability (RetroController     *self,
+                                          RetroControllerType  controller_type);
 gboolean retro_controller_set_rumble_state (RetroController   *self,
                                             RetroRumbleEffect  effect,
                                             guint16            strength);

@@ -104,6 +104,30 @@ retro_controller_get_capabilities (RetroController *self)
 }
 
 /**
+ * retro_controller_has_capability:
+ * @self: a #RetroController
+ * @controller_type: a #RetroControllerType
+ *
+ * Gets whether @self has the capability to represent the given controller type.
+ *
+ * Returns: whether @self has the capability
+ */
+gboolean
+retro_controller_has_capability (RetroController     *self,
+                                 RetroControllerType  controller_type)
+{
+  guint64 capabilities;
+  RetroControllerType masked_controller_type;
+
+  g_return_val_if_fail (RETRO_IS_CONTROLLER (self), FALSE);
+
+  capabilities = retro_controller_get_capabilities (self);
+  masked_controller_type = controller_type & RETRO_CONTROLLER_TYPE_TYPE_MASK;
+
+  return (capabilities & (1 << masked_controller_type)) != 0;
+}
+
+/**
  * retro_controller_set_rumble_state:
  * @self: a #RetroController
  * @effect: the rumble effect

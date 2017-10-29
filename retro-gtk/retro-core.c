@@ -130,6 +130,7 @@ retro_core_finalize (GObject *object)
   RetroCore *self = RETRO_CORE (object);
   RetroUnloadGame unload_game;
   RetroDeinit deinit;
+  gsize i;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
@@ -146,6 +147,9 @@ retro_core_finalize (GObject *object)
     g_strfreev (self->media_uris);
 
   g_object_unref (self->module);
+  for (i = 0; i < RETRO_CONTROLLER_TYPE_COUNT; i++)
+    if (self->default_controllers[i] != NULL)
+      g_object_unref (self->default_controllers[i]);
   g_hash_table_unref (self->controllers);
   g_object_unref (self->options);
 
@@ -1747,22 +1751,24 @@ retro_core_get_controller_input_state (RetroCore  *self,
                                        RetroInput *input)
 {
   RetroController *controller;
+  RetroControllerType controller_type;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), 0);
 
-  if (!g_hash_table_contains (self->controllers, &port))
-    return 0;
+  controller_type = retro_input_get_controller_type (input) &
+                    RETRO_CONTROLLER_TYPE_TYPE_MASK;
 
   controller = g_hash_table_lookup (self->controllers, &port);
+  if (controller != NULL &&
+      retro_controller_has_capability (controller, controller_type))
+    return retro_controller_get_input_state (controller, input);
 
-  if (controller == NULL)
-    return 0;
+  controller = self->default_controllers[controller_type];
+  if (controller != NULL &&
+      retro_controller_has_capability (controller, controller_type))
+    return retro_controller_get_input_state (controller, input);
 
-  if ((retro_controller_get_capabilities (controller) &
-      (1 << retro_input_get_controller_type (input))) == 0)
-    return 0;
-
-  return retro_controller_get_input_state (controller, input);
+  return 0;
 }
 
 // FIXME documentation
@@ -1785,6 +1791,36 @@ retro_core_get_controller_capabilities (RetroCore *self)
   // TODO
 
   return 0;
+}
+
+/**
+ * retro_core_set_default_controller:
+ * @self: a #RetroCore
+ * @controller: (nullable): a #RetroController
+ *
+ * Uses @controller as the default controller for its type. When a port has no
+ * controller plugged plugged into it, the core will use the default controllers
+ * instead.
+ */
+void
+retro_core_set_default_controller (RetroCore       *self,
+                                   RetroController *controller)
+{
+  RetroControllerType controller_type;
+  RetroControllerType masked_controller_type;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  controller_type = retro_controller_get_controller_type (controller);
+  masked_controller_type = controller_type & RETRO_CONTROLLER_TYPE_TYPE_MASK;
+
+  if (masked_controller_type >= RETRO_CONTROLLER_TYPE_COUNT) {
+    g_critical ("Unexpected controller type: %d.", controller_type);
+
+    return;
+  }
+
+  g_set_object (&self->default_controllers[masked_controller_type], controller);
 }
 
 /**

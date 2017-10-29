@@ -55,6 +55,8 @@ GBytes *retro_core_get_memory (RetroCore       *self,
 void retro_core_set_memory (RetroCore       *self,
                             RetroMemoryType  memory_type,
                             GBytes          *bytes);
+void retro_core_set_default_controller (RetroCore       *self,
+                                        RetroController *controller);
 void retro_core_set_controller (RetroCore       *self,
                                 guint            port,
                                 RetroController *controller);

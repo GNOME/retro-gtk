@@ -46,6 +46,7 @@ struct _RetroCore
   gdouble sample_rate;
 
   RetroKeyboardCallback keyboard_callback;
+  RetroController *default_controllers[RETRO_CONTROLLER_TYPE_COUNT];
   GHashTable *controllers;
   GtkWidget *keyboard_widget;
   gulong key_press_event_id;

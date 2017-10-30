@@ -62,8 +62,6 @@ void retro_core_set_controller (RetroCore       *self,
                                 RetroController *controller);
 void retro_core_set_keyboard (RetroCore *self,
                               GtkWidget *widget);
-void retro_core_remove_controller (RetroCore *self,
-                                   guint      port);
 RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
 
 G_END_DECLS

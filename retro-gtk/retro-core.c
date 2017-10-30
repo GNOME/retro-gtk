@@ -588,35 +588,6 @@ retro_core_get_name (RetroCore *self)
 }
 
 static void
-retro_core_controller_connected (RetroCore       *self,
-                                 guint            port,
-                                 RetroController *controller)
-{
-  RetroControllerType controller_type;
-
-  g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (controller != NULL);
-
-  if (!retro_core_get_is_initiated (self))
-    return;
-
-  controller_type = retro_controller_get_controller_type (controller);
-  retro_core_set_controller_port_device (self, port, controller_type);
-}
-
-static void
-retro_core_controller_disconnected (RetroCore *self,
-                                    guint      port)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  if (!retro_core_get_is_initiated (self))
-    return;
-
-  retro_core_set_controller_port_device (self, port, RETRO_CONTROLLER_TYPE_NONE);
-}
-
-static void
 retro_core_send_input_key_event (RetroCore                *self,
                                  gboolean                  down,
                                  RetroKeyboardKey          keycode,
@@ -1837,16 +1808,27 @@ retro_core_set_controller (RetroCore       *self,
                            RetroController *controller)
 {
   guint *port_copy;
+  RetroControllerType controller_type;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (RETRO_IS_CONTROLLER (controller));
 
-  port_copy = g_new (guint, 1);
-  *port_copy = port;
-  g_hash_table_insert (self->controllers,
-                       port_copy,
-                       g_object_ref (controller));
-  retro_core_controller_connected (self, port, controller);
+  if (RETRO_IS_CONTROLLER (controller)) {
+    port_copy = g_new (guint, 1);
+    *port_copy = port;
+    g_hash_table_insert (self->controllers,
+                         port_copy,
+                         g_object_ref (controller));
+    controller_type = retro_controller_get_controller_type (controller);
+  }
+  else {
+    g_hash_table_remove (self->controllers, &port);
+    controller_type = RETRO_CONTROLLER_TYPE_NONE;
+  }
+
+  if (!retro_core_get_is_initiated (self))
+    return;
+
+  retro_core_set_controller_port_device (self, port, controller_type);
 }
 
 /**
@@ -1883,25 +1865,6 @@ retro_core_set_keyboard (RetroCore *self,
                                0);
     self->keyboard_widget = g_object_ref (widget);
   }
-}
-
-/**
- * retro_core_remove_controller:
- * @self: a #RetroCore
- * @port: the port number
- *
- * Removes the controller plugged into @self at port @port, if any.
- */
-void
-retro_core_remove_controller (RetroCore *self,
-                              guint      port)
-{
-
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  // FIXME Do that only if a controller is plugged into that port.
-  g_hash_table_remove (self->controllers, &port);
-  retro_core_controller_disconnected (self, port);
 }
 
 /**

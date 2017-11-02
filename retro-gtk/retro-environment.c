@@ -2,6 +2,7 @@
 
 #include "retro-core-private.h"
 
+#include <stdbool.h>
 #include "libretro-environment.h"
 #include "retro-input-private.h"
 #include "retro-pixdata-private.h"
@@ -197,9 +198,10 @@ get_variable (RetroCore     *self,
   return TRUE;
 }
 
+// The data must be bool, not gboolean, the sizes can be different.
 static gboolean
 get_variable_update (RetroCore *self,
-                     gboolean  *update)
+                     bool      *update)
 {
   *update = retro_options_get_variable_update (self->options);
 
@@ -343,7 +345,7 @@ environment_core_command (RetroCore *self,
     return get_variable (self, (RetroVariable *) data);
 
   case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
-    return get_variable_update (self, (gboolean *) data);
+    return get_variable_update (self, (bool *) data);
 
   case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
     set_disk_control_interface (self, (RetroDiskControlCallback *) data);

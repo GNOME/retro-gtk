@@ -5,8 +5,9 @@ project('retro-gtk','c',
 
 gnome = import('gnome')
 
-libdir = get_option ('libdir')
-libretrodir = join_paths (libdir, 'libretro')
+prefix = get_option('prefix')
+libdir = join_paths(prefix, get_option('libdir'))
+libretrodir = join_paths(libdir, 'libretro')
 
 confinc = include_directories('.')
 srcinc = include_directories('retro-gtk')

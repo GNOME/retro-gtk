@@ -76,6 +76,7 @@ configure_file(
 retro_gtk_c_args = [
   '-DRETRO_GTK_COMPILATION',
   '-DG_LOG_DOMAIN="Retro"',
+  '-DRETRO_PLUGIN_PATH="@0@:@1@"'.format(libretrodir, libdir),
 ]
 
 retro_gtk_deps = [

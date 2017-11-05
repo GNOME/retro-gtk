@@ -46,6 +46,28 @@ build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
 
+tests = [
+  ['RetroCore', 'test-core', [], [retro_dummy_lib]],
+]
+
+foreach t : tests
+  test_display_name = t.get(0)
+  test_name = t.get(1)
+  test_srcs = ['@0@.c'.format(test_name)] + t.get(2, [])
+  test_args = t.get(3)
+
+  test_exe = executable(test_display_name, test_srcs,
+    c_args: retro_gtk_c_args,
+    dependencies: retro_gtk_deps,
+    link_with: retro_gtk_lib)
+
+  test(
+    '@0@ test'.format(test_display_name),
+    test_exe,
+    args: test_args
+  )
+endforeach
+
 reftests = [
   ['/retro-dummy', 'retro-dummy'],
 ]

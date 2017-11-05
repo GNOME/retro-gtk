@@ -46,11 +46,11 @@ build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
 
-tests = [
+reftests = [
   ['/retro-dummy', 'retro-dummy'],
 ]
 
-foreach t : tests
+foreach t : reftests
   test_display_name = t.get(0)
   test_name = t.get(1)
   input_name = '@0@.reftest.in'.format(test_name)

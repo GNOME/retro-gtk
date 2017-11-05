@@ -18,6 +18,8 @@ G_DECLARE_FINAL_TYPE (RetroCoreDescriptor, retro_core_descriptor, RETRO, CORE_DE
 
 RetroCoreDescriptor *retro_core_descriptor_new (const gchar  *filename,
                                                 GError      **error);
+RetroCoreDescriptor *retro_core_descriptor_new_for_uri (const gchar  *uri,
+                                                        GError      **error);
 gboolean retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
                                          GError              **error);
 gchar *retro_core_descriptor_get_uri (RetroCoreDescriptor *self);
@@ -26,11 +28,11 @@ gboolean retro_core_descriptor_get_is_game (RetroCoreDescriptor  *self,
                                             GError              **error);
 gboolean retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
                                                 GError              **error);
-char *retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
+gchar *retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
                                       GError              **error);
 GIcon *retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
                                        GError              **error);
-char *retro_core_descriptor_get_module (RetroCoreDescriptor  *self,
+gchar *retro_core_descriptor_get_module (RetroCoreDescriptor  *self,
                                         GError              **error);
 GFile *retro_core_descriptor_get_module_file (RetroCoreDescriptor  *self,
                                               GError              **error);

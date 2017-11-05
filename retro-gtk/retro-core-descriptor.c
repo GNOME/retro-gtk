@@ -5,7 +5,7 @@
 struct _RetroCoreDescriptor
 {
   GObject parent_instance;
-  gchar *filename;
+  gchar *uri;
   GKeyFile *key_file;
 };
 
@@ -49,7 +49,7 @@ retro_core_descriptor_finalize (GObject *object)
 {
   RetroCoreDescriptor *self = RETRO_CORE_DESCRIPTOR (object);
 
-  g_free (self->filename);
+  g_free (self->uri);
   g_key_file_unref (self->key_file);
 
   G_OBJECT_CLASS (retro_core_descriptor_parent_class)->finalize (object);
@@ -219,7 +219,7 @@ retro_core_descriptor_check_has_required_key (RetroCoreDescriptor  *self,
                  RETRO_CORE_DESCRIPTOR_ERROR_REQUIRED_KEY_NOT_FOUND,
                  "%s isn't a valid Libretro core descriptor: "
                  "required key %s not found in group [%s].",
-                 self->filename,
+                 self->uri,
                  key,
                  group);
 }
@@ -326,7 +326,7 @@ retro_core_descriptor_check_platform_group (RetroCoreDescriptor  *self,
                    RETRO_CORE_DESCRIPTOR_ERROR_FIRMWARE_NOT_FOUND,
                    "%s isn't a valid Libretro core descriptor:"
                    "[%s] mentioned in [%s] not found.",
-                   self->filename,
+                   self->uri,
                    firmware_group,
                    group);
 
@@ -414,16 +414,9 @@ retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
 gchar *
 retro_core_descriptor_get_uri (RetroCoreDescriptor *self)
 {
-  gchar *result;
-  GFile *file;
-
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
-  file = g_file_new_for_path (self->filename);
-  result = g_file_get_uri (file);
-  g_object_unref (file);
-
-  return result;
+  return g_strdup (self->uri);
 }
 
 /**
@@ -439,7 +432,8 @@ retro_core_descriptor_get_id (RetroCoreDescriptor *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
-  return g_path_get_basename (self->filename);
+  // FIXME???
+  return g_path_get_basename (self->uri);
 }
 
 /**
@@ -525,6 +519,8 @@ gchar *
 retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
                                 GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return g_key_file_get_string (self->key_file,
                                 RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
                                 RETRO_CORE_DESCRIPTOR_NAME_KEY,
@@ -575,7 +571,7 @@ retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
  *
  * Returns: (nullable) (transfer full): a string or %NULL, free it with g_free()
  */
-char *
+gchar *
 retro_core_descriptor_get_module (RetroCoreDescriptor  *self,
                                   GError              **error)
 {
@@ -608,7 +604,7 @@ retro_core_descriptor_get_module_file (RetroCoreDescriptor  *self,
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
-  file = g_file_new_for_path (self->filename);
+  file = g_file_new_for_uri (self->uri);
   dir = g_file_get_parent (file);
   g_object_unref (file);
   if (dir == NULL)
@@ -651,8 +647,8 @@ retro_core_descriptor_has_platform (RetroCoreDescriptor *self,
                                     const gchar         *platform)
 {
   return has_group_prefixed (self,
-                           RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
-                           platform);
+                             RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
+                             platform);
 }
 
 /**
@@ -932,8 +928,8 @@ retro_core_descriptor_get_platform_supports_mime_types (RetroCoreDescriptor  *se
 }
 
 /**
- * retro_core_descriptor_new:
- * @filename: the file name of the core descriptor
+ * retro_core_descriptor_new_for_uri:
+ * @uri: the URI of the core descriptor
  * @error: return location for a #GError, or %NULL
  *
  * Creates a new #RetroCoreDescriptor.
@@ -941,30 +937,57 @@ retro_core_descriptor_get_platform_supports_mime_types (RetroCoreDescriptor  *se
  * Returns: (transfer full): a new #RetroCoreDescriptor
  */
 RetroCoreDescriptor *
-retro_core_descriptor_new (const gchar  *filename,
-                           GError      **error)
+retro_core_descriptor_new_for_uri (const gchar  *uri,
+                                   GError      **error)
 {
   RetroCoreDescriptor *self;
+  GFile *file;
+  GFileInputStream *input_stream;
+  GBytes *content;
+  GKeyFile *key_file;
   gchar ** groups;
   gsize groups_length;
   gsize i;
   GError *tmp_error = NULL;
 
-  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (uri != NULL, NULL);
 
-  self =  g_object_new (RETRO_TYPE_CORE_DESCRIPTOR, NULL);
-  self->filename = g_strdup (filename);
-  self->key_file = g_key_file_new ();
-  g_key_file_load_from_file (self->key_file,
-                             filename,
-                             G_KEY_FILE_NONE,
-                             &tmp_error);
+  file = g_file_new_for_uri (uri);
+  input_stream = g_file_read (file, NULL, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_object_unref (self);
+    g_object_unref (file);
     g_propagate_error (error, tmp_error);
 
     return NULL;
   }
+
+  g_object_unref (file);
+
+  content = g_input_stream_read_bytes (G_INPUT_STREAM (input_stream), 4096, NULL, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_object_unref (input_stream);
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  g_object_unref (input_stream);
+
+  key_file = g_key_file_new ();
+  g_key_file_load_from_bytes (key_file, content, G_KEY_FILE_NONE, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_bytes_unref (content);
+    g_key_file_unref (key_file);
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  g_bytes_unref (content);
+
+  self =  g_object_new (RETRO_TYPE_CORE_DESCRIPTOR, NULL);
+  self->uri = g_strdup (uri);
+  self->key_file = key_file;
 
   retro_core_descriptor_check_libretro_group (self, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
@@ -1001,6 +1024,45 @@ retro_core_descriptor_new (const gchar  *filename,
   }
 
   g_strfreev (groups);
+
+  return self;
+}
+
+/**
+ * retro_core_descriptor_new:
+ * @filename: the file name of the core descriptor
+ * @error: return location for a #GError, or %NULL
+ *
+ * Creates a new #RetroCoreDescriptor.
+ *
+ * Returns: (transfer full): a new #RetroCoreDescriptor
+ */
+RetroCoreDescriptor *
+retro_core_descriptor_new (const gchar  *filename,
+                           GError      **error)
+{
+  RetroCoreDescriptor *self;
+  gchar *uri;
+  GError *tmp_error = NULL;
+
+  g_return_val_if_fail (filename != NULL, NULL);
+
+  uri = g_filename_to_uri (filename, NULL, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  self = retro_core_descriptor_new_for_uri (uri, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+    g_free (uri);
+
+    return NULL;
+  }
+
+  g_free (uri);
 
   return self;
 }

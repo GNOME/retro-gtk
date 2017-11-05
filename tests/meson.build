@@ -46,11 +46,11 @@ build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
 
-tests = [
+reftests = [
   ['/retro-dummy', 'retro-dummy'],
 ]
 
-foreach t : tests
+foreach t : reftests
   test_display_name = t.get(0)
   test_name = t.get(1)
   input_name = '@0@.test.in'.format(test_name)
@@ -75,4 +75,28 @@ foreach t : tests
     retro_reftest,
     args: build_test,
   )
+endforeach
+
+test_core_descriptor_resources = gnome.compile_resources(
+  'test_core_descriptor_resources',
+  'test-core-descriptor.gresource.xml',
+  c_name: 'test',
+  source_dir: '.',
+)
+
+tests = [
+  ['RetroCoreDescriptor', 'test-core-descriptor', [test_core_descriptor_resources[0]]],
+]
+
+foreach t : tests
+  test_display_name = t.get(0)
+  test_name = t.get(1)
+  test_srcs = ['@0@.c'.format(test_name)] + t.get(2, [])
+
+  test_exe = executable(test_display_name, test_srcs,
+    c_args: retro_gtk_c_args,
+    dependencies: retro_gtk_deps,
+    link_with: retro_gtk_lib)
+
+  test('@0@ test'.format(test_display_name), test_exe)
 endforeach

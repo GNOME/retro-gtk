@@ -82,7 +82,6 @@ retro_demo_activate (GApplication *application)
 {
   RetroDemoApplication *self;
   GtkWidget *window;
-  RetroController *controller;
 
   self = RETRO_DEMO_APPLICATION (application);
 
@@ -90,23 +89,9 @@ retro_demo_activate (GApplication *application)
 
   self->view = retro_core_view_new ();
   retro_core_view_set_core (self->view, self->core);
+  retro_core_view_set_as_default_controller (self->view, self->core);
 
   retro_core_set_keyboard (self->core, GTK_WIDGET (self->view));
-
-  controller = retro_core_view_as_controller (self->view,
-                                              RETRO_CONTROLLER_TYPE_JOYPAD);
-  retro_core_set_default_controller (self->core, controller);
-  g_object_unref (controller);
-
-  controller = retro_core_view_as_controller (self->view,
-                                              RETRO_CONTROLLER_TYPE_MOUSE);
-  retro_core_set_default_controller (self->core, controller);
-  g_object_unref (controller);
-
-  controller = retro_core_view_as_controller (self->view,
-                                              RETRO_CONTROLLER_TYPE_POINTER);
-  retro_core_set_default_controller (self->core, controller);
-  g_object_unref (controller);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);

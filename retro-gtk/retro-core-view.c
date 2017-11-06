@@ -619,6 +619,32 @@ retro_core_view_as_controller (RetroCoreView       *self,
 }
 
 /**
+ * retro_core_view_set_as_default_controller:
+ * @self: a #RetroCoreView
+ * @core: (nullable): a #RetroCore
+ *
+ * Sets the @self as the default controllers of @core.
+ */
+void
+retro_core_view_set_as_default_controller (RetroCoreView *self,
+                                           RetroCore     *core)
+{
+  RetroControllerType type;
+  RetroController *controller;
+
+  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
+  g_return_if_fail (RETRO_IS_CORE (core));
+
+  for (type = RETRO_CONTROLLER_TYPE_NONE;
+       type < RETRO_CONTROLLER_TYPE_COUNT;
+       type++) {
+    controller = retro_core_view_as_controller (self, type);
+    retro_core_set_default_controller (core, controller);
+    g_object_unref (controller);
+  }
+}
+
+/**
  * retro_core_view_get_input_state:
  * @self: a #RetroCoreView
  * @input: a #RetroInput to query @self

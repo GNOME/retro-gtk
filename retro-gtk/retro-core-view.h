@@ -30,6 +30,8 @@ void retro_core_view_set_filter (RetroCoreView    *self,
                                  RetroVideoFilter  filter);
 RetroController *retro_core_view_as_controller (RetroCoreView       *self,
                                                 RetroControllerType  controller_type);
+void retro_core_view_set_as_default_controller (RetroCoreView *self,
+                                                RetroCore     *core);
 gint16 retro_core_view_get_input_state (RetroCoreView *self,
                                         RetroInput    *input);
 guint64 retro_core_view_get_controller_capabilities (RetroCoreView *self);

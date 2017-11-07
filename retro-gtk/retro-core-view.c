@@ -639,7 +639,7 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
        type < RETRO_CONTROLLER_TYPE_COUNT;
        type++) {
     controller = retro_core_view_as_controller (self, type);
-    retro_core_set_default_controller (core, controller);
+    retro_core_set_default_controller (core, type, controller);
     g_object_unref (controller);
   }
 }

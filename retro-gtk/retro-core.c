@@ -1767,31 +1767,22 @@ retro_core_get_controller_capabilities (RetroCore *self)
 /**
  * retro_core_set_default_controller:
  * @self: a #RetroCore
+ * @controller_type: a #RetroControllerType
  * @controller: (nullable): a #RetroController
  *
- * Uses @controller as the default controller for its type. When a port has no
- * controller plugged plugged into it, the core will use the default controllers
- * instead.
+ * Uses @controller as the default controller for the given type. When a port
+ * has no controller plugged plugged into it, the core will use the default
+ * controllers instead.
  */
 void
-retro_core_set_default_controller (RetroCore       *self,
-                                   RetroController *controller)
+retro_core_set_default_controller (RetroCore           *self,
+                                   RetroControllerType  controller_type,
+                                   RetroController     *controller)
 {
-  RetroControllerType controller_type;
-  RetroControllerType masked_controller_type;
-
   g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (controller_type < RETRO_CONTROLLER_TYPE_COUNT);
 
-  controller_type = retro_controller_get_controller_type (controller);
-  masked_controller_type = controller_type & RETRO_CONTROLLER_TYPE_TYPE_MASK;
-
-  if (masked_controller_type >= RETRO_CONTROLLER_TYPE_COUNT) {
-    g_critical ("Unexpected controller type: %d.", controller_type);
-
-    return;
-  }
-
-  g_set_object (&self->default_controllers[masked_controller_type], controller);
+  g_set_object (&self->default_controllers[controller_type], controller);
 }
 
 /**

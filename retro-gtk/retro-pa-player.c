@@ -51,6 +51,7 @@ retro_pa_player_prepare_for_sample_rate (RetroPaPlayer *self,
                                          gdouble        sample_rate)
 {
   pa_sample_spec sample_spec = {0};
+  gint error;
 
   g_return_if_fail (RETRO_IS_PA_PLAYER (self));
 
@@ -65,7 +66,10 @@ retro_pa_player_prepare_for_sample_rate (RetroPaPlayer *self,
     pa_simple_free (self->simple);
 
   self->simple = pa_simple_new (NULL, NULL, PA_STREAM_PLAYBACK, NULL, "",
-                                &sample_spec, NULL, NULL, NULL);
+                                &sample_spec, NULL, NULL, &error);
+  if (!self->simple) {
+      g_critical ("pa_simple_new() failed: %s", pa_strerror(error));
+  }
 }
 
 static void

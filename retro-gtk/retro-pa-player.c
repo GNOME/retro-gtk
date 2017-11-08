@@ -82,6 +82,9 @@ retro_pa_player_on_audio_output (RetroCore *sender,
   if (self->simple == NULL || sample_rate != self->sample_rate)
     retro_pa_player_prepare_for_sample_rate (self, sample_rate);
 
+  if (self->simple == NULL)
+    return;
+
   pa_simple_write (self->simple, data, sizeof (gint16) * length, NULL);
 }
 

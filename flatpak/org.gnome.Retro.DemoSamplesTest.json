@@ -43,7 +43,7 @@
                 {
                     "type": "script",
                     "commands": [
-                        "retro-demo /app/lib/libretro/test_libretro.so"
+                        "retro-demo /app/lib/libretro/testgl_ff_libretro.so"
                     ],
                     "dest-filename": "retro-demo-samples-test"
                 },

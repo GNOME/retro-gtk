@@ -2,12 +2,14 @@ NULL=
 
 CORES= \
 	tests/test/test_libretro.so \
+	video/opengl/libretro_test_gl_fixedfunction/testgl_ff_libretro.so \
 	$(NULL)
 
-all: tests/test/test_libretro.so
+all: $(CORES)
 
-tests/test/test_libretro.so:
+%.so:
 	make -C $(@D)
 
 install: $(CORES)
 	install -Dp -m755 tests/test/test_libretro.so $(DESTDIR)$(prefix)/lib/libretro/test_libretro.so
+	install -Dp -m755 video/opengl/libretro_test_gl_fixedfunction/testgl_ff_libretro.so $(DESTDIR)$(prefix)/lib/libretro/testgl_ff_libretro.so 

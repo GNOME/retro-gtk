@@ -1,4 +1,32 @@
 ==============
+Version 0.13.2
+==============
+
+* Port the build system to Meson, requiring version 0.43.0 and drop the
+  Autotools.
+* Drop retro_core_remove_controller(), to remove a controller instead
+  set it to NULL.
+* Make retro_core_poll_controllers(),
+  retro_core_get_controller_input_state() and
+  retro_core_get_controller_capabilities() private as they are meant to
+  be used by the Libretro core and not the end users.
+* Add retro_core_set_default_controller() to set controllers to be used
+  by default when there is no controller with the requested capability
+  in the requested port. Add retro_core_view_set_as_default_controller()
+  to easily set the controllers of a RetroCoreView as the default
+  controllers of a RetroCore. retro-demo now uses these.
+* Add retro_controller_has_capability() to easily check if a controller
+  has the given RetroControllerType capability.
+* Add RetroInput to encapsulate the inputs used in an input state query.
+  It is used in retro_controller_get_input_state() and
+  retro_core_view_get_input_state().
+* Replace gboolean by bool in get_variable_update() to avoid crashes.
+* Add a count enumeration value to RetroControllerType and the various
+  controller code enumerations.
+* Better check the creation of the PuleAudio sound output to avoid
+  crashes.
+
+==============
 Version 0.13.1
 ==============
 

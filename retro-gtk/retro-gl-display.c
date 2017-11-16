@@ -104,6 +104,7 @@ retro_gl_display_realize (RetroGLDisplay *self)
   GLuint vertex_array_object;
   GLuint element_buffer_object;
   RetroVideoFilter filter;
+  GError *inner_error = NULL;
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
@@ -120,7 +121,16 @@ retro_gl_display_realize (RetroGLDisplay *self)
 
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
     self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], NULL);
-    retro_glsl_filter_prepare_program (self->glsl_filter[filter]);
+    retro_glsl_filter_prepare_program (self->glsl_filter[filter], &inner_error);
+    if (G_UNLIKELY (inner_error != NULL)) {
+      g_critical ("Shader program %s creation failed: %s",
+                  filter_uris[filter],
+                  inner_error->message);
+      g_clear_object (&self->glsl_filter[filter]);
+      g_clear_error (&inner_error);
+
+      continue;
+    }
 
     retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
                                              "position",
@@ -167,10 +177,6 @@ retro_gl_display_unrealize (RetroGLDisplay *self)
 static gboolean
 retro_gl_display_render (RetroGLDisplay *self)
 {
-  gdouble w = 0.0;
-  gdouble h = 0.0;
-  gdouble x = 0.0;
-  gdouble y = 0.0;
   GLfloat source_width, source_height;
   GLfloat target_width, target_height;
   GLfloat output_width, output_height;
@@ -178,18 +184,19 @@ retro_gl_display_render (RetroGLDisplay *self)
 
   g_return_val_if_fail (self != NULL, FALSE);
 
-  retro_gl_display_get_video_box (self, &w, &h, &x, &y);
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  retro_glsl_filter_use_program (self->glsl_filter[filter]);
-
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  if (self->glsl_filter[filter] == NULL)
+    return FALSE;
 
   if (self->pixbuf == NULL)
     return FALSE;
+
+  retro_glsl_filter_use_program (self->glsl_filter[filter]);
 
   glTexImage2D (GL_TEXTURE_2D,
                 0,

@@ -14,7 +14,8 @@ G_DECLARE_FINAL_TYPE (RetroGLSLFilter, retro_glsl_filter, RETRO, GLSL_FILTER, GO
 RetroGLSLFilter *retro_glsl_filter_new (const char  *uri,
                                         GError     **error);
 void retro_glsl_filter_apply_texture_params (RetroGLSLFilter *self);
-void retro_glsl_filter_prepare_program (RetroGLSLFilter *self);
+void retro_glsl_filter_prepare_program (RetroGLSLFilter  *self,
+                                        GError          **error);
 void retro_glsl_filter_use_program (RetroGLSLFilter *self);
 void retro_glsl_filter_set_attribute_pointer (RetroGLSLFilter *self,
                                               const gchar     *name,

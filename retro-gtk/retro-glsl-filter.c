@@ -239,11 +239,13 @@ create_shader (GBytes *source_bytes,
                GLenum  shader_type)
 {
   const gchar *source;
+  gint size;
   GLuint shader;
 
   source = g_bytes_get_data (source_bytes, NULL);
+  size = g_bytes_get_size (source_bytes);
   shader = glCreateShader (shader_type);
-  glShaderSource (shader, 1, &source, NULL);
+  glShaderSource (shader, 1, &source, &size);
   glCompileShader (shader);
 
   return shader;

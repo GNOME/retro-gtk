@@ -124,7 +124,6 @@ retro_glsl_filter_new (const char  *uri,
   GKeyFile *key_file;
   GFile *file;
   GFile *parent;
-  GFileInputStream *stream;
   GBytes *bytes;
   const gchar *value;
   GError *inner_error = NULL;
@@ -132,24 +131,12 @@ retro_glsl_filter_new (const char  *uri,
   g_return_val_if_fail (uri != NULL, NULL);
 
   file = g_file_new_for_uri (uri);
-  stream = g_file_read (file, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
+  bytes = g_file_try_read_bytes (file);
+  if (G_UNLIKELY (bytes == NULL)) {
     g_object_unref (file);
 
     return NULL;
   }
-
-  bytes = g_input_stream_read_bytes (G_INPUT_STREAM (stream), 4096, NULL, error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
-    g_object_unref (file);
-    g_object_unref (stream);
-
-    return NULL;
-  }
-
-  g_object_unref (stream);
 
   key_file = g_key_file_new ();
   g_key_file_load_from_bytes (key_file, bytes, G_KEY_FILE_NONE, &inner_error);

@@ -52,6 +52,7 @@ static GLuint elements[] = {
 static const gchar *filter_uris[] = {
   "resource:///org/gnome/Retro/glsl-filters/bicubic.filter",
   "resource:///org/gnome/Retro/glsl-filters/sharp.filter",
+  "resource:///org/gnome/Retro/glsl-filters/crt-simple.filter",
 };
 
 /* Private */

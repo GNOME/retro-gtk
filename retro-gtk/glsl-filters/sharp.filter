@@ -1,7 +1,0 @@
-[GLSL Filter]
-Filter=Nearest
-Wrap=Border
-Vertex=sharp.vs
-Fragment=sharp.fs
-Authors=Adrien Plazas;
-License=GPL-3.0+;

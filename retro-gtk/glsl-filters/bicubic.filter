@@ -1,5 +1,0 @@
-[GLSL Filter]
-Fragment=bicubic.fs
-Authors=hunterk;
-License=GPL-2.0+;
-URL=https://github.com/hizzlekizzle/quark-shaders/tree/master/Bicubic.shader

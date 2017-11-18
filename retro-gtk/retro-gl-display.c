@@ -69,7 +69,7 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   gdouble display_ratio;
   gdouble allocated_ratio;
 
-  g_return_if_fail (self != NULL);
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
   g_return_if_fail (width != NULL);
   g_return_if_fail (height != NULL);
   g_return_if_fail (x != NULL);
@@ -182,7 +182,7 @@ retro_gl_display_render (RetroGLDisplay *self)
   GLfloat output_width, output_height;
   RetroVideoFilter filter;
 
-  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -370,7 +370,7 @@ retro_gl_display_on_video_output (RetroCore    *sender,
 
   GdkPixbuf *pixbuf;
 
-  g_return_if_fail (self != NULL);
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
   pixbuf = retro_pixdata_to_pixbuf (pixdata);
@@ -393,7 +393,7 @@ void
 retro_gl_display_set_core (RetroGLDisplay *self,
                            RetroCore      *core)
 {
-  g_return_if_fail (self != NULL);
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   if (self->core == core)
     return;
@@ -420,7 +420,7 @@ retro_gl_display_set_core (RetroGLDisplay *self,
 GdkPixbuf *
 retro_gl_display_get_pixbuf (RetroGLDisplay *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), NULL);
 
   return self->pixbuf;
 }
@@ -436,7 +436,7 @@ void
 retro_gl_display_set_pixbuf (RetroGLDisplay *self,
                              GdkPixbuf      *pixbuf)
 {
-  g_return_if_fail (self != NULL);
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   if (self->pixbuf == pixbuf)
     return;
@@ -460,7 +460,7 @@ void
 retro_gl_display_set_filter (RetroGLDisplay   *self,
                              RetroVideoFilter  filter)
 {
-  g_return_if_fail (self != NULL);
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   self->filter = filter;
   gtk_widget_queue_draw (GTK_WIDGET (self));
@@ -491,7 +491,7 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
   gdouble x = 0.0;
   gdouble y = 0.0;
 
-  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 

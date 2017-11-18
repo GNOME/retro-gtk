@@ -255,6 +255,38 @@ retro_pixdata_free (RetroPixdata *self)
 }
 
 /**
+ * retro_pixdata_get_width:
+ * @self: a #RetroCore
+ *
+ * Gets the width of @self.
+ *
+ * Returns: the width
+ */
+gint
+retro_pixdata_get_width (RetroPixdata *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  return self->width;
+}
+
+/**
+ * retro_pixdata_get_height:
+ * @self: a #RetroCore
+ *
+ * Gets the height of @self.
+ *
+ * Returns: the height
+ */
+gint
+retro_pixdata_get_height (RetroPixdata *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  return self->height;
+}
+
+/**
  * retro_pixdata_get_aspect_ratio:
  * @self: a #RetroCore
  *

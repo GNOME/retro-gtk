@@ -20,6 +20,8 @@ typedef struct _RetroPixdata RetroPixdata;
 
 RetroPixdata *retro_pixdata_copy (RetroPixdata *self);
 void retro_pixdata_free (RetroPixdata *self);
+gint retro_pixdata_get_width (RetroPixdata *self);
+gint retro_pixdata_get_height (RetroPixdata *self);
 gfloat retro_pixdata_get_aspect_ratio (RetroPixdata *self);
 GdkPixbuf *retro_pixdata_to_pixbuf (RetroPixdata *self);
 

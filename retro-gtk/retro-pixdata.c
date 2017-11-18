@@ -167,7 +167,6 @@ retro_pixdata_new (gconstpointer    data,
   RetroPixdata *self;
 
   g_return_val_if_fail (data != NULL, NULL);
-  g_return_val_if_fail (rowstride != 0, NULL);
   g_return_val_if_fail (width != 0, NULL);
   g_return_val_if_fail (height != 0, NULL);
   g_return_val_if_fail (aspect_ratio > 0.f, NULL);

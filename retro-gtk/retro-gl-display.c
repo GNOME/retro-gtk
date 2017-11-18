@@ -10,6 +10,7 @@ struct _RetroGLDisplay
 {
   GtkGLArea parent_instance;
   RetroCore *core;
+  RetroPixdata *pixdata;
   GdkPixbuf *pixbuf;
   RetroVideoFilter filter;
   gfloat aspect_ratio;
@@ -50,6 +51,25 @@ static const gchar *filter_uris[] = {
 };
 
 /* Private */
+
+static void
+retro_gl_display_set_pixdata (RetroGLDisplay *self,
+                              RetroPixdata   *pixdata)
+{
+  if (self->pixdata == pixdata)
+    return;
+
+  g_clear_object (&self->pixbuf);
+  if (self->pixdata != NULL) {
+    retro_pixdata_free (self->pixdata);
+    self->pixdata = NULL;
+  }
+
+  if (pixdata != NULL)
+    self->pixdata = retro_pixdata_copy (pixdata);
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
 
 static void
 retro_gl_display_get_video_box (RetroGLDisplay *self,
@@ -382,16 +402,13 @@ retro_gl_display_on_video_output (RetroCore    *sender,
 {
   RetroGLDisplay *self = RETRO_GL_DISPLAY (user_data);
 
-  GdkPixbuf *pixbuf;
-
   g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
-  self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
-  pixbuf = retro_pixdata_to_pixbuf (pixdata);
-  retro_gl_display_set_pixbuf (self, pixbuf);
+  if (pixdata == NULL)
+    return;
 
-  if (pixbuf != NULL)
-    g_object_unref (pixbuf);
+  self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
+  retro_gl_display_set_pixdata (self, pixdata);
 }
 
 /* Public */
@@ -436,6 +453,12 @@ retro_gl_display_get_pixbuf (RetroGLDisplay *self)
 {
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), NULL);
 
+  if (self->pixbuf != NULL)
+    return self->pixbuf;
+
+  if (self->pixdata != NULL)
+    self->pixbuf = retro_pixdata_to_pixbuf (self->pixdata);
+
   return self->pixbuf;
 }
 
@@ -456,6 +479,10 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
     return;
 
   g_clear_object (&self->pixbuf);
+  if (self->pixdata != NULL) {
+    retro_pixdata_free (self->pixdata);
+    self->pixdata = NULL;
+  }
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);

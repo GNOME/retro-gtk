@@ -53,17 +53,23 @@ static const gchar *filter_uris[] = {
 /* Private */
 
 static void
+retro_gl_display_clear_video (RetroGLDisplay *self)
+{
+  g_clear_object (&self->pixbuf);
+  if (self->pixdata != NULL) {
+    retro_pixdata_free (self->pixdata);
+    self->pixdata = NULL;
+  }
+}
+
+static void
 retro_gl_display_set_pixdata (RetroGLDisplay *self,
                               RetroPixdata   *pixdata)
 {
   if (self->pixdata == pixdata)
     return;
 
-  g_clear_object (&self->pixbuf);
-  if (self->pixdata != NULL) {
-    retro_pixdata_free (self->pixdata);
-    self->pixdata = NULL;
-  }
+  retro_gl_display_clear_video (self);
 
   if (pixdata != NULL)
     self->pixdata = retro_pixdata_copy (pixdata);
@@ -485,11 +491,7 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
   if (self->pixbuf == pixbuf)
     return;
 
-  g_clear_object (&self->pixbuf);
-  if (self->pixdata != NULL) {
-    retro_pixdata_free (self->pixdata);
-    self->pixdata = NULL;
-  }
+  retro_gl_display_clear_video (self);
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);

@@ -24,6 +24,7 @@ gint retro_pixdata_get_width (RetroPixdata *self);
 gint retro_pixdata_get_height (RetroPixdata *self);
 gfloat retro_pixdata_get_aspect_ratio (RetroPixdata *self);
 GdkPixbuf *retro_pixdata_to_pixbuf (RetroPixdata *self);
+gboolean retro_pixdata_load_gl_texture (RetroPixdata *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroPixdata, retro_pixdata_free)
 

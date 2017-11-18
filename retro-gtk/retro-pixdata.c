@@ -2,6 +2,8 @@
 
 #include "retro-pixdata-private.h"
 
+#include <epoxy/gl.h>
+
 G_DEFINE_BOXED_TYPE (RetroPixdata, retro_pixdata, retro_pixdata_copy, retro_pixdata_free)
 
 /*
@@ -351,4 +353,29 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
   g_free (x_dpi_string);
 
   return pixbuf;
+}
+
+/**
+ * retro_pixdata_load_gl_texture:
+ * @self: the #RetroPixdata
+ *
+ * Loads an OpenGL texture from @self.
+ *
+ * Returns: whether the loading was successful
+ */
+gboolean
+retro_pixdata_load_gl_texture (RetroPixdata *self)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                self->width,
+                self->height,
+                0,
+                GL_BGRA, GL_UNSIGNED_BYTE,
+                self->data);
+
+  return TRUE;
 }

@@ -33,9 +33,7 @@ struct _RetroCoreView
   GtkEventBox parent_instance;
   RetroCore *core;
   RetroGLDisplay *display;
-  GBinding *pixbuf_binding;
   GBinding *sensitive_binding;
-  GdkPixbuf *pixbuf;
   RetroPaPlayer *audio_player;
   gboolean can_grab_pointer;
   gboolean snap_pointer_to_borders;
@@ -57,8 +55,7 @@ struct _RetroCoreView
 G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_EVENT_BOX)
 
 enum {
-  PROP_PIXBUF = 1,
-  PROP_CAN_GRAB_POINTER,
+  PROP_CAN_GRAB_POINTER = 1,
   PROP_SNAP_POINTER_TO_BORDERS,
   N_PROPS,
 };
@@ -366,9 +363,7 @@ retro_core_view_finalize (GObject *object)
 
   g_clear_object (&self->core);
   g_object_unref (self->display);
-  g_object_unref (self->pixbuf_binding);
   g_object_unref (self->sensitive_binding);
-  g_clear_object (&self->pixbuf);
   g_object_unref (self->audio_player);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->mouse_button_state);
@@ -387,10 +382,6 @@ retro_core_view_get_property (GObject    *object,
   RetroCoreView *self = RETRO_CORE_VIEW (object);
 
   switch (prop_id) {
-  case PROP_PIXBUF:
-    g_value_set_object (value, retro_core_view_get_pixbuf (self));
-
-    break;
   case PROP_CAN_GRAB_POINTER:
     g_value_set_boolean (value, retro_core_view_get_can_grab_pointer (self));
 
@@ -415,10 +406,6 @@ retro_core_view_set_property (GObject      *object,
   RetroCoreView *self = RETRO_CORE_VIEW (object);
 
   switch (prop_id) {
-  case PROP_PIXBUF:
-    retro_core_view_set_pixbuf (self, g_value_get_object (value));
-
-    break;
   case PROP_CAN_GRAB_POINTER:
     retro_core_view_set_can_grab_pointer (self, g_value_get_boolean (value));
 
@@ -442,16 +429,6 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
   object_class->finalize = retro_core_view_finalize;
   object_class->get_property = retro_core_view_get_property;
   object_class->set_property = retro_core_view_set_property;
-
-  properties[PROP_PIXBUF] =
-    g_param_spec_object ("pixbuf",
-                         "Pixbuf",
-                         "The displayed pixbuf",
-                         gdk_pixbuf_get_type (),
-                         G_PARAM_READWRITE |
-                         G_PARAM_STATIC_NAME |
-                         G_PARAM_STATIC_NICK |
-                         G_PARAM_STATIC_BLURB);
 
   properties[PROP_CAN_GRAB_POINTER] =
     g_param_spec_boolean ("can-grab-pointer",
@@ -494,11 +471,6 @@ retro_core_view_init (RetroCoreView *self)
   g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);
   gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->display));
 
-  self->pixbuf_binding =
-    g_object_bind_property (G_OBJECT (self->display), "pixbuf",
-                            G_OBJECT (self), "pixbuf",
-                            G_BINDING_BIDIRECTIONAL |
-                            G_BINDING_SYNC_CREATE);
   self->sensitive_binding =
     g_object_bind_property (G_OBJECT (self), "sensitive",
                             G_OBJECT (self->display), "sensitive",
@@ -563,8 +535,7 @@ retro_core_view_set_pixbuf (RetroCoreView *self,
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
   g_return_if_fail (pixbuf == NULL || GDK_IS_PIXBUF (pixbuf));
 
-  if (g_set_object (&self->pixbuf, pixbuf))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PIXBUF]);
+  retro_gl_display_set_pixbuf (self->display, pixbuf);
 }
 
 /**
@@ -580,7 +551,7 @@ retro_core_view_get_pixbuf (RetroCoreView *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), NULL);
 
-  return self->pixbuf;
+  return retro_gl_display_get_pixbuf (self->display);
 }
 
 /**

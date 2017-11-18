@@ -91,6 +91,29 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   *y = (h - *height) / 2;
 }
 
+static gboolean
+retro_gl_display_load_texture (RetroGLDisplay *self,
+                               gint           *texture_width,
+                               gint           *texture_height)
+{
+  if (retro_gl_display_get_pixbuf (self) == NULL)
+    return FALSE;
+
+  *texture_width = gdk_pixbuf_get_width (self->pixbuf),
+  *texture_height = gdk_pixbuf_get_height (self->pixbuf),
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                *texture_width,
+                *texture_height,
+                0,
+                GL_RGBA, GL_UNSIGNED_BYTE,
+                gdk_pixbuf_get_pixels (self->pixbuf));
+
+  return TRUE;
+}
+
 static void
 retro_gl_display_blit_texture (RetroGLDisplay *self,
                                GLenum          filter,
@@ -262,20 +285,8 @@ retro_gl_display_render (RetroGLDisplay *self)
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  if (self->pixbuf == NULL)
+  if (!retro_gl_display_load_texture (self, &texture_width, &texture_height))
     return FALSE;
-
-  texture_width = gdk_pixbuf_get_width (self->pixbuf);
-  texture_height = gdk_pixbuf_get_height (self->pixbuf);
-
-  glTexImage2D (GL_TEXTURE_2D,
-                0,
-                GL_RGB,
-                texture_width,
-                texture_height,
-                0,
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                gdk_pixbuf_get_pixels (self->pixbuf));
 
   if (filter == RETRO_VIDEO_FILTER_SMOOTH) {
     retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);

@@ -365,16 +365,45 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
 gboolean
 retro_pixdata_load_gl_texture (RetroPixdata *self)
 {
+  GLenum format;
+  GLenum type;
+  gint pixel_size;
+
   g_return_val_if_fail (self != NULL, FALSE);
 
+  switch (self->pixel_format) {
+  case RETRO_PIXEL_FORMAT_XRGB1555:
+    format = GL_BGRA;
+    type =  GL_UNSIGNED_SHORT_5_5_5_1;
+    pixel_size = 2;
+
+    break;
+  case RETRO_PIXEL_FORMAT_XRGB8888:
+    format = GL_BGRA;
+    type = GL_UNSIGNED_BYTE;
+    pixel_size = 4;
+
+    break;
+  case RETRO_PIXEL_FORMAT_RGB565:
+    format = GL_RGB;
+    type =  GL_UNSIGNED_SHORT_5_6_5;
+    pixel_size = 2;
+
+    break;
+  default:
+    return FALSE;
+  }
+
+  glPixelStorei (GL_UNPACK_ROW_LENGTH, self->rowstride / pixel_size);
   glTexImage2D (GL_TEXTURE_2D,
                 0,
                 GL_RGB,
                 self->width,
                 self->height,
                 0,
-                GL_BGRA, GL_UNSIGNED_BYTE,
+                format, type,
                 self->data);
+  glPixelStorei (GL_UNPACK_ROW_LENGTH, 0);
 
   return TRUE;
 }

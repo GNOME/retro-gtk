@@ -22,13 +22,6 @@ struct _RetroGLDisplay
 
 G_DEFINE_TYPE (RetroGLDisplay, retro_gl_display, GTK_TYPE_GL_AREA)
 
-enum {
-  PROP_PIXBUF = 1,
-  N_PROPS,
-};
-
-static GParamSpec *properties [N_PROPS];
-
 typedef struct {
   struct {
     float x, y;
@@ -317,64 +310,11 @@ retro_gl_display_finalize (GObject *object)
 }
 
 static void
-retro_gl_display_get_property (GObject    *object,
-                               guint       prop_id,
-                               GValue     *value,
-                               GParamSpec *pspec)
-{
-  RetroGLDisplay *self = RETRO_GL_DISPLAY (object);
-
-  switch (prop_id) {
-  case PROP_PIXBUF:
-    g_value_set_object (value, retro_gl_display_get_pixbuf (self));
-
-    break;
-  default:
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-
-    break;
-  }
-}
-
-static void
-retro_gl_display_set_property (GObject      *object,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
-{
-  RetroGLDisplay *self = RETRO_GL_DISPLAY (object);
-
-  switch (prop_id) {
-  case PROP_PIXBUF:
-    retro_gl_display_set_pixbuf (self, g_value_get_object (value));
-
-    break;
-  default:
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-
-    break;
-  }
-}
-
-static void
 retro_gl_display_class_init (RetroGLDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = retro_gl_display_finalize;
-  object_class->get_property = retro_gl_display_get_property;
-  object_class->set_property = retro_gl_display_set_property;
-
-  properties[PROP_PIXBUF] =
-    g_param_spec_object ("pixbuf",
-                         "Pixbuf",
-                         "The displayed pixbuf",
-                         gdk_pixbuf_get_type (),
-                         G_PARAM_READWRITE |
-                         G_PARAM_STATIC_NAME |
-                         G_PARAM_STATIC_NICK |
-                         G_PARAM_STATIC_BLURB);
-  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_PIXBUF, properties[PROP_PIXBUF]);
 }
 
 static void
@@ -410,12 +350,6 @@ retro_gl_display_init (RetroGLDisplay *self)
 
   g_signal_connect_object (G_OBJECT (self),
                            "notify::sensitive",
-                           (GCallback) queue_draw,
-                           GTK_WIDGET (self),
-                           0);
-
-  g_signal_connect_object (G_OBJECT (self),
-                           "notify::pixbuf",
                            (GCallback) queue_draw,
                            GTK_WIDGET (self),
                            0);
@@ -506,7 +440,7 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PIXBUF]);
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 /**

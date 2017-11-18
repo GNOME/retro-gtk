@@ -15,6 +15,7 @@ struct _RetroGLDisplay
   RetroVideoFilter filter;
   gfloat aspect_ratio;
   gulong on_video_output_id;
+  guint tick_id;
 
   RetroGLSLFilter *glsl_filter[RETRO_VIDEO_FILTER_COUNT];
   GLuint framebuffer;
@@ -52,6 +53,17 @@ static const gchar *filter_uris[] = {
 
 /* Private */
 
+static gboolean
+retro_gl_display_on_tick (GtkWidget      *sender,
+                          GdkFrameClock  *frame_clock,
+                          RetroGLDisplay *self)
+{
+  gtk_gl_area_queue_render (self);
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+
+  return G_SOURCE_CONTINUE;
+}
+
 static void
 retro_gl_display_clear_video (RetroGLDisplay *self)
 {
@@ -63,6 +75,28 @@ retro_gl_display_clear_video (RetroGLDisplay *self)
 }
 
 static void
+retro_gl_display_clear_tick_callback (RetroGLDisplay *self)
+{
+  if (self->tick_id == 0)
+    return;
+
+  gtk_widget_remove_tick_callback (GTK_WIDGET (self), self->tick_id);
+  self->tick_id = 0;
+}
+
+static void
+retro_gl_display_set_tick_callback (RetroGLDisplay *self)
+{
+  if (self->tick_id != 0)
+    return;
+
+  self->tick_id = gtk_widget_add_tick_callback (GTK_WIDGET (self),
+                                                (GtkTickCallback) retro_gl_display_on_tick,
+                                                self,
+                                                NULL);
+}
+
+static void
 retro_gl_display_set_pixdata (RetroGLDisplay *self,
                               RetroPixdata   *pixdata)
 {
@@ -70,11 +104,14 @@ retro_gl_display_set_pixdata (RetroGLDisplay *self,
     return;
 
   retro_gl_display_clear_video (self);
+  if (pixdata == NULL)
+    retro_gl_display_clear_tick_callback (self);
 
-  if (pixdata != NULL)
+
+  if (pixdata != NULL) {
     self->pixdata = retro_pixdata_copy (pixdata);
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+    retro_gl_display_set_tick_callback (self);
+  }
 }
 
 static void
@@ -218,13 +255,16 @@ retro_gl_display_draw_texture (RetroGLDisplay  *self,
 }
 
 static void
-retro_gl_display_realize (RetroGLDisplay *self)
+retro_gl_display_realize (GtkWidget *widget)
 {
   GLuint vertex_buffer_object;
   GLuint vertex_array_object;
   GLuint element_buffer_object;
   RetroVideoFilter filter;
+  RetroGLDisplay *self = (RetroGLDisplay *) widget;
   GError *inner_error = NULL;
+
+  GTK_WIDGET_CLASS (retro_gl_display_parent_class)->realize (widget);
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
@@ -289,8 +329,9 @@ retro_gl_display_realize (RetroGLDisplay *self)
 }
 
 static void
-retro_gl_display_unrealize (RetroGLDisplay *self)
+retro_gl_display_unrealize (GtkWidget *widget)
 {
+  RetroGLDisplay *self = (RetroGLDisplay *) widget;
   RetroVideoFilter filter;
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
@@ -301,11 +342,15 @@ retro_gl_display_unrealize (RetroGLDisplay *self)
   self->texture = 0;
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
+
+  GTK_WIDGET_CLASS (retro_gl_display_parent_class)->unrealize (widget);
 }
 
 static gboolean
-retro_gl_display_render (RetroGLDisplay *self)
+retro_gl_display_render (GtkGLArea    *glarea,
+                         GdkGLContext *context)
 {
+  RetroGLDisplay *self = (RetroGLDisplay *) glarea;
   RetroVideoFilter filter;
   gint texture_width;
   gint texture_height;
@@ -358,16 +403,39 @@ retro_gl_display_finalize (GObject *object)
     g_object_unref (self->core);
   if (self->pixbuf != NULL)
     g_object_unref (self->pixbuf);
+  if (self->tick_id != 0)
+    gtk_widget_remove_tick_callback (GTK_WIDGET (self), self->tick_id);
 
   G_OBJECT_CLASS (retro_gl_display_parent_class)->finalize (object);
+}
+
+static gboolean
+retro_gl_display_draw (GtkWidget *widget,
+                       cairo_t   *cr)
+{
+  GTimer *timer = g_timer_new ();
+  gboolean result = GTK_WIDGET_CLASS (retro_gl_display_parent_class)->draw (widget, cr);
+
+  g_message ("draw took %lf msec ", g_timer_elapsed (timer, NULL) * 1000.0);
+  g_timer_destroy (timer);
+
+  return result;
 }
 
 static void
 retro_gl_display_class_init (RetroGLDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkGLAreaClass *glarea_class = GTK_GL_AREA_CLASS (klass);
 
   object_class->finalize = retro_gl_display_finalize;
+
+  widget_class->realize = retro_gl_display_realize;
+  widget_class->unrealize = retro_gl_display_unrealize;
+  widget_class->draw = retro_gl_display_draw;
+
+  glarea_class->render = retro_gl_display_render;
 }
 
 static void
@@ -375,30 +443,12 @@ queue_draw (GObject    *sender,
             GParamSpec *pspec,
             gpointer    self)
 {
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  gtk_gl_area_queue_render (self);
 }
 
 static void
 retro_gl_display_init (RetroGLDisplay *self)
 {
-  g_signal_connect_object (G_OBJECT (self),
-                           "realize",
-                           (GCallback) retro_gl_display_realize,
-                           GTK_WIDGET (self),
-                           0);
-
-  g_signal_connect_object (G_OBJECT (self),
-                           "unrealize",
-                           (GCallback) retro_gl_display_unrealize,
-                           GTK_WIDGET (self),
-                           0);
-
-  g_signal_connect_object (G_OBJECT (self),
-                           "render",
-                           (GCallback) retro_gl_display_render,
-                           GTK_WIDGET (self),
-                           0);
-
   self->filter = RETRO_VIDEO_FILTER_SMOOTH;
 
   g_signal_connect_object (G_OBJECT (self),
@@ -492,9 +542,13 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
     return;
 
   retro_gl_display_clear_video (self);
+  if (pixbuf == NULL)
+    retro_gl_display_clear_tick_callback (self);
 
-  if (pixbuf != NULL)
+  if (pixbuf != NULL) {
     self->pixbuf = g_object_ref (pixbuf);
+    retro_gl_display_set_tick_callback (self);
+  }
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
@@ -565,5 +619,7 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
 RetroGLDisplay *
 retro_gl_display_new (void)
 {
-  return g_object_new (RETRO_TYPE_GL_DISPLAY, NULL);
+  return g_object_new (RETRO_TYPE_GL_DISPLAY,
+                       "auto-render", FALSE,
+                       NULL);
 }

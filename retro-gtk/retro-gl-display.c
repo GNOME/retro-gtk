@@ -93,7 +93,9 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
 
 static void
 retro_gl_display_blit_texture (RetroGLDisplay *self,
-                               GLenum          filter)
+                               GLenum          filter,
+                               gint            texture_width,
+                               gint            texture_height)
 {
   gdouble w = 0.0;
   gdouble h = 0.0;
@@ -109,8 +111,8 @@ retro_gl_display_blit_texture (RetroGLDisplay *self,
 
   glBindFramebuffer (GL_READ_FRAMEBUFFER, self->framebuffer);
   glBlitFramebuffer (0, 0,
-                     gdk_pixbuf_get_width (self->pixbuf),
-                     gdk_pixbuf_get_height (self->pixbuf),
+                     texture_width,
+                     texture_height,
                      (GLint) x, (GLint) (y + h), (GLint) (x + w), (GLint) y,
                      GL_COLOR_BUFFER_BIT,
                      filter);
@@ -119,7 +121,9 @@ retro_gl_display_blit_texture (RetroGLDisplay *self,
 
 static void
 retro_gl_display_draw_texture (RetroGLDisplay  *self,
-                               RetroGLSLFilter *filter)
+                               RetroGLSLFilter *filter,
+                               gint             texture_width,
+                               gint             texture_height)
 {
   GLfloat source_width, source_height;
   GLfloat target_width, target_height;
@@ -134,8 +138,8 @@ retro_gl_display_draw_texture (RetroGLDisplay  *self,
     (gfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self)) /
     self->aspect_ratio);
 
-  source_width = (GLfloat) gdk_pixbuf_get_width (self->pixbuf);
-  source_height = (GLfloat) gdk_pixbuf_get_height (self->pixbuf);
+  source_width = (GLfloat) texture_width;
+  source_height = (GLfloat) texture_height;
   target_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
   target_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
   output_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
@@ -247,6 +251,8 @@ static gboolean
 retro_gl_display_render (RetroGLDisplay *self)
 {
   RetroVideoFilter filter;
+  gint texture_width;
+  gint texture_height;
 
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
 
@@ -259,34 +265,37 @@ retro_gl_display_render (RetroGLDisplay *self)
   if (self->pixbuf == NULL)
     return FALSE;
 
+  texture_width = gdk_pixbuf_get_width (self->pixbuf);
+  texture_height = gdk_pixbuf_get_height (self->pixbuf);
+
   glTexImage2D (GL_TEXTURE_2D,
                 0,
                 GL_RGB,
-                gdk_pixbuf_get_width (self->pixbuf),
-                gdk_pixbuf_get_height (self->pixbuf),
+                texture_width,
+                texture_height,
                 0,
                 GL_RGBA, GL_UNSIGNED_BYTE,
                 gdk_pixbuf_get_pixels (self->pixbuf));
 
   if (filter == RETRO_VIDEO_FILTER_SMOOTH) {
-    retro_gl_display_blit_texture (self, GL_LINEAR);
+    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
 
     return FALSE;
   }
 
   if (filter == RETRO_VIDEO_FILTER_SHARP) {
-    retro_gl_display_blit_texture (self, GL_NEAREST);
+    retro_gl_display_blit_texture (self, GL_NEAREST, texture_width, texture_height);
 
     return FALSE;
   }
 
   if (self->glsl_filter[filter] == NULL) {
-    retro_gl_display_blit_texture (self, GL_LINEAR);
+    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
 
     return FALSE;
   }
 
-  retro_gl_display_draw_texture (self, self->glsl_filter[filter]);
+  retro_gl_display_draw_texture (self, self->glsl_filter[filter], texture_width, texture_height);
 
   return FALSE;
 }

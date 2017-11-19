@@ -26,6 +26,9 @@ struct _RetroControllerInterface
                              RetroInput      *input);
   RetroControllerType (*get_controller_type) (RetroController *self);
   guint64 (*get_capabilities) (RetroController *self);
+  gboolean (*set_rumble_state) (RetroController   *self,
+                                RetroRumbleEffect  effect,
+                                guint16            strength);
 };
 
 void retro_controller_poll (RetroController *self);

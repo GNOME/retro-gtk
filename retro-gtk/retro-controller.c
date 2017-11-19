@@ -142,9 +142,13 @@ retro_controller_set_rumble_state (RetroController   *self,
                                    RetroRumbleEffect  effect,
                                    guint16            strength)
 {
+  RetroControllerInterface *iface;
+
   g_return_val_if_fail (RETRO_IS_CONTROLLER (self), FALSE);
 
-  // TODO
+  iface = RETRO_CONTROLLER_GET_IFACE (self);
 
-  return FALSE;
+  g_return_val_if_fail (iface->set_rumble_state != NULL, FALSE);
+
+  return iface->set_rumble_state (self, effect, strength);
 }

@@ -8,7 +8,6 @@
 #endif
 
 #include <glib-object.h>
-#include "retro-variable.h"
 
 G_BEGIN_DECLS
 
@@ -16,8 +15,6 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroOption, retro_option, RETRO, OPTION, GObject)
 
-RetroOption *retro_option_new (const RetroVariable  *variable,
-                               GError              **error);
 const gchar *retro_option_get_key (RetroOption *self);
 const gchar *retro_option_get_description (RetroOption *self);
 const gchar **retro_option_get_values (RetroOption *self);

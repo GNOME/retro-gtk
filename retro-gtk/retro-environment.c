@@ -293,13 +293,15 @@ static gboolean
 get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
+  RetroOption *option;
   const gchar *value;
 
-  if (!retro_options_contains (self->options, variable->key))
+  if (!retro_core_has_option (self, variable->key))
     return FALSE;
 
-  value = retro_options_get_option_value (self->options, variable->key);
-  variable->value = g_strdup (value); // FIXME Is that a memory leak?
+  option = retro_core_get_option (self, variable->key);
+  value = retro_option_get_value (option);
+  variable->value = value;
 
   return TRUE;
 }
@@ -309,7 +311,7 @@ static gboolean
 get_variable_update (RetroCore *self,
                      bool      *update)
 {
-  *update = retro_options_get_variable_update (self->options);
+  *update = retro_core_get_variable_update (self);
 
   return TRUE;
 }
@@ -406,7 +408,7 @@ set_variables (RetroCore     *self,
   int i;
 
   for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
-    retro_options_insert_variable (self->options, &variable_array[i]);
+    retro_core_insert_variable (self, &variable_array[i]);
 
   return TRUE;
 }

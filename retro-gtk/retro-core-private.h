@@ -12,7 +12,7 @@
 #include "retro-input.h"
 #include "retro-input-descriptor.h"
 #include "retro-module.h"
-#include "retro-options.h"
+#include "retro-option-private.h"
 #include "retro-pixel-format.h"
 #include "retro-rotation.h"
 
@@ -51,8 +51,8 @@ struct _RetroCore
   GtkWidget *keyboard_widget;
   gulong key_press_event_id;
   gulong key_release_event_id;
-  RetroOptions *options;
-
+  GHashTable *options;
+  gboolean variable_updated;
   guint runahead;
   gssize run_remaining;
 };
@@ -80,6 +80,9 @@ void retro_core_set_controller_descriptors (RetroCore            *self,
                                             RetroInputDescriptor *input_descriptors,
                                             gsize                 length);
 gboolean retro_core_is_running_ahead (RetroCore *self);
+void retro_core_insert_variable (RetroCore           *self,
+                                 const RetroVariable *variable);
+gboolean retro_core_get_variable_update (RetroCore *self);
 
 G_END_DECLS
 

@@ -10,6 +10,7 @@
 #include <gtk/gtk.h>
 #include "retro-controller-iterator.h"
 #include "retro-memory-type.h"
+#include "retro-option.h"
 
 G_BEGIN_DECLS
 
@@ -67,6 +68,10 @@ RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
 guint retro_core_get_runahead (RetroCore *self);
 void retro_core_set_runahead (RetroCore *self,
                               guint      runahead);
+gboolean retro_core_has_option (RetroCore   *self,
+                                const gchar *key);
+RetroOption *retro_core_get_option (RetroCore   *self,
+                                    const gchar *key);
 
 G_END_DECLS
 

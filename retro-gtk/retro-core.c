@@ -152,7 +152,7 @@ retro_core_finalize (GObject *object)
     if (self->default_controllers[i] != NULL)
       g_object_unref (self->default_controllers[i]);
   g_hash_table_unref (self->controllers);
-  g_object_unref (self->options);
+  g_hash_table_unref (self->options);
 
   g_free (self->filename);
   g_free (self->system_directory);
@@ -521,6 +521,8 @@ retro_core_class_init (RetroCoreClass *klass)
 static void
 retro_core_init (RetroCore *self)
 {
+  self->options = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                         g_free, g_object_unref);
 }
 
 static void
@@ -1037,6 +1039,60 @@ on_key_event (GtkWidget   *widget,
   g_return_val_if_fail (event != NULL, FALSE);
 
   return retro_core_key_event (RETRO_CORE (self), event);
+}
+
+static void
+on_option_value_changed (RetroOption *option,
+                         RetroCore   *self)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  self->variable_updated = TRUE;
+}
+
+void
+retro_core_insert_variable (RetroCore           *self,
+                            const RetroVariable *variable)
+{
+  RetroOption *option;
+  const gchar *key;
+  GError *tmp_error = NULL;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (variable != NULL);
+
+  option = retro_option_new (variable, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_debug ("%s", tmp_error->message);
+    g_clear_error (&tmp_error);
+
+    return;
+  }
+
+  key = retro_option_get_key (option);
+
+  g_hash_table_insert (self->options, g_strdup (key), option);
+
+  g_signal_connect_object (option,
+                           "value-changed",
+                           G_CALLBACK (on_option_value_changed),
+                           self,
+                           0);
+
+  self->variable_updated = TRUE;
+}
+
+gboolean
+retro_core_get_variable_update (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
+
+  if (!self->variable_updated)
+    return FALSE;
+
+  self->variable_updated = FALSE;
+
+  return TRUE;
 }
 
 /* Public */
@@ -2045,6 +2101,44 @@ retro_core_is_running_ahead (RetroCore *self)
 }
 
 /**
+ * retro_core_has_option:
+ * @self: a #RetroCore
+ * @key: the key of the option
+ *
+ * Gets whether the core has an option for the given key.
+ *
+ * Returns: whether the core has an option for the given key
+ */
+gboolean
+retro_core_has_option (RetroCore   *self,
+                       const gchar *key)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
+  g_return_val_if_fail (key != NULL, FALSE);
+
+  return g_hash_table_contains (self->options, key);
+}
+
+/**
+ * retro_core_get_option:
+ * @self: a #RetroCore
+ * @key: the key of the option
+ *
+ * Gets the option for the given key.
+ *
+ * Returns: (transfer none): the option
+ */
+RetroOption *
+retro_core_get_option (RetroCore    *self,
+                       const gchar  *key)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+  g_return_val_if_fail (key != NULL, NULL);
+
+  return RETRO_OPTION (g_hash_table_lookup (self->options, key));
+}
+
+/**
  * retro_core_new:
  * @filename: the filename of a Libretro core
  *
@@ -2079,7 +2173,6 @@ retro_core_new (const gchar *filename)
   retro_core_set_callbacks (self);
   self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
                                              g_free, g_object_unref);
-  self->options = retro_options_new ();
 
   return self;
 }

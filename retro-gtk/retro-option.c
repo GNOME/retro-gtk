@@ -66,6 +66,14 @@ retro_option_init (RetroOption *self)
 
 /* Public */
 
+/**
+ * retro_option_get_key:
+ * @self: a #RetroOption
+ *
+ * Gets the key of @self.
+ *
+ * Returns: (transfer none): the key of @self
+ */
 const gchar *
 retro_option_get_key (RetroOption *self)
 {
@@ -74,6 +82,14 @@ retro_option_get_key (RetroOption *self)
   return self->key;
 }
 
+/**
+ * retro_option_get_description:
+ * @self: a #RetroOption
+ *
+ * Gets the description of @self.
+ *
+ * Returns: (transfer none): the description of @self
+ */
 const gchar *
 retro_option_get_description (RetroOption *self)
 {
@@ -82,6 +98,15 @@ retro_option_get_description (RetroOption *self)
   return self->description;
 }
 
+/**
+ * retro_option_get_values:
+ * @self: a #RetroOption
+ *
+ * Gets the value of @self.
+ *
+ * Returns: (array zero-terminated=1) (element-type utf8) (transfer none): the
+ * value of @self
+ */
 const gchar **
 retro_option_get_values (RetroOption *self)
 {
@@ -90,6 +115,14 @@ retro_option_get_values (RetroOption *self)
   return (const gchar **) self->values;
 }
 
+/**
+ * retro_option_get_value:
+ * @self: a #RetroOption
+ *
+ * Gets the value of @self.
+ *
+ * Returns: (transfer none): the value of @self
+ */
 const gchar *
 retro_option_get_value (RetroOption *self)
 {
@@ -98,6 +131,15 @@ retro_option_get_value (RetroOption *self)
   return self->values[self->value];
 }
 
+/**
+ * retro_option_set_value:
+ * @self: a #RetroOption
+ * @value: the value
+ * @error: return location for a #GError, or %NULL
+ *
+ * Sets the value for @self. An error will be thrown if the value is invalid for
+ * @self.
+ */
 void
 retro_option_set_value (RetroOption  *self,
                         const gchar  *value,

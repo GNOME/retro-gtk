@@ -8,7 +8,7 @@ struct _RetroOption
   gchar *key;
   gchar *description;
   gchar **values;
-  gchar *current;
+  gsize value;
 };
 
 G_DEFINE_TYPE (RetroOption, retro_option, G_TYPE_OBJECT)
@@ -33,7 +33,6 @@ retro_option_finalize (GObject *object)
   g_free (self->key);
   g_free (self->description);
   g_strfreev (self->values);
-  g_free (self->current);
 
   G_OBJECT_CLASS (retro_option_parent_class)->finalize (object);
 }
@@ -78,26 +77,31 @@ retro_option_get_values (RetroOption *self)
 }
 
 const gchar *
-retro_option_get_current (RetroOption *self)
+retro_option_get_value (RetroOption *self)
 {
   g_return_val_if_fail (RETRO_IS_OPTION (self), NULL);
 
-  return self->current;
+  return self->values[self->value];
 }
 
 void
-retro_option_set_current (RetroOption  *self,
-                          const gchar  *current,
-                          GError      **error)
+retro_option_set_value (RetroOption  *self,
+                        const gchar  *value,
+                        GError      **error)
 {
-  g_return_if_fail (RETRO_IS_OPTION (self));
-  g_return_if_fail (current != NULL);
+  gsize i;
 
-  g_message ("%s, %s", self->current, current);
-  if (g_strcmp0 (self->current, current) == 0)
+  g_return_if_fail (RETRO_IS_OPTION (self));
+  g_return_if_fail (value != NULL);
+
+  if (g_strcmp0 (self->values[self->value], value) == 0)
     return;
 
-  if (G_UNLIKELY (g_strv_contains ((const gchar *const *) self->values, current))) {
+  for (i = 0; self->values[i] != NULL; i++)
+    if (g_strcmp0 (self->values[i], value) == 0)
+      break;
+
+  if (G_UNLIKELY (self->values[i] == NULL)) {
     g_set_error_literal (error,
                          RETRO_OPTION_ERROR,
                          RETRO_OPTION_ERROR_INVALID_VALUE,
@@ -106,8 +110,7 @@ retro_option_set_current (RetroOption  *self,
     return;
   }
 
-  g_free (self->current);
-  self->current = g_strdup (current);
+  self->value = i;
 }
 
 RetroOption *
@@ -150,7 +153,6 @@ retro_option_new (const RetroVariable  *variable,
   self->description = g_strndup (variable->value,
                                  description_separator - variable->value);
   self->values = values;
-  self->current = g_strdup (values[0]);
 
   return self;
 }

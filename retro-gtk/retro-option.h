@@ -21,10 +21,10 @@ RetroOption *retro_option_new (const RetroVariable  *variable,
 const gchar *retro_option_get_key (RetroOption *self);
 const gchar *retro_option_get_description (RetroOption *self);
 const gchar **retro_option_get_values (RetroOption *self);
-const gchar *retro_option_get_current (RetroOption *self);
-void retro_option_set_current (RetroOption  *self,
-                               const gchar  *current,
-                               GError      **error);
+const gchar *retro_option_get_value (RetroOption *self);
+void retro_option_set_value (RetroOption  *self,
+                             const gchar  *value,
+                             GError      **error);
 
 G_END_DECLS
 

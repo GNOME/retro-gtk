@@ -82,7 +82,7 @@ retro_options_get_option_value (RetroOptions *self,
 
   option = RETRO_OPTION (g_hash_table_lookup (self->options, key));
 
-  return retro_option_get_current (option);
+  return retro_option_get_value (option);
 }
 
 void
@@ -99,7 +99,7 @@ retro_options_set_option_value (RetroOptions *self,
 
   option = RETRO_OPTION (g_hash_table_lookup (self->options, key));
 
-  retro_option_set_current (option, value, &tmp_error);
+  retro_option_set_value (option, value, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_clear_error (&tmp_error);
 

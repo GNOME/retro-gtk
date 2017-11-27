@@ -17,15 +17,14 @@ retro-gtk depends on the following libraries at compile time and at run time:
 ## Compiling
 
 To configure the compilation, do:
-`./autogen.sh`
+`meson build`
 
 You can specify the installation prefix by doing:
-`./autogen.sh --prefix /my/prefix`
+`meson build --prefix /my/prefix`
 
 Then compile:
-`./configure`
-`make`
+`ninja -C build`
 
 ## Installing
 
-`make install`
+`ninja -C build install`

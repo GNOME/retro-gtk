@@ -233,6 +233,8 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
+  gtk_widget_grab_focus (GTK_WIDGET (source));
+
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (retro_core_view_get_is_pointer_grabbed (self))
       set_input_pressed (self->mouse_button_state, event->button);

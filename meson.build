@@ -33,9 +33,5 @@ configure_file(
   configuration: config_h,
 )
 
-add_project_arguments([
-  '-I' + meson.build_root(),
-], language: 'c')
-
 subdir('retro-gtk')
 subdir('demos')

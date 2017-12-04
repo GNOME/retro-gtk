@@ -104,6 +104,7 @@ retro_gtk_lib = shared_library(
   retro_gtk_sources,
   c_args: retro_gtk_c_args,
   dependencies: retro_gtk_deps,
+  include_directories: confinc,
   install: true,
 )
 
@@ -148,6 +149,13 @@ gnome.generate_vapi(
   install: true,
   packages: retro_gtk_vapi_packages,
   sources: retro_gtk_gir[0],
+)
+
+retro_gtk_dep = declare_dependency(
+  link_with: retro_gtk_lib,
+  sources: retro_gtk_gir,
+  include_directories: confinc,
+  dependencies: retro_gtk_deps,
 )
 
 install_headers(retro_gtk_headers, subdir: 'retro-gtk')

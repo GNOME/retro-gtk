@@ -269,7 +269,7 @@ retro_gl_display_realize (RetroGLDisplay *self)
                                              GL_FLOAT,
                                              GL_FALSE,
                                              sizeof (RetroVertex),
-                                             offsetof (RetroVertex, texture_coordinates));
+                                             (const GLvoid *) offsetof (RetroVertex, texture_coordinates));
   }
 
   glDeleteFramebuffers (1, &self->framebuffer);

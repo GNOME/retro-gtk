@@ -261,7 +261,7 @@ retro_gl_display_realize (RetroGLDisplay *self)
                                              GL_FLOAT,
                                              GL_FALSE,
                                              sizeof (RetroVertex),
-                                             offsetof (RetroVertex, position));
+                                             (const GLvoid *) offsetof (RetroVertex, position));
 
     retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
                                              "texCoord",
@@ -269,7 +269,7 @@ retro_gl_display_realize (RetroGLDisplay *self)
                                              GL_FLOAT,
                                              GL_FALSE,
                                              sizeof (RetroVertex),
-                                             offsetof (RetroVertex, texture_coordinates));
+                                             (const GLvoid *) offsetof (RetroVertex, texture_coordinates));
   }
 
   glDeleteFramebuffers (1, &self->framebuffer);

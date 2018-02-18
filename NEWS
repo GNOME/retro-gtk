@@ -1,4 +1,36 @@
 ==============
+Version 0.14.0
+==============
+
+* Add dependency on libepoxy.
+* RetroCoreView:
+ - Render the video with OpenGL instead of Cairo.
+ - Drop the 'pixbuf' property, bt keep the pixbuf accessor functions.
+   This avoids an automatic and probably useless convertion of the video
+   to a GdkPixbuf as it isn't part of the rendering pipeline anymore.
+ - Grab the focus when clicked, avoiding to miss the player's keyboard
+   events to control the game.
+ - Allow it to be the default widget by default bt setting the
+   'can-default' property to TRUE on construction.
+* Add internal support for GLSL based video filters and port the
+  existing ones to GLSL so they can work with the OpenGL renderer.
+* Add RETRO_VIDEO_FILTER_CRT, a RetroVideoFilter demanding the video
+  display to mimick a CRT TV screen.
+* RetroPixdata:
+ - Add retro_pixdata_get_width/height() and
+   retro_pixdata_load_gl_texture(), allowing to export the pixel data to
+   an OpenGL texture and to draw it at the expected size.
+ - Don't fail when constructing with a non-zero rowstride, as these are
+   valid values.
+* Add the set_rumble_state() virtual method to RetroController and
+  implement it in RetroCoreViewController.
+* Build system change: make retro-gtk-demo properly depend on retro-gtk.
+* The project moved to https://gitlab.gnome.org/GNOME/retro-gtk.
+
+* Bugs fixed:
+ - https://bugzilla.gnome.org/show_bug.cgi?id=790454
+
+==============
 Version 0.13.2
 ==============
 

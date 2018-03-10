@@ -106,6 +106,7 @@ retro_gtk_lib = shared_library(
   dependencies: retro_gtk_deps,
   include_directories: confinc,
   install: true,
+  soversion: 0,
 )
 
 retro_gtk_gir_args = [

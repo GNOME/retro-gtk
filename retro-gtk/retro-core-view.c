@@ -4,6 +4,7 @@
 
 #include <linux/input-event-codes.h>
 #include "retro-cairo-display.h"
+#include "retro-display.h"
 #include "retro-gl-display.h"
 #include "retro-controller-codes.h"
 #include "retro-core-view-controller.h"
@@ -32,7 +33,7 @@ struct _RetroCoreView
 {
   GtkEventBox parent_instance;
   RetroCore *core;
-  RetroGLDisplay *display;
+  RetroDisplay *display;
   GBinding *sensitive_binding;
   RetroPaPlayer *audio_player;
   gboolean can_grab_pointer;
@@ -247,11 +248,11 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
   else {
     set_input_pressed (self->mouse_button_state, event->button);
     self->pointer_is_on_display =
-      retro_gl_display_get_coordinates_on_display (self->display,
-                                                   event->x,
-                                                   event->y,
-                                                   &self->pointer_x,
-                                                   &self->pointer_y);
+      retro_display_get_coordinates_on_display (self->display,
+                                                event->x,
+                                                event->y,
+                                                &self->pointer_x,
+                                                &self->pointer_y);
   }
 
   return FALSE;
@@ -312,11 +313,11 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
   }
   else {
     self->pointer_is_on_display =
-      retro_gl_display_get_coordinates_on_display (self->display,
-                                                   event->x,
-                                                   event->y,
-                                                   &self->pointer_x,
-                                                   &self->pointer_y);
+      retro_display_get_coordinates_on_display (self->display,
+                                                event->x,
+                                                event->y,
+                                                &self->pointer_x,
+                                                &self->pointer_y);
 
   }
 
@@ -469,7 +470,7 @@ retro_core_view_init (RetroCoreView *self)
   g_object_set ((GtkWidget*) self, "can-default", TRUE, NULL);
   g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
 
-  self->display = g_object_ref_sink (retro_gl_display_new ());
+  self->display = g_object_ref_sink (RETRO_DISPLAY (retro_gl_display_new ()));
   gtk_widget_set_visible (GTK_WIDGET (self->display), TRUE);
   g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);
   gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->display));
@@ -513,13 +514,13 @@ retro_core_view_set_core (RetroCoreView *self,
 
   if (self->core != NULL) {
     g_clear_object (&self->core);
-    retro_gl_display_set_core (self->display, NULL);
+    retro_display_set_core (self->display, NULL);
     retro_pa_player_set_core (self->audio_player, NULL);
   }
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    retro_gl_display_set_core (self->display, core);
+    retro_display_set_core (self->display, core);
     retro_pa_player_set_core (self->audio_player, core);
   }
 }
@@ -538,7 +539,7 @@ retro_core_view_set_pixbuf (RetroCoreView *self,
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
   g_return_if_fail (pixbuf == NULL || GDK_IS_PIXBUF (pixbuf));
 
-  retro_gl_display_set_pixbuf (self->display, pixbuf);
+  retro_display_set_pixbuf (self->display, pixbuf);
 }
 
 /**
@@ -554,7 +555,7 @@ retro_core_view_get_pixbuf (RetroCoreView *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), NULL);
 
-  return retro_gl_display_get_pixbuf (self->display);
+  return retro_display_get_pixbuf (self->display);
 }
 
 /**
@@ -570,7 +571,7 @@ retro_core_view_set_filter (RetroCoreView    *self,
 {
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
 
-  retro_gl_display_set_filter (self->display, filter);
+  retro_display_set_filter (self->display, filter);
 }
 
 /**

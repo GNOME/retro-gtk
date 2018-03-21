@@ -34,4 +34,3 @@ gboolean retro_cairo_display_get_coordinates_on_display (RetroCairoDisplay *self
 G_END_DECLS
 
 #endif /* RETRO_CAIRO_DISPLAY_H */
-

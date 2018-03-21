@@ -3,6 +3,7 @@
 #include "retro-gl-display.h"
 
 #include <epoxy/gl.h>
+#include "retro-display.h"
 #include "retro-glsl-filter.h"
 #include "retro-pixdata.h"
 
@@ -21,7 +22,11 @@ struct _RetroGLDisplay
   GLuint texture;
 };
 
-G_DEFINE_TYPE (RetroGLDisplay, retro_gl_display, GTK_TYPE_GL_AREA)
+static void retro_display_interface_init (RetroDisplayInterface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (RetroGLDisplay, retro_gl_display, GTK_TYPE_GL_AREA,
+                         G_IMPLEMENT_INTERFACE (RETRO_TYPE_DISPLAY,
+                                                retro_display_interface_init))
 
 typedef struct {
   struct {
@@ -406,6 +411,52 @@ retro_gl_display_init (RetroGLDisplay *self)
                            (GCallback) queue_draw,
                            GTK_WIDGET (self),
                            0);
+}
+
+static GdkPixbuf *
+get_pixbuf (RetroDisplay *self) {
+  return retro_gl_display_get_pixbuf (RETRO_GL_DISPLAY (self));
+}
+
+static void
+set_pixbuf (RetroDisplay *self,
+            GdkPixbuf    *pixbuf) {
+  retro_gl_display_set_pixbuf (RETRO_GL_DISPLAY (self), pixbuf);
+}
+
+static void
+set_core (RetroDisplay *self,
+          RetroCore    *core) {
+  retro_gl_display_set_core (RETRO_GL_DISPLAY (self), core);
+}
+
+static void
+set_filter (RetroDisplay     *self,
+            RetroVideoFilter  filter) {
+  retro_gl_display_set_filter (RETRO_GL_DISPLAY (self), filter);
+}
+
+static gboolean
+get_coordinates_on_display (RetroDisplay *self,
+                            gdouble       widget_x,
+                            gdouble       widget_y,
+                            gdouble      *display_x,
+                            gdouble      *display_y) {
+  return retro_gl_display_get_coordinates_on_display (RETRO_GL_DISPLAY (self),
+                                                      widget_x,
+                                                      widget_y,
+                                                      display_x,
+                                                      display_y);
+}
+
+static void
+retro_display_interface_init (RetroDisplayInterface *iface)
+{
+  iface->get_pixbuf = get_pixbuf;
+  iface->set_pixbuf = set_pixbuf;
+  iface->set_core = set_core;
+  iface->set_filter = set_filter;
+  iface->get_coordinates_on_display = get_coordinates_on_display;
 }
 
 static void

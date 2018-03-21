@@ -20,6 +20,7 @@ retro_gtk_sources = [
   'retro-core-descriptor.c',
   'retro-core-view.c',
   'retro-core-view-controller.c',
+  'retro-display.c',
   'retro-environment.c',
   'retro-game-info.c',
   'retro-gl-display.c',

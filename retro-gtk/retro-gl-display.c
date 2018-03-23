@@ -398,11 +398,11 @@ retro_gl_display_init (RetroGLDisplay *self)
                            GTK_WIDGET (self),
                            0);
 
-  g_signal_connect_object (G_OBJECT (self),
-                           "render",
-                           (GCallback) retro_gl_display_render,
-                           GTK_WIDGET (self),
-                           0);
+  /* g_signal_connect_object (G_OBJECT (self), */
+  /*                          "render", */
+  /*                          (GCallback) retro_gl_display_render, */
+  /*                          GTK_WIDGET (self), */
+  /*                          0); */
 
   self->filter = RETRO_VIDEO_FILTER_SMOOTH;
 

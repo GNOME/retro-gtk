@@ -368,11 +368,34 @@ retro_gl_display_finalize (GObject *object)
 }
 
 static void
+realize (GtkWidget *widget) {
+}
+
+static void
+unrealize (GtkWidget *widget) {
+}
+
+static gboolean
+draw (GtkWidget *widget,
+      cairo_t   *cr)
+{
+  return TRUE;
+}
+
+static void
 retro_gl_display_class_init (RetroGLDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = retro_gl_display_finalize;
+
+  /* widget_class->realize = realize; */
+  /* widget_class->unrealize = unrealize; */
+  /* widget_class->map = map; */
+  /* widget_class->unmap = unmap; */
+  /* widget_class->size_allocate = allocate; */
+  widget_class->draw = draw;
 }
 
 static void

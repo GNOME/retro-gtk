@@ -386,17 +386,17 @@ queue_draw (GObject    *sender,
 static void
 retro_gl_display_init (RetroGLDisplay *self)
 {
-  g_signal_connect_object (G_OBJECT (self),
-                           "realize",
-                           (GCallback) retro_gl_display_realize,
-                           GTK_WIDGET (self),
-                           0);
+  /* g_signal_connect_object (G_OBJECT (self), */
+  /*                          "realize", */
+  /*                          (GCallback) retro_gl_display_realize, */
+  /*                          GTK_WIDGET (self), */
+  /*                          0); */
 
-  g_signal_connect_object (G_OBJECT (self),
-                           "unrealize",
-                           (GCallback) retro_gl_display_unrealize,
-                           GTK_WIDGET (self),
-                           0);
+  /* g_signal_connect_object (G_OBJECT (self), */
+  /*                          "unrealize", */
+  /*                          (GCallback) retro_gl_display_unrealize, */
+  /*                          GTK_WIDGET (self), */
+  /*                          0); */
 
   /* g_signal_connect_object (G_OBJECT (self), */
   /*                          "render", */

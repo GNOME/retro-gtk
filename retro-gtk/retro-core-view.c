@@ -359,6 +359,79 @@ retro_core_view_get_mouse_button_state (RetroCoreView *self,
   return get_input_state (self->mouse_button_state, button);
 }
 
+/* FIXME This is a workaround for slowdowns in RetroGlDisplay.
+ * It uses the RetroCairoDisplay for filters it can handle.
+ */
+static void
+retro_core_view_prepare_and_add_display (RetroCoreView    *self,
+                                         RetroDisplay     *display,
+                                         RetroVideoFilter  filter)
+{
+  retro_display_set_filter (display, filter);
+  gtk_widget_set_visible (GTK_WIDGET (display), TRUE);
+  g_object_set (GTK_WIDGET (display), "can-focus", FALSE, NULL);
+  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (display));
+}
+
+/* FIXME This is a workaround for slowdowns in RetroGlDisplay.
+ * It uses the RetroCairoDisplay for filters it can handle.
+ */
+static void
+retro_core_view_set_display_for_filter (RetroCoreView    *self,
+                                        RetroVideoFilter  filter)
+{
+  RetroDisplay *new_display;
+  GdkPixbuf *pixbuf;
+
+  switch (filter) {
+  case RETRO_VIDEO_FILTER_SMOOTH:
+  case RETRO_VIDEO_FILTER_SHARP:
+    if (self->display == NULL) {
+      self->display = g_object_ref_sink (RETRO_DISPLAY (retro_cairo_display_new ()));
+      retro_core_view_prepare_and_add_display (self, self->display, filter);
+
+      return;
+    }
+
+    if (RETRO_IS_CAIRO_DISPLAY (self->display)) {
+      retro_display_set_filter (self->display, filter);
+
+      return;
+    }
+
+    new_display = g_object_ref_sink (RETRO_DISPLAY (retro_cairo_display_new ()));
+
+    break;
+  default:
+    if (self->display == NULL) {
+      self->display = g_object_ref_sink (RETRO_DISPLAY (retro_gl_display_new ()));
+      retro_core_view_prepare_and_add_display (self, self->display, filter);
+
+      return;
+    }
+
+    if (RETRO_IS_GL_DISPLAY (self->display)) {
+      retro_display_set_filter (self->display, filter);
+
+      return;
+    }
+
+    new_display = g_object_ref_sink (RETRO_DISPLAY (retro_gl_display_new ()));
+
+    break;
+  }
+
+  retro_display_set_core (new_display, self->core);
+  pixbuf = retro_display_get_pixbuf (self->display);
+  retro_display_set_pixbuf (new_display, pixbuf);
+  gtk_container_remove (GTK_CONTAINER (self), GTK_WIDGET (self->display));
+
+  retro_core_view_prepare_and_add_display (self, new_display, filter);
+
+  g_object_unref (self->display);
+  self->display = new_display;
+}
+
 static void
 retro_core_view_finalize (GObject *object)
 {
@@ -470,10 +543,8 @@ retro_core_view_init (RetroCoreView *self)
   g_object_set ((GtkWidget*) self, "can-default", TRUE, NULL);
   g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
 
-  self->display = g_object_ref_sink (RETRO_DISPLAY (retro_gl_display_new ()));
-  gtk_widget_set_visible (GTK_WIDGET (self->display), TRUE);
-  g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);
-  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->display));
+  /* FIXME This is a workaround for slowdowns in RetroGlDisplay. */
+  retro_core_view_set_display_for_filter (self, RETRO_VIDEO_FILTER_SMOOTH);
 
   self->sensitive_binding =
     g_object_bind_property (G_OBJECT (self), "sensitive",
@@ -570,6 +641,11 @@ retro_core_view_set_filter (RetroCoreView    *self,
                             RetroVideoFilter  filter)
 {
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
+
+  /* FIXME This is a workaround for slowdowns in RetroGlDisplay.
+   * Once fixed we should just set the display's filter.
+   */
+  retro_core_view_set_display_for_filter (self, filter);
 
   retro_display_set_filter (self->display, filter);
 }

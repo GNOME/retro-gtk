@@ -1,0 +1,15 @@
+        {
+            "name": "test-data",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "mkdir -p /app/tests/",
+                "install -m644 -pD test_libretro.png /app/tests/test_libretro.png"
+            ],
+            "sources" : [
+                {
+                    "type" : "file",
+                    "path" : "test_libretro.png",
+                    "dest-filename" : "test_libretro.png"
+                }
+            ]
+        }

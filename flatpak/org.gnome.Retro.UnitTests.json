@@ -1,0 +1,78 @@
+{
+    "app-id" : "org.gnome.Retro.UnitTests",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "master",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "retro-unit-tests",
+    "tags" : [
+        "nightly"
+    ],
+    "desktop-file-name-prefix" : "(Nightly) ",
+    "finish-args" : [
+        "--share=network",
+        "--share=ipc",
+        "--socket=x11",
+        "--socket=wayland",
+        "--device=dri",
+        "--socket=pulseaudio"
+    ],
+    "build-options" : {
+        "cflags" : "-O2 -g",
+        "cxxflags" : "-O2 -g",
+        "env" : {
+        }
+    },
+    "cleanup" : [
+        "/include",
+        "/lib/pkgconfig",
+        "/share/pkgconfig",
+        "/share/aclocal",
+        "/man",
+        "/share/man",
+        "/share/gtk-doc",
+        "*.la",
+        "*.a",
+        "/lib/girepository-1.0",
+        "/share/dbus-1",
+        "/share/doc",
+        "/share/gir-1.0"
+    ],
+    "modules" : [
+        "libretro-cores/libretro-samples.json",
+        "tests/test-data.json",
+        {
+            "name" : "retro-unit-tests",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "mkdir -p /app/bin/",
+                "install -m755 -pD retro-unit-tests /app/bin/retro-unit-tests",
+                "install -m755 -pD org.gnome.Retro.UnitTests.desktop /app/share/applications/org.gnome.Retro.UnitTests.desktop"
+            ],
+            "sources" : [
+                {
+                    "type" : "script",
+                    "commands" : [
+                        "retro-reftest /app/lib/libretro/test_libretro.so -v /app/tests/test_libretro.png"
+                    ],
+                    "dest-filename" : "retro-unit-tests"
+                },
+                {
+                    "type" : "file",
+                    "path" : "org.gnome.Retro.UnitTests.desktop",
+                    "dest-filename" : "org.gnome.Retro.UnitTests.desktop"
+                }
+            ]
+        },
+        {
+            "name" : "retro-gtk",
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/retro-gtk.git"
+                }
+            ]
+        }
+    ]
+}

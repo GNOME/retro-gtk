@@ -34,4 +34,5 @@ configure_file(
 )
 
 subdir('retro-gtk')
+subdir('tests')
 subdir('demos')

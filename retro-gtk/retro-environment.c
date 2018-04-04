@@ -430,6 +430,9 @@ on_video_refresh (guint8 *data,
   if (self == NULL)
     g_return_if_reached ();
 
+  if (retro_core_is_running_ahead (self))
+    return;
+
   retro_pixdata_init (&pixdata,
                       data, self->pixel_format,
                       pitch, width, height,
@@ -457,6 +460,9 @@ on_audio_sample (gint16 left,
   if (self == NULL)
     g_return_if_reached ();
 
+  if (retro_core_is_running_ahead (self))
+    return;
+
   if (self->sample_rate <= 0.0)
     return;
 
@@ -473,6 +479,10 @@ on_audio_sample_batch (gint16 *data,
 
   if (self == NULL)
     g_return_val_if_reached (0);
+
+  if (retro_core_is_running_ahead (self))
+    // FIXME What should be returned?
+    return 0;
 
   if (self->sample_rate <= 0.0)
     return 0;

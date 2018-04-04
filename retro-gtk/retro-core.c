@@ -31,6 +31,7 @@ enum {
   PROP_GAME_LOADED,
   PROP_SUPPORT_NO_GAME,
   PROP_FRAMES_PER_SECOND,
+  PROP_RUNAHEAD,
   N_PROPS,
 };
 
@@ -192,6 +193,10 @@ retro_core_get_property (GObject    *object,
     g_value_set_double (value, retro_core_get_frames_per_second (self));
 
     break;
+  case PROP_RUNAHEAD:
+    g_value_set_uint (value, retro_core_get_runahead (self));
+
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 
@@ -234,6 +239,10 @@ retro_core_set_property (GObject      *object,
     break;
   case PROP_SUPPORT_NO_GAME:
     retro_core_set_support_no_game (self, g_value_get_boolean (value));
+
+    break;
+  case PROP_RUNAHEAD:
+    retro_core_set_runahead (self, g_value_get_uint (value));
 
     break;
   default:
@@ -391,6 +400,23 @@ retro_core_class_init (RetroCoreClass *klass)
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);
+
+  /**
+   * RetroCore:runahead:
+   *
+   * The number of frame to run ahead of time.
+   */
+  properties[PROP_RUNAHEAD] =
+    g_param_spec_uint ("runahead",
+                       "Runahead",
+                       "The number of frame to run ahead of time",
+                       0,
+                       G_MAXUINT,
+                       0,
+                       G_PARAM_READWRITE |
+                       G_PARAM_STATIC_NAME |
+                       G_PARAM_STATIC_NICK |
+                       G_PARAM_STATIC_BLURB);
 
   g_object_class_install_properties (G_OBJECT_CLASS (klass), N_PROPS, properties);
 
@@ -1396,13 +1422,109 @@ void
 retro_core_run (RetroCore *self)
 {
   RetroRun run;
+  RetroSerializeSize serialize_size = NULL;
+  RetroSerialize serialize = NULL;
+  RetroUnserialize unserialize = NULL;
+  guint8 *data;
+  gsize size;
+  gsize new_size;
+  gboolean success;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  retro_core_push_cb_data (self);
   run = retro_module_get_run (self->module);
+
+  if (self->runahead == 0) {
+    self->run_remaining = 0;
+    retro_core_push_cb_data (self);
+    run ();
+    retro_core_pop_cb_data ();
+
+    return;
+  }
+
+  serialize_size = retro_module_get_serialize_size (self->module);
+
+  retro_core_push_cb_data (self);
+  size = serialize_size ();
+  retro_core_pop_cb_data ();
+
+  if (size == 0) {
+    self->run_remaining = 0;
+    retro_core_push_cb_data (self);
+    run ();
+    retro_core_pop_cb_data ();
+
+    g_critical ("Couldn't run ahead: serialization not supported.");
+
+    return;
+  }
+
+  self->run_remaining = self->runahead;
+
+  retro_core_push_cb_data (self);
   run ();
   retro_core_pop_cb_data ();
+
+  self->run_remaining--;
+
+  new_size = serialize_size ();
+
+  if (size > new_size) {
+    g_critical ("Couldn't run ahead: unexpected serialization size %"
+                G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
+                new_size, size);
+
+    return;
+  }
+
+  size = new_size;
+  data = g_new0 (guint8, size);
+
+  serialize = retro_module_get_serialize (self->module);
+  retro_core_push_cb_data (self);
+  success = serialize (data, size);
+  retro_core_pop_cb_data ();
+
+  if (!success) {
+    g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
+
+    g_free (data);
+
+    return;
+  }
+
+  retro_core_push_cb_data (self);
+  for (; self->run_remaining >= 0; self->run_remaining--)
+    run ();
+  retro_core_pop_cb_data ();
+
+  new_size = serialize_size ();
+
+  if (size > new_size) {
+    g_critical ("Couldn't run ahead: unexpected deserialization size %"
+                G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
+                new_size, size);
+
+    g_free (data);
+
+    return;
+  }
+
+  unserialize = retro_module_get_unserialize (self->module);
+  retro_core_push_cb_data (self);
+  success = unserialize ((guint8 *) data, size);
+  retro_core_pop_cb_data ();
+
+  if (!success) {
+    g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
+
+    g_free (data);
+
+    return;
+  }
+
+  g_free (data);
 }
 
 /**
@@ -1874,6 +1996,29 @@ retro_core_iterate_controllers (RetroCore *self)
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
   return retro_controller_iterator_new (self->controllers);
+}
+
+guint
+retro_core_get_runahead (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  return self->runahead;
+}
+
+void
+retro_core_set_runahead (RetroCore *self,
+                         guint      runahead)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  self->runahead = runahead;
+}
+
+gboolean
+retro_core_is_running_ahead (RetroCore *self)
+{
+  return self->run_remaining > 0;
 }
 
 /**

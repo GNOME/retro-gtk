@@ -64,6 +64,9 @@ void retro_core_set_controller (RetroCore       *self,
 void retro_core_set_keyboard (RetroCore *self,
                               GtkWidget *widget);
 RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
+guint retro_core_get_runahead (RetroCore *self);
+void retro_core_set_runahead (RetroCore *self,
+                              guint      runahead);
 
 G_END_DECLS
 

@@ -52,6 +52,9 @@ struct _RetroCore
   gulong key_press_event_id;
   gulong key_release_event_id;
   RetroOptions *options;
+
+  guint runahead;
+  gssize run_remaining;
 };
 
 void retro_core_push_cb_data (RetroCore *self);
@@ -74,6 +77,7 @@ void retro_core_set_controller_port_device (RetroCore           *self,
 void retro_core_set_controller_descriptors (RetroCore            *self,
                                             RetroInputDescriptor *input_descriptors,
                                             gsize                 length);
+gboolean retro_core_is_running_ahead (RetroCore *self);
 
 G_END_DECLS
 

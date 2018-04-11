@@ -948,7 +948,7 @@ retro_core_load_medias (RetroCore *self,
   GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  length = g_strv_length (self->media_uris);
+  length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
   if (length == 0) {
     retro_core_prepare (self);

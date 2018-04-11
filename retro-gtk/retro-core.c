@@ -159,7 +159,7 @@ retro_core_finalize (GObject *object)
   g_free (self->libretro_path);
   g_free (self->content_directory);
   g_free (self->save_directory);
-  g_object_unref (self->keyboard_widget);
+  g_clear_object (&self->keyboard_widget);
 
   G_OBJECT_CLASS (retro_core_parent_class)->finalize (object);
 }

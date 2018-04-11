@@ -285,7 +285,8 @@ retro_gl_display_realize (RetroGLDisplay *self)
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  retro_glsl_filter_use_program (self->glsl_filter[filter]);
+  if (self->glsl_filter[filter] != NULL)
+    retro_glsl_filter_use_program (self->glsl_filter[filter]);
 }
 
 static void

@@ -13,6 +13,14 @@ struct _RetroMainLoop
 
 G_DEFINE_TYPE (RetroMainLoop, retro_main_loop, G_TYPE_OBJECT)
 
+typedef struct _RetroTimeoutSource RetroTimeoutSource;
+
+struct _RetroTimeoutSource
+{
+  GSource source;
+  guint64 interval;
+};
+
 enum  {
   PROP_CORE = 1,
   PROP_SPEED_RATE,
@@ -184,6 +192,83 @@ retro_main_loop_run (RetroMainLoop *self)
   return TRUE;
 }
 
+static void
+retro_timeout_set_expiration (RetroTimeoutSource *timeout_source,
+                              gint64              current_time)
+{
+  gint64 expiration;
+
+  expiration = current_time + timeout_source->interval;
+
+  g_source_set_ready_time ((GSource *) timeout_source, expiration);
+}
+
+static gboolean
+retro_timeout_dispatch (GSource     *source,
+                        GSourceFunc  callback,
+                        gpointer     user_data)
+{
+  RetroTimeoutSource *timeout_source = (RetroTimeoutSource *)source;
+  gboolean again;
+
+  if (!callback) {
+    g_warning ("Timeout source dispatched without callback\n"
+               "You must call g_source_set_callback().");
+
+    return FALSE;
+  }
+
+  again = callback (user_data);
+
+  if (again)
+    retro_timeout_set_expiration (timeout_source, g_source_get_time (source));
+
+  return again;
+}
+
+static GSourceFuncs retro_timeout_funcs =
+{
+  NULL,
+  NULL,
+  retro_timeout_dispatch,
+  NULL
+};
+
+static GSource *
+retro_timeout_source_new (guint64 interval)
+{
+  GSource *source = g_source_new (&retro_timeout_funcs, sizeof (RetroTimeoutSource));
+  RetroTimeoutSource *timeout_source = (RetroTimeoutSource *)source;
+
+  timeout_source->interval = interval;
+  retro_timeout_set_expiration (timeout_source, g_get_monotonic_time ());
+
+  return source;
+}
+
+static guint
+retro_timeout_add (guint64        interval,
+                   GSourceFunc    function,
+                   gpointer       data,
+                   GDestroyNotify notify)
+{
+  GSource *source;
+  guint id;
+
+  g_return_val_if_fail (function != NULL, 0);
+
+  source = retro_timeout_source_new (interval);
+
+  g_source_set_priority (source, G_PRIORITY_HIGH);
+
+  g_source_set_callback (source, function, data, notify);
+  id = g_source_attach (source, NULL);
+
+  g_source_unref (source);
+
+  return id;
+}
+
 /* Public */
 
 /**
@@ -293,11 +378,10 @@ retro_main_loop_start (RetroMainLoop *self)
 
   // TODO What if fps <= 0?
   fps = retro_core_get_frames_per_second (self->core);
-  self->loop = g_timeout_add_full (G_PRIORITY_DEFAULT,
-                                   (guint) (1000 / (fps * self->speed_rate)),
-                                   (GSourceFunc) retro_main_loop_run,
-                                   g_object_ref (self),
-                                   g_object_unref);
+  self->loop = retro_timeout_add ((guint64) (1000000 / (fps * self->speed_rate)),
+                                  (GSourceFunc) retro_main_loop_run,
+                                  g_object_ref (self),
+                                  g_object_unref);
 }
 
 /**
@@ -345,3 +429,4 @@ retro_main_loop_new (RetroCore *core)
 {
   return g_object_new (RETRO_TYPE_MAIN_LOOP, "core", core, NULL);
 }
+

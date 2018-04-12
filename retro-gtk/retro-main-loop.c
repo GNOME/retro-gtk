@@ -179,6 +179,14 @@ retro_main_loop_init (RetroMainLoop *self)
                            0);
 }
 
+static gint64 interval, last;
+
+static guint
+retro_timeout_add (guint64        interval,
+                   GSourceFunc    function,
+                   gpointer       data,
+                   GDestroyNotify notify);
+
 static gboolean
 retro_main_loop_run (RetroMainLoop *self)
 {
@@ -187,9 +195,22 @@ retro_main_loop_run (RetroMainLoop *self)
   if (self->core == NULL || self->loop < 0)
     return FALSE;
 
+  gint64 now = g_get_monotonic_time ();
+  gint64 actual = now - last;
+  gint64 diff = actual - interval;
+  last = now;
+  /* g_message ("expected %ld actual %ld diff %ld", interval, actual, diff); */
+
   retro_core_run (self->core);
 
-  return TRUE;
+  self->loop = retro_timeout_add (interval - diff,
+                                  (GSourceFunc) retro_main_loop_run,
+                                  g_object_ref (self),
+                                  g_object_unref);
+
+  return FALSE;
+
+  /* return TRUE; */
 }
 
 static void
@@ -378,6 +399,7 @@ retro_main_loop_start (RetroMainLoop *self)
 
   // TODO What if fps <= 0?
   fps = retro_core_get_frames_per_second (self->core);
+  interval = (1000000 / (fps * self->speed_rate));
   self->loop = retro_timeout_add ((guint64) (1000000 / (fps * self->speed_rate)),
                                   (GSourceFunc) retro_main_loop_run,
                                   g_object_ref (self),

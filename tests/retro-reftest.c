@@ -248,6 +248,7 @@ retro_reftest_test_video (RetroReftest *reftest)
   GError *error = NULL;
 
   screenshot = retro_pixdata_to_pixbuf (reftest->pixdata);
+  g_assert_nonnull (screenshot);
 
   reference_screenshot = gdk_pixbuf_new_from_file (arg_video_file, &error);
   g_assert_no_error (error);

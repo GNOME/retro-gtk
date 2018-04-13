@@ -261,6 +261,8 @@ retro_reftest_test_video (RetroReftest *reftest)
     g_object_unref (reference_screenshot);
 
     g_test_fail ();
+
+    return;
   }
 
   g_object_unref (screenshot);

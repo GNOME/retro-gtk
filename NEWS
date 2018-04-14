@@ -1,4 +1,65 @@
 ==============
+Version 0.15.3
+==============
+
+* Add the 'runahead' property to RetroCore. This allow the core to
+  output the video and audio of a future frame, allowing to compensate
+  for input lag from the original hardware for console emulator cores.
+* Options:
+ - Make RetroOption public.
+ - Add RetroOptionIterator to iterate over an option set.
+ - Add retro_core_has_option(), retro_core_get_option() and retro_core_iterate_options().
+ - core: Add 'options-set' signal
+   It is emitted when the core initially sets the options during boot. This
+   allows setting options that require being set before the core is
+   initialized.
+* Add RetroKeyJoypadMapping and let RetroCoreView use one to set its
+  keyboard to virtual joypad mapping.
+* Make RetroCoreView set default controllers only for actually supported
+  capabilities and make RetroCoreViewController return only the
+  capabilities matching its type.
+* Add retro_joypad_id_to_button_code() and
+  retro_joypad_id_from_button_code() to convert a Linux button event
+  code into a RetroJoypadId and vice versa.
+* Add RETRO_RUMBLE_EFFECT_COUNT, allowing to know the number of values
+  of RetrormbleEffect.
+* Libretro environment commands:
+ - Implement RETRO_ENVIRONMENT_SET_GEOMETRY to allow cores to change
+   aspect ratio separately from framerate.
+ - Implement RETRO_ENVIRONMENT_GET_LANGUAGE to allow cores to know the
+   user's language.
+ - Fix a missing return when setting the disk control interface, which
+   let the cores think we don't support it.
+* add documentation of what's unimplemented from Libretro, updated to retroarch 1.7.2
+  Add UNIMPLEMENTED.md
+    This documents which parts of Libretro are not yet implemented by
+    retro-gtk.
+* Tests:
+ - Add the retro-reftest program allowing to easily run reference tests
+   on Libretro cores, based on retro-gtk and test descriptor files.
+
+  generate tests references
+  Boot test
+  Options
+  FastForward test
+  State None, State Refresh
+  Run test
+  Video test
+  controllers and inputs
+* Add retro-dummy dummy Libretro core, used to run unit tests and reference tests.
+* Add RetroCore unit tests
+* retro-demo will take params after the core to be medias to load into the core
+* Fix various runtime warnings and potential crashes.
+*
+    build: Add options and slight cleanup
+
+    Add the 'introspection', 'demos', 'build-tests' and 'install-tests'
+    options allowing you to disable instrospection, demos and tests.
+
+* improve some internal docs (keyboard key convertion)
+
+
+==============
 Version 0.14.0
 ==============
 

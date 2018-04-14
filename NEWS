@@ -1,4 +1,55 @@
 ==============
+Version 0.15.3
+==============
+
+* Add the 'runahead' property to RetroCore. This allow the core to
+  output the video and audio of a future frame, allowing to compensate
+  for input lag from the original hardware for console emulator cores.
+* Add RetroOption and RetroOptionIterator to the public and add the
+  retro_core_has_option(), retro_core_get_option() and
+  retro_core_iterate_options() accessors and the 'options-set' signal to
+  Retrocore. The signal is emitted when the core initially sets the
+  options during boot. This allows setting options that require being
+  set before the core is initialized.
+* Add RetroKeyJoypadMapping and let RetroCoreView use one to set its
+  keyboard to virtual joypad mapping.
+* Make RetroCoreView set default controllers only for actually supported
+  capabilities and make RetroCoreViewController return only the
+  capability matching its type.
+* Add retro_joypad_id_to_button_code() and
+  retro_joypad_id_from_button_code() to convert a Linux button event
+  code into a RetroJoypadId and vice versa.
+* Add RETRO_RUMBLE_EFFECT_COUNT, allowing to know the number of values
+  of RetrormbleEffect.
+* Implement the RETRO_ENVIRONMENT_SET_GEOMETRY Libretro environment
+  command, allowing cores to change the aspect ratio separately from the
+  framerate.
+* Implement the RETRO_ENVIRONMENT_GET_LANGUAGE Libretro environment
+  command, allowing cores to know the user's language.
+* Fix a missing return in the implementation of the
+  RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE Libretro environment
+  command, which could have led the cores to think we don't support it.
+* Fix various runtime warnings and potential crashes.
+* Improve internal documentation on keyboard key convertion.
+* Add UNIMPLEMENTED.md as documentation of what is unimplemented from
+  the Libretro API, updated to retroarch 1.7.2.
+* Add the retro-reftest program allowing to easily run reference tests
+  on Libretro cores, based on retro-gtk and test descriptor files. It
+  allows to generate the test references via the --generate option, and
+  it can that check a core boots, that it has the expected options, that
+  its inter state can or can't be accessed, that a frame runs, that the
+  video output is as expected and it can be controlled by setting the
+  controllers and their inputs.
+* Add the retro-dummy dummy Libretro core, used to run unit tests and
+  reference tests.
+* Add some RetroCore unit tests.
+* Let retro-demo take parameters for medias to load into the core.
+* Add the 'introspection', 'demos', 'build-tests' and 'install-tests'
+  options to the ME4son build system, allowing you to disable
+  compilation of instrospection, demos and tests or to enable
+  installation of tests.
+
+==============
 Version 0.14.0
 ==============
 

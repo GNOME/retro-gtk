@@ -1,4 +1,62 @@
 ==============
+Version 0.15.3
+==============
+
+* Add the RetroOption, RetroOptionIterator and RetroKeyJoypadMapping
+  types to the public API.
+* RetroCore:
+ - Add the 'runahead' property. This allow the core to output the video
+   and audio of a future frame, allowing to compensate for input lag
+   from the original hardware for console emulator cores.
+ - Add the retro_core_has_option(), retro_core_get_option() and
+   retro_core_iterate_options() option accessors.
+ - Add the 'options-set' signal. The signal is emitted when the core
+   initially sets the options during boot. This allows setting options
+   that require being set before the core is initialized.
+* RetroCoreView:
+ - Use a RetroKeyJoypadMapping to let users set its keyboard to virtual
+   joypad mapping.
+ - Set default controllers only for actually supported capabilities.
+* Make RetroCoreViewController return only the capability matching its
+  type and not all the the capabilities of its RetroCoreView.
+* Add retro_joypad_id_to_button_code() and
+  retro_joypad_id_from_button_code() to convert a Linux button event
+  code into a RetroJoypadId and vice versa.
+* Add RETRO_RUMBLE_EFFECT_COUNT, allowing to know the number of values
+  of RetrormbleEffect.
+* Libretro environment commands:
+ - Implement RETRO_ENVIRONMENT_SET_GEOMETRY, allowing cores to change
+   the aspect ratio separately from the framerate.
+ - Implement RETRO_ENVIRONMENT_GET_LANGUAGE, allowing cores to know the
+   user's language.
+ - Fix a missing return in the implementation of
+   RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE, which could have led
+   the cores to think we don't support it.
+* Fix various runtime warnings and potential crashes.
+* Improve internal documentation on keyboard key convertion.
+* Add UNIMPLEMENTED.md as documentation of what is unimplemented from
+  the Libretro API, updated to retroarch 1.7.2.
+* Add the retro-reftest program allowing to easily run reference tests
+  on Libretro cores, based on retro-gtk and test descriptor files.
+ - It allows to generate the test references via the --generate option.
+ - It allows to control the core by setting controllers and their
+   inputs.
+ - It can check that a core boots.
+ - It can check that it has the expected options.
+ - It can check that its internal state can or can't be accessed.
+ - It can check that a frame runs.
+ - It can check that the video output is as expected
+* Add the retro-dummy dummy Libretro core, used to run unit tests and
+  reference tests.
+* Add some RetroCore unit tests.
+* Let retro-demo take parameters for medias to load into the core.
+* Add the following options to Meson:
+ - 'introspection' to disable compilation of instrospection.
+ - 'demos' to disable compilation of demos.
+ - 'build-tests' to disable compilation of tests.
+ - 'install-tests' to enable installation of tests.
+
+==============
 Version 0.14.0
 ==============
 

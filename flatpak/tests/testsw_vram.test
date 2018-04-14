@@ -1,0 +1,7 @@
+[Retro Reftest]
+Path=/testsw_vram
+Core=/app/lib/libretro/testsw_vram_libretro.so
+
+[Frame 0]
+Tests=Run;Video;
+Video=testsw_vram.png

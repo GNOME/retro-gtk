@@ -1,0 +1,7 @@
+[Retro Reftest]
+Path=/advanced_tests
+Core=/app/lib/libretro/advanced_tests_libretro.so
+
+[Frame 0]
+Tests=Run;Video;
+Video=advanced_tests.png

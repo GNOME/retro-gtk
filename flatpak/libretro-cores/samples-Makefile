@@ -1,13 +1,29 @@
 NULL=
 
 CORES= \
+	audio/audio_callback/testaudio_callback_libretro.so \
+	audio/audio_no_callback/testaudio_no_callback_libretro.so \
+	audio/audio_playback_wav/testaudio_playback_wav_libretro.so \
+	input/button_test/testinput_buttontest_libretro.so \
+	tests/cruzes/cruzes_libretro.so \
+	tests/test_advanced/advanced_tests_libretro.so \
 	tests/test/test_libretro.so \
+	video/opengl/libretro_test_gl_compute_shaders/testgl_compute_shaders_libretro.so \
+	video/opengl/libretro_test_gl_fixedfunction/testgl_ff_libretro.so \
+	video/opengl/libretro_test_gl_shaders/testgl_libretro.so \
+	video/software/rendering_direct_to_vram/testsw_vram_libretro.so \
+	video/software/rendering/testsw_libretro.so \
 	$(NULL)
 
-all: tests/test/test_libretro.so
+LIBRETRODIR=$(DESTDIR)$(prefix)/lib/libretro/
 
-tests/test/test_libretro.so:
+all: $(CORES)
+
+%.so:
 	make -C $(@D)
 
-install: $(CORES)
-	install -Dp -m755 tests/test/test_libretro.so $(DESTDIR)$(prefix)/lib/libretro/test_libretro.so
+install:
+	mkdir -p $(LIBRETRODIR)
+	for core in $(CORES); do \
+		install -p -m755 $$core $(LIBRETRODIR) ; \
+	done

@@ -1,0 +1,7 @@
+[Retro Reftest]
+Path=/testsw
+Core=/app/lib/libretro/testsw_libretro.so
+
+[Frame 0]
+Tests=Run;Video;
+Video=testsw.png

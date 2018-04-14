@@ -3,4 +3,5 @@ Path=/test
 Core=/app/lib/libretro/test_libretro.so
 
 [Frame 0]
+Tests=Run;Video;
 Video=test.png

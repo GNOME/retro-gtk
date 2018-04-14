@@ -1,0 +1,7 @@
+[Retro Reftest]
+Path=/testaudio_callback
+Core=/app/lib/libretro/testaudio_callback_libretro.so
+
+[Frame 0]
+Tests=Run;Video;
+Video=testaudio_callback.png

@@ -1,0 +1,8 @@
+[Retro Reftest]
+Path=/testaudio_playback_wav
+Core=/app/lib/libretro/testaudio_callback_libretro.so
+Medias=BAK_1.wav;
+
+[Frame 0]
+Tests=Run;Video;
+Video=testaudio_callback.png

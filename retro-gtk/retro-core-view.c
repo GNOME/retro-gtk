@@ -2,31 +2,11 @@
 
 #include "retro-core-view.h"
 
-#include <linux/input-event-codes.h>
 #include "retro-cairo-display.h"
 #include "retro-gl-display.h"
 #include "retro-controller-codes.h"
 #include "retro-core-view-controller.h"
 #include "retro-pa-player.h"
-
-static guint16 DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
-  KEY_S,
-  KEY_A,
-  KEY_BACKSPACE,
-  KEY_ENTER,
-  KEY_UP,
-  KEY_DOWN,
-  KEY_LEFT,
-  KEY_RIGHT,
-  KEY_D,
-  KEY_W,
-  KEY_Q,
-  KEY_E,
-  KEY_Z,
-  KEY_C,
-  KEY_1,
-  KEY_3,
-};
 
 struct _RetroCoreView
 {
@@ -38,6 +18,7 @@ struct _RetroCoreView
   gboolean can_grab_pointer;
   gboolean snap_pointer_to_borders;
   GHashTable *key_state;
+  RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
   GdkScreen *grabbed_screen;
   GdkDevice *grabbed_device;
@@ -203,7 +184,7 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
 
-  set_input_pressed (self->key_state, event->hardware_keycode);
+  set_input_pressed (self->key_state, event->keyval);
 
   return FALSE;
 }
@@ -218,7 +199,7 @@ retro_core_view_on_key_release_event (GtkWidget   *source,
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
-  set_input_released (self->key_state, event->hardware_keycode);
+  set_input_released (self->key_state, event->keyval);
 
   return FALSE;
 }
@@ -325,28 +306,27 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
 
 static gboolean
 retro_core_view_get_key_state (RetroCoreView *self,
-                               guint16        hardware_keycode)
+                               guint          keyval)
 {
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
-  return get_input_state (self->key_state, hardware_keycode);
+  return get_input_state (self->key_state, keyval);
 }
 
 static gboolean
 retro_core_view_get_joypad_button_state (RetroCoreView *self,
                                          RetroJoypadId  button)
 {
-  guint16 hardware_keycode;
+  guint keyval;
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
   if (button >= RETRO_JOYPAD_ID_COUNT)
     return 0;
 
-  // GDK adds 8 to the Linux input event codes to create the hardware keycode.
-  hardware_keycode = DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[button] + 8;
+  keyval = retro_key_joypad_mapping_get_button_key (self->key_joypad_mapping, button);
 
-  return retro_core_view_get_key_state (self, hardware_keycode);
+  return retro_core_view_get_key_state (self, keyval);
 }
 
 static gboolean
@@ -368,6 +348,7 @@ retro_core_view_finalize (GObject *object)
   g_object_unref (self->sensitive_binding);
   g_object_unref (self->audio_player);
   g_hash_table_unref (self->key_state);
+  g_object_unref (self->key_joypad_mapping);
   g_hash_table_unref (self->mouse_button_state);
   g_clear_object (&self->grabbed_screen);
   g_clear_object (&self->grabbed_device);
@@ -483,6 +464,7 @@ retro_core_view_init (RetroCoreView *self)
   self->audio_player = retro_pa_player_new ();
 
   self->key_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
+  self->key_joypad_mapping = retro_key_joypad_mapping_new ();
   self->mouse_button_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
 
   g_signal_connect_object (self, "key-press-event", (GCallback) retro_core_view_on_key_press_event, self, 0);
@@ -571,6 +553,44 @@ retro_core_view_set_filter (RetroCoreView    *self,
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
 
   retro_gl_display_set_filter (self->display, filter);
+}
+
+/**
+ * retro_core_view_set_key_joypad_mapping:
+ * @self: a #RetroCoreView
+ * @mapping: (nullable): a #RetroKeyJoypadMapping
+ *
+ * Sets the key joypad mapping on @self. If given mapping is %NULL, then set to
+ * an empty configuration.
+ */
+void
+retro_core_view_set_key_joypad_mapping (RetroCoreView         *self,
+                                        RetroKeyJoypadMapping *mapping)
+{
+  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
+  g_return_if_fail (mapping == NULL || RETRO_IS_KEY_JOYPAD_MAPPING (mapping));
+
+  g_object_unref (self->key_joypad_mapping);
+  if (mapping != NULL)
+    self->key_joypad_mapping = g_object_ref (mapping);
+  else
+    self->key_joypad_mapping = retro_key_joypad_mapping_new ();
+}
+
+/**
+ * retro_core_view_get_key_joypad_mapping:
+ * @self: a #RetroCoreView
+ *
+ * Gets the currently set key joypad mapping.
+ *
+ * Returns: (transfer none): a #RetroKeyJoypadMapping
+ */
+RetroKeyJoypadMapping *
+retro_core_view_get_key_joypad_mapping (RetroCoreView *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), NULL);
+
+  return g_object_ref (self->key_joypad_mapping);
 }
 
 /**

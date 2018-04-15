@@ -17,6 +17,7 @@
 #include "retro-core-view.h"
 #include "retro-gtk-version.h"
 #include "retro-input.h"
+#include "retro-key-joypad-mapping.h"
 #include "retro-log.h"
 #include "retro-main-loop.h"
 #include "retro-memory-type.h"

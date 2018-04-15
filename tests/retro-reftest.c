@@ -83,6 +83,8 @@ parse_command_line (int    *argc,
     arg_skip = 0;
   }
 
+  g_test_set_nonfatal_assertions ();
+
   return TRUE;
 }
 

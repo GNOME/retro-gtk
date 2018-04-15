@@ -61,7 +61,11 @@ typedef enum
   RETRO_JOYPAD_ID_L3,
   RETRO_JOYPAD_ID_R3,
   RETRO_JOYPAD_ID_COUNT,
+  RETRO_JOYPAD_ID_INVALID,
 } RetroJoypadId;
+
+guint16 retro_joypad_id_to_event_code (RetroJoypadId joypad_id);
+RetroJoypadId retro_joypad_id_from_event_code (guint16 event_code);
 
 #define RETRO_TYPE_MOUSE_ID (retro_mouse_id_get_type ())
 

@@ -2,6 +2,8 @@
 
 #include "retro-controller-codes.h"
 
+#include <linux/input-event-codes.h>
+
 GType
 retro_joypad_id_get_type (void)
 {
@@ -26,6 +28,7 @@ retro_joypad_id_get_type (void)
       { RETRO_JOYPAD_ID_L3, "RETRO_JOYPAD_ID_L3", "l3" },
       { RETRO_JOYPAD_ID_R3, "RETRO_JOYPAD_ID_R3", "r3" },
       { RETRO_JOYPAD_ID_COUNT, "RETRO_JOYPAD_ID_COUNT", "count" },
+      { RETRO_JOYPAD_ID_INVALID, "RETRO_JOYPAD_ID_INVALID", "invalid" },
       { 0, NULL, NULL },
     };
     GType type;
@@ -36,6 +39,56 @@ retro_joypad_id_get_type (void)
   }
 
   return retro_joypad_id_type;
+}
+
+static guint16 RETRO_JOYPAD_ID_EVENT_CODE_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
+  BTN_A,
+  BTN_Y,
+  BTN_SELECT,
+  BTN_START,
+  BTN_DPAD_UP,
+  BTN_DPAD_DOWN,
+  BTN_DPAD_LEFT,
+  BTN_DPAD_RIGHT,
+  BTN_B,
+  BTN_X,
+  BTN_TL,
+  BTN_TR,
+  BTN_TL2,
+  BTN_TR2,
+  BTN_THUMBL,
+  BTN_THUMBR,
+};
+
+/**
+ * retro_joypad_id_to_event_code:
+ * @joypad_id: a #RetroJoypadId
+ *
+ * Returns: the event code for joypad id
+ */
+guint16
+retro_joypad_id_to_event_code (RetroJoypadId joypad_id)
+{
+  g_return_val_if_fail (joypad_id >= 0, EV_MAX);
+  g_return_val_if_fail (joypad_id < RETRO_JOYPAD_ID_COUNT, EV_MAX);
+
+  return RETRO_JOYPAD_ID_EVENT_CODE_MAPPING[joypad_id];
+}
+
+/**
+ * retro_joypad_id_from_event_code:
+ * @event_code: a linux event code
+ *
+ * Returns: the joypad id for event code
+ */
+RetroJoypadId
+retro_joypad_id_from_event_code (guint16 event_code)
+{
+  for (gint i = 0; i < RETRO_JOYPAD_ID_COUNT; ++i)
+    if (event_code == RETRO_JOYPAD_ID_EVENT_CODE_MAPPING[i])
+      return (RetroJoypadId) i;
+
+  return RETRO_JOYPAD_ID_INVALID;
 }
 
 GType

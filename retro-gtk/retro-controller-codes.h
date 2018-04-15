@@ -63,6 +63,9 @@ typedef enum
   RETRO_JOYPAD_ID_COUNT,
 } RetroJoypadId;
 
+guint16 retro_joypad_id_to_button_code (RetroJoypadId joypad_id);
+RetroJoypadId retro_joypad_id_from_button_code (guint16 button_code);
+
 #define RETRO_TYPE_MOUSE_ID (retro_mouse_id_get_type ())
 
 GType retro_mouse_id_get_type (void) G_GNUC_CONST;

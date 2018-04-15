@@ -11,6 +11,7 @@
 #include "retro-core.h"
 #include "retro-controller.h"
 #include "retro-input.h"
+#include "retro-key-joypad-mapping.h"
 #include "retro-video-filter.h"
 
 G_BEGIN_DECLS
@@ -28,6 +29,9 @@ void retro_core_view_set_pixbuf (RetroCoreView *self,
 GdkPixbuf *retro_core_view_get_pixbuf (RetroCoreView *self);
 void retro_core_view_set_filter (RetroCoreView    *self,
                                  RetroVideoFilter  filter);
+void retro_core_view_set_key_joypad_mapping (RetroCoreView         *self,
+                                             RetroKeyJoypadMapping *mapping);
+RetroKeyJoypadMapping *retro_core_view_get_key_joypad_mapping (RetroCoreView *self);
 RetroController *retro_core_view_as_controller (RetroCoreView       *self,
                                                 RetroControllerType  controller_type);
 void retro_core_view_set_as_default_controller (RetroCoreView *self,

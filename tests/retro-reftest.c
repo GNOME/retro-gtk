@@ -266,6 +266,15 @@ retro_reftest_on_video_output (RetroReftestData *data,
 }
 
 static void
+retro_reftest_test_boot (RetroReftestData *data)
+{
+  GError *error = NULL;
+
+  retro_core_boot (data->core, &error);
+  g_assert_no_error (error);
+}
+
+static void
 retro_reftest_test_run (RetroReftestRun *run)
 {
   guint target_frame = run->target_frame;
@@ -368,6 +377,11 @@ retro_reftest_setup_for_commandline_args ()
 
   retro_core_boot (data->core, &error);
   g_assert_no_error (error);
+
+  g_test_add_data_func_full ("/boot",
+                             retro_reftest_data_ref (data),
+                             (GTestDataFunc) retro_reftest_test_boot,
+                             (GDestroyNotify) retro_reftest_data_unref);
 
   run = g_new0 (RetroReftestRun, 1);
   run->data = retro_reftest_data_ref (data);

@@ -26,6 +26,7 @@
 #include <retro-gtk/retro-gtk.h>
 
 typedef struct {
+  guint refs;
   RetroCore *core;
   RetroPixdata *pixdata;
 } RetroReftestData;
@@ -46,6 +47,30 @@ static const GOptionEntry test_args[] = {
     "The reference video output", "FILE" },
   { NULL }
 };
+
+static RetroReftestData *
+retro_reftest_data_ref (RetroReftestData *self) {
+  g_return_val_if_fail (self != NULL, NULL);
+
+  self->refs++;
+
+  return self;
+}
+
+static void
+retro_reftest_data_unref (RetroReftestData *self) {
+  g_return_if_fail (self != NULL);
+
+  if (self->refs == 0) {
+    g_object_unref (self->core);
+    retro_pixdata_free (self->pixdata);
+    g_free (self);
+
+    return;
+  }
+
+  self->refs--;
+}
 
 static gboolean
 parse_command_line (int    *argc,
@@ -235,15 +260,6 @@ retro_reftest_setup (GFile *file,
 }
 
 static void
-retro_reftest_teardown (RetroReftestData *data)
-{
-  g_object_unref (data->core);
-  if (data->pixdata != NULL)
-    retro_pixdata_free (data->pixdata);
-  g_free (data);
-}
-
-static void
 retro_reftest_test_video (RetroReftestData *data)
 {
   GdkPixbuf *screenshot, *reference_screenshot;
@@ -295,7 +311,6 @@ main (int argc,
   GFile *core_file;
   gchar **media_uris = NULL;
   RetroReftestData *data;
-  int result;
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
 
@@ -321,13 +336,12 @@ main (int argc,
   g_strfreev (media_uris);
 
   if (arg_video_file != NULL)
-    g_test_add_data_func ("/video",
-                          data,
-                          (GTestDataFunc) retro_reftest_test_video);
+    g_test_add_data_func_full ("/video",
+                               retro_reftest_data_ref (data),
+                               (GTestDataFunc) retro_reftest_test_video,
+                               (GDestroyNotify) retro_reftest_data_unref);
 
-  result = g_test_run ();
+  retro_reftest_data_unref (data);
 
-  retro_reftest_teardown (data);
-
-  return result;
+  return g_test_run ();
 }

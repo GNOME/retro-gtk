@@ -31,6 +31,12 @@ typedef struct {
   RetroPixdata *pixdata;
 } RetroReftestData;
 
+typedef struct {
+  guint refs;
+  RetroReftestData *data;
+  GFile *video_file;
+} RetroReftestVideo;
+
 static gboolean arg_generate = FALSE;
 static gint arg_skip = 0;
 static gchar *arg_video_file = NULL;
@@ -64,6 +70,21 @@ retro_reftest_data_unref (RetroReftestData *self) {
   if (self->refs == 0) {
     g_object_unref (self->core);
     retro_pixdata_free (self->pixdata);
+    g_free (self);
+
+    return;
+  }
+
+  self->refs--;
+}
+
+static void
+retro_reftest_video_unref (RetroReftestVideo *self) {
+  g_return_if_fail (self != NULL);
+
+  if (self->refs == 0) {
+    retro_reftest_data_unref (self->data);
+    g_object_unref (self->video_file);
     g_free (self);
 
     return;
@@ -220,7 +241,7 @@ retro_reftest_skip_frames (RetroReftestData *data)
 
 static void
 retro_reftest_on_video_output (RetroReftestData *data,
-                               RetroPixdata *pixdata)
+                               RetroPixdata     *pixdata)
 {
   if (pixdata == NULL)
     return;
@@ -231,33 +252,38 @@ retro_reftest_on_video_output (RetroReftestData *data,
 }
 
 static void
-retro_reftest_test_video (RetroReftestData *data)
+retro_reftest_test_video (RetroReftestVideo *video)
 {
   GdkPixbuf *screenshot, *reference_screenshot;
+  gchar *path;
   GError *error = NULL;
 
-  screenshot = retro_pixdata_to_pixbuf (data->pixdata);
+  screenshot = retro_pixdata_to_pixbuf (video->data->pixdata);
   g_assert_nonnull (screenshot);
+
+  path = g_file_get_path (video->video_file);
 
   if (arg_generate) {
     /* See http://www.libpng.org/pub/png/spec/iso/index-object.html#11textinfo for
      * description of used keys.
      */
     gdk_pixbuf_save (screenshot,
-                     arg_video_file,
+                     path,
                      "png",
                      &error,
                      "tEXt::Software", g_get_prgname (),
                      NULL);
     g_assert_no_error (error);
 
+    g_free (path);
     g_object_unref (screenshot);
 
     return;
   }
 
-  reference_screenshot = gdk_pixbuf_new_from_file (arg_video_file, &error);
+  reference_screenshot = gdk_pixbuf_new_from_file (path, &error);
   g_assert_no_error (error);
+  g_free (path);
 
   pixdata_equal (screenshot, reference_screenshot, &error);
   if (error != NULL) {
@@ -281,6 +307,7 @@ retro_reftest_setup_for_commandline_args ()
   GFile *core_file;
   gchar **media_uris = NULL;
   RetroReftestData *data;
+  RetroReftestVideo *video;
   gchar *core_filename;
   GError *error = NULL;
 
@@ -313,11 +340,15 @@ retro_reftest_setup_for_commandline_args ()
   retro_reftest_skip_frames (data);
   retro_core_run (data->core);
 
-  if (arg_video_file != NULL)
+  if (arg_video_file != NULL) {
+    video = g_new0 (RetroReftestVideo, 1);
+    video->data = retro_reftest_data_ref (data);
+    video->video_file = g_file_new_for_path (arg_video_file);
     g_test_add_data_func_full ("/video",
-                               retro_reftest_data_ref (data),
+                               video,
                                (GTestDataFunc) retro_reftest_test_video,
-                               (GDestroyNotify) retro_reftest_data_unref);
+                               (GDestroyNotify) retro_reftest_video_unref);
+  }
 
   retro_reftest_data_unref (data);
 }

@@ -28,7 +28,7 @@
 typedef struct {
   RetroCore *core;
   RetroPixdata *pixdata;
-} RetroReftest;
+} RetroReftestData;
 
 static gboolean arg_generate = FALSE;
 static gint arg_skip = 0;
@@ -187,29 +187,29 @@ pixdata_equal (GdkPixbuf  *test,
 }
 
 static void
-retro_reftest_skip_frames (RetroReftest *reftest)
+retro_reftest_skip_frames (RetroReftestData *data)
 {
   for (gint i = 0; i < arg_skip; i++)
-    retro_core_run (reftest->core);
+    retro_core_run (data->core);
 }
 
 static void
-retro_reftest_on_video_output (RetroReftest *reftest,
+retro_reftest_on_video_output (RetroReftestData *data,
                                RetroPixdata *pixdata)
 {
   if (pixdata == NULL)
     return;
 
-  if (reftest->pixdata != NULL)
-    retro_pixdata_free (reftest->pixdata);
-  reftest->pixdata = retro_pixdata_copy (pixdata);
+  if (data->pixdata != NULL)
+    retro_pixdata_free (data->pixdata);
+  data->pixdata = retro_pixdata_copy (pixdata);
 }
 
-static RetroReftest *
+static RetroReftestData *
 retro_reftest_setup (GFile *file,
                      const gchar * const *media_uris)
 {
-  RetroReftest *reftest = g_new0 (RetroReftest, 1);
+  RetroReftestData *data = g_new0 (RetroReftestData, 1);
   gchar *core_filename;
   GError *error = NULL;
 
@@ -217,39 +217,39 @@ retro_reftest_setup (GFile *file,
   g_assert (g_file_query_exists (file, NULL));
 
   core_filename = g_file_get_path (file);
-  reftest->core = retro_core_new (core_filename);
+  data->core = retro_core_new (core_filename);
   g_free (core_filename);
-  g_assert (reftest->core != NULL);
+  g_assert (data->core != NULL);
 
-  retro_core_set_medias (reftest->core, media_uris);
-  retro_core_boot (reftest->core, &error);
+  retro_core_set_medias (data->core, media_uris);
+  retro_core_boot (data->core, &error);
   g_assert_no_error (error);
 
-  retro_reftest_skip_frames (reftest);
+  retro_reftest_skip_frames (data);
 
-  g_signal_connect_swapped (reftest->core, "video-output", (GCallback) retro_reftest_on_video_output, reftest);
+  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
 
-  retro_core_run (reftest->core);
+  retro_core_run (data->core);
 
-  return reftest;
+  return data;
 }
 
 static void
-retro_reftest_teardown (RetroReftest *reftest)
+retro_reftest_teardown (RetroReftestData *data)
 {
-  g_object_unref (reftest->core);
-  if (reftest->pixdata != NULL)
-    retro_pixdata_free (reftest->pixdata);
-  g_free (reftest);
+  g_object_unref (data->core);
+  if (data->pixdata != NULL)
+    retro_pixdata_free (data->pixdata);
+  g_free (data);
 }
 
 static void
-retro_reftest_test_video (RetroReftest *reftest)
+retro_reftest_test_video (RetroReftestData *data)
 {
   GdkPixbuf *screenshot, *reference_screenshot;
   GError *error = NULL;
 
-  screenshot = retro_pixdata_to_pixbuf (reftest->pixdata);
+  screenshot = retro_pixdata_to_pixbuf (data->pixdata);
   g_assert_nonnull (screenshot);
 
   if (arg_generate) {
@@ -294,7 +294,7 @@ main (int argc,
 {
   GFile *core_file;
   gchar **media_uris = NULL;
-  RetroReftest *reftest;
+  RetroReftestData *data;
   int result;
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
@@ -316,18 +316,18 @@ main (int argc,
       media_uris[i] = g_file_get_uri (media_file);
     }
   }
-  reftest = retro_reftest_setup (core_file, (const gchar* const *) media_uris);
+  data = retro_reftest_setup (core_file, (const gchar* const *) media_uris);
   g_object_unref (core_file);
   g_strfreev (media_uris);
 
   if (arg_video_file != NULL)
     g_test_add_data_func ("/video",
-                          reftest,
+                          data,
                           (GTestDataFunc) retro_reftest_test_video);
 
   result = g_test_run ();
 
-  retro_reftest_teardown (reftest);
+  retro_reftest_teardown (data);
 
   return result;
 }

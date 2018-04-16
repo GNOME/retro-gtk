@@ -28,8 +28,15 @@
 typedef struct {
   guint refs;
   RetroCore *core;
+  guint next_frame;
   RetroPixdata *pixdata;
 } RetroReftestData;
+
+typedef struct {
+  guint refs;
+  RetroReftestData *data;
+  guint target_frame;
+} RetroReftestRun;
 
 typedef struct {
   guint refs;
@@ -70,6 +77,20 @@ retro_reftest_data_unref (RetroReftestData *self) {
   if (self->refs == 0) {
     g_object_unref (self->core);
     retro_pixdata_free (self->pixdata);
+    g_free (self);
+
+    return;
+  }
+
+  self->refs--;
+}
+
+static void
+retro_reftest_run_unref (RetroReftestRun *self) {
+  g_return_if_fail (self != NULL);
+
+  if (self->refs == 0) {
+    retro_reftest_data_unref (self->data);
     g_free (self);
 
     return;
@@ -233,13 +254,6 @@ pixdata_equal (GdkPixbuf  *test,
 }
 
 static void
-retro_reftest_skip_frames (RetroReftestData *data)
-{
-  for (gint i = 0; i < arg_skip; i++)
-    retro_core_run (data->core);
-}
-
-static void
 retro_reftest_on_video_output (RetroReftestData *data,
                                RetroPixdata     *pixdata)
 {
@@ -249,6 +263,23 @@ retro_reftest_on_video_output (RetroReftestData *data,
   if (data->pixdata != NULL)
     retro_pixdata_free (data->pixdata);
   data->pixdata = retro_pixdata_copy (pixdata);
+}
+
+static void
+retro_reftest_test_run (RetroReftestRun *run)
+{
+  guint target_frame = run->target_frame;
+  guint next_frame = run->data->next_frame;
+
+  g_assert_cmpuint (next_frame, <=, target_frame);
+
+  for (; next_frame < target_frame + 1; next_frame++)
+    retro_core_run (run->data->core);
+
+  run->target_frame = target_frame;
+  run->data->next_frame = next_frame;
+
+  g_assert_cmpuint (target_frame + 1, ==, next_frame);
 }
 
 static void
@@ -307,6 +338,7 @@ retro_reftest_setup_for_commandline_args ()
   GFile *core_file;
   gchar **media_uris = NULL;
   RetroReftestData *data;
+  RetroReftestRun *run;
   RetroReftestVideo *video;
   gchar *core_filename;
   GError *error = NULL;
@@ -337,8 +369,13 @@ retro_reftest_setup_for_commandline_args ()
   retro_core_boot (data->core, &error);
   g_assert_no_error (error);
 
-  retro_reftest_skip_frames (data);
-  retro_core_run (data->core);
+  run = g_new0 (RetroReftestRun, 1);
+  run->data = retro_reftest_data_ref (data);
+  run->target_frame = arg_skip;
+  g_test_add_data_func_full ("/run",
+                             run,
+                             (GTestDataFunc) retro_reftest_test_run,
+                             (GDestroyNotify) retro_reftest_run_unref);
 
   if (arg_video_file != NULL) {
     video = g_new0 (RetroReftestVideo, 1);

@@ -52,7 +52,7 @@
                 {
                     "type" : "script",
                     "commands" : [
-                        "retro-reftest /app/lib/libretro/test_libretro.so -v /app/tests/test_libretro.png"
+                        "retro-reftest /app/tests/test.test"
                     ],
                     "dest-filename" : "retro-unit-tests"
                 },

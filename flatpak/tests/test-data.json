@@ -3,13 +3,19 @@
             "buildsystem" : "simple",
             "build-commands" : [
                 "mkdir -p /app/tests/",
-                "install -m644 -pD test_libretro.png /app/tests/test_libretro.png"
+                "install -m644 -pD test.png /app/tests/test.png",
+                "install -m644 -pD test.test /app/tests/test.test"
             ],
             "sources" : [
                 {
                     "type" : "file",
-                    "path" : "test_libretro.png",
-                    "dest-filename" : "test_libretro.png"
+                    "path" : "test.png",
+                    "dest-filename" : "test.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "test.test",
+                    "dest-filename" : "test.test"
                 }
             ]
         }

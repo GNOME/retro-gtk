@@ -1,0 +1,6 @@
+[Retro Reftest]
+Path=/test
+Core=/app/lib/libretro/test_libretro.so
+
+[Frame 0]
+Video=test.png

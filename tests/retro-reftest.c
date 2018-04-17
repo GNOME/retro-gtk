@@ -268,6 +268,26 @@ retro_reftest_test_run (RetroReftestRun *run)
 }
 
 static void
+retro_reftest_test_state_refresh (RetroReftestData *data)
+{
+  GBytes *state;
+  GError *error = NULL;
+
+  if (!retro_core_get_can_access_state (data->core)) {
+    g_test_fail ();
+
+    return;
+  }
+
+  state = retro_core_get_state (data->core, &error);
+  g_assert_no_error (error);
+  retro_core_set_state (data->core, state, &error);
+  g_assert_no_error (error);
+
+  g_bytes_unref (state);
+}
+
+static void
 retro_reftest_test_video (RetroReftestVideo *video)
 {
   GdkPixbuf *screenshot, *reference_screenshot;
@@ -375,6 +395,23 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
 }
 
 static void
+retro_reftest_add_state_refresh_test (RetroReftestFile *reftest_file,
+                                      guint             frame_number,
+                                      RetroReftestData *data)
+{
+  gchar *test_path;
+
+  test_path = g_strdup_printf ("%s/%u/StateRefresh",
+                               retro_reftest_file_peek_path (reftest_file),
+                               frame_number);
+  g_test_add_data_func_full (test_path,
+                             retro_reftest_data_ref (data),
+                             (GTestDataFunc) retro_reftest_test_state_refresh,
+                             (GDestroyNotify) retro_reftest_data_unref);
+  g_free (test_path);
+}
+
+static void
 retro_reftest_add_video_test (RetroReftestFile *reftest_file,
                               guint             frame_number,
                               RetroReftestData *data)
@@ -443,6 +480,8 @@ retro_reftest_setup_for_file (GFile *file)
     for (tests_i = 0; tests != NULL && tests[tests_i] != NULL; tests_i++) {
       if (g_str_equal (tests[tests_i], "Run"))
         retro_reftest_add_run_test (reftest_file, frame_number, data);
+      else if (g_str_equal (tests[tests_i], "StateRefresh"))
+        retro_reftest_add_state_refresh_test (reftest_file, frame_number, data);
       else if (g_str_equal (tests[tests_i], "Video"))
         retro_reftest_add_video_test (reftest_file, frame_number, data);
     }

@@ -40,19 +40,12 @@ typedef struct {
 } RetroReftestVideo;
 
 static gboolean arg_generate = FALSE;
-static gint arg_skip = 0;
-static gchar *arg_video_file = NULL;
-static gchar *arg_core_file = NULL;
 static gchar **arg_media_files = NULL;
 static gint arg_media_files_count = 0;
 
 static const GOptionEntry test_args[] = {
   { "generate", 'g', 0, G_OPTION_ARG_NONE, &arg_generate,
     "Generate reference files instead of testing them", NULL },
-  { "skip", 's', 0, G_OPTION_ARG_INT, &arg_skip,
-    "The number of frames to skip before running the test", "FRAMES" },
-  { "video", 'v', 0, G_OPTION_ARG_FILENAME, &arg_video_file,
-    "The reference video output", "FILE" },
   { NULL }
 };
 
@@ -116,7 +109,7 @@ parse_command_line (int    *argc,
   GError *error = NULL;
   GOptionContext *context;
 
-  context = g_option_context_new ("CORE [MEDIAS…] - Run retro-gtk reftests");
+  context = g_option_context_new ("TESTS… - Run retro-gtk reftests");
   g_option_context_add_main_entries (context, test_args, NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);
 
@@ -126,23 +119,11 @@ parse_command_line (int    *argc,
     return FALSE;
   }
 
-  if (*argc < 2) {
-    g_printerr ("Mandatory argument CORE missing.\n");
-
-    return FALSE;
-  }
-
-  arg_core_file = (*argv)[1];
-  if (*argc > 2) {
-    arg_media_files = &(*argv)[2];
-    arg_media_files_count = *argc - 2;
-  }
-
   gtk_test_init (argc, argv);
 
-  if (arg_skip < 0) {
-    g_printerr ("Invalid argument passed to --skip argument. It must be a positive integer.\n");
-    arg_skip = 0;
+  if (*argc > 1) {
+    arg_media_files = &(*argv)[1];
+    arg_media_files_count = *argc - 1;
   }
 
   g_test_set_nonfatal_assertions ();
@@ -512,12 +493,19 @@ int
 main (int argc,
       gchar **argv)
 {
+  GFile *file;
+  gint i;
+
   g_setenv ("GDK_RENDERING", "image", FALSE);
 
   if (!parse_command_line (&argc, &argv))
     return 1;
 
-  retro_reftest_setup_for_commandline_args ();
+  for (i = 1; i < argc; i++) {
+    file = g_file_new_for_commandline_arg (argv[i]);
+    retro_reftest_setup_for_file (file);
+    g_object_unref (file);
+  }
 
   return g_test_run ();
 }

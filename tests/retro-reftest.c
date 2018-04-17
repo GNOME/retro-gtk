@@ -230,35 +230,6 @@ retro_reftest_on_video_output (RetroReftestData *data,
   data->pixdata = retro_pixdata_copy (pixdata);
 }
 
-static RetroReftestData *
-retro_reftest_setup (GFile *file,
-                     const gchar * const *media_uris)
-{
-  RetroReftestData *data = g_new0 (RetroReftestData, 1);
-  gchar *core_filename;
-  GError *error = NULL;
-
-  g_assert_nonnull (file);
-  g_assert (g_file_query_exists (file, NULL));
-
-  core_filename = g_file_get_path (file);
-  data->core = retro_core_new (core_filename);
-  g_free (core_filename);
-  g_assert (data->core != NULL);
-
-  retro_core_set_medias (data->core, media_uris);
-  retro_core_boot (data->core, &error);
-  g_assert_no_error (error);
-
-  retro_reftest_skip_frames (data);
-
-  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
-
-  retro_core_run (data->core);
-
-  return data;
-}
-
 static void
 retro_reftest_test_video (RetroReftestData *data)
 {
@@ -304,22 +275,22 @@ retro_reftest_test_video (RetroReftestData *data)
   g_object_unref (reference_screenshot);
 }
 
-int
-main (int argc,
-      gchar **argv)
+static void
+retro_reftest_setup_for_commandline_args ()
 {
   GFile *core_file;
   gchar **media_uris = NULL;
   RetroReftestData *data;
+  gchar *core_filename;
+  GError *error = NULL;
 
-  g_setenv ("GDK_RENDERING", "image", FALSE);
-
-  if (!parse_command_line (&argc, &argv))
-    return 1;
-
+  data = g_new0 (RetroReftestData, 1);
   core_file = g_file_new_for_commandline_arg (arg_core_file);
-
-  g_assert (g_file_query_file_type (core_file, 0, NULL) == G_FILE_TYPE_REGULAR);
+  core_filename = g_file_get_path (core_file);
+  g_object_unref (core_file);
+  data->core = retro_core_new (core_filename);
+  g_free (core_filename);
+  g_assert (data->core != NULL);
 
   if (arg_media_files_count > 0) {
     media_uris = g_new0 (gchar *, arg_media_files_count + 1);
@@ -331,9 +302,16 @@ main (int argc,
       media_uris[i] = g_file_get_uri (media_file);
     }
   }
-  data = retro_reftest_setup (core_file, (const gchar* const *) media_uris);
-  g_object_unref (core_file);
+  retro_core_set_medias (data->core, (const gchar * const *) media_uris);
   g_strfreev (media_uris);
+
+  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
+
+  retro_core_boot (data->core, &error);
+  g_assert_no_error (error);
+
+  retro_reftest_skip_frames (data);
+  retro_core_run (data->core);
 
   if (arg_video_file != NULL)
     g_test_add_data_func_full ("/video",
@@ -342,6 +320,18 @@ main (int argc,
                                (GDestroyNotify) retro_reftest_data_unref);
 
   retro_reftest_data_unref (data);
+}
+
+int
+main (int argc,
+      gchar **argv)
+{
+  g_setenv ("GDK_RENDERING", "image", FALSE);
+
+  if (!parse_command_line (&argc, &argv))
+    return 1;
+
+  retro_reftest_setup_for_commandline_args ();
 
   return g_test_run ();
 }

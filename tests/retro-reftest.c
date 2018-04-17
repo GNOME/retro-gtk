@@ -252,6 +252,23 @@ retro_reftest_test_video (RetroReftest *reftest)
   screenshot = retro_pixdata_to_pixbuf (reftest->pixdata);
   g_assert_nonnull (screenshot);
 
+  if (arg_generate) {
+    /* See http://www.libpng.org/pub/png/spec/iso/index-object.html#11textinfo for
+     * description of used keys.
+     */
+    gdk_pixbuf_save (screenshot,
+                     arg_video_file,
+                     "png",
+                     &error,
+                     "tEXt::Software", g_get_prgname (),
+                     NULL);
+    g_assert_no_error (error);
+
+    g_object_unref (screenshot);
+
+    return;
+  }
+
   reference_screenshot = gdk_pixbuf_new_from_file (arg_video_file, &error);
   g_assert_no_error (error);
 
@@ -269,28 +286,6 @@ retro_reftest_test_video (RetroReftest *reftest)
 
   g_object_unref (screenshot);
   g_object_unref (reference_screenshot);
-}
-
-static void
-retro_reftest_generate_video (RetroReftest *reftest)
-{
-  GdkPixbuf *screenshot;
-  GError *error = NULL;
-
-  screenshot = retro_pixdata_to_pixbuf (reftest->pixdata);
-
-  /* See http://www.libpng.org/pub/png/spec/iso/index-object.html#11textinfo for
-   * description of used keys.
-   */
-  gdk_pixbuf_save (screenshot,
-                   arg_video_file,
-                   "png",
-                   &error,
-                   "tEXt::Software", g_get_prgname (),
-                   NULL);
-  g_assert_no_error (error);
-
-  g_object_unref (screenshot);
 }
 
 int
@@ -325,20 +320,12 @@ main (int argc,
   g_object_unref (core_file);
   g_strfreev (media_uris);
 
-  if (arg_generate) {
-    if (arg_video_file != NULL)
-      retro_reftest_generate_video (reftest);
+  if (arg_video_file != NULL)
+    g_test_add_data_func ("/video",
+                          reftest,
+                          (GTestDataFunc) retro_reftest_test_video);
 
-    result = 0;
-  }
-  else {
-    if (arg_video_file != NULL)
-      g_test_add_data_func ("/video",
-                            reftest,
-                            (GTestDataFunc) retro_reftest_test_video);
-
-    result = g_test_run ();
-  }
+  result = g_test_run ();
 
   retro_reftest_teardown (reftest);
 

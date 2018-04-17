@@ -318,69 +318,6 @@ retro_reftest_test_video (RetroReftestVideo *video)
 }
 
 static void
-retro_reftest_setup_for_commandline_args ()
-{
-  GFile *core_file;
-  gchar **media_uris = NULL;
-  RetroReftestData *data;
-  RetroReftestRun *run;
-  RetroReftestVideo *video;
-  gchar *core_filename;
-  GError *error = NULL;
-
-  data = g_new0 (RetroReftestData, 1);
-  core_file = g_file_new_for_commandline_arg (arg_core_file);
-  core_filename = g_file_get_path (core_file);
-  g_object_unref (core_file);
-  data->core = retro_core_new (core_filename);
-  g_free (core_filename);
-  g_assert (data->core != NULL);
-
-  if (arg_media_files_count > 0) {
-    media_uris = g_new0 (gchar *, arg_media_files_count + 1);
-    for (int i = 0; i < arg_media_files_count; i++) {
-      GFile *media_file = g_file_new_for_commandline_arg (arg_media_files[i]);
-
-      g_assert (g_file_query_file_type (media_file, 0, NULL) == G_FILE_TYPE_REGULAR);
-
-      media_uris[i] = g_file_get_uri (media_file);
-    }
-  }
-  retro_core_set_medias (data->core, (const gchar * const *) media_uris);
-  g_strfreev (media_uris);
-
-  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
-
-  retro_core_boot (data->core, &error);
-  g_assert_no_error (error);
-
-  g_test_add_data_func_full ("/boot",
-                             retro_reftest_data_ref (data),
-                             (GTestDataFunc) retro_reftest_test_boot,
-                             (GDestroyNotify) retro_reftest_data_unref);
-
-  run = g_new0 (RetroReftestRun, 1);
-  run->data = retro_reftest_data_ref (data);
-  run->target_frame = arg_skip;
-  g_test_add_data_func_full ("/run",
-                             run,
-                             (GTestDataFunc) retro_reftest_test_run,
-                             (GDestroyNotify) retro_reftest_run_unref);
-
-  if (arg_video_file != NULL) {
-    video = g_new0 (RetroReftestVideo, 1);
-    video->data = retro_reftest_data_ref (data);
-    video->video_file = g_file_new_for_path (arg_video_file);
-    g_test_add_data_func_full ("/video",
-                               video,
-                               (GTestDataFunc) retro_reftest_test_video,
-                               (GDestroyNotify) retro_reftest_video_unref);
-  }
-
-  retro_reftest_data_unref (data);
-}
-
-static void
 retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
                              RetroReftestData *data)
 {

@@ -18,12 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <string.h>
-#include <glib/gstdio.h>
-#include <gtk/gtk.h>
-
-#define RETRO_GTK_USE_UNSTABLE_API
-#include <retro-gtk/retro-gtk.h>
+#include "retro-reftest-file.h"
 
 typedef struct {
   guint refs;
@@ -402,6 +397,115 @@ retro_reftest_setup_for_commandline_args ()
   }
 
   retro_reftest_data_unref (data);
+}
+
+static void
+retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
+                             RetroReftestData *data)
+{
+  gchar *test_path;
+
+  test_path = g_strdup_printf ("%s/boot",
+                               retro_reftest_file_peek_path (reftest_file));
+  g_test_add_data_func_full (test_path,
+                             retro_reftest_data_ref (data),
+                             (GTestDataFunc) retro_reftest_test_boot,
+                             (GDestroyNotify) retro_reftest_data_unref);
+  g_free (test_path);
+}
+
+static void
+retro_reftest_add_run_test (RetroReftestFile *reftest_file,
+                            guint             frame_number,
+                            RetroReftestData *data)
+{
+  RetroReftestRun *run;
+  gchar *test_path;
+
+  run = g_new0 (RetroReftestRun, 1);
+  run->data = retro_reftest_data_ref (data);
+  run->target_frame = frame_number;
+  test_path = g_strdup_printf ("%s/%u/run",
+                               retro_reftest_file_peek_path (reftest_file),
+                               frame_number);
+  g_test_add_data_func_full (test_path,
+                             run,
+                             (GTestDataFunc) retro_reftest_test_run,
+                             (GDestroyNotify) retro_reftest_run_unref);
+  g_free (test_path);
+}
+
+static void
+retro_reftest_add_video_test (RetroReftestFile *reftest_file,
+                              guint             frame_number,
+                              RetroReftestData *data)
+{
+  RetroReftestVideo *video;
+  gchar *test_path;
+  GError *error = NULL;
+
+  video = g_new0 (RetroReftestVideo, 1);
+  video->data = retro_reftest_data_ref (data);
+  video->video_file = retro_reftest_file_get_video (reftest_file, frame_number, &error);
+  g_assert_no_error (error);
+  test_path = g_strdup_printf ("%s/%u/video",
+                               retro_reftest_file_peek_path (reftest_file),
+                               frame_number);
+  g_test_add_data_func_full (test_path,
+                             video,
+                             (GTestDataFunc) retro_reftest_test_video,
+                             (GDestroyNotify) retro_reftest_video_unref);
+  g_free (test_path);
+}
+
+static void
+retro_reftest_setup_for_file (GFile *file)
+{
+  RetroReftestFile *reftest_file;
+  GList *frames, *frame;
+  guint frame_number;
+  gchar **tests;
+  gsize tests_length, tests_i;
+  RetroReftestData *data;
+  GError *error = NULL;
+
+  reftest_file = retro_reftest_file_new (file);
+  data = g_new0 (RetroReftestData, 1);
+  data->core = retro_reftest_file_get_core (reftest_file, &error);
+  if (error != NULL) {
+    gchar *path = g_file_get_path (file);
+    g_critical ("Invalid test file %s: %s", path, error->message);
+    g_free (path);
+    retro_reftest_data_unref (data);
+    g_object_unref (reftest_file);
+    g_clear_error (&error);
+
+    return;
+  }
+
+  retro_reftest_add_boot_test (reftest_file, data);
+
+  frames = retro_reftest_file_get_frames (reftest_file);
+  for (frame = frames; frame != NULL; frame = frame->next) {
+    frame_number = *((guint *) frame->data);
+
+    tests_length = 0;
+    tests = retro_reftest_file_get_tests (reftest_file,
+                                          frame_number,
+                                          &tests_length,
+                                          &error);
+    g_assert_no_error (error);
+    for (tests_i = 0; tests != NULL && tests[tests_i] != NULL; tests_i++) {
+      if (g_str_equal (tests[tests_i], "Run"))
+        retro_reftest_add_run_test (reftest_file, frame_number, data);
+      else if (g_str_equal (tests[tests_i], "Video"))
+        retro_reftest_add_video_test (reftest_file, frame_number, data);
+    }
+  }
+  g_list_free (frames);
+  retro_reftest_data_unref (data);
+
+  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
 }
 
 int

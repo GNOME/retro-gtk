@@ -333,6 +333,27 @@ retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
 }
 
 static void
+retro_reftest_add_fast_forward_test (RetroReftestFile *reftest_file,
+                                     guint             frame_number,
+                                     RetroReftestData *data)
+{
+  RetroReftestRun *run;
+  gchar *test_path;
+
+  run = g_new0 (RetroReftestRun, 1);
+  run->data = retro_reftest_data_ref (data);
+  run->target_frame = frame_number - 1;
+  test_path = g_strdup_printf ("%s/%u/FastForward",
+                               retro_reftest_file_peek_path (reftest_file),
+                               frame_number);
+  g_test_add_data_func_full (test_path,
+                             run,
+                             (GTestDataFunc) retro_reftest_test_run,
+                             (GDestroyNotify) retro_reftest_run_unref);
+  g_free (test_path);
+}
+
+static void
 retro_reftest_add_run_test (RetroReftestFile *reftest_file,
                             guint             frame_number,
                             RetroReftestData *data)
@@ -381,7 +402,7 @@ retro_reftest_setup_for_file (GFile *file)
 {
   RetroReftestFile *reftest_file;
   GList *frames, *frame;
-  guint frame_number;
+  guint current_frame_number, frame_number;
   gchar **tests;
   gsize tests_length, tests_i;
   RetroReftestData *data;
@@ -404,8 +425,14 @@ retro_reftest_setup_for_file (GFile *file)
   retro_reftest_add_boot_test (reftest_file, data);
 
   frames = retro_reftest_file_get_frames (reftest_file);
+  current_frame_number = 0;
   for (frame = frames; frame != NULL; frame = frame->next) {
     frame_number = *((guint *) frame->data);
+
+    if (current_frame_number < frame_number) {
+      retro_reftest_add_fast_forward_test (reftest_file, frame_number, data);
+    }
+    current_frame_number = frame_number + 1;
 
     tests_length = 0;
     tests = retro_reftest_file_get_tests (reftest_file,

@@ -3,5 +3,5 @@ Path=/cruzes
 Core=/app/lib/libretro/cruzes_libretro.so
 
 [Frame 0]
-Tests=Run;Video;
+Tests=Run;Video;StateRefresh;
 Video=cruzes.png

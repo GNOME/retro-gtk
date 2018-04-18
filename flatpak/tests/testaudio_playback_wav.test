@@ -4,5 +4,5 @@ Core=/app/lib/libretro/testaudio_callback_libretro.so
 Medias=BAK_1.wav;
 
 [Frame 0]
-Tests=Run;Video;
+Tests=Run;Video;StateRefresh;
 Video=testaudio_callback.png

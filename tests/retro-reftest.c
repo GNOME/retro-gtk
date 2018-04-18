@@ -323,7 +323,7 @@ retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
 {
   gchar *test_path;
 
-  test_path = g_strdup_printf ("%s/boot",
+  test_path = g_strdup_printf ("%s/Boot",
                                retro_reftest_file_peek_path (reftest_file));
   g_test_add_data_func_full (test_path,
                              retro_reftest_data_ref (data),
@@ -343,7 +343,7 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
   run = g_new0 (RetroReftestRun, 1);
   run->data = retro_reftest_data_ref (data);
   run->target_frame = frame_number;
-  test_path = g_strdup_printf ("%s/%u/run",
+  test_path = g_strdup_printf ("%s/%u/Run",
                                retro_reftest_file_peek_path (reftest_file),
                                frame_number);
   g_test_add_data_func_full (test_path,
@@ -366,7 +366,7 @@ retro_reftest_add_video_test (RetroReftestFile *reftest_file,
   video->data = retro_reftest_data_ref (data);
   video->video_file = retro_reftest_file_get_video (reftest_file, frame_number, &error);
   g_assert_no_error (error);
-  test_path = g_strdup_printf ("%s/%u/video",
+  test_path = g_strdup_printf ("%s/%u/Video",
                                retro_reftest_file_peek_path (reftest_file),
                                frame_number);
   g_test_add_data_func_full (test_path,

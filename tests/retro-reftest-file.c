@@ -321,7 +321,7 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
       g_critical ("Can't use [%s], frame %u is already implemented by [%s].",
                   groups[i],
                   frame_number,
-                  g_hash_table_lookup (self->frames, &frame_number));
+                  (gchar *) g_hash_table_lookup (self->frames, &frame_number));
 
       continue;
     }

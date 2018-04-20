@@ -9,6 +9,7 @@ testdatadir = installed_test_datadir
 retro_reftest_sources = [
   'retro-reftest.c',
   'retro-reftest-file.c',
+  'retro-test-controller.c',
 ]
 
 retro_reftest = executable('retro-reftest',

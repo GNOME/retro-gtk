@@ -1,7 +1,6 @@
 #pragma once
 
 #include <gio/gio.h>
-#include <glib-object.h>
 #define RETRO_GTK_USE_UNSTABLE_API
 #include <retro-gtk/retro-gtk.h>
 

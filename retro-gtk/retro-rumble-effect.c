@@ -11,6 +11,7 @@ retro_rumble_effect_get_type (void)
     static const GEnumValue values[] = {
       { RETRO_RUMBLE_EFFECT_STRONG, "RETRO_RUMBLE_EFFECT_STRONG", "strong" },
       { RETRO_RUMBLE_EFFECT_WEAK, "RETRO_RUMBLE_EFFECT_WEAK", "weak" },
+      { RETRO_RUMBLE_EFFECT_COUNT, "RETRO_RUMBLE_EFFECT_COUNT", "count" },
       { 0, NULL, NULL },
     };
     GType type;

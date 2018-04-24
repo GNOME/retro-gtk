@@ -213,6 +213,63 @@ retro_reftest_file_peek_path (RetroReftestFile *self)
   return self->path;
 }
 
+static guint
+retro_reftest_file_str_to_uint (gchar   *string,
+                                GError **error)
+{
+  gchar *string_end;
+  guint64 number_long;
+
+  if (string == NULL) {
+    g_set_error (error,
+                 RETRO_REFTEST_FILE_ERROR,
+                 RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+                 "Unexpected NULL string.");
+
+    return 0;
+  }
+
+  if (!g_ascii_isdigit (string[0])) {
+    g_set_error (error,
+                 RETRO_REFTEST_FILE_ERROR,
+                 RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+                 "Not a number: %s.", string);
+
+    return 0;
+  }
+
+  errno = 0;
+  number_long = g_ascii_strtoull (string, &string_end, 10);
+  if (errno != 0) {
+    g_set_error (error,
+                 RETRO_REFTEST_FILE_ERROR,
+                 RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+                 "%s.", strerror (errno));
+
+    return 0;
+  }
+
+  if (string_end[0] != '\0') {
+    g_set_error (error,
+                 RETRO_REFTEST_FILE_ERROR,
+                 RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+                 "Not a number: %s.", string);
+
+    return 0;
+  }
+
+  if (number_long > G_MAXUINT) {
+    g_set_error (error,
+                 RETRO_REFTEST_FILE_ERROR,
+                 RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+                 "Not an unsigned interger: %s.", string);
+
+    return 0;
+  }
+
+  return (guint) number_long;
+}
+
 RetroCore *
 retro_reftest_file_get_core (RetroReftestFile  *self,
                              GError           **error)
@@ -328,10 +385,10 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
 {
   gsize i, groups_length = 0;
   gchar **groups;
-  gchar *frame_number_string, *frame_number_string_end;
-  guint64 frame_number_long;
+  gchar *frame_number_string;
   guint frame_number;
   guint *key;
+  GError *error = NULL;
 
   if (self->frames != NULL) {
     return g_list_sort (g_hash_table_get_keys (self->frames),
@@ -346,36 +403,14 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
     if (!g_str_has_prefix (groups[i], RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX))
       continue;
 
-    frame_number_string = groups[i] + RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH;
-    if (!g_ascii_isdigit (frame_number_string[0])) {
-      g_critical ("Invalid frame group [%s]: %s isn't a valid frame number.", groups[i], frame_number_string);
+    frame_number_string = groups[i] + strlen (RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX);
+    frame_number = retro_reftest_file_str_to_uint (frame_number_string, &error);
+    if (G_UNLIKELY (error != NULL)) {
+      g_critical ("Invalid frame group [%s]: %s", groups[i], error->message);
+      g_clear_error (&error);
 
       continue;
     }
-
-    errno = 0;
-    frame_number_long = g_ascii_strtoull (frame_number_string,
-                                          &frame_number_string_end,
-                                          10);
-    if (errno != 0) {
-      g_critical ("Invalid frame group [%s]: %s", groups[i], strerror (errno));
-
-      continue;
-    }
-
-    if (frame_number_string_end[0] != '\0') {
-      g_critical ("Invalid frame group [%s]: %s isn't a valid frame number.", groups[i], frame_number_string);
-
-      continue;
-    }
-
-    if (frame_number_long >= G_MAXUINT) {
-      g_critical ("Invalid frame number %lu, the maximum allowed frame number is %u.", frame_number_long, G_MAXUINT - 1);
-
-      continue;
-    }
-
-    frame_number = (guint) frame_number_long;
 
     if (g_hash_table_contains (self->frames, &frame_number)) {
       g_critical ("Can't use [%s], frame %u is already implemented by [%s].",

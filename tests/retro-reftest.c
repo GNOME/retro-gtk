@@ -18,6 +18,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include <X11/extensions/XTest.h>
+#include <X11/keysym.h>
+
 #include "retro-reftest-file.h"
 
 typedef struct {
@@ -496,10 +499,27 @@ int
 main (int argc,
       gchar **argv)
 {
+  Display *display = NULL;
+  int event_base, error_base, major_version, minor_version;
   GFile *file;
-  gint i;
+  gint i, result;
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
+
+
+  display = XOpenDisplay (NULL);
+
+  if (display == NULL) {
+    g_critical ("Cannot open display.");
+
+    return 1;
+  }
+
+  if (!XTestQueryExtension (display, &event_base, &error_base, &major_version, &minor_version)) {
+    g_critical ("No XTest extension.");
+
+    return 1;
+  }
 
   if (!parse_command_line (&argc, &argv))
     return 1;
@@ -510,5 +530,9 @@ main (int argc,
     g_object_unref (file);
   }
 
-  return g_test_run ();
+  result = g_test_run ();
+
+  XCloseDisplay (display);
+
+  return result;
 }

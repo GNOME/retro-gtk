@@ -158,10 +158,12 @@ retro_option_set_value (RetroOption  *self,
       break;
 
   if (G_UNLIKELY (self->values[i] == NULL)) {
-    g_set_error_literal (error,
-                         RETRO_OPTION_ERROR,
-                         RETRO_OPTION_ERROR_INVALID_VALUE,
-                         "Unexpected option value: option %s doesn’t have value %s.");
+    g_set_error (error,
+                 RETRO_OPTION_ERROR,
+                 RETRO_OPTION_ERROR_INVALID_VALUE,
+                 "Unexpected option value: option %s doesn’t have value %s.",
+                 self->key,
+                 value);
 
     return;
   }

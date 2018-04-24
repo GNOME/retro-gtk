@@ -3,28 +3,7 @@
             "buildsystem" : "simple",
             "build-commands" : [
                 "mkdir -p /app/tests/",
-                "install -m644 -pD advanced_tests.png /app/tests/advanced_tests.png",
-                "install -m644 -pD advanced_tests.test /app/tests/advanced_tests.test",
-                "install -m644 -pD BAK_1.wav /app/tests/BAK_1.wav",
-                "install -m644 -pD cruzes.png /app/tests/cruzes.png",
-                "install -m644 -pD cruzes.test /app/tests/cruzes.test",
-                "install -m644 -pD testaudio_callback.png /app/tests/testaudio_callback.png",
-                "install -m644 -pD testaudio_callback.test /app/tests/testaudio_callback.test",
-                "install -m644 -pD testaudio_no_callback.png /app/tests/testaudio_no_callback.png",
-                "install -m644 -pD testaudio_no_callback.test /app/tests/testaudio_no_callback.test",
-                "install -m644 -pD testaudio_playback_wav.png /app/tests/testaudio_playback_wav.png",
-                "install -m644 -pD testaudio_playback_wav.test /app/tests/testaudio_playback_wav.test",
-                "install -m644 -pD testgl.test /app/tests/testgl.test",
-                "install -m644 -pD testgl_compute_shaders.test /app/tests/testgl_compute_shaders.test",
-                "install -m644 -pD testgl_ff.test /app/tests/testgl_ff.test",
-                "install -m644 -pD testinput_buttontest.png /app/tests/testinput_buttontest.png",
-                "install -m644 -pD testinput_buttontest.test /app/tests/testinput_buttontest.test",
-                "install -m644 -pD test.png /app/tests/test.png",
-                "install -m644 -pD test.test /app/tests/test.test",
-                "install -m644 -pD testsw.png /app/tests/testsw.png",
-                "install -m644 -pD testsw.test /app/tests/testsw.test",
-                "install -m644 -pD testsw_vram.png /app/tests/testsw_vram.png",
-                "install -m644 -pD testsw_vram.test /app/tests/testsw_vram.test"
+                "install -m644 -p -t /app/tests *"
             ],
             "sources" : [
                 {

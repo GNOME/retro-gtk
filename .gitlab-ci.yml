@@ -1,0 +1,51 @@
+
+.build_template: &distro_build
+  script:
+    - meson -Dmanpage=false _build
+    - ninja -C _build install
+
+stages:
+  - build-flatpak
+  - build-os
+
+flatpak:master:
+  image: registry.gitlab.com/alatiera/gnome-nightly-oci/gnome-master:latest
+  stage: build-flatpak
+  script:
+    - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json
+    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
+  artifacts:
+    paths:
+      # - contacts-dev.flatpak
+      - _build/meson-logs/meson-log.txt
+      # - _build/meson-logs/testlog.txt
+    expire_in: 2 days
+  cache:
+    paths:
+      - .flatpak-builder/cache
+
+fedora:stable:
+  image: fedora:27
+  stage: build-os
+  before_script:
+    - dnf update -y
+    - >
+      dnf install -y \
+        gcc \
+        meson \
+        vala \
+        gettext \
+        glib2-devel \
+        gtk3-devel \
+        libgee-devel \
+        folks-devel \
+        evolution-data-server-devel \
+        gnome-desktop3-devel \
+        cheese-libs-devel \
+        gnome-online-accounts-devel \
+        telepathy-glib-devel
+  <<: *distro_build
+  only:
+    - schedules
+    - web
+    - tags

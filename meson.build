@@ -24,8 +24,6 @@ gobject = dependency ('gobject-2.0', version: glib_version)
 gtk = dependency ('gtk+-3.0', version: gtk_version)
 libpulse_simple = dependency ('libpulse-simple')
 m = cc.find_library('m', required : false)
-x11_dep = dependency('x11')
-xtst_dep = dependency('xtst')
 
 config_h = configuration_data()
 config_h.set_quoted ('RETRO_PLUGIN_PATH', ':'.join ([libretrodir, libdir]))

@@ -13,16 +13,9 @@ flatpak:master:
   stage: build-flatpak
   script:
     - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json
-    - flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
-    # Make sure to keep this in sync with the Flatpak manifest, all arguments
-    # are passed except the config-args because we build it ourselves
-    # - flatpak build app meson --prefix=/app _build
-    # - flatpak build app ninja -C _build install
-    # - flatpak-builder --finish-only --repo=repo app flatpak/org.gnome.Retro.UnitTests.json
-    # TODO: Make a Flatpak Contacts bundle for people to test
-    # - flatpak build-bundle repo contacts-dev.flatpak --runtime-repo=https://sdk.gnome.org/gnome-nightly.flatpakrepo org.gnome.ContactsDevel
+    # - flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
     # TODO: Run automatic tests inside the Flatpak env
-    # - xvfb-run -a -s "-screen 0 1024x768x24" flatpak build app ninja -C _build test
+    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
   artifacts:
     paths:
       # - contacts-dev.flatpak

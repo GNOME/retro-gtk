@@ -44,6 +44,86 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "button_test_a.png",
+                    "dest-filename" : "button_test_a.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_b.png",
+                    "dest-filename" : "button_test_b.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_down.png",
+                    "dest-filename" : "button_test_down.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_l.png",
+                    "dest-filename" : "button_test_l.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_l2.png",
+                    "dest-filename" : "button_test_l2.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_l3.png",
+                    "dest-filename" : "button_test_l3.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_left.png",
+                    "dest-filename" : "button_test_left.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_r.png",
+                    "dest-filename" : "button_test_r.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_r2.png",
+                    "dest-filename" : "button_test_r2.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_r3.png",
+                    "dest-filename" : "button_test_r3.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_right.png",
+                    "dest-filename" : "button_test_right.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_select.png",
+                    "dest-filename" : "button_test_select.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_start.png",
+                    "dest-filename" : "button_test_start.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_up.png",
+                    "dest-filename" : "button_test_up.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_x.png",
+                    "dest-filename" : "button_test_x.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test_y.png",
+                    "dest-filename" : "button_test_y.png"
+                },
+                {
+                    "type" : "file",
                     "path" : "cruzes.png",
                     "dest-filename" : "cruzes.png"
                 },

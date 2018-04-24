@@ -1,9 +1,90 @@
 [Retro Reftest]
 Path=/button_test
 Core=/app/lib/libretro/button_test_libretro.so
+Controllers=Joypad;
 
 [Options]
 
 [Frame 0]
 State=None
 Video=button_test.png
+
+[Frame 1]
+Controller 0=Joypad UP;
+State=None
+Video=button_test_up.png
+
+[Frame 2]
+Controller 0=Joypad DOWN;
+State=None
+Video=button_test_down.png
+
+[Frame 3]
+Controller 0=Joypad LEFT;
+State=None
+Video=button_test_left.png
+
+[Frame 4]
+Controller 0=Joypad RIGHT;
+State=None
+Video=button_test_right.png
+
+[Frame 5]
+Controller 0=Joypad A;
+State=None
+Video=button_test_a.png
+
+[Frame 6]
+Controller 0=Joypad B;
+State=None
+Video=button_test_b.png
+
+[Frame 7]
+Controller 0=Joypad X;
+State=None
+Video=button_test_x.png
+
+[Frame 8]
+Controller 0=Joypad Y;
+State=None
+Video=button_test_y.png
+
+[Frame 9]
+Controller 0=Joypad START;
+State=None
+Video=button_test_start.png
+
+[Frame 10]
+Controller 0=Joypad SELECT;
+State=None
+Video=button_test_select.png
+
+[Frame 11]
+Controller 0=Joypad L;
+State=None
+Video=button_test_l.png
+
+[Frame 12]
+Controller 0=Joypad R;
+State=None
+Video=button_test_r.png
+
+[Frame 13]
+Controller 0=Joypad L2;
+State=None
+Video=button_test_l2.png
+
+[Frame 14]
+Controller 0=Joypad R2;
+State=None
+Video=button_test_r2.png
+
+[Frame 15]
+Controller 0=Joypad L3;
+State=None
+Video=button_test_l3.png
+
+[Frame 16]
+Controller 0=Joypad R3;
+State=None
+Video=button_test_r3.png

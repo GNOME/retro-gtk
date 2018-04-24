@@ -1,0 +1,15 @@
+
+.build_template: &distro_build
+  script:
+    - meson -Dmanpage=false _build
+    - ninja -C _build install
+
+stages:
+  - build-flatpak
+
+flatpak:master:
+  image: registry.gitlab.com/alatiera/gnome-nightly-oci/gnome-master:latest
+  stage: build-flatpak
+  script:
+    - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json
+    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests

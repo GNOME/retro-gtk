@@ -34,6 +34,15 @@ struct _RetroReftestFile
 
 G_DEFINE_TYPE (RetroReftestFile, retro_reftest_file, G_TYPE_OBJECT)
 
+#define RETRO_REFTEST_FILE_ERROR (retro_reftest_file_error_quark ())
+
+typedef enum
+{
+  RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
+} ManetteMappingError;
+
+GQuark retro_reftest_file_error_quark (void);
+
 #define RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP "Retro Reftest"
 #define RETRO_REFTEST_FILE_PATH_KEY "Path"
 #define RETRO_REFTEST_FILE_CORE_KEY "Core"
@@ -446,3 +455,5 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
 
   return video_file;
 }
+
+G_DEFINE_QUARK (retro-reftest-file-error, retro_reftest_file_error)

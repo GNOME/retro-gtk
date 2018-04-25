@@ -126,8 +126,6 @@ parse_command_line (int    *argc,
     arg_media_files_count = *argc - 1;
   }
 
-  g_test_set_nonfatal_assertions ();
-
   return TRUE;
 }
 
@@ -469,6 +467,8 @@ retro_reftest_setup_for_file (GFile *file)
   RetroReftestData *data;
   GError *error = NULL;
 
+  g_critical ("Setup");
+
   reftest_file = retro_reftest_file_new (file);
   data = g_new0 (RetroReftestData, 1);
   data->core = retro_reftest_file_get_core (reftest_file, &error);
@@ -524,6 +524,10 @@ main (int argc,
 {
   GFile *file;
   gint i;
+
+  g_critical ("Main");
+
+  g_message ("Main");
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
 

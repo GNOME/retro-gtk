@@ -175,6 +175,9 @@ retro_module_new (const gchar *file_name)
     load_module (self, self->file_name);
   }
 
+  if (self->module == NULL)
+    g_critical ("%s", g_module_error ());
+
   g_module_symbol (self->module, "retro_set_environment", &function);
   self->set_environment = (RetroCallbackSetter) function;
   g_module_symbol (self->module, "retro_set_video_refresh", &function);

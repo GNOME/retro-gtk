@@ -45,6 +45,17 @@ retro_demo_open (GApplication  *application,
   if (self->core == NULL)
     return;
 
+  if (n_files > 1) {
+    gchar **medias;
+    gint i;
+
+    medias = g_new0 (gchar *, n_files);
+    for (i = 1; i < n_files; i++)
+      medias[i - 1] = g_file_get_uri (files[i]);
+    retro_core_set_medias (self->core, (const gchar *const *) medias);
+    g_strfreev (medias);
+  }
+
   retro_core_boot (self->core, &error);
   if (error != NULL) {
     g_debug ("Couldn't initialize the Libretro core: %s", error->message);

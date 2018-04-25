@@ -1,0 +1,4 @@
+/testinput_buttontest/Boot: OK
+/testinput_buttontest/0/Run: OK
+/testinput_buttontest/0/Video: OK
+/testinput_buttontest/0/StateRefresh: FAIL

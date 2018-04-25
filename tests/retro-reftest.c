@@ -20,6 +20,8 @@
 
 #include "retro-reftest-file.h"
 
+#include <execinfo.h>
+
 typedef struct {
   guint refs;
   RetroCore *core;
@@ -492,6 +494,19 @@ retro_reftest_setup_for_file (GFile *file)
   g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
 }
 
+void
+on_sigsegv (int sig)
+{
+  gpointer array[10];
+  gint size;
+
+  size = backtrace (array, 10);
+
+  fprintf (stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd (array, size, STDERR_FILENO);
+  exit (1);
+}
+
 int
 main (int argc,
       gchar **argv)
@@ -500,6 +515,7 @@ main (int argc,
   gint i;
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
+  signal(SIGSEGV, on_sigsegv);
 
   if (!parse_command_line (&argc, &argv))
     return 1;

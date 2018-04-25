@@ -123,6 +123,8 @@ retro_module_new (const gchar *file_name)
   gpointer function;
   GError *inner_error = NULL;
 
+  g_critical ("Filename: %s", file_name);
+
   g_return_val_if_fail (file_name != NULL, NULL);
 
   self = (RetroModule*) g_object_new (RETRO_TYPE_MODULE, NULL);
@@ -174,6 +176,8 @@ retro_module_new (const gchar *file_name)
     g_hash_table_add (retro_module_loaded_modules, g_strdup (self->file_name));
     load_module (self, self->file_name);
   }
+
+  g_critical ("Module: %p", self->module);
 
   g_module_symbol (self->module, "retro_set_environment", &function);
   self->set_environment = (RetroCallbackSetter) function;

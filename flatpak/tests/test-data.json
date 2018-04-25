@@ -18,6 +18,11 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "advanced_tests.test.expected",
+                    "dest-filename" : "advanced_tests.test.expected"
+                },
+                {
+                    "type" : "file",
                     "url" : "https://upload.wikimedia.org/wikipedia/commons/7/74/BAK_1.wav",
                     "dest-filename" : "BAK_1.wav",
                     "sha256" : "e5b6bb141e48e706b57417229e33df2b9ff4a11dcb3a59e32dec77545c316788"
@@ -34,6 +39,11 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "cruzes.test.expected",
+                    "dest-filename" : "cruzes.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "testaudio_callback.png",
                     "dest-filename" : "testaudio_callback.png"
                 },
@@ -41,6 +51,11 @@
                     "type" : "file",
                     "path" : "testaudio_callback.test",
                     "dest-filename" : "testaudio_callback.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "testaudio_callback.test.expected",
+                    "dest-filename" : "testaudio_callback.test.expected"
                 },
                 {
                     "type" : "file",
@@ -54,6 +69,11 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "testaudio_no_callback.test.expected",
+                    "dest-filename" : "testaudio_no_callback.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "testaudio_playback_wav.png",
                     "dest-filename" : "testaudio_playback_wav.png"
                 },
@@ -64,8 +84,18 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "testaudio_playback_wav.test.expected",
+                    "dest-filename" : "testaudio_playback_wav.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "testgl.test",
                     "dest-filename" : "testgl.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "testgl.test.expected",
+                    "dest-filename" : "testgl.test.expected"
                 },
                 {
                     "type" : "file",
@@ -74,8 +104,18 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "testgl_compute_shaders.test.expected",
+                    "dest-filename" : "testgl_compute_shaders.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "testgl_ff.test",
                     "dest-filename" : "testgl_ff.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "testgl_ff.test.expected",
+                    "dest-filename" : "testgl_ff.test.expected"
                 },
                 {
                     "type" : "file",
@@ -89,6 +129,11 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "testinput_buttontest.test.expected",
+                    "dest-filename" : "testinput_buttontest.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "test.png",
                     "dest-filename" : "test.png"
                 },
@@ -96,6 +141,11 @@
                     "type" : "file",
                     "path" : "test.test",
                     "dest-filename" : "test.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "test.test.expected",
+                    "dest-filename" : "test.test.expected"
                 },
                 {
                     "type" : "file",
@@ -109,6 +159,11 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "testsw.test.expected",
+                    "dest-filename" : "testsw.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "testsw_vram.png",
                     "dest-filename" : "testsw_vram.png"
                 },
@@ -116,6 +171,11 @@
                     "type" : "file",
                     "path" : "testsw_vram.test",
                     "dest-filename" : "testsw_vram.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "testsw_vram.test.expected",
+                    "dest-filename" : "testsw_vram.test.expected"
                 }
             ]
         }

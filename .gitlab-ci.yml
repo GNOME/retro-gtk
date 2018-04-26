@@ -7,9 +7,41 @@
 stages:
   - build-flatpak
 
-flatpak:master:
+flatpak:unit-tests:
   image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
   stage: build-flatpak
+  variables:
+    MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
   script:
-    - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json
-    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
+    - flatpak-builder unit-tests ${MANIFEST_PATH}
+    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests ${MANIFEST_PATH} retro-unit-tests
+  cache:
+    paths:
+      - .flatpak-builder/cache/
+
+flatpak:demo-samples-test:
+  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
+  stage: build-flatpak
+  variables:
+    MANIFEST_PATH: "flatpak/org.gnome.Retro.DemoSamplesTest.json"
+    RUNTIME_REPO: "https://sdk.gnome.org/gnome-nightly.flatpakrepo"
+    FLATPAK_MODULE: "retro-gtk"
+    BUNDLE: "retro-demo-samples-test-git.flatpak"
+  script:
+    - flatpak-builder --stop-at=${FLATPAK_MODULE} app ${MANIFEST_PATH}
+    - flatpak build app meson --prefix=/app ${MESON_ARGS} _build
+    - flatpak build app ninja -C _build install
+    - flatpak-builder --finish-only --repo=repo app ${MANIFEST_PATH}
+    - flatpak build-bundle repo ${BUNDLE} --runtime-repo=${RUNTIME_REPO} org.gnome.Retro.DemoSamplesTest
+
+  artifacts:
+    paths:
+      - ${BUNDLE}
+      - _build/meson-logs/meson-log.txt
+    expire_in: 2 days
+  cache:
+    paths:
+      - .flatpak-builder/cache/
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://gitlab.gnome.org/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/${BUNDLE}

@@ -66,6 +66,8 @@ void retro_core_set_support_no_game (RetroCore *self,
 gchar *retro_core_get_name (RetroCore *self);
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
+void retro_core_set_geometry (RetroCore         *self,
+                              RetroGameGeometry *geometry);
 void retro_core_poll_controllers (RetroCore *self);
 gint16 retro_core_get_controller_input_state (RetroCore  *self,
                                               uint        port,

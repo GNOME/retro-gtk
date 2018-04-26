@@ -4,6 +4,7 @@ project('retro-gtk','c',
 )
 
 retro_gtk_prefix = get_option('prefix')
+retro_gtk_datadir = join_paths(retro_gtk_prefix, get_option('datadir'))
 
 cc = meson.get_compiler('c')
 gnome = import('gnome')
@@ -58,6 +59,7 @@ summary = [
   '             Demos: @0@'.format(get_option('demos')),
   'Directories:',
   '            prefix: @0@'.format(retro_gtk_prefix),
+  '           datadir: @0@'.format(retro_gtk_datadir),
   '------',
   ''
 ]

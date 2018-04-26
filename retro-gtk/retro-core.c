@@ -603,12 +603,19 @@ retro_core_set_system_av_info (RetroCore         *self,
     self->frames_per_second = system_av_info->timing.fps;
     g_object_notify (G_OBJECT (self), "frames-per-second");
   }
-  if (system_av_info->geometry.aspect_ratio > 0.f)
-    self->aspect_ratio = system_av_info->geometry.aspect_ratio;
-  else
-    self->aspect_ratio = (float) system_av_info->geometry.base_width /
-                             (float) system_av_info->geometry.base_height;
+  retro_core_set_geometry (self, &system_av_info->geometry);
   self->sample_rate = system_av_info->timing.sample_rate;
+}
+
+void
+retro_core_set_geometry (RetroCore         *self,
+                         RetroGameGeometry *geometry)
+{
+  if (geometry->aspect_ratio > 0.f)
+    self->aspect_ratio = geometry->aspect_ratio;
+  else
+    self->aspect_ratio = (float) geometry->base_width /
+                         (float) geometry->base_height;
 }
 
 /**

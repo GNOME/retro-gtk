@@ -215,6 +215,15 @@ set_disk_control_interface (RetroCore                *self,
 }
 
 static gboolean
+set_geometry (RetroCore         *self,
+              RetroGameGeometry *geometry)
+{
+  retro_core_set_geometry (self, geometry);
+
+  return TRUE;
+}
+
+static gboolean
 set_input_descriptors (RetroCore            *self,
                        RetroInputDescriptor *descriptors)
 {
@@ -347,6 +356,9 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
     set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
+  case RETRO_ENVIRONMENT_SET_GEOMETRY:
+    return set_geometry (self, (RetroGameGeometry *) data);
+
   case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
     return set_input_descriptors (self, (RetroInputDescriptor *) data);
 
@@ -383,7 +395,6 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
   case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
   case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
-  case RETRO_ENVIRONMENT_SET_GEOMETRY:
   case RETRO_ENVIRONMENT_SET_HW_RENDER:
   case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
   case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:

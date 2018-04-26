@@ -595,6 +595,22 @@ retro_core_get_needs_full_path (RetroCore *self)
   return system_info.need_fullpath;
 }
 
+void
+retro_core_set_system_av_info (RetroCore         *self,
+                               RetroSystemAvInfo *system_av_info)
+{
+  if (self->frames_per_second != system_av_info->timing.fps) {
+    self->frames_per_second = system_av_info->timing.fps;
+    g_object_notify (G_OBJECT (self), "frames-per-second");
+  }
+  if (system_av_info->geometry.aspect_ratio > 0.f)
+    self->aspect_ratio = system_av_info->geometry.aspect_ratio;
+  else
+    self->aspect_ratio = (float) system_av_info->geometry.base_width /
+                             (float) system_av_info->geometry.base_height;
+  self->sample_rate = system_av_info->timing.sample_rate;
+}
+
 /**
  * retro_core_get_name:
  * @self: a #RetroCore

@@ -7,9 +7,6 @@
 #include "retro-input-private.h"
 #include "retro-pixdata-private.h"
 
-void retro_core_set_system_av_info (RetroCore         *self,
-                                    RetroSystemAvInfo *system_av_info);
-
 enum RetroLogLevel {
   RETRO_LOG_LEVEL_DEBUG = 0,
   RETRO_LOG_LEVEL_INFO,
@@ -565,21 +562,4 @@ retro_core_set_callbacks (RetroCore *self)
   set_input_poll (on_input_poll);
   set_input_state (on_input_state);
   retro_core_pop_cb_data ();
-}
-
-// TODO This is internal, make it private as soon as possible.
-void
-retro_core_set_system_av_info (RetroCore         *self,
-                               RetroSystemAvInfo *system_av_info)
-{
-  if (self->frames_per_second != system_av_info->timing.fps) {
-    self->frames_per_second = system_av_info->timing.fps;
-    g_object_notify (G_OBJECT (self), "frames-per-second");
-  }
-  if (system_av_info->geometry.aspect_ratio > 0.f)
-    self->aspect_ratio = system_av_info->geometry.aspect_ratio;
-  else
-    self->aspect_ratio = (float) system_av_info->geometry.base_width /
-                             (float) system_av_info->geometry.base_height;
-  self->sample_rate = system_av_info->timing.sample_rate;
 }

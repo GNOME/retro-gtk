@@ -1,7 +1,0 @@
-[Retro Reftest]
-Path=/testinput_buttontest
-Core=/app/lib/libretro/testinput_buttontest_libretro.so
-
-[Frame 0]
-Tests=Run;Video;NoStateAccess;
-Video=testinput_buttontest.png

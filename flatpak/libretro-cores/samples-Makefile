@@ -4,7 +4,7 @@ CORES= \
 	audio/audio_callback/testaudio_callback_libretro.so \
 	audio/audio_no_callback/testaudio_no_callback_libretro.so \
 	audio/audio_playback_wav/testaudio_playback_wav_libretro.so \
-	input/button_test/testinput_buttontest_libretro.so \
+	input/button_test/button_test_libretro.so \
 	tests/cruzes/cruzes_libretro.so \
 	tests/test_advanced/advanced_tests_libretro.so \
 	tests/test/test_libretro.so \

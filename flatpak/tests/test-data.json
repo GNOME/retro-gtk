@@ -29,6 +29,21 @@
                 },
                 {
                     "type" : "file",
+                    "path" : "button_test.png",
+                    "dest-filename" : "button_test.png"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test.test",
+                    "dest-filename" : "button_test.test"
+                },
+                {
+                    "type" : "file",
+                    "path" : "button_test.test.expected",
+                    "dest-filename" : "button_test.test.expected"
+                },
+                {
+                    "type" : "file",
                     "path" : "cruzes.png",
                     "dest-filename" : "cruzes.png"
                 },
@@ -116,21 +131,6 @@
                     "type" : "file",
                     "path" : "testgl_ff.test.expected",
                     "dest-filename" : "testgl_ff.test.expected"
-                },
-                {
-                    "type" : "file",
-                    "path" : "testinput_buttontest.png",
-                    "dest-filename" : "testinput_buttontest.png"
-                },
-                {
-                    "type" : "file",
-                    "path" : "testinput_buttontest.test",
-                    "dest-filename" : "testinput_buttontest.test"
-                },
-                {
-                    "type" : "file",
-                    "path" : "testinput_buttontest.test.expected",
-                    "dest-filename" : "testinput_buttontest.test.expected"
                 },
                 {
                     "type" : "file",

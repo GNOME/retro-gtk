@@ -8,14 +8,14 @@ stages:
   - build-flatpak
 
 flatpak:unit-tests:
-  image: registry.gitlab.com/alatiera/gnome-nightly-oci/gnome-master:latest
+  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
   stage: build-flatpak
   script:
     - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json
     - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests flatpak/org.gnome.Retro.UnitTests.json retro-unit-tests
 
 flatpak:demo-samples-test:
-  image: registry.gitlab.com/alatiera/gnome-nightly-oci/gnome-master:latest
+  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
   stage: build-flatpak
   script:
     - flatpak-builder --repo=repo demo-samples-test flatpak/org.gnome.Retro.DemoSamplesTest.json

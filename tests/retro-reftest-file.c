@@ -21,6 +21,7 @@
 #include "retro-reftest-file.h"
 
 #include <errno.h>
+#include "retro-test-controller.h"
 
 struct _RetroReftestFile
 {
@@ -46,12 +47,14 @@ GQuark retro_reftest_file_error_quark (void);
 #define RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP "Retro Reftest"
 #define RETRO_REFTEST_FILE_PATH_KEY "Path"
 #define RETRO_REFTEST_FILE_CORE_KEY "Core"
+#define RETRO_REFTEST_FILE_CONTROLLERS_KEY "Controllers"
 #define RETRO_REFTEST_FILE_MEDIAS_KEY "Medias"
 
 #define RETRO_REFTEST_FILE_OPTIONS_GROUP "Options"
 
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX "Frame "
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH 6
+#define RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX "Controller "
 #define RETRO_REFTEST_FILE_FRAME_TESTS_KEY "Tests"
 #define RETRO_REFTEST_FILE_FRAME_STATE_KEY "State"
 #define RETRO_REFTEST_FILE_FRAME_VIDEO_KEY "Video"
@@ -63,6 +66,20 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+g_pointer_free (gpointer *pointer)
+{
+  if (pointer != NULL)
+    g_free (*pointer);
+}
+
+static void
+g_object_pointer_unref (GObject **pointer)
+{
+  if (pointer != NULL)
+    g_object_unref (*pointer);
+}
 
 static gint uint_compare (guint *a, guint *b) {
   if (*a == *b)
@@ -270,6 +287,69 @@ retro_reftest_file_str_to_uint (gchar   *string,
   return (guint) number_long;
 }
 
+static RetroControllerState *
+retro_controller_state_from_string (gchar *string)
+{
+  RetroControllerState *state;
+  RetroControllerType type;
+  guint id, index;
+  gint16 value;
+  gchar *remaining;
+
+  if (g_str_has_prefix (string, "Joypad ")) {
+    remaining = string + strlen ("Joypad ");
+
+    type = RETRO_CONTROLLER_TYPE_JOYPAD;
+    index = 0;
+    value = G_MAXINT16;
+
+    if (g_str_equal (remaining, "B"))
+      id = RETRO_JOYPAD_ID_B;
+    else if (g_str_equal (remaining, "Y"))
+      id = RETRO_JOYPAD_ID_Y;
+    else if (g_str_equal (remaining, "SELECT"))
+      id = RETRO_JOYPAD_ID_SELECT;
+    else if (g_str_equal (remaining, "START"))
+      id = RETRO_JOYPAD_ID_START;
+    else if (g_str_equal (remaining, "UP"))
+      id = RETRO_JOYPAD_ID_UP;
+    else if (g_str_equal (remaining, "DOWN"))
+      id = RETRO_JOYPAD_ID_DOWN;
+    else if (g_str_equal (remaining, "LEFT"))
+      id = RETRO_JOYPAD_ID_LEFT;
+    else if (g_str_equal (remaining, "RIGHT"))
+      id = RETRO_JOYPAD_ID_RIGHT;
+    else if (g_str_equal (remaining, "A"))
+      id = RETRO_JOYPAD_ID_A;
+    else if (g_str_equal (remaining, "X"))
+      id = RETRO_JOYPAD_ID_X;
+    else if (g_str_equal (remaining, "L"))
+      id = RETRO_JOYPAD_ID_L;
+    else if (g_str_equal (remaining, "R"))
+      id = RETRO_JOYPAD_ID_R;
+    else if (g_str_equal (remaining, "L2"))
+      id = RETRO_JOYPAD_ID_L2;
+    else if (g_str_equal (remaining, "R2"))
+      id = RETRO_JOYPAD_ID_R2;
+    else if (g_str_equal (remaining, "L3"))
+      id = RETRO_JOYPAD_ID_L3;
+    else if (g_str_equal (remaining, "R3"))
+      id = RETRO_JOYPAD_ID_R3;
+    else
+      return NULL;
+  }
+  else
+    return NULL;
+
+  state = g_new0 (RetroControllerState, 1);
+  state->type = type;
+  state->id = id;
+  state->index = index;
+  state->value = value;
+
+  return state;
+}
+
 RetroCore *
 retro_reftest_file_get_core (RetroReftestFile  *self,
                              GError           **error)
@@ -378,6 +458,57 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
   g_strfreev (keys);
 
   return options;
+}
+
+GArray *
+retro_reftest_file_get_controllers (RetroReftestFile  *self,
+                                    gsize             *length,
+                                    GError           **error)
+{
+  gboolean has_controllers;
+  gchar **controller_names;
+  gsize i;
+  GArray *controllers;
+  RetroControllerType type;
+  GError *tmp_error = NULL;
+
+  has_controllers = g_key_file_has_key (self->key_file,
+                                        RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                        RETRO_REFTEST_FILE_CONTROLLERS_KEY,
+                                        &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  if (!has_controllers)
+    return NULL;
+
+  controller_names = g_key_file_get_string_list (self->key_file,
+                                                 RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                                 RETRO_REFTEST_FILE_CONTROLLERS_KEY,
+                                                 length,
+                                                 &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  controllers = g_array_sized_new (TRUE, TRUE, sizeof (RetroTestController *), *length);
+  g_array_set_clear_func (controllers, (GDestroyNotify) g_object_pointer_unref);
+  for (i = 0; controller_names[i] != NULL; i++) {
+    if (g_str_equal (controller_names[i], "Joypad"))
+      type = RETRO_CONTROLLER_TYPE_JOYPAD;
+    else
+      continue;
+
+    g_array_index (controllers, RetroTestController *, i) = retro_test_controller_new (type);
+  }
+  g_strfreev (controller_names);
+
+  return controllers;
 }
 
 GList *
@@ -489,6 +620,75 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
   g_free (key_file_video);
 
   return video_file;
+}
+
+GHashTable *
+retro_reftest_file_get_controller_states (RetroReftestFile  *self,
+                                          guint              frame,
+                                          GError           **error)
+{
+  GHashTable *controllers;
+  gchar *group;
+  gchar **keys, **key_i;
+  gchar **inputs, **input_i;
+  guint *controller_number;
+  gchar *controller_number_string;
+  RetroControllerState *state;
+  GArray *states;
+  GError *tmp_error = NULL;
+
+  group = g_hash_table_lookup (self->frames, &frame);
+  keys = g_key_file_get_keys (self->key_file, group, NULL, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  controllers = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, (GDestroyNotify) g_array_unref);
+
+  for (key_i = keys; *key_i != NULL; key_i++) {
+    if (!g_str_has_prefix (*key_i, RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX))
+      continue;
+
+    controller_number_string = *key_i + strlen (RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX);
+    controller_number = g_new (guint, 1);
+    *controller_number = retro_reftest_file_str_to_uint (controller_number_string, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_critical ("Invalid controller key [%s]: %s", *key_i, tmp_error->message);
+      g_clear_error (&tmp_error);
+      g_free (controller_number);
+
+      continue;
+    }
+
+    inputs = g_key_file_get_string_list (self->key_file, group, *key_i, NULL, &tmp_error);
+    states = g_array_new (TRUE, TRUE, sizeof (RetroControllerState *));
+    g_array_set_clear_func (states, (GDestroyNotify) g_pointer_free);
+    for (input_i = inputs; *input_i != NULL; input_i++) {
+      state = retro_controller_state_from_string (*input_i);
+      if (state == NULL) {
+        g_critical ("Invalid controller input: %s. Skipping.", *input_i);
+
+        continue;
+      }
+
+      g_array_append_val (states, state);
+    }
+    g_strfreev (inputs);
+
+    g_hash_table_insert (controllers, controller_number, states);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_critical ("%s", tmp_error->message);
+      g_clear_error (&tmp_error);
+      g_free (controller_number);
+
+      continue;
+    }
+  }
+  g_strfreev (keys);
+
+  return controllers;
 }
 
 G_DEFINE_QUARK (retro-reftest-file-error, retro_reftest_file_error)

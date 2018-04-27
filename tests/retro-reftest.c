@@ -339,17 +339,32 @@ retro_reftest_test_options (RetroReftestOptions *options)
 }
 
 static void
+retro_reftest_test_fast_forward (RetroReftestRun *run)
+{
+  guint target_frame = run->target_frame;
+  guint next_frame = run->data->next_frame;
+
+  g_assert_cmpuint (next_frame, <, target_frame);
+
+  for (; next_frame < target_frame; next_frame++)
+    retro_core_run (run->data->core);
+
+  run->data->next_frame = next_frame;
+
+  g_assert_cmpuint (target_frame, ==, next_frame);
+}
+
+static void
 retro_reftest_test_run (RetroReftestRun *run)
 {
   guint target_frame = run->target_frame;
   guint next_frame = run->data->next_frame;
 
-  g_assert_cmpuint (next_frame, <=, target_frame);
+  g_assert_cmpuint (next_frame, ==, target_frame);
 
-  for (; next_frame < target_frame + 1; next_frame++)
-    retro_core_run (run->data->core);
+  retro_core_run (run->data->core);
+  next_frame++;
 
-  run->target_frame = target_frame;
   run->data->next_frame = next_frame;
 
   g_assert_cmpuint (target_frame + 1, ==, next_frame);
@@ -478,13 +493,13 @@ retro_reftest_add_fast_forward_test (RetroReftestFile *reftest_file,
 
   run = g_new0 (RetroReftestRun, 1);
   run->data = retro_reftest_data_ref (data);
-  run->target_frame = frame_number - 1;
+  run->target_frame = frame_number;
   test_path = g_strdup_printf ("%s/%u/FastForward",
                                retro_reftest_file_peek_path (reftest_file),
                                frame_number);
   g_test_add_data_func_full (test_path,
                              run,
-                             (GTestDataFunc) retro_reftest_test_run,
+                             (GTestDataFunc) retro_reftest_test_fast_forward,
                              (GDestroyNotify) retro_reftest_run_unref);
   g_free (test_path);
 }
@@ -625,6 +640,8 @@ retro_reftest_setup_for_file (GFile *file)
     g_assert_no_error (error);
     if (has_test)
       retro_reftest_add_video_test (reftest_file, frame_number, data);
+
+    current_frame_number = frame_number + 1;
   }
   g_list_free (frames);
   retro_reftest_data_unref (data);

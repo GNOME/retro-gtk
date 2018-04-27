@@ -93,6 +93,9 @@
             "name" : "retro-gtk",
             "buildsystem" : "meson",
             "builddir" : true,
+            "config-opts" : [
+                "-Dinstall-tests=true"
+            ],
             "sources" : [
                 {
                     "type" : "git",

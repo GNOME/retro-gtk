@@ -1,0 +1,12 @@
+# Documentation and introspection
+option('introspection', type: 'boolean', value: 'true',
+  description : 'Build introspection data (requires gobject-introspection)')
+
+# Demos and binaries
+option('demos', type: 'boolean', value: 'true',
+  description : 'Build demo programs')
+option('build-tests', type: 'boolean', value: 'true',
+  description : 'Build tests')
+option('install-tests', type: 'boolean', value: 'false',
+  description : 'Install tests')
+

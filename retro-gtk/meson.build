@@ -1,7 +1,3 @@
-api_version = '0.14'
-
-retro_gtk_module = 'retro-gtk-' + api_version
-
 retro_gtk_resources = gnome.compile_resources(
   'retro_gtk_resources',
   'retro-gtk.gresource.xml',
@@ -75,7 +71,7 @@ version_conf.set('MAJOR_VERSION', MAJOR_VERSION)
 version_conf.set('MINOR_VERSION', MINOR_VERSION)
 version_conf.set('MICRO_VERSION', MICRO_VERSION)
 
-configure_file(
+retro_gtk_version = configure_file(
   input: 'retro-gtk-version.h.in',
   output: 'retro-gtk-version.h',
   configuration: version_conf,
@@ -109,52 +105,60 @@ retro_gtk_lib = shared_library(
   soversion: 0,
 )
 
-retro_gtk_gir_args = [
-   '--quiet',
-  '-DRETRO_GTK_USE_UNSTABLE_API',
+retro_gtk_dep_sources = [
+  retro_gtk_version,
 ]
 
-retro_gtk_gir_includes = [
-  'Gio-2.0',
-  'GLib-2.0',
-  'GModule-2.0',
-  'GObject-2.0',
-  'Gtk-3.0',
-]
+if get_option('introspection')
+  retro_gtk_gir_args = [
+     '--quiet',
+    '-DRETRO_GTK_USE_UNSTABLE_API',
+  ]
 
-retro_gtk_gir = gnome.generate_gir(
-  retro_gtk_lib,
-  extra_args: retro_gtk_gir_args,
-  export_packages: retro_gtk_module,
-  sources: retro_gtk_headers + retro_gtk_sources,
-  nsversion: api_version,
-  namespace: 'Retro',
-  identifier_prefix: 'Retro',
-  includes: retro_gtk_gir_includes,
-  header: retro_gtk_main_header,
-  install: true,
-  symbol_prefix: 'retro',
-)
+  retro_gtk_gir_includes = [
+    'Gio-2.0',
+    'GLib-2.0',
+    'GModule-2.0',
+    'GObject-2.0',
+    'Gtk-3.0',
+  ]
 
-retro_gtk_vapi_packages = [
-  'gio-2.0',
-  'glib-2.0',
-  'gmodule-2.0',
-  'gobject-2.0',
-  'gtk+-3.0',
-  # 'libpulse-simple',
-]
+  retro_gtk_gir = gnome.generate_gir(
+    retro_gtk_lib,
+    extra_args: retro_gtk_gir_args,
+    export_packages: retro_gtk_module,
+    sources: retro_gtk_headers + retro_gtk_sources,
+    nsversion: retro_gtk_api_version,
+    namespace: 'Retro',
+    identifier_prefix: 'Retro',
+    includes: retro_gtk_gir_includes,
+    header: retro_gtk_main_header,
+    install: true,
+    symbol_prefix: 'retro',
+  )
 
-gnome.generate_vapi(
-  retro_gtk_module,
-  install: true,
-  packages: retro_gtk_vapi_packages,
-  sources: retro_gtk_gir[0],
-)
+  retro_gtk_vapi_packages = [
+    'gio-2.0',
+    'glib-2.0',
+    'gmodule-2.0',
+    'gobject-2.0',
+    'gtk+-3.0',
+    # 'libpulse-simple',
+  ]
+
+  gnome.generate_vapi(
+    retro_gtk_module,
+    install: true,
+    packages: retro_gtk_vapi_packages,
+    sources: retro_gtk_gir[0],
+  )
+
+  retro_gtk_dep_sources += retro_gtk_gir
+endif
 
 retro_gtk_dep = declare_dependency(
   link_with: retro_gtk_lib,
-  sources: retro_gtk_gir,
+  sources: retro_gtk_dep_sources,
   include_directories: confinc,
   dependencies: retro_gtk_deps,
 )
@@ -167,7 +171,7 @@ pkg.generate(
   description: 'A simple GObject game controller library',
     libraries: retro_gtk_lib,
          name: 'retro-gtk',
-     filebase: 'retro-gtk-' + api_version,
+     filebase: 'retro-gtk-' + retro_gtk_api_version,
       version: meson.project_version(),
       subdirs: 'retro-gtk',
      requires: 'glib-2.0',

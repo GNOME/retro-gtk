@@ -3,6 +3,8 @@ project('retro-gtk','c',
   meson_version: '>= 0.43.0',
 )
 
+retro_gtk_prefix = get_option('prefix')
+
 cc = meson.get_compiler('c')
 gnome = import('gnome')
 
@@ -12,6 +14,10 @@ libretrodir = join_paths(libdir, 'libretro')
 
 confinc = include_directories('.')
 srcinc = include_directories('retro-gtk')
+
+retro_gtk_version = meson.project_version()
+retro_gtk_api_version = '0.14'
+retro_gtk_module = 'retro-gtk-' + retro_gtk_api_version
 
 glib_version = '>= 2.50'
 gtk_version = '>= 3.22'
@@ -34,5 +40,26 @@ configure_file(
 )
 
 subdir('retro-gtk')
-subdir('tests')
-subdir('demos')
+if get_option('build-tests')
+  subdir('tests')
+endif
+if get_option('demos')
+  subdir('demos')
+endif
+
+summary = [
+  '',
+  '------',
+  'retro-gtk @0@ (@1@)'.format(retro_gtk_version, retro_gtk_api_version),
+  '',
+  '     Introspection: @0@'.format(get_option('introspection')),
+  '       Build tests: @0@'.format(get_option('build-tests')),
+  '     Install tests: @0@'.format(get_option('install-tests')),
+  '             Demos: @0@'.format(get_option('demos')),
+  'Directories:',
+  '            prefix: @0@'.format(retro_gtk_prefix),
+  '------',
+  ''
+]
+
+message('\n'.join(summary))

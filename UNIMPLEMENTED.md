@@ -3,7 +3,7 @@
 retro-gtk is a Libretro frontend which reimplements and uses the Libretro API.
 This file lists parts of the Libretro API which are not implemented by
 retro-gtk, please update this file when such features are implemented or when
-updating the reference retro-gtk/libretro.h.
+updating the reference tests/libretro.h.
 
 This has been updated to RetroArch 1.7.2.
 

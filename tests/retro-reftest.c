@@ -19,10 +19,13 @@
  */
 
 #include "retro-reftest-file.h"
+#include "retro-test-controller.h"
 
 typedef struct {
   guint refs;
   RetroCore *core;
+  GArray *controllers;
+  gsize controllers_length;
   guint next_frame;
   RetroPixdata *pixdata;
 } RetroReftestData;
@@ -37,6 +40,7 @@ typedef struct {
   guint refs;
   RetroReftestData *data;
   guint target_frame;
+  GHashTable *controller_states;
 } RetroReftestRun;
 
 typedef struct {
@@ -71,6 +75,8 @@ retro_reftest_data_unref (RetroReftestData *self) {
   if (self->refs == 0) {
     g_object_unref (self->core);
     retro_pixdata_free (self->pixdata);
+    if (self->controllers != NULL)
+      g_array_unref (self->controllers);
     g_free (self);
 
     return;
@@ -100,6 +106,8 @@ retro_reftest_run_unref (RetroReftestRun *self) {
 
   if (self->refs == 0) {
     retro_reftest_data_unref (self->data);
+    if (self->controller_states != NULL)
+      g_hash_table_unref (self->controller_states);
     g_free (self);
 
     return;
@@ -357,10 +365,38 @@ retro_reftest_test_fast_forward (RetroReftestRun *run)
 static void
 retro_reftest_test_run (RetroReftestRun *run)
 {
+  GHashTableIter iter;
+  guint *controller_i;
+  GArray *states;
+  gsize state_i;
+  RetroControllerState *state;
+  RetroTestController *controller;
+
   guint target_frame = run->target_frame;
   guint next_frame = run->data->next_frame;
 
   g_assert_cmpuint (next_frame, ==, target_frame);
+
+  if (run->controller_states != NULL) {
+    g_hash_table_iter_init (&iter, run->controller_states);
+    while (g_hash_table_iter_next (&iter, (gpointer) &controller_i, (gpointer) &states)) {
+      if (*controller_i >= run->data->controllers_length)
+        continue;
+
+      controller = g_array_index (run->data->controllers, RetroTestController *, *controller_i);
+      if (controller == NULL)
+        continue;
+
+      retro_test_controller_reset (controller);
+      state_i = 0;
+      for (state_i = 0;
+           (state = g_array_index (states, RetroControllerState *, state_i)) != NULL;
+           state_i++) {
+
+        retro_test_controller_set_input_state (controller, state);
+      }
+    }
+  }
 
   retro_core_run (run->data->core);
   next_frame++;
@@ -511,10 +547,13 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
 {
   RetroReftestRun *run;
   gchar *test_path;
+  GError *error = NULL;
 
   run = g_new0 (RetroReftestRun, 1);
   run->data = retro_reftest_data_ref (data);
   run->target_frame = frame_number;
+  run->controller_states = retro_reftest_file_get_controller_states (reftest_file, frame_number, &error);
+  g_assert_no_error (error);
   test_path = g_strdup_printf ("%s/%u/Run",
                                retro_reftest_file_peek_path (reftest_file),
                                frame_number);
@@ -609,6 +648,24 @@ retro_reftest_setup_for_file (GFile *file)
 
     return;
   }
+  data->controllers = retro_reftest_file_get_controllers (reftest_file,
+                                                          &data->controllers_length,
+                                                          &error);
+  if (error != NULL) {
+    gchar *path = g_file_get_path (file);
+    g_critical ("Invalid test file %s: %s", path, error->message);
+    g_free (path);
+    retro_reftest_data_unref (data);
+    g_object_unref (reftest_file);
+    g_clear_error (&error);
+
+    return;
+  }
+  if (data->controllers != NULL)
+    for (gsize i = 0; i < data->controllers_length; i++)
+      if (g_array_index (data->controllers, RetroTestController *, i) != NULL)
+        retro_core_set_controller (data->core, i,
+                                   RETRO_CONTROLLER (g_array_index (data->controllers, RetroTestController *, i)));
 
   /* Boot */
   retro_reftest_add_boot_test (reftest_file, data);

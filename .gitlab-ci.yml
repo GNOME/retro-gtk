@@ -8,7 +8,7 @@ stages:
   - build-flatpak
 
 flatpak:master:
-  image: registry.gitlab.com/alatiera/gnome-nightly-oci/gnome-master:latest
+  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
   stage: build-flatpak
   script:
     - flatpak-builder unit-tests flatpak/org.gnome.Retro.UnitTests.json

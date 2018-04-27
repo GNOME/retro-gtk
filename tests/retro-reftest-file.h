@@ -34,6 +34,9 @@ RetroReftestFile *retro_reftest_file_new (GFile *file);
 const gchar *retro_reftest_file_peek_path (RetroReftestFile *self);
 RetroCore *retro_reftest_file_get_core (RetroReftestFile  *self,
                                         GError           **error);
+GArray *retro_reftest_file_get_controllers (RetroReftestFile  *self,
+                                            gsize             *length,
+                                            GError           **error);
 gboolean retro_reftest_file_has_options (RetroReftestFile *self);
 GHashTable *retro_reftest_file_get_options (RetroReftestFile  *self,
                                             GError           **error);
@@ -50,5 +53,8 @@ gboolean retro_reftest_file_has_video (RetroReftestFile  *self,
 GFile *retro_reftest_file_get_video (RetroReftestFile  *self,
                                      guint              frame,
                                      GError           **error);
+GHashTable *retro_reftest_file_get_controller_states (RetroReftestFile  *self,
+                                                      guint              frame,
+                                                      GError           **error);
 
 G_END_DECLS

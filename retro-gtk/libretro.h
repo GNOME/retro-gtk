@@ -1,4 +1,4 @@
-/* Copyright (C) 2010-2017 The RetroArch team
+/* Copyright (C) 2010-2018 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this libretro API header (libretro.h).
@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 #ifndef __cplusplus
-#if defined(_MSC_VER) && !defined(SN_TARGET_PS3)
+#if defined(_MSC_VER) && _MSC_VER < 1800 && !defined(SN_TARGET_PS3)
 /* Hack applied for MSVC when compiling in C89 mode
  * as it isn't C99-compliant. */
 #define bool unsigned char
@@ -126,16 +126,23 @@ extern "C" {
  */
 #define RETRO_DEVICE_KEYBOARD     3
 
-/* Lightgun X/Y coordinates are reported relatively to last poll,
- * similar to mouse. */
+/* LIGHTGUN device is similar to Guncon-2 for PlayStation 2.
+ * It reports X/Y coordinates in screen space (similar to the pointer)
+ * in the range [-0x8000, 0x7fff] in both axes, with zero being center.
+ * As well as reporting on/off screen state. It features a trigger,
+ * start/select buttons, auxiliary action buttons and a
+ * directional pad. A forced off-screen shot can be requested for
+ * auto-reloading function in some games.
+ */
 #define RETRO_DEVICE_LIGHTGUN     4
 
 /* The ANALOG device is an extension to JOYPAD (RetroPad).
- * Similar to DualShock it adds two analog sticks.
- * This is treated as a separate device type as it returns values in the
- * full analog range of [-0x8000, 0x7fff]. Positive X axis is right.
- * Positive Y axis is down.
- * Only use ANALOG type when polling for analog values of the axes.
+ * Similar to DualShock2 it adds two analog sticks and all buttons can
+ * be analog. This is treated as a separate device type as it returns
+ * axis values in the full analog range of [-0x8000, 0x7fff].
+ * Positive X axis is right. Positive Y axis is down.
+ * Buttons are returned in the range [0, 0x7fff].
+ * Only use ANALOG type when polling for analog values.
  */
 #define RETRO_DEVICE_ANALOG       5
 
@@ -174,7 +181,8 @@ extern "C" {
 /* Buttons for the RetroPad (JOYPAD).
  * The placement of these is equivalent to placements on the
  * Super Nintendo controller.
- * L2/R2/L3/R3 buttons correspond to the PS1 DualShock. */
+ * L2/R2/L3/R3 buttons correspond to the PS1 DualShock.
+ * Also used as id values for RETRO_DEVICE_INDEX_ANALOG_BUTTON */
 #define RETRO_DEVICE_ID_JOYPAD_B        0
 #define RETRO_DEVICE_ID_JOYPAD_Y        1
 #define RETRO_DEVICE_ID_JOYPAD_SELECT   2
@@ -193,10 +201,11 @@ extern "C" {
 #define RETRO_DEVICE_ID_JOYPAD_R3      15
 
 /* Index / Id values for ANALOG device. */
-#define RETRO_DEVICE_INDEX_ANALOG_LEFT   0
-#define RETRO_DEVICE_INDEX_ANALOG_RIGHT  1
-#define RETRO_DEVICE_ID_ANALOG_X         0
-#define RETRO_DEVICE_ID_ANALOG_Y         1
+#define RETRO_DEVICE_INDEX_ANALOG_LEFT       0
+#define RETRO_DEVICE_INDEX_ANALOG_RIGHT      1
+#define RETRO_DEVICE_INDEX_ANALOG_BUTTON     2
+#define RETRO_DEVICE_ID_ANALOG_X             0
+#define RETRO_DEVICE_ID_ANALOG_Y             1
 
 /* Id values for MOUSE. */
 #define RETRO_DEVICE_ID_MOUSE_X                0
@@ -208,15 +217,30 @@ extern "C" {
 #define RETRO_DEVICE_ID_MOUSE_MIDDLE           6
 #define RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP    7
 #define RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN  8
+#define RETRO_DEVICE_ID_MOUSE_BUTTON_4         9
+#define RETRO_DEVICE_ID_MOUSE_BUTTON_5         10
 
-/* Id values for LIGHTGUN types. */
-#define RETRO_DEVICE_ID_LIGHTGUN_X        0
-#define RETRO_DEVICE_ID_LIGHTGUN_Y        1
-#define RETRO_DEVICE_ID_LIGHTGUN_TRIGGER  2
-#define RETRO_DEVICE_ID_LIGHTGUN_CURSOR   3
-#define RETRO_DEVICE_ID_LIGHTGUN_TURBO    4
-#define RETRO_DEVICE_ID_LIGHTGUN_PAUSE    5
-#define RETRO_DEVICE_ID_LIGHTGUN_START    6
+/* Id values for LIGHTGUN. */
+#define RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X        13 /*Absolute Position*/
+#define RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y        14 /*Absolute*/
+#define RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN    15 /*Status Check*/
+#define RETRO_DEVICE_ID_LIGHTGUN_TRIGGER          2
+#define RETRO_DEVICE_ID_LIGHTGUN_RELOAD          16 /*Forced off-screen shot*/
+#define RETRO_DEVICE_ID_LIGHTGUN_AUX_A            3
+#define RETRO_DEVICE_ID_LIGHTGUN_AUX_B            4
+#define RETRO_DEVICE_ID_LIGHTGUN_START            6
+#define RETRO_DEVICE_ID_LIGHTGUN_SELECT           7
+#define RETRO_DEVICE_ID_LIGHTGUN_AUX_C            8
+#define RETRO_DEVICE_ID_LIGHTGUN_DPAD_UP          9
+#define RETRO_DEVICE_ID_LIGHTGUN_DPAD_DOWN       10
+#define RETRO_DEVICE_ID_LIGHTGUN_DPAD_LEFT       11
+#define RETRO_DEVICE_ID_LIGHTGUN_DPAD_RIGHT      12
+/* deprecated */
+#define RETRO_DEVICE_ID_LIGHTGUN_X                0 /*Relative Position*/
+#define RETRO_DEVICE_ID_LIGHTGUN_Y                1 /*Relative*/
+#define RETRO_DEVICE_ID_LIGHTGUN_CURSOR           3 /*Use Aux:A*/
+#define RETRO_DEVICE_ID_LIGHTGUN_TURBO            4 /*Use Aux:B*/
+#define RETRO_DEVICE_ID_LIGHTGUN_PAUSE            5 /*Use Start*/
 
 /* Id values for POINTER. */
 #define RETRO_DEVICE_ID_POINTER_X         0
@@ -230,21 +254,23 @@ extern "C" {
 /* Id values for LANGUAGE */
 enum retro_language
 {
-   RETRO_LANGUAGE_ENGLISH             =  0,
-   RETRO_LANGUAGE_JAPANESE            =  1,
-   RETRO_LANGUAGE_FRENCH              =  2,
-   RETRO_LANGUAGE_SPANISH             =  3,
-   RETRO_LANGUAGE_GERMAN              =  4,
-   RETRO_LANGUAGE_ITALIAN             =  5,
-   RETRO_LANGUAGE_DUTCH               =  6,
-   RETRO_LANGUAGE_PORTUGUESE          =  7,
-   RETRO_LANGUAGE_RUSSIAN             =  8,
-   RETRO_LANGUAGE_KOREAN              =  9,
-   RETRO_LANGUAGE_CHINESE_TRADITIONAL = 10,
-   RETRO_LANGUAGE_CHINESE_SIMPLIFIED  = 11,
-   RETRO_LANGUAGE_ESPERANTO           = 12,
-   RETRO_LANGUAGE_POLISH              = 13,
-   RETRO_LANGUAGE_VIETNAMESE          = 14,
+   RETRO_LANGUAGE_ENGLISH             = 0,
+   RETRO_LANGUAGE_JAPANESE            = 1,
+   RETRO_LANGUAGE_FRENCH              = 2,
+   RETRO_LANGUAGE_SPANISH             = 3,
+   RETRO_LANGUAGE_GERMAN              = 4,
+   RETRO_LANGUAGE_ITALIAN             = 5,
+   RETRO_LANGUAGE_DUTCH               = 6,
+   RETRO_LANGUAGE_PORTUGUESE_BRAZIL   = 7,
+   RETRO_LANGUAGE_PORTUGUESE_PORTUGAL = 8,
+   RETRO_LANGUAGE_RUSSIAN             = 9,
+   RETRO_LANGUAGE_KOREAN              = 10,
+   RETRO_LANGUAGE_CHINESE_TRADITIONAL = 11,
+   RETRO_LANGUAGE_CHINESE_SIMPLIFIED  = 12,
+   RETRO_LANGUAGE_ESPERANTO           = 13,
+   RETRO_LANGUAGE_POLISH              = 14,
+   RETRO_LANGUAGE_VIETNAMESE          = 15,
+   RETRO_LANGUAGE_ARABIC              = 16,
    RETRO_LANGUAGE_LAST,
 
    /* Ensure sizeof(enum) == sizeof(int) */
@@ -350,6 +376,10 @@ enum retro_key
    RETROK_x              = 120,
    RETROK_y              = 121,
    RETROK_z              = 122,
+   RETROK_LEFTBRACE      = 123,
+   RETROK_BAR            = 124,
+   RETROK_RIGHTBRACE     = 125,
+   RETROK_TILDE          = 126,
    RETROK_DELETE         = 127,
 
    RETROK_KP0            = 256,
@@ -569,9 +599,12 @@ enum retro_mod
                                             * GET_VARIABLE.
                                             * This allows the frontend to present these variables to
                                             * a user dynamically.
-                                            * This should be called as early as possible (ideally in
-                                            * retro_set_environment).
-                                            *
+                                            * This should be called the first time as early as
+                                            * possible (ideally in retro_set_environment).
+                                            * Afterward it may be called again for the core to communicate
+                                            * updated options to the frontend, but the number of core
+                                            * options must not change from the number in the initial call.
+					    *
                                             * 'data' points to an array of retro_variable structs
                                             * terminated by a { NULL, NULL } element.
                                             * retro_variable::key should be namespaced to not collide
@@ -713,7 +746,7 @@ enum retro_mod
                                            /* struct retro_log_callback * --
                                             * Gets an interface for logging. This is useful for
                                             * logging in a cross-platform way
-                                            * as certain platforms cannot use use stderr for logging.
+                                            * as certain platforms cannot use stderr for logging.
                                             * It also allows the frontend to
                                             * show logging information in a more suitable way.
                                             * If this interface is not used, libretro cores should
@@ -922,10 +955,148 @@ enum retro_mod
                                             * writeable (and readable).
                                             */
 
+#define RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT (44 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* N/A (null) * --
+                                            * The frontend will try to use a 'shared' hardware context (mostly applicable
+                                            * to OpenGL) when a hardware context is being set up.
+                                            *
+                                            * Returns true if the frontend supports shared hardware contexts and false
+                                            * if the frontend does not support shared hardware contexts.
+                                            *
+                                            * This will do nothing on its own until SET_HW_RENDER env callbacks are
+                                            * being used.
+                                            */
+
+#define RETRO_ENVIRONMENT_GET_VFS_INTERFACE (45 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_vfs_interface_info * --
+                                            * Gets access to the VFS interface.
+                                            * VFS presence needs to be queried prior to load_game or any
+                                            * get_system/save/other_directory being called to let front end know
+                                            * core supports VFS before it starts handing out paths.
+                                            * It is recomended to do so in retro_set_environment */
+
+/* VFS functionality */
+
+/* File paths:
+ * File paths passed as parameters when using this api shall be well formed unix-style,
+ * using "/" (unquoted forward slash) as directory separator regardless of the platform's native separator.
+ * Paths shall also include at least one forward slash ("game.bin" is an invalid path, use "./game.bin" instead).
+ * Other than the directory separator, cores shall not make assumptions about path format:
+ * "C:/path/game.bin", "http://example.com/game.bin", "#game/game.bin", "./game.bin" (without quotes) are all valid paths.
+ * Cores may replace the basename or remove path components from the end, and/or add new components;
+ * however, cores shall not append "./", "../" or multiple consecutive forward slashes ("//") to paths they request to front end.
+ * The frontend is encouraged to make such paths work as well as it can, but is allowed to give up if the core alters paths too much.
+ * Frontends are encouraged, but not required, to support native file system paths (modulo replacing the directory separator, if applicable).
+ * Cores are allowed to try using them, but must remain functional if the front rejects such requests.
+ * Cores are encouraged to use the libretro-common filestream functions for file I/O,
+ * as they seamlessly integrate with VFS, deal with directory separator replacement as appropriate
+ * and provide platform-specific fallbacks in cases where front ends do not support VFS. */
+
+/* Opaque file handle
+ * Introduced in VFS API v1 */
+struct retro_vfs_file_handle;
+
+/* File open flags
+ * Introduced in VFS API v1 */
+#define RETRO_VFS_FILE_ACCESS_READ            (1 << 0) /* Read only mode */
+#define RETRO_VFS_FILE_ACCESS_WRITE           (1 << 1) /* Write only mode, discard contents and overwrites existing file unless RETRO_VFS_FILE_ACCESS_UPDATE is also specified */
+#define RETRO_VFS_FILE_ACCESS_READ_WRITE      (RETRO_VFS_FILE_ACCESS_READ | RETRO_VFS_FILE_ACCESS_WRITE) /* Read-write mode, discard contents and overwrites existing file unless RETRO_VFS_FILE_ACCESS_UPDATE is also specified*/
+#define RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING (1 << 2) /* Prevents discarding content of existing files opened for writing */
+
+/* These are only hints. The frontend may choose to ignore them. Other than RAM/CPU/etc use,
+   and how they react to unlikely external interference (for example someone else writing to that file,
+   or the file's server going down), behavior will not change. */
+#define RETRO_VFS_FILE_ACCESS_HINT_NONE              (0)
+/* Indicate that the file will be accessed many times. The frontend should aggressively cache everything. */
+#define RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS   (1 << 0)
+
+/* Seek positions */
+#define RETRO_VFS_SEEK_POSITION_START    0
+#define RETRO_VFS_SEEK_POSITION_CURRENT  1
+#define RETRO_VFS_SEEK_POSITION_END      2
+
+/* Get path from opaque handle. Returns the exact same path passed to file_open when getting the handle
+ * Introduced in VFS API v1 */
+typedef const char *(RETRO_CALLCONV *retro_vfs_get_path_t)(struct retro_vfs_file_handle *stream);
+
+/* Open a file for reading or writing. If path points to a directory, this will
+ * fail. Returns the opaque file handle, or NULL for error.
+ * Introduced in VFS API v1 */
+typedef struct retro_vfs_file_handle *(RETRO_CALLCONV *retro_vfs_open_t)(const char *path, unsigned mode, unsigned hints);
+
+/* Close the file and release its resources. Must be called if open_file returns non-NULL. Returns 0 on succes, -1 on failure.
+ * Whether the call succeeds ot not, the handle passed as parameter becomes invalid and should no longer be used.
+ * Introduced in VFS API v1 */
+typedef int (RETRO_CALLCONV *retro_vfs_close_t)(struct retro_vfs_file_handle *stream);
+
+/* Return the size of the file in bytes, or -1 for error.
+ * Introduced in VFS API v1 */
+typedef int64_t (RETRO_CALLCONV *retro_vfs_size_t)(struct retro_vfs_file_handle *stream);
+
+/* Get the current read / write position for the file. Returns - 1 for error.
+ * Introduced in VFS API v1 */
+typedef int64_t (RETRO_CALLCONV *retro_vfs_tell_t)(struct retro_vfs_file_handle *stream);
+
+/* Set the current read/write position for the file. Returns the new position, -1 for error.
+ * Introduced in VFS API v1 */
+typedef int64_t (RETRO_CALLCONV *retro_vfs_seek_t)(struct retro_vfs_file_handle *stream, int64_t offset, int seek_position);
+
+/* Read data from a file. Returns the number of bytes read, or -1 for error.
+ * Introduced in VFS API v1 */
+typedef int64_t (RETRO_CALLCONV *retro_vfs_read_t)(struct retro_vfs_file_handle *stream, void *s, uint64_t len);
+
+/* Write data to a file. Returns the number of bytes written, or -1 for error.
+ * Introduced in VFS API v1 */
+typedef int64_t (RETRO_CALLCONV *retro_vfs_write_t)(struct retro_vfs_file_handle *stream, const void *s, uint64_t len);
+
+/* Flush pending writes to file, if using buffered IO. Returns 0 on sucess, or -1 on failure.
+ * Introduced in VFS API v1 */
+typedef int (RETRO_CALLCONV *retro_vfs_flush_t)(struct retro_vfs_file_handle *stream);
+
+/* Delete the specified file. Returns 0 on success, -1 on failure
+ * Introduced in VFS API v1 */
+typedef int (RETRO_CALLCONV *retro_vfs_remove_t)(const char *path);
+
+/* Rename the specified file. Returns 0 on success, -1 on failure
+ * Introduced in VFS API v1 */
+typedef int (RETRO_CALLCONV *retro_vfs_rename_t)(const char *old_path, const char *new_path);
+
+struct retro_vfs_interface
+{
+	retro_vfs_get_path_t get_path;
+	retro_vfs_open_t open;
+	retro_vfs_close_t close;
+	retro_vfs_size_t size;
+	retro_vfs_tell_t tell;
+	retro_vfs_seek_t seek;
+	retro_vfs_read_t read;
+	retro_vfs_write_t write;
+	retro_vfs_flush_t flush;
+	retro_vfs_remove_t remove;
+	retro_vfs_rename_t rename;
+};
+
+struct retro_vfs_interface_info
+{
+   /* Set by core: should this be higher than the version the front end supports,
+    * front end will return false in the RETRO_ENVIRONMENT_GET_VFS_INTERFACE call
+    * Introduced in VFS API v1 */
+   uint32_t required_interface_version;
+
+   /* Frontend writes interface pointer here. The frontend also sets the actual
+    * version, must be at least required_interface_version.
+    * Introduced in VFS API v1 */
+   struct retro_vfs_interface *iface;
+};
+
 enum retro_hw_render_interface_type
 {
-   RETRO_HW_RENDER_INTERFACE_VULKAN = 0,
-   RETRO_HW_RENDER_INTERFACE_DUMMY = INT_MAX
+	RETRO_HW_RENDER_INTERFACE_VULKAN = 0,
+	RETRO_HW_RENDER_INTERFACE_D3D9   = 1,
+	RETRO_HW_RENDER_INTERFACE_D3D10  = 2,
+	RETRO_HW_RENDER_INTERFACE_D3D11  = 3,
+	RETRO_HW_RENDER_INTERFACE_D3D12  = 4,
+   RETRO_HW_RENDER_INTERFACE_DUMMY  = INT_MAX
 };
 
 /* Base struct. All retro_hw_render_interface_* types
@@ -935,6 +1106,62 @@ struct retro_hw_render_interface
    enum retro_hw_render_interface_type interface_type;
    unsigned interface_version;
 };
+
+
+#define RETRO_ENVIRONMENT_GET_LED_INTERFACE (46 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_led_interface * --
+                                            * Gets an interface which is used by a libretro core to set
+                                            * state of LEDs.
+                                            */
+
+typedef void (RETRO_CALLCONV *retro_set_led_state_t)(int led, int state);
+struct retro_led_interface
+{
+    retro_set_led_state_t set_led_state;
+};
+
+#define RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE (47 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* int * --
+                                            * Tells the core if the frontend wants audio or video.
+                                            * If disabled, the frontend will discard the audio or video,
+                                            * so the core may decide to skip generating a frame or generating audio.
+                                            * This is mainly used for increasing performance.
+                                            * Bit 0 (value 1): Enable Video
+                                            * Bit 1 (value 2): Enable Audio
+                                            * Bit 2 (value 4): Use Fast Savestates.
+                                            * Bit 3 (value 8): Hard Disable Audio
+                                            * Other bits are reserved for future use and will default to zero.
+                                            * If video is disabled:
+                                            * * The frontend wants the core to not generate any video,
+                                            *   including presenting frames via hardware acceleration.
+                                            * * The frontend's video frame callback will do nothing.
+                                            * * After running the frame, the video output of the next frame should be
+                                            *   no different than if video was enabled, and saving and loading state
+                                            *   should have no issues.
+                                            * If audio is disabled:
+                                            * * The frontend wants the core to not generate any audio.
+                                            * * The frontend's audio callbacks will do nothing.
+                                            * * After running the frame, the audio output of the next frame should be
+                                            *   no different than if audio was enabled, and saving and loading state
+                                            *   should have no issues.
+                                            * Fast Savestates:
+                                            * * Guaranteed to be created by the same binary that will load them.
+                                            * * Will not be written to or read from the disk.
+                                            * * Suggest that the core assumes loading state will succeed.
+                                            * * Suggest that the core updates its memory buffers in-place if possible.
+                                            * * Suggest that the core skips clearing memory.
+                                            * * Suggest that the core skips resetting the system.
+                                            * * Suggest that the core may skip validation steps.
+                                            * Hard Disable Audio:
+                                            * * Used for a secondary core when running ahead.
+                                            * * Indicates that the frontend will never need audio from the core.
+                                            * * Suggests that the core may stop synthesizing audio, but this should not
+                                            *   compromise emulation accuracy.
+                                            * * Audio output for the next frame does not matter, and the frontend will
+                                            *   never need an accurate audio state in the future.
+                                            * * State will never be saved when using Hard Disable Audio.
+                                            */
+
 #define RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE (41 | RETRO_ENVIRONMENT_EXPERIMENTAL)
                                            /* const struct retro_hw_render_interface ** --
                                             * Returns an API specific rendering interface for accessing API specific data.
@@ -1006,7 +1233,6 @@ struct retro_hw_render_context_negotiation_interface
                                             * Sets quirk flags associated with serialization. The frontend will zero any flags it doesn't
                                             * recognize or support. Should be set in either retro_init or retro_load_game, but not both.
                                             */
-
 
 #define RETRO_MEMDESC_CONST     (1 << 0)   /* The frontend will never change this memory area once retro_load_game has returned. */
 #define RETRO_MEMDESC_BIGENDIAN (1 << 1)   /* The memory area contains big endian data. Default is little endian. */
@@ -1664,6 +1890,10 @@ enum retro_hw_context_type
    /* Vulkan, see RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE. */
    RETRO_HW_CONTEXT_VULKAN           = 6,
 
+   /* Direct3D, set version_major to select the type of interface
+    * returned by RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE */
+   RETRO_HW_CONTEXT_DIRECT3D         = 7,
+
    RETRO_HW_CONTEXT_DUMMY = INT_MAX
 };
 
@@ -1975,10 +2205,12 @@ struct retro_variable
 struct retro_game_info
 {
    const char *path;       /* Path to game, UTF-8 encoded.
-                            * Usually used as a reference.
-                            * May be NULL if rom was loaded from stdin
-                            * or similar.
-                            * retro_system_info::need_fullpath guaranteed
+                            * Sometimes used as a reference for building other paths.
+                            * May be NULL if game was loaded from stdin or similar,
+                            * but in this case some cores will be unable to load `data`.
+                            * So, it is preferable to fabricate something here instead
+                            * of passing NULL, which will help more cores to succeed.
+                            * retro_system_info::need_fullpath requires
                             * that this path is valid. */
    const void *data;       /* Memory buffer of loaded game. Will be NULL
                             * if need_fullpath was set. */

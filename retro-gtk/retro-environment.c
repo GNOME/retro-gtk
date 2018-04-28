@@ -7,6 +7,26 @@
 #include "retro-input-private.h"
 #include "retro-pixdata-private.h"
 
+enum RetroLanguage {
+  RETRO_LANGUAGE_ENGLISH = 0,
+  RETRO_LANGUAGE_JAPANESE,
+  RETRO_LANGUAGE_FRENCH,
+  RETRO_LANGUAGE_SPANISH,
+  RETRO_LANGUAGE_GERMAN,
+  RETRO_LANGUAGE_ITALIAN,
+  RETRO_LANGUAGE_DUTCH,
+  RETRO_LANGUAGE_PORTUGUESE_BRAZIL,
+  RETRO_LANGUAGE_PORTUGUESE_PORTUGAL,
+  RETRO_LANGUAGE_RUSSIAN,
+  RETRO_LANGUAGE_KOREAN,
+  RETRO_LANGUAGE_CHINESE_TRADITIONAL,
+  RETRO_LANGUAGE_CHINESE_SIMPLIFIED,
+  RETRO_LANGUAGE_ESPERANTO,
+  RETRO_LANGUAGE_POLISH,
+  RETRO_LANGUAGE_VIETNAMESE,
+  RETRO_LANGUAGE_ARABIC,
+};
+
 enum RetroLogLevel {
   RETRO_LOG_LEVEL_DEBUG = 0,
   RETRO_LOG_LEVEL_INFO,
@@ -122,6 +142,48 @@ get_input_device_capabilities (RetroCore *self,
                                guint64   *capabilities)
 {
   *capabilities = retro_core_get_controller_capabilities (self);
+
+  return TRUE;
+}
+
+static gboolean
+get_language (RetroCore *self,
+              unsigned  *language)
+{
+  static const struct { const gchar *locale_prefix; enum RetroLanguage language; } values[] = {
+    { "ar_", RETRO_LANGUAGE_ARABIC },
+    { "de_", RETRO_LANGUAGE_GERMAN },
+    { "en_", RETRO_LANGUAGE_ENGLISH },
+    { "eo", RETRO_LANGUAGE_ESPERANTO },
+    { "es_", RETRO_LANGUAGE_SPANISH },
+    { "fr_", RETRO_LANGUAGE_FRENCH },
+    { "it_", RETRO_LANGUAGE_ITALIAN },
+    { "jp_", RETRO_LANGUAGE_JAPANESE },
+    { "ko_", RETRO_LANGUAGE_KOREAN },
+    { "nl_", RETRO_LANGUAGE_DUTCH },
+    { "pl_", RETRO_LANGUAGE_POLISH },
+    { "pt_BR", RETRO_LANGUAGE_PORTUGUESE_BRAZIL },
+    { "pt_PT", RETRO_LANGUAGE_PORTUGUESE_PORTUGAL },
+    { "ru_", RETRO_LANGUAGE_RUSSIAN },
+    { "vi_", RETRO_LANGUAGE_VIETNAMESE },
+    { "zh_CN", RETRO_LANGUAGE_CHINESE_SIMPLIFIED },
+    { "zh_HK", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
+    { "zh_SG", RETRO_LANGUAGE_CHINESE_SIMPLIFIED },
+    { "zh_TW", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
+    { NULL, RETRO_LANGUAGE_ENGLISH },
+  };
+
+  const gchar *locale = g_getenv ("LANG");
+  gsize i;
+
+  for (i = 0; values[i].locale_prefix != NULL; i++)
+    if (g_str_has_prefix (locale, values[i].locale_prefix)) {
+      *language = values[i].language;
+
+      return TRUE;
+    }
+
+  *language = RETRO_LANGUAGE_ENGLISH;
 
   return TRUE;
 }
@@ -329,6 +391,9 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
     return get_input_device_capabilities (self, (guint64 *) data);
 
+  case RETRO_ENVIRONMENT_GET_LANGUAGE:
+    return get_language (self, (unsigned *) data);
+
   case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
     return get_libretro_path (self, (const gchar **) data);
 
@@ -387,7 +452,6 @@ environment_core_command (RetroCore *self,
     return shutdown (self);
 
   case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-  case RETRO_ENVIRONMENT_GET_LANGUAGE:
   case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
   case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
   case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:

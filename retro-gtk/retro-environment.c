@@ -151,43 +151,42 @@ static gboolean
 get_language (RetroCore *self,
               unsigned  *language)
 {
-  static const struct { const gchar *locale_prefix; enum RetroLanguage language; } values[] = {
-    { "ar_", RETRO_LANGUAGE_ARABIC },
-    { "de_", RETRO_LANGUAGE_GERMAN },
-    { "en_", RETRO_LANGUAGE_ENGLISH },
+  static const struct { const gchar *locale; enum RetroLanguage language; } values[] = {
+    { "ar", RETRO_LANGUAGE_ARABIC },
+    { "de", RETRO_LANGUAGE_GERMAN },
+    { "en", RETRO_LANGUAGE_ENGLISH },
     { "eo", RETRO_LANGUAGE_ESPERANTO },
-    { "es_", RETRO_LANGUAGE_SPANISH },
-    { "fr_", RETRO_LANGUAGE_FRENCH },
-    { "it_", RETRO_LANGUAGE_ITALIAN },
-    { "jp_", RETRO_LANGUAGE_JAPANESE },
-    { "ko_", RETRO_LANGUAGE_KOREAN },
-    { "nl_", RETRO_LANGUAGE_DUTCH },
-    { "pl_", RETRO_LANGUAGE_POLISH },
+    { "es", RETRO_LANGUAGE_SPANISH },
+    { "fr", RETRO_LANGUAGE_FRENCH },
+    { "it", RETRO_LANGUAGE_ITALIAN },
+    { "jp", RETRO_LANGUAGE_JAPANESE },
+    { "ko", RETRO_LANGUAGE_KOREAN },
+    { "nl", RETRO_LANGUAGE_DUTCH },
+    { "pl", RETRO_LANGUAGE_POLISH },
     { "pt_BR", RETRO_LANGUAGE_PORTUGUESE_BRAZIL },
     { "pt_PT", RETRO_LANGUAGE_PORTUGUESE_PORTUGAL },
-    { "ru_", RETRO_LANGUAGE_RUSSIAN },
-    { "vi_", RETRO_LANGUAGE_VIETNAMESE },
+    { "ru", RETRO_LANGUAGE_RUSSIAN },
+    { "vi", RETRO_LANGUAGE_VIETNAMESE },
     { "zh_CN", RETRO_LANGUAGE_CHINESE_SIMPLIFIED },
     { "zh_HK", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
     { "zh_SG", RETRO_LANGUAGE_CHINESE_SIMPLIFIED },
     { "zh_TW", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
-    { NULL, RETRO_LANGUAGE_DEFAULT },
+    { "C", RETRO_LANGUAGE_DEFAULT },
   };
 
-  const gchar *locale = g_getenv ("LANG");
-  gsize i = 0;
+  const gchar * const *locales = g_get_language_names ();
+  gsize locale_i, language_i;
 
-  if (locale == NULL) {
-    *language = RETRO_LANGUAGE_DEFAULT;
-
-    return TRUE;
+  for (locale_i = 0; locales[locale_i] != NULL; locale_i++) {
+    for (language_i = 0;
+         !g_str_equal (values[language_i].locale, "C") &&
+         !g_str_equal (locales[locale_i], values[language_i].locale);
+         language_i++);
+    if (!g_str_equal (values[language_i].locale, "C"))
+      break;
   }
 
-  while (values[i].locale_prefix != NULL &&
-         !g_str_has_prefix (locale, values[i].locale_prefix))
-    i++;
-
-  *language = values[i].language;
+  *language = values[language_i].language;
 
   return TRUE;
 }

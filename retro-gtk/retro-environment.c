@@ -422,7 +422,7 @@ environment_core_command (RetroCore *self,
     return get_variable_update (self, (bool *) data);
 
   case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
-    set_disk_control_interface (self, (RetroDiskControlCallback *) data);
+    return set_disk_control_interface (self, (RetroDiskControlCallback *) data);
 
   case RETRO_ENVIRONMENT_SET_GEOMETRY:
     return set_geometry (self, (RetroGameGeometry *) data);

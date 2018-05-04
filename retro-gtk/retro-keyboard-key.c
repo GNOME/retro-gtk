@@ -29,31 +29,47 @@ retro_keyboard_modifier_key_converter (guint           keyval,
 RetroKeyboardKey
 retro_keyboard_key_converter (guint keyval)
 {
-  guint key;
+  /*
+   * US-ASCII codes
+   *
+   * Both GDK_KEY_* and RETRO_KEYBOARD_KEY_* start with the US-ASCII codes,
+   * implementing common letters, digits and symbols.
+   *
+   * If the key is uppercase, turn it lower case as Libretro doesn't make a
+   * distinction between these.
+   */
+  if (keyval < 0x80)
+    return (keyval >= GDK_KEY_A && keyval <= GDK_KEY_Z) ?
+      keyval + (GDK_KEY_a - GDK_KEY_A) : keyval;
 
-  // Common keys (0x0020 to 0x00fe)
-  if (keyval < 0x80) {
-    key = (0x7f & keyval);
+  /*
+   * Function keys
+   *
+   * Both GDK_KEY_F* and RETRO_KEYBOARD_KEY_F* implement function keys 1—15 in a
+   * consecutive manner. GDK_KEY_F* actually implements more function keys but
+   * RETRO_KEYBOARD_KEY_F* doesn't.
+   */
+  if (keyval >= GDK_KEY_F1 && keyval <= GDK_KEY_F15)
+    return RETRO_KEYBOARD_KEY_F1 + (keyval - GDK_KEY_F1);
 
-    // If the key is uppercase, turn it lower case
-    if (key >= 'A' && key <= 'Z')
-      return key + 0x20;
+  /*
+   * Keypad digits
+   *
+   * Both GDK_KEY_KP_* and RETRO_KEYBOARD_KEY_KP* implement keypad digits 0–9 in
+   * a consecutive manner.
+   */
+  if (keyval >= GDK_KEY_KP_0 && keyval <= GDK_KEY_KP_9)
+    return RETRO_KEYBOARD_KEY_KP0 + (keyval - GDK_KEY_KP_0);
 
-    return key;
-  }
-
-  // Function keys
-  key = keyval - GDK_KEY_F1;
-  if (key < 15)
-    return RETRO_KEYBOARD_KEY_F1 + key;
-
-  // Keypad digits
-  key = keyval - GDK_KEY_KP_0;
-  if (key < 10)
-    return RETRO_KEYBOARD_KEY_KP0 + key;
-
-  // Various keys
-  // Missing keys: MODE, COMPOSE, POWER
+  /*
+   * Various keys
+   *
+   * FIXME: The following keys are unimplemented because I couldn't find the
+   * right GDK_KEY_* equivalent:
+   * - RETRO_KEYBOARD_KEY_MODE
+   * - RETRO_KEYBOARD_KEY_COMPOSE
+   * - RETRO_KEYBOARD_KEY_POWER
+   */
   switch (keyval) {
   case GDK_KEY_BackSpace:
     return RETRO_KEYBOARD_KEY_BACKSPACE;

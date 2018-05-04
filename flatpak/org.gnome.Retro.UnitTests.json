@@ -77,6 +77,8 @@
                         "  rm \"$RESULT\"",
                         "  return $RETURN",
                         "}",
+                        "cd /app/share/installed-tests/retro-gtk-0.14/",
+                        "/app/libexec/installed-tests/retro-gtk-0.14/retro-reftest `find . -name '*.test'`",
                         "cd /app/tests",
                         "retro_reftest_test `ls *.test`"
                     ],

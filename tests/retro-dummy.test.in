@@ -1,0 +1,7 @@
+[Retro Reftest]
+Path=/retro-dummy
+Core=@testlibretrodir@/libretro-dummy.so
+
+[Frame 0]
+Tests=Run;Video;NoStateAccess;
+Video=@testdatadir@/retro-dummy.png

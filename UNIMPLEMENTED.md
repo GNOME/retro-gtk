@@ -658,15 +658,6 @@ Input device capabilities are implemented by
 
 ## Keyboard
 
-The following keys are undefined:
-
-```
-RETROK_LEFTBRACE      = 123,
-RETROK_BAR            = 124,
-RETROK_RIGHTBRACE     = 125,
-RETROK_TILDE          = 126,
-```
-
 The following symbols are defined but unused:
 
 ```

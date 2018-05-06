@@ -3,5 +3,5 @@ Path=/testaudio_no_callback
 Core=/app/lib/libretro/testaudio_no_callback_libretro.so
 
 [Frame 0]
-Tests=Run;Video;StateRefresh;
+State=Refresh
 Video=testaudio_no_callback.png

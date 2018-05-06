@@ -3,4 +3,4 @@ Path=/testgl_ff
 Core=/app/lib/libretro/testgl_ff_libretro.so
 
 [Frame 0]
-Tests=Run;StateRefresh;
+State=Refresh

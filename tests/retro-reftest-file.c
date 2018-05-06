@@ -339,19 +339,6 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
                       (GCompareFunc) uint_compare);
 }
 
-gchar **
-retro_reftest_file_get_tests (RetroReftestFile  *self,
-                              guint              frame,
-                              gsize             *length,
-                              GError           **error)
-{
-  return g_key_file_get_string_list (self->key_file,
-                                     g_hash_table_lookup (self->frames, &frame),
-                                     RETRO_REFTEST_FILE_FRAME_TESTS_KEY,
-                                     length,
-                                     error);
-}
-
 gboolean
 retro_reftest_file_has_state (RetroReftestFile  *self,
                               guint              frame,

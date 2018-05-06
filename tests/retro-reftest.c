@@ -268,7 +268,7 @@ retro_reftest_test_run (RetroReftestRun *run)
 }
 
 static void
-retro_reftest_test_no_state_access (RetroReftestData *data)
+retro_reftest_test_state_none (RetroReftestData *data)
 {
   if (retro_core_get_can_access_state (data->core))
     g_test_fail ();
@@ -402,37 +402,41 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
 }
 
 static void
-retro_reftest_add_no_state_access_test (RetroReftestFile *reftest_file,
-                                        guint             frame_number,
-                                        RetroReftestData *data)
+retro_reftest_add_state_test (RetroReftestFile *reftest_file,
+                              guint             frame_number,
+                              RetroReftestData *data)
 {
+  gchar *state;
   gchar *test_path;
+  GError *error = NULL;
 
-  test_path = g_strdup_printf ("%s/%u/NoStateAccess",
-                               retro_reftest_file_peek_path (reftest_file),
-                               frame_number);
-  g_test_add_data_func_full (test_path,
-                             retro_reftest_data_ref (data),
-                             (GTestDataFunc) retro_reftest_test_no_state_access,
-                             (GDestroyNotify) retro_reftest_data_unref);
-  g_free (test_path);
-}
+  state = retro_reftest_file_get_state (reftest_file, frame_number, &error);
+  g_assert_no_error (error);
 
-static void
-retro_reftest_add_state_refresh_test (RetroReftestFile *reftest_file,
-                                      guint             frame_number,
-                                      RetroReftestData *data)
-{
-  gchar *test_path;
-
-  test_path = g_strdup_printf ("%s/%u/StateRefresh",
-                               retro_reftest_file_peek_path (reftest_file),
-                               frame_number);
-  g_test_add_data_func_full (test_path,
-                             retro_reftest_data_ref (data),
-                             (GTestDataFunc) retro_reftest_test_state_refresh,
-                             (GDestroyNotify) retro_reftest_data_unref);
-  g_free (test_path);
+  if (g_str_equal (state, "None")) {
+    test_path = g_strdup_printf ("%s/%u/State None",
+                                 retro_reftest_file_peek_path (reftest_file),
+                                 frame_number);
+    g_test_add_data_func_full (test_path,
+                               retro_reftest_data_ref (data),
+                               (GTestDataFunc) retro_reftest_test_state_none,
+                               (GDestroyNotify) retro_reftest_data_unref);
+    g_free (test_path);
+  }
+  else if (g_str_equal (state, "Refresh")) {
+    test_path = g_strdup_printf ("%s/%u/State Refresh",
+                                 retro_reftest_file_peek_path (reftest_file),
+                                 frame_number);
+    g_test_add_data_func_full (test_path,
+                               retro_reftest_data_ref (data),
+                               (GTestDataFunc) retro_reftest_test_state_refresh,
+                               (GDestroyNotify) retro_reftest_data_unref);
+    g_free (test_path);
+  }
+  else {
+    g_critical ("Not a state test: %s.", state);
+    g_assert_not_reached ();
+  }
 }
 
 static void
@@ -464,8 +468,6 @@ retro_reftest_setup_for_file (GFile *file)
   RetroReftestFile *reftest_file;
   GList *frames, *frame;
   guint current_frame_number, frame_number;
-  gchar **tests;
-  gsize tests_length, tests_i;
   gboolean has_test;
   RetroReftestData *data;
   GError *error = NULL;
@@ -496,18 +498,11 @@ retro_reftest_setup_for_file (GFile *file)
     }
     current_frame_number = frame_number + 1;
 
-    tests_length = 0;
-    tests = retro_reftest_file_get_tests (reftest_file,
-                                          frame_number,
-                                          &tests_length,
-                                          &error);
+    /* State */
+    has_test = retro_reftest_file_has_state (reftest_file, frame_number, &error);
     g_assert_no_error (error);
-    for (tests_i = 0; tests != NULL && tests[tests_i] != NULL; tests_i++) {
-      if (g_str_equal (tests[tests_i], "NoStateAccess"))
-        retro_reftest_add_no_state_access_test (reftest_file, frame_number, data);
-      else if (g_str_equal (tests[tests_i], "StateRefresh"))
-        retro_reftest_add_state_refresh_test (reftest_file, frame_number, data);
-    }
+    if (has_test)
+      retro_reftest_add_state_test (reftest_file, frame_number, data);
 
     /* Run */
     retro_reftest_add_run_test (reftest_file, frame_number, data);

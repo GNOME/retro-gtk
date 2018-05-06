@@ -35,10 +35,6 @@ const gchar *retro_reftest_file_peek_path (RetroReftestFile *self);
 RetroCore *retro_reftest_file_get_core (RetroReftestFile  *self,
                                         GError           **error);
 GList *retro_reftest_file_get_frames (RetroReftestFile *self);
-gchar **retro_reftest_file_get_tests (RetroReftestFile  *self,
-                                      guint              frame,
-                                      gsize             *length,
-                                      GError           **error);
 gboolean retro_reftest_file_has_state (RetroReftestFile  *self,
                                        guint              frame,
                                        GError           **error);

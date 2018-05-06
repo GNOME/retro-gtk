@@ -35,14 +35,14 @@ struct _RetroReftestFile
 G_DEFINE_TYPE (RetroReftestFile, retro_reftest_file, G_TYPE_OBJECT)
 
 #define RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP "Retro Reftest"
-#define RETRO_REFTEST_FILE_RETRO_PATH_KEY "Path"
-#define RETRO_REFTEST_FILE_RETRO_CORE_KEY "Core"
-#define RETRO_REFTEST_FILE_RETRO_MEDIAS_KEY "Medias"
+#define RETRO_REFTEST_FILE_PATH_KEY "Path"
+#define RETRO_REFTEST_FILE_CORE_KEY "Core"
+#define RETRO_REFTEST_FILE_MEDIAS_KEY "Medias"
 
-#define RETRO_REFTEST_FILE_RETRO_FRAME_GROUP_PREFIX "Frame "
-#define RETRO_REFTEST_FILE_RETRO_FRAME_GROUP_PREFIX_LENGTH 6
-#define RETRO_REFTEST_FILE_RETRO_FRAME_TESTS_KEY "Tests"
-#define RETRO_REFTEST_FILE_RETRO_FRAME_VIDEO_KEY "Video"
+#define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX "Frame "
+#define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH 6
+#define RETRO_REFTEST_FILE_FRAME_TESTS_KEY "Tests"
+#define RETRO_REFTEST_FILE_FRAME_VIDEO_KEY "Video"
 
 enum {
   PROP_0,
@@ -194,7 +194,7 @@ retro_reftest_file_peek_path (RetroReftestFile *self)
 
   return g_key_file_get_string (self->key_file,
                                 RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                RETRO_REFTEST_FILE_RETRO_PATH_KEY,
+                                RETRO_REFTEST_FILE_PATH_KEY,
                                 &error);
   g_assert_no_error (error);
 
@@ -218,7 +218,7 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
 
   key_file_core = g_key_file_get_string (self->key_file,
                                          RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                         RETRO_REFTEST_FILE_RETRO_CORE_KEY,
+                                         RETRO_REFTEST_FILE_CORE_KEY,
                                          &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -235,7 +235,7 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
 
   key_file_medias = g_key_file_get_string_list (self->key_file,
                                                 RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                                RETRO_REFTEST_FILE_RETRO_MEDIAS_KEY,
+                                                RETRO_REFTEST_FILE_MEDIAS_KEY,
                                                 &key_file_medias_length,
                                                 &tmp_error);
   g_clear_error (&tmp_error);
@@ -283,10 +283,10 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
   groups = g_key_file_get_groups (self->key_file, &groups_length);
 
   for (i = 0; i < groups_length; i++) {
-    if (!g_str_has_prefix (groups[i], RETRO_REFTEST_FILE_RETRO_FRAME_GROUP_PREFIX))
+    if (!g_str_has_prefix (groups[i], RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX))
       continue;
 
-    frame_number_string = groups[i] + RETRO_REFTEST_FILE_RETRO_FRAME_GROUP_PREFIX_LENGTH;
+    frame_number_string = groups[i] + RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH;
     if (!g_ascii_isdigit (frame_number_string[0])) {
       g_critical ("Invalid frame group [%s]: %s isn't a valid frame number.", groups[i], frame_number_string);
 
@@ -346,7 +346,7 @@ retro_reftest_file_get_tests (RetroReftestFile  *self,
 {
   return g_key_file_get_string_list (self->key_file,
                                      g_hash_table_lookup (self->frames, &frame),
-                                     RETRO_REFTEST_FILE_RETRO_FRAME_TESTS_KEY,
+                                     RETRO_REFTEST_FILE_FRAME_TESTS_KEY,
                                      length,
                                      error);
 }
@@ -362,7 +362,7 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
 
   key_file_video = g_key_file_get_string (self->key_file,
                                           g_hash_table_lookup (self->frames, &frame),
-                                          RETRO_REFTEST_FILE_RETRO_FRAME_VIDEO_KEY,
+                                          RETRO_REFTEST_FILE_FRAME_VIDEO_KEY,
                                           error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);

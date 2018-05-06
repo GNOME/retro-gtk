@@ -219,7 +219,7 @@ get_language (RetroCore *self,
   };
 
   const gchar * const *locales = g_get_language_names ();
-  gsize locale_i, language_i;
+  gsize locale_i, language_i = 0;
 
   for (locale_i = 0; locales[locale_i] != NULL; locale_i++) {
     for (language_i = 0;

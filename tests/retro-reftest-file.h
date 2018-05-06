@@ -39,6 +39,9 @@ gchar **retro_reftest_file_get_tests (RetroReftestFile  *self,
                                       guint              frame,
                                       gsize             *length,
                                       GError           **error);
+gboolean retro_reftest_file_has_video (RetroReftestFile  *self,
+                                       guint              frame,
+                                       GError           **error);
 GFile *retro_reftest_file_get_video (RetroReftestFile  *self,
                                      guint              frame,
                                      GError           **error);

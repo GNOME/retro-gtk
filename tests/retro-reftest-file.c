@@ -351,6 +351,17 @@ retro_reftest_file_get_tests (RetroReftestFile  *self,
                                      error);
 }
 
+gboolean
+retro_reftest_file_has_video (RetroReftestFile  *self,
+                              guint              frame,
+                              GError           **error)
+{
+  return g_key_file_has_key (self->key_file,
+                             g_hash_table_lookup (self->frames, &frame),
+                             RETRO_REFTEST_FILE_FRAME_VIDEO_KEY,
+                             error);
+}
+
 GFile *
 retro_reftest_file_get_video (RetroReftestFile  *self,
                               guint              frame,

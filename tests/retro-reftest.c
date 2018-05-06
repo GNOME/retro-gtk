@@ -30,6 +30,12 @@ typedef struct {
 typedef struct {
   guint refs;
   RetroReftestData *data;
+  GHashTable *options;
+} RetroReftestOptions;
+
+typedef struct {
+  guint refs;
+  RetroReftestData *data;
   guint target_frame;
 } RetroReftestRun;
 
@@ -65,6 +71,21 @@ retro_reftest_data_unref (RetroReftestData *self) {
   if (self->refs == 0) {
     g_object_unref (self->core);
     retro_pixdata_free (self->pixdata);
+    g_free (self);
+
+    return;
+  }
+
+  self->refs--;
+}
+
+static void
+retro_reftest_options_unref (RetroReftestOptions *self) {
+  g_return_if_fail (self != NULL);
+
+  if (self->refs == 0) {
+    retro_reftest_data_unref (self->data);
+    g_hash_table_unref (self->options);
     g_free (self);
 
     return;
@@ -251,6 +272,73 @@ retro_reftest_test_boot (RetroReftestData *data)
 }
 
 static void
+retro_reftest_test_options (RetroReftestOptions *options)
+{
+  RetroCore *core;
+  RetroOption *option;
+  gchar *options_key, *core_key;
+  const gchar **options_values, **core_values;
+  GHashTableIter iter;
+  gsize i;
+  RetroOptionIterator *option_iterator;
+
+  core = options->data->core;
+
+  g_hash_table_iter_init (&iter, options->options);
+  while (g_hash_table_iter_next (&iter, (gpointer) &options_key, (gpointer) &options_values)) {
+    if (retro_core_has_option (core, options_key))
+      continue;
+
+    g_test_fail ();
+    g_test_message ("Expected option not found: %s.", options_key);
+
+    return;
+  }
+
+  option_iterator = retro_core_iterate_options (core);
+  g_hash_table_iter_init (&iter, options->options);
+  while (retro_option_iterator_next (option_iterator, (gpointer) &core_key, (gpointer) &option)) {
+    core_values = retro_option_get_values (option);
+    if (!g_hash_table_contains (options->options, core_key)) {
+      g_test_fail ();
+      g_test_message ("Unexpected option found: %s.", core_key);
+      g_object_unref (option_iterator);
+
+      return;
+    }
+
+    options_values = g_hash_table_lookup (options->options, core_key);
+    for (i = 0; core_values[i] != NULL && options_values[i] != NULL; i++) {
+      if (g_str_equal (core_values[i], options_values[i]))
+        continue;
+
+      g_test_fail ();
+      g_test_message ("Unexpxected value found for option %s: expected %s, got %s.", core_key, options_values[i], core_values[i]);
+      g_object_unref (option_iterator);
+
+      return;
+    }
+
+    if (options_values[i] != NULL) {
+      g_test_fail ();
+      g_test_message ("Expected value not found for option %s: %s.", core_key, options_values[i]);
+      g_object_unref (option_iterator);
+
+      return;
+    }
+
+    if (core_values[i] != NULL) {
+      g_test_fail ();
+      g_test_message ("Unexpected value found for option %s: %s.", core_key, core_values[i]);
+      g_object_unref (option_iterator);
+
+      return;
+    }
+  }
+  g_object_unref (option_iterator);
+}
+
+static void
 retro_reftest_test_run (RetroReftestRun *run)
 {
   guint target_frame = run->target_frame;
@@ -356,6 +444,27 @@ retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
                              retro_reftest_data_ref (data),
                              (GTestDataFunc) retro_reftest_test_boot,
                              (GDestroyNotify) retro_reftest_data_unref);
+  g_free (test_path);
+}
+
+static void
+retro_reftest_add_options_test (RetroReftestFile *reftest_file,
+                                RetroReftestData *data)
+{
+  RetroReftestOptions *options;
+  gchar *test_path;
+  GError *error = NULL;
+
+  options = g_new0 (RetroReftestOptions, 1);
+  options->data = retro_reftest_data_ref (data);
+  options->options = retro_reftest_file_get_options (reftest_file, &error);
+  g_assert_no_error (error);
+  test_path = g_strdup_printf ("%s/Options",
+                               retro_reftest_file_peek_path (reftest_file));
+  g_test_add_data_func_full (test_path,
+                             options,
+                             (GTestDataFunc) retro_reftest_test_options,
+                             (GDestroyNotify) retro_reftest_options_unref);
   g_free (test_path);
 }
 
@@ -488,6 +597,10 @@ retro_reftest_setup_for_file (GFile *file)
 
   /* Boot */
   retro_reftest_add_boot_test (reftest_file, data);
+
+  /* Options */
+  if (retro_reftest_file_has_options (reftest_file))
+    retro_reftest_add_options_test (reftest_file, data);
 
   frames = retro_reftest_file_get_frames (reftest_file);
   current_frame_number = 0;

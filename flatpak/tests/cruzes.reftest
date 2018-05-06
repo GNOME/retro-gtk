@@ -2,6 +2,8 @@
 Path=/cruzes
 Core=/app/lib/libretro/cruzes_libretro.so
 
+[Options]
+
 [Frame 0]
 State=None
 Video=cruzes.png

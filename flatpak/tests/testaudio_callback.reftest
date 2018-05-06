@@ -2,6 +2,8 @@
 Path=/testaudio_callback
 Core=/app/lib/libretro/testaudio_callback_libretro.so
 
+[Options]
+
 [Frame 0]
 State=Refresh
 Video=testaudio_callback.png

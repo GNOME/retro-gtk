@@ -2,6 +2,8 @@
 Path=/button_test
 Core=/app/lib/libretro/button_test_libretro.so
 
+[Options]
+
 [Frame 0]
 State=None
 Video=button_test.png

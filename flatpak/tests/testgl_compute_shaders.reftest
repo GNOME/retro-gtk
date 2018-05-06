@@ -2,5 +2,9 @@
 Path=/testgl_compute_shaders
 Core=/app/lib/libretro/testgl_compute_shaders_libretro.so
 
+[Options]
+boxes_resolution=320x180;640x360;1280x720;1920x1080;
+boxes_multisample=1x;2x;4x;
+
 [Frame 0]
 State=Refresh

@@ -2,6 +2,8 @@
 Path=/advanced_tests
 Core=/app/lib/libretro/advanced_tests_libretro.so
 
+[Options]
+
 [Frame 0]
 State=Refresh
 Video=advanced_tests.png

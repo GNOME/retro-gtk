@@ -2,6 +2,8 @@
 Path=/testsw
 Core=/app/lib/libretro/testsw_libretro.so
 
+[Options]
+
 [Frame 0]
 State=Refresh
 Video=testsw.png

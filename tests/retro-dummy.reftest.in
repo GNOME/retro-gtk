@@ -2,6 +2,8 @@
 Path=/retro-dummy
 Core=@testlibretrodir@/libretro-dummy.so
 
+[Options]
+
 [Frame 0]
 State=None
 Video=@testdatadir@/retro-dummy.png

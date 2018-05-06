@@ -5,6 +5,7 @@
 #include <string.h>
 #include "retro-controller-iterator-private.h"
 #include "retro-keyboard-key.h"
+#include "retro-option-iterator-private.h"
 #include "retro-pixdata.h"
 
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
@@ -2151,6 +2152,24 @@ retro_core_get_option (RetroCore    *self,
   g_return_val_if_fail (key != NULL, NULL);
 
   return RETRO_OPTION (g_hash_table_lookup (self->options, key));
+}
+
+/**
+ * retro_core_iterate_options:
+ * @self: a #RetroCore
+ *
+ * Creates a new #RetroOptionIterator which can be used to iterate through the
+ * options of @self.
+ *
+ * Returns: (transfer full): a new #RetroOptionIterator
+ */
+RetroOptionIterator *
+retro_core_iterate_options (RetroCore *self)
+{
+
+  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+
+  return retro_option_iterator_new (self->options);
 }
 
 /**

@@ -10,7 +10,7 @@
 #include <gtk/gtk.h>
 #include "retro-controller-iterator.h"
 #include "retro-memory-type.h"
-#include "retro-option.h"
+#include "retro-option-iterator.h"
 
 G_BEGIN_DECLS
 
@@ -72,6 +72,7 @@ gboolean retro_core_has_option (RetroCore   *self,
                                 const gchar *key);
 RetroOption *retro_core_get_option (RetroCore   *self,
                                     const gchar *key);
+RetroOptionIterator *retro_core_iterate_options (RetroCore *self);
 
 G_END_DECLS
 

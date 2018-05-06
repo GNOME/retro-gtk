@@ -42,6 +42,7 @@ G_DEFINE_TYPE (RetroReftestFile, retro_reftest_file, G_TYPE_OBJECT)
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX "Frame "
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH 6
 #define RETRO_REFTEST_FILE_FRAME_TESTS_KEY "Tests"
+#define RETRO_REFTEST_FILE_FRAME_STATE_KEY "State"
 #define RETRO_REFTEST_FILE_FRAME_VIDEO_KEY "Video"
 
 enum {
@@ -349,6 +350,28 @@ retro_reftest_file_get_tests (RetroReftestFile  *self,
                                      RETRO_REFTEST_FILE_FRAME_TESTS_KEY,
                                      length,
                                      error);
+}
+
+gboolean
+retro_reftest_file_has_state (RetroReftestFile  *self,
+                              guint              frame,
+                              GError           **error)
+{
+  return g_key_file_has_key (self->key_file,
+                             g_hash_table_lookup (self->frames, &frame),
+                             RETRO_REFTEST_FILE_FRAME_STATE_KEY,
+                             error);
+}
+
+gchar *
+retro_reftest_file_get_state (RetroReftestFile  *self,
+                              guint              frame,
+                              GError           **error)
+{
+  return g_key_file_get_string (self->key_file,
+                                g_hash_table_lookup (self->frames, &frame),
+                                RETRO_REFTEST_FILE_FRAME_STATE_KEY,
+                                error);
 }
 
 gboolean

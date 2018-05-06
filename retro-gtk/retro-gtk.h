@@ -23,6 +23,7 @@
 #include "retro-module-iterator.h"
 #include "retro-module-query.h"
 #include "retro-option.h"
+#include "retro-option-iterator.h"
 #include "retro-pixdata.h"
 #include "retro-video-filter.h"
 

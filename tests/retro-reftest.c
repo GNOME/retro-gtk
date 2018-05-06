@@ -466,6 +466,7 @@ retro_reftest_setup_for_file (GFile *file)
   guint current_frame_number, frame_number;
   gchar **tests;
   gsize tests_length, tests_i;
+  gboolean has_test;
   RetroReftestData *data;
   GError *error = NULL;
 
@@ -508,9 +509,13 @@ retro_reftest_setup_for_file (GFile *file)
         retro_reftest_add_no_state_access_test (reftest_file, frame_number, data);
       else if (g_str_equal (tests[tests_i], "StateRefresh"))
         retro_reftest_add_state_refresh_test (reftest_file, frame_number, data);
-      else if (g_str_equal (tests[tests_i], "Video"))
-        retro_reftest_add_video_test (reftest_file, frame_number, data);
     }
+
+    /* Video */
+    has_test = retro_reftest_file_has_video (reftest_file, frame_number, &error);
+    g_assert_no_error (error);
+    if (has_test)
+      retro_reftest_add_video_test (reftest_file, frame_number, data);
   }
   g_list_free (frames);
   retro_reftest_data_unref (data);

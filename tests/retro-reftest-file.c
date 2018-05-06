@@ -39,6 +39,8 @@ G_DEFINE_TYPE (RetroReftestFile, retro_reftest_file, G_TYPE_OBJECT)
 #define RETRO_REFTEST_FILE_CORE_KEY "Core"
 #define RETRO_REFTEST_FILE_MEDIAS_KEY "Medias"
 
+#define RETRO_REFTEST_FILE_OPTIONS_GROUP "Options"
+
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX "Frame "
 #define RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX_LENGTH 6
 #define RETRO_REFTEST_FILE_FRAME_TESTS_KEY "Tests"
@@ -262,6 +264,54 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   g_strfreev (media_uris);
 
   return core;
+}
+
+gboolean
+retro_reftest_file_has_options (RetroReftestFile *self)
+{
+  return g_key_file_has_group (self->key_file, RETRO_REFTEST_FILE_OPTIONS_GROUP);
+}
+
+GHashTable *
+retro_reftest_file_get_options (RetroReftestFile  *self,
+                                GError           **error)
+{
+  gchar **keys, **values;
+  gsize i, keys_length = 0;
+  GHashTable *options;
+  GError *tmp_error = NULL;
+
+  keys = g_key_file_get_keys (self->key_file,
+                              RETRO_REFTEST_FILE_OPTIONS_GROUP,
+                              &keys_length,
+                              &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return NULL;
+  }
+
+  options = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_strfreev);
+  for (i = 0; i < keys_length; i++) {
+    values = g_key_file_get_string_list (self->key_file,
+                                         RETRO_REFTEST_FILE_OPTIONS_GROUP,
+                                         keys[i],
+                                         NULL,
+                                         &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
+      g_strfreev (keys);
+      g_hash_table_unref (options);
+
+      return NULL;
+    }
+
+    g_hash_table_insert (options, g_strdup (keys[i]), values);
+  }
+
+  g_strfreev (keys);
+
+  return options;
 }
 
 GList *

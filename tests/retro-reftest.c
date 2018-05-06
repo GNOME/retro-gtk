@@ -503,13 +503,14 @@ retro_reftest_setup_for_file (GFile *file)
                                           &error);
     g_assert_no_error (error);
     for (tests_i = 0; tests != NULL && tests[tests_i] != NULL; tests_i++) {
-      if (g_str_equal (tests[tests_i], "Run"))
-        retro_reftest_add_run_test (reftest_file, frame_number, data);
-      else if (g_str_equal (tests[tests_i], "NoStateAccess"))
+      if (g_str_equal (tests[tests_i], "NoStateAccess"))
         retro_reftest_add_no_state_access_test (reftest_file, frame_number, data);
       else if (g_str_equal (tests[tests_i], "StateRefresh"))
         retro_reftest_add_state_refresh_test (reftest_file, frame_number, data);
     }
+
+    /* Run */
+    retro_reftest_add_run_test (reftest_file, frame_number, data);
 
     /* Video */
     has_test = retro_reftest_file_has_video (reftest_file, frame_number, &error);

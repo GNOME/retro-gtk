@@ -53,12 +53,12 @@ tests = [
 foreach t : tests
   test_display_name = t.get(0)
   test_name = t.get(1)
-  input_name = '@0@.test.in'.format(test_name)
+  input_name = '@0@.reftest.in'.format(test_name)
 
   if get_option('install-tests')
     configure_file(
       input: input_name,
-      output: '@0@.test'.format(test_name),
+      output: '@0@.reftest'.format(test_name),
       configuration: installed_conf,
       install_dir: testdatadir
     )
@@ -66,7 +66,7 @@ foreach t : tests
 
   build_test = configure_file(
     input: input_name,
-    output: '@0@.test.build'.format(test_name),
+    output: '@0@.reftest.build'.format(test_name),
     configuration: build_conf
   )
 

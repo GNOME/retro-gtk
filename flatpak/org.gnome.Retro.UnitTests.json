@@ -66,9 +66,9 @@
                         "  return $RETURN",
                         "}",
                         "cd /app/share/installed-tests/retro-gtk-0.14/",
-                        "/app/libexec/installed-tests/retro-gtk-0.14/retro-reftest `find . -name '*.test'`",
+                        "/app/libexec/installed-tests/retro-gtk-0.14/retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",
-                        "retro_reftest_test `ls *.test`"
+                        "retro_reftest_test `ls *.reftest`"
                     ],
                     "dest-filename" : "retro-unit-tests"
                 },

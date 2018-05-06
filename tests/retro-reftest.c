@@ -486,6 +486,7 @@ retro_reftest_setup_for_file (GFile *file)
     return;
   }
 
+  /* Boot */
   retro_reftest_add_boot_test (reftest_file, data);
 
   frames = retro_reftest_file_get_frames (reftest_file);
@@ -493,10 +494,9 @@ retro_reftest_setup_for_file (GFile *file)
   for (frame = frames; frame != NULL; frame = frame->next) {
     frame_number = *((guint *) frame->data);
 
-    if (current_frame_number < frame_number) {
+    /* FastForward */
+    if (current_frame_number < frame_number)
       retro_reftest_add_fast_forward_test (reftest_file, frame_number, data);
-    }
-    current_frame_number = frame_number + 1;
 
     /* State */
     has_test = retro_reftest_file_has_state (reftest_file, frame_number, &error);

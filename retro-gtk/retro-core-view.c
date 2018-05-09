@@ -606,16 +606,21 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
 {
   RetroControllerType type;
   RetroController *controller;
+  guint64 capabilities;
 
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
   g_return_if_fail (RETRO_IS_CORE (core));
 
+  capabilities = retro_core_view_get_controller_capabilities (self);
+
   for (type = RETRO_CONTROLLER_TYPE_NONE;
        type < RETRO_CONTROLLER_TYPE_COUNT;
        type++) {
-    controller = retro_core_view_as_controller (self, type);
-    retro_core_set_default_controller (core, type, controller);
-    g_object_unref (controller);
+    if ((capabilities & (1 << type)) != 0) {
+      controller = retro_core_view_as_controller (self, type);
+      retro_core_set_default_controller (core, type, controller);
+      g_object_unref (controller);
+    }
   }
 }
 

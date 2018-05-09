@@ -64,7 +64,7 @@ retro_core_view_controller_get_capabilities (RetroController *base)
 {
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
   gpointer view;
-  guint64 result;
+  guint64 capabilities;
 
   g_return_val_if_fail (self != NULL, 0);
 
@@ -73,11 +73,11 @@ retro_core_view_controller_get_capabilities (RetroController *base)
   if (view == NULL)
     return 0;
 
-  result = retro_core_view_get_controller_capabilities (RETRO_CORE_VIEW (view));
+  capabilities = retro_core_view_get_controller_capabilities (RETRO_CORE_VIEW (view));
 
   g_object_unref (G_OBJECT (view));
 
-  return result;
+  return capabilities & (1 << self->controller_type);
 }
 
 static gboolean

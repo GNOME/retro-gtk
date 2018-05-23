@@ -53,6 +53,12 @@
                     "type" : "script",
                     "commands" : [
                         "PATH=$PATH:/app/libexec/installed-tests/retro-gtk-0.14/",
+                        "RETURN=0",
+                        "retro_test()",
+                        "{",
+                        "  $@",
+                        "  if [ $? -ne '0' ]; then RETURN=1; fi",
+                        "}",
                         "retro_reftest_expect()",
                         "{",
                         "  TEST=\"$1\"",
@@ -63,7 +69,6 @@
                         "}",
                         "retro_reftest_test()",
                         "{",
-                        "  RETURN=0",
                         "  RESULT=$(mktemp /tmp/retro_reftest.XXXXXX)",
                         "  for TEST in $@; do",
                         "    retro_reftest_expect \"$TEST\" > \"$RESULT\"",
@@ -79,9 +84,10 @@
                         "  return $RETURN",
                         "}",
                         "cd /app/share/installed-tests/retro-gtk-0.14/",
-                        "retro-reftest `find . -name '*.reftest'`",
+                        "retro_test retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",
-                        "retro_reftest_test `ls *.reftest`"
+                        "retro_reftest_test `ls *.reftest`",
+                        "exit $RETURN"
                     ],
                     "dest-filename" : "retro-unit-tests"
                 },

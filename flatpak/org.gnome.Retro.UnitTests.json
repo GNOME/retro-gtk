@@ -52,12 +52,13 @@
                 {
                     "type" : "script",
                     "commands" : [
+                        "PATH=$PATH:/app/libexec/installed-tests/retro-gtk-0.14/",
                         "retro_reftest_test()",
                         "{",
                         "  RETURN=0",
                         "  RESULT=$(mktemp /tmp/retro_reftest.XXXXXX)",
                         "  for TEST in $@; do",
-                        "    /app/libexec/installed-tests/retro-gtk-0.14/retro-reftest \"$TEST\"",
+                        "    retro-reftest \"$TEST\"",
                         "    if [ $? -eq 0 ]; then",
                         "      RETURN=1",
                         "    fi",
@@ -66,7 +67,7 @@
                         "  return $RETURN",
                         "}",
                         "cd /app/share/installed-tests/retro-gtk-0.14/",
-                        "/app/libexec/installed-tests/retro-gtk-0.14/retro-reftest `find . -name '*.reftest'`",
+                        "retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",
                         "retro_reftest_test `ls *.reftest`"
                     ],

@@ -84,6 +84,7 @@
                         "  return $RETURN",
                         "}",
                         "cd /app/share/installed-tests/retro-gtk-0.14/",
+                        "retro_test RetroCore libretro/libretro-dummy.so",
                         "retro_test retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",
                         "retro_reftest_test `ls *.reftest`",

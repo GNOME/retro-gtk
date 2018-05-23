@@ -1,0 +1,6 @@
+/testgl/Boot: [libretro-test]: Got size: 320 x 240.
+HW Context could not be initialized, exiting...
+OK
+/testgl/Options: OK
+/testgl/0/State None: OK
+/testgl/0/Run: [libretro-test]: Got size: 320 x 240.

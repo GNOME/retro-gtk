@@ -59,7 +59,10 @@ foreach t : tests
   test_exe = executable(test_display_name, test_srcs,
     c_args: retro_gtk_c_args,
     dependencies: retro_gtk_deps,
-    link_with: retro_gtk_lib)
+    link_with: retro_gtk_lib,
+    install: get_option('install-tests'),
+    install_dir: installed_test_bindir,
+  )
 
   test(
     '@0@ test'.format(test_display_name),

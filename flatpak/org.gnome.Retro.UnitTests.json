@@ -52,6 +52,8 @@
                 {
                     "type" : "script",
                     "commands" : [
+                        "ls /app/libexec/installed-tests/retro-gtk-0.14/",
+                        "PATH=$PATH:/app/libexec/installed-tests/retro-gtk-0.14/",
                         "RETURN=0",
                         "retro_test()",
                         "{",
@@ -64,7 +66,7 @@
                         "  if test \"$2\"; then EXPECTED=\"$2\"; else EXPECTED=\"$1\".expected; fi",
                         "  shift; shift;",
                         "  # Run the tests | Append a new line if needed | Compare with the expected results.",
-                        "  /app/libexec/installed-tests/retro-gtk-0.14/retro-reftest \"$TEST\" 2>&1 | sed -e '$a\\' | diff -u \"$EXPECTED\" -",
+                        "  retro-reftest \"$TEST\" 2>&1 | sed -e '$a\\' | diff -u \"$EXPECTED\" -",
                         "}",
                         "retro_reftest_test()",
                         "{",
@@ -83,8 +85,8 @@
                         "  return $RETURN",
                         "}",
                         "cd /app/share/installed-tests/retro-gtk-0.14/",
-                        "retro_test /app/libexec/installed-tests/retro-gtk-0.14/RetroCore libretro/libretro-dummy.so",
-                        "retro_test /app/libexec/installed-tests/retro-gtk-0.14/retro-reftest `find . -name '*.reftest'`",
+                        "retro_test RetroCore libretro/libretro-dummy.so",
+                        "retro_test retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",
                         "retro_reftest_test `ls *.reftest`",
                         "exit $RETURN"

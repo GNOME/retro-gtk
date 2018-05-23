@@ -12,8 +12,13 @@ flatpak:unit-tests:
   stage: build-flatpak
   variables:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
+    FLATPAK_MODULE: "retro-gtk"
+    MESON_ARGS: "--libdir=lib -Dinstall-tests=true"
   script:
-    - flatpak-builder unit-tests ${MANIFEST_PATH}
+    - flatpak-builder --stop-at=${FLATPAK_MODULE} unit-tests ${MANIFEST_PATH}
+    - flatpak build unit-tests meson --prefix=/app ${MESON_ARGS} _build
+    - flatpak build unit-tests ninja -C _build install
+    - flatpak-builder --finish-only --repo=repo unit-tests ${MANIFEST_PATH}
     - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --run unit-tests ${MANIFEST_PATH} retro-unit-tests
   cache:
     paths:

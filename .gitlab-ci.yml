@@ -1,9 +1,3 @@
-
-.build_template: &distro_build
-  script:
-    - meson -Dmanpage=false _build
-    - ninja -C _build install
-
 stages:
   - build
   - test
@@ -38,13 +32,13 @@ flatpak:demo:
     RUNTIME_REPO: "https://sdk.gnome.org/gnome-nightly.flatpakrepo"
     FLATPAK_MODULE: "retro-gtk"
     FLATPAK_BUILD_DIR: "app"
+    MESON_ARGS: ""
   script:
     - flatpak-builder --stop-at=${FLATPAK_MODULE} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
     - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${MESON_ARGS} _build
     - flatpak build ${FLATPAK_BUILD_DIR} ninja -C _build install
     - flatpak-builder --finish-only --repo=repo ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
     - flatpak build-bundle repo ${BUNDLE} --runtime-repo=${RUNTIME_REPO} org.gnome.Retro.DemoSamplesTest
-
   artifacts:
     paths:
       - ${BUNDLE}

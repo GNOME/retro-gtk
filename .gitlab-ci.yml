@@ -5,11 +5,16 @@
     - ninja -C _build install
 
 stages:
-  - build-flatpak
+  - build
+  - test
+  - review
 
-flatpak:unit-tests:
+variables:
+  BUNDLE: "retro-demo-samples-test-git.flatpak"
+
+flatpak:tests:
   image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
-  stage: build-flatpak
+  stage: test
   variables:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
     FLATPAK_MODULE: "retro-gtk"
@@ -25,15 +30,14 @@ flatpak:unit-tests:
     paths:
       - .flatpak-builder/cache/
 
-flatpak:demo-samples-test:
+flatpak:demo:
   image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
-  stage: build-flatpak
+  stage: build
   variables:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.DemoSamplesTest.json"
     RUNTIME_REPO: "https://sdk.gnome.org/gnome-nightly.flatpakrepo"
     FLATPAK_MODULE: "retro-gtk"
     FLATPAK_BUILD_DIR: "app"
-    BUNDLE: "retro-demo-samples-test-git.flatpak"
   script:
     - flatpak-builder --stop-at=${FLATPAK_MODULE} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
     - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${MESON_ARGS} _build
@@ -45,10 +49,32 @@ flatpak:demo-samples-test:
     paths:
       - ${BUNDLE}
       - _build/meson-logs/meson-log.txt
-    expire_in: 2 days
+    expire_in: 30 days
   cache:
     paths:
       - .flatpak-builder/cache/
+
+review:
+  stage: review
+  dependencies:
+    - flatpak:demo
+    - flatpak:tests
+  script:
+    - echo "Generating flatpak deployment"
+  artifacts:
+    paths:
+      - ${BUNDLE}
+    expire_in: 30 days
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://gitlab.gnome.org/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/${BUNDLE}
+    on_stop: stop_review
+
+stop_review:
+  stage: review
+  script:
+    - echo "Stopping flatpak deployment"
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop

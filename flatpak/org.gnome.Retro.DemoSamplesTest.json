@@ -7,6 +7,8 @@
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
     "finish-args": [
+        /* GTK+ Inspector access */
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         /* X11 + XShm access */
         "--share=ipc", "--socket=x11",
         /* Wayland access */

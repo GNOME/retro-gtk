@@ -5,9 +5,11 @@
     "sdk" : "org.gnome.Sdk",
     "command" : "retro-demo-samples-test",
     "tags" : [
+        "devel",
+        "development",
         "nightly"
     ],
-    "desktop-file-name-prefix" : "(Nightly) ",
+    "desktop-file-name-prefix" : "(Development) ",
     "finish-args" : [
         /* GTK+ Inspector access */
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf",

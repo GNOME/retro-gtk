@@ -636,6 +636,13 @@ retro_core_set_geometry (RetroCore         *self,
                          (float) geometry->base_height;
 }
 
+void
+retro_core_set_hardware_render_callback (RetroCore                   *self,
+                                         RetroHardwareRenderCallback *hardware_render_callback)
+{
+  self->hardware_render_callback = *hardware_render_callback;
+}
+
 /**
  * retro_core_get_name:
  * @self: a #RetroCore
@@ -1528,6 +1535,12 @@ retro_core_run (RetroCore *self)
   g_return_if_fail (RETRO_IS_CORE (self));
 
   run = retro_module_get_run (self->module);
+
+  static gboolean hardware_context;
+  if (!hardware_context) {
+    hardware_context = TRUE;
+    self->hardware_render_callback.context_reset ();
+  }
 
   if (self->runahead == 0) {
     self->run_remaining = 0;

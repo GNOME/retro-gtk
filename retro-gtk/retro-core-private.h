@@ -9,6 +9,7 @@
 
 #include "retro-core.h"
 #include "retro-disk-control-callback.h"
+#include "retro-hardware-render-callback.h"
 #include "retro-input.h"
 #include "retro-input-descriptor.h"
 #include "retro-module.h"
@@ -44,6 +45,7 @@ struct _RetroCore
   RetroPixelFormat pixel_format;
   RetroRotation rotation;
   gdouble sample_rate;
+  RetroHardwareRenderCallback hardware_render_callback;
 
   RetroKeyboardCallback keyboard_callback;
   RetroController *default_controllers[RETRO_CONTROLLER_TYPE_COUNT];
@@ -68,6 +70,8 @@ void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
 void retro_core_set_geometry (RetroCore         *self,
                               RetroGameGeometry *geometry);
+void retro_core_set_hardware_render_callback (RetroCore                   *self,
+                                              RetroHardwareRenderCallback *hardware_render_callback);
 void retro_core_poll_controllers (RetroCore *self);
 gint16 retro_core_get_controller_input_state (RetroCore  *self,
                                               uint        port,

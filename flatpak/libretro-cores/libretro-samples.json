@@ -12,7 +12,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/libretro/libretro-samples.git"
+                    "path": "/home/kekun/Projects/libretro-samples"
                 },
                 {
                     "type": "file",

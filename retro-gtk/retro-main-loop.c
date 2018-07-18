@@ -293,7 +293,7 @@ retro_main_loop_start (RetroMainLoop *self)
 
   // TODO What if fps <= 0?
   fps = retro_core_get_frames_per_second (self->core);
-  self->loop = g_timeout_add_full (G_PRIORITY_DEFAULT,
+  self->loop = g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
                                    (guint) (1000 / (fps * self->speed_rate)),
                                    (GSourceFunc) retro_main_loop_run,
                                    g_object_ref (self),

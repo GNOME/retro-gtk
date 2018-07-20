@@ -78,6 +78,8 @@ retro_demo_application_finalize (GObject *object)
 {
   RetroDemoApplication *self = RETRO_DEMO_APPLICATION (object);
 
+  retro_core_set_keyboard (self->core, NULL);
+
   if (self->core != NULL)
     g_object_unref (self->core);
 

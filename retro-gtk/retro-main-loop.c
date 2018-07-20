@@ -297,7 +297,7 @@ retro_main_loop_start (RetroMainLoop *self)
    * destroying the RetroMainLoop while it is still running will stop it instead
    * of leaking a reference.
    */
-  self->loop = g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
+  self->loop = g_timeout_add_full (G_PRIORITY_LOW,
                                    (guint) (1000 / (fps * self->speed_rate)),
                                    (GSourceFunc) retro_main_loop_run,
                                    self,

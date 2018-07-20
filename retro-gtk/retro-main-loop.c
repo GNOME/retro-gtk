@@ -293,11 +293,15 @@ retro_main_loop_start (RetroMainLoop *self)
 
   // TODO What if fps <= 0?
   fps = retro_core_get_frames_per_second (self->core);
+  /* Do not make the timeout source hold a reference on the RetroMainLoop, so
+   * destroying the RetroMainLoop while it is still running will stop it instead
+   * of leaking a reference.
+   */
   self->loop = g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
                                    (guint) (1000 / (fps * self->speed_rate)),
                                    (GSourceFunc) retro_main_loop_run,
-                                   g_object_ref (self),
-                                   g_object_unref);
+                                   self,
+                                   NULL);
 }
 
 /**

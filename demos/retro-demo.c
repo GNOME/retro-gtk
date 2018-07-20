@@ -11,8 +11,6 @@ struct _RetroDemoApplication
 {
   GtkApplication parent_instance;
 
-  GtkApplicationWindow *window;
-
   RetroCore *core;
   RetroMainLoop *loop;
   RetroCoreView *view;

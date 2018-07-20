@@ -13,7 +13,6 @@ struct _RetroDemoApplication
 
   RetroCore *core;
   RetroMainLoop *loop;
-  RetroCoreView *view;
 };
 
 G_DEFINE_TYPE (RetroDemoApplication, retro_demo_application, GTK_TYPE_APPLICATION)
@@ -93,20 +92,21 @@ retro_demo_activate (GApplication *application)
 {
   RetroDemoApplication *self;
   GtkWidget *window;
+  RetroCoreView *view;
 
   self = RETRO_DEMO_APPLICATION (application);
 
   g_signal_connect (self->core, "log", (GCallback) retro_g_log, NULL);
 
-  self->view = retro_core_view_new ();
-  retro_core_view_set_core (self->view, self->core);
-  retro_core_view_set_as_default_controller (self->view, self->core);
+  view = retro_core_view_new ();
+  retro_core_view_set_core (view, self->core);
+  retro_core_view_set_as_default_controller (view, self->core);
 
-  retro_core_set_keyboard (self->core, GTK_WIDGET (self->view));
+  retro_core_set_keyboard (self->core, GTK_WIDGET (view));
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
-  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (self->view));
+  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (view));
 
   gtk_widget_show_all (GTK_WIDGET (window));
   gtk_application_add_window (GTK_APPLICATION (application),

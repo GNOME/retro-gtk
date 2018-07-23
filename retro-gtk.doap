@@ -8,9 +8,9 @@
   <name xml:lang="en">retro-gtk</name>
   <shortdesc xml:lang="en">Toolkit to write GTK+ 3 based Libretro frontends</shortdesc>
   <description xml:lang="en">retro-gtk is a toolkit allowing to easily write GTK+ 3 based Libretro frontends.</description>
-  <homepage rdf:resource="https://git.gnome.org/browse/retro-gtk" />
+  <homepage rdf:resource="https://gitlab.gnome.org/GNOME/retro-gtk" />
   <download-page rdf:resource="http://download.gnome.org/sources/retro-gtk/" />
-  <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=gnome-games" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/retro-gtk/issues" />
 
   <programming-language>C</programming-language>
 

@@ -20,14 +20,18 @@ struct _RetroCoreView
   GHashTable *key_state;
   RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
+/*
   GdkScreen *grabbed_screen;
   GdkDevice *grabbed_device;
+*/
   gdouble mouse_x_delta;
   gdouble mouse_y_delta;
+/*
   gint screen_center_x;
   gint screen_center_y;
   gint position_on_grab_x;
   gint position_on_grab_y;
+*/
   gboolean pointer_is_on_display;
   gdouble pointer_x;
   gdouble pointer_y;
@@ -92,7 +96,7 @@ axis_to_retro_axis (gdouble value)
 
   return (gint16) (value * G_MAXINT16);
 }
-
+/*
 static void
 recenter_pointer (RetroCoreView *self)
 {
@@ -168,7 +172,7 @@ retro_core_view_ungrab (RetroCoreView *self)
   g_clear_object (&self->grabbed_device);
   g_clear_object (&self->grabbed_screen);
 }
-
+*/
 static gboolean
 retro_core_view_on_key_press_event (GtkWidget   *source,
                                     GdkEventKey *event,
@@ -178,12 +182,12 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
-
+/*
   if (event->keyval == GDK_KEY_Escape &&
       (event->state & GDK_CONTROL_MASK) &&
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
-
+*/
   set_input_pressed (self->key_state, event->hardware_keycode);
 
   return FALSE;
@@ -215,7 +219,7 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
   g_return_val_if_fail (event != NULL, FALSE);
 
   gtk_widget_grab_focus (GTK_WIDGET (source));
-
+/*
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (retro_core_view_get_is_pointer_grabbed (self))
       set_input_pressed (self->mouse_button_state, event->button);
@@ -225,7 +229,7 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
                             event->window,
                             (GdkEvent *) event);
   }
-  else {
+  else {*/
     set_input_pressed (self->mouse_button_state, event->button);
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
@@ -233,7 +237,7 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
                                                    event->y,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
-  }
+//  }
 
   return FALSE;
 }
@@ -263,8 +267,10 @@ retro_core_view_on_focus_out_event (GtkWidget     *source,
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
+/*
   if (retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
+*/
 
   reset_input (self->key_state);
   reset_input (self->mouse_button_state);
@@ -282,6 +288,7 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
+/*
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (retro_core_view_get_is_pointer_grabbed (self) &&
         event->device == self->grabbed_device) {
@@ -291,7 +298,7 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
       recenter_pointer (self);
     }
   }
-  else {
+  else {*/
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
                                                    event->x,
@@ -299,7 +306,7 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
 
-  }
+//  }
 
   return FALSE;
 }
@@ -350,8 +357,10 @@ retro_core_view_finalize (GObject *object)
   g_hash_table_unref (self->key_state);
   g_object_unref (self->key_joypad_mapping);
   g_hash_table_unref (self->mouse_button_state);
+/*
   g_clear_object (&self->grabbed_screen);
   g_clear_object (&self->grabbed_device);
+*/
 
   G_OBJECT_CLASS (retro_core_view_parent_class)->finalize (object);
 }
@@ -775,11 +784,11 @@ retro_core_view_set_can_grab_pointer (RetroCoreView *self,
     return;
 
   self->can_grab_pointer = can_grab_pointer;
-
+/*
   if (can_grab_pointer == FALSE &&
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
-
+*/
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CAN_GRAB_POINTER]);
 }
 

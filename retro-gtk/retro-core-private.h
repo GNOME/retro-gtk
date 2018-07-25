@@ -49,8 +49,9 @@ struct _RetroCore
   RetroController *default_controllers[RETRO_CONTROLLER_TYPE_COUNT];
   GHashTable *controllers;
   GtkWidget *keyboard_widget;
-  gulong key_press_event_id;
-  gulong key_release_event_id;
+  GtkEventController *key_controller;
+  gulong key_pressed_id;
+  gulong key_released_id;
   GHashTable *options;
   gboolean variable_updated;
   guint runahead;

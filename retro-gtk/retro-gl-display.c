@@ -88,6 +88,7 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   gdouble h;
   gdouble display_ratio;
   gdouble allocated_ratio;
+  gint scale;
 
   g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
   g_return_if_fail (width != NULL);
@@ -95,8 +96,10 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   g_return_if_fail (x != NULL);
   g_return_if_fail (y != NULL);
 
-  w = (gdouble) gtk_widget_get_allocated_width (GTK_WIDGET (self));
-  h = (gdouble) gtk_widget_get_allocated_height (GTK_WIDGET (self));
+  scale = gtk_widget_get_scale_factor (GTK_WIDGET (self));
+
+  w = (gdouble) gtk_widget_get_allocated_width (GTK_WIDGET (self)) * scale;
+  h = (gdouble) gtk_widget_get_allocated_height (GTK_WIDGET (self)) * scale;
 
   // Set the size of the display.
   display_ratio = (gdouble) self->aspect_ratio;

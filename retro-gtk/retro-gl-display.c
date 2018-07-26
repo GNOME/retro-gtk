@@ -125,6 +125,8 @@ retro_gl_display_load_texture (RetroGLDisplay *self,
                                gint           *texture_width,
                                gint           *texture_height)
 {
+  glBindTexture (GL_TEXTURE_2D, self->texture);
+
   if (self->pixdata != NULL) {
     *texture_width = retro_pixdata_get_width (self->pixdata);
     *texture_height = retro_pixdata_get_height (self->pixdata);

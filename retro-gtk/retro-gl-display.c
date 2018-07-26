@@ -289,6 +289,8 @@ retro_gl_display_realize (RetroGLDisplay *self)
 
   if (self->glsl_filter[filter] != NULL)
     retro_glsl_filter_use_program (self->glsl_filter[filter]);
+
+  glClearColor (0, 0, 0, 1);
 }
 
 static void

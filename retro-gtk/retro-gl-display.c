@@ -317,7 +317,7 @@ retro_gl_display_render (RetroGLDisplay *self)
 
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
 
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear (GL_COLOR_BUFFER_BIT);
 
   filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
     RETRO_VIDEO_FILTER_SMOOTH :

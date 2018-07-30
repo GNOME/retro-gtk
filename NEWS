@@ -1,3 +1,22 @@
+===============
+Version 0.15.90
+===============
+
+* RetroMainLoop:
+ - Lower the priority of the loop to prevent a lagging game from
+   freezing the rendering of its video.
+ - Prevent reference leaking when destroying the loop while its not
+   stopped by not giving a reference to the loop's callback.
+* RetroGLDisplay:
+ - Take the UI's scale into account, making it usable in Hi-DPI.
+* Prepare RetroGLDisplay for GTK+ 4:
+ - Don't clear depth buffer as we don't use it and as this would cause
+   glitches in GTK+ 4.
+ - Explicitly use glClearColor().
+ - Call glBindTexture() on every frame to ensure that we're always
+   working with the right texture, which is needed for GTK+ 4.
+* Fix reference cycles in retro-demo to avoid memory leaks.
+
 ==============
 Version 0.15.3
 ==============

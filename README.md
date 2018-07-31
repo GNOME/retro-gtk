@@ -13,8 +13,14 @@ retro-gtk depends on the following libraries at compile time and at run time:
 - cairo
 - libpulse
 - libpulse-simple
+- libepoxy
+
+The fedora packages for fedora 28 :
+sudo dnf install libepoxy-devel ghc-gio-devel gtk3-devel pulseaudio-libs-devel gobject-introspection-devel vala-devel
 
 ## Compiling
+
+You need 
 
 To configure the compilation, do:
 `meson build`

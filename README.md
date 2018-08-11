@@ -20,7 +20,6 @@ sudo dnf install libepoxy-devel ghc-gio-devel gtk3-devel pulseaudio-libs-devel g
 
 ## Compiling
 
-You need 
 
 To configure the compilation, do:
 `meson build`

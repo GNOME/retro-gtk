@@ -7,7 +7,7 @@ variables:
   BUNDLE: "retro-demo-samples-test-git.flatpak"
 
 flatpak:tests:
-  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
+  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
   stage: test
   variables:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
@@ -25,7 +25,7 @@ flatpak:tests:
       - .flatpak-builder/cache/
 
 flatpak:demo:
-  image: registry.gitlab.gnome.org/gnome/gnome-nightly-oci/nightly:master
+  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
   stage: build
   variables:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.DemoSamplesTest.json"
@@ -43,7 +43,7 @@ flatpak:demo:
     paths:
       - ${BUNDLE}
       - _build/meson-logs/meson-log.txt
-    expire_in: 30 days
+    expire_in: 2 days
   cache:
     paths:
       - .flatpak-builder/cache/
@@ -63,6 +63,10 @@ review:
     name: review/$CI_COMMIT_REF_NAME
     url: https://gitlab.gnome.org/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/${BUNDLE}
     on_stop: stop_review
+  except:
+    - master@GNOME/retro-gtk
+    - gnome-3-.*
+    - tags
 
 stop_review:
   stage: review
@@ -72,3 +76,7 @@ stop_review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
+  except:
+    - master@GNOME/retro-gtk
+    - gnome-3-.*
+    - tags

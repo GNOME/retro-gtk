@@ -1,6 +1,18 @@
 # retro-gtk
 
-retro-gtk is a toolkit to write  GTK+ 3 based Libretro frontends.
+The GTK+ Libretro frontend framework.
+
+[Libretro](https://www.libretro.com/) is a plugin format design to implement
+video game console emulators, video games and similar multimedia software. Such
+plugins are called Libretro cores.
+
+retro-gtk is a framework easing the usage of Libretro cores in conjunction with
+[GTK+](https://www.gtk.org/).
+
+It encourages the cores to be installed in a well defined centralized place —
+namely the `libretro` subdirectory of your `lib` directory — and it recommends
+them to come with [Libretro core descriptors]
+(https://wiki.gnome.org/Apps/Games/Documentation/LibretroDescriptorSpec).
 
 ## Dependencies
 

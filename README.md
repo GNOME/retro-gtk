@@ -14,6 +14,44 @@ namely the `libretro` subdirectory of your `lib` directory — and it recommends
 them to come with [Libretro core descriptors]
 (https://wiki.gnome.org/Apps/Games/Documentation/LibretroDescriptorSpec).
 
+## Example
+
+Writing a Libretro frontend with retro-gtk can be as simple as the following
+Vala code:
+
+```
+int main (string[] args) {
+    Gtk.init (ref args);
+
+    var core = new Retro.Core ("/path/to/your/core_libretro.so");
+    try {
+        core.boot();
+    }
+    catch (Error e) {
+        critical (e.message);
+
+        return 1;
+    }
+
+    var view = new Retro.CoreView ();
+    view.set_as_default_controller (core);
+    view.set_core (core);
+    view.show ();
+
+    var loop = new Retro.MainLoop (core);
+    loop.start ();
+
+    var win = new Gtk.Window ();
+    win.destroy.connect (Gtk.main_quit);
+    win.add (view);
+    win.present ();
+
+    Gtk.main ();
+
+    return 0;
+}
+```
+
 ## Dependencies
 
 retro-gtk depends on the following libraries at compile time and at run time:

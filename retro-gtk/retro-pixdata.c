@@ -365,11 +365,37 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
 gboolean
 retro_pixdata_load_gl_texture (RetroPixdata *self)
 {
+  GdkRectangle rectangle;
+
+  rectangle.x = 0;
+  rectangle.y = 0;
+  rectangle.width = self->width;
+  rectangle.height = self->height;
+
+  return retro_pixdata_load_rectangle_as_gl_texture (self, &rectangle);
+}
+
+/**
+ * retro_pixdata_load_rectangle_as_gl_texture:
+ * @self: the #RetroPixdata
+ * @rectangle: the #GdkRectangle
+ *
+ * Loads an OpenGL texture from a rectangle in @self.
+ *
+ * Returns: whether the loading was successful
+ */
+gboolean
+retro_pixdata_load_rectangle_as_gl_texture (RetroPixdata *self,
+                                            GdkRectangle *rectangle)
+{
   GLenum format;
   GLenum type;
   gint pixel_size;
 
   g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (rectangle != NULL, FALSE);
+  g_return_val_if_fail (rectangle->x + rectangle->width <= self->width, FALSE);
+  g_return_val_if_fail (rectangle->y + rectangle->height <= self->height, FALSE);
 
   switch (self->pixel_format) {
   case RETRO_PIXEL_FORMAT_XRGB1555:
@@ -398,11 +424,11 @@ retro_pixdata_load_gl_texture (RetroPixdata *self)
   glTexImage2D (GL_TEXTURE_2D,
                 0,
                 GL_RGB,
-                self->width,
-                self->height,
+                rectangle->width,
+                rectangle->height,
                 0,
                 format, type,
-                self->data);
+                self->data + rectangle->x * pixel_size + rectangle->y * self->rowstride);
   glPixelStorei (GL_UNPACK_ROW_LENGTH, 0);
 
   return TRUE;

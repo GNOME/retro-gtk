@@ -408,6 +408,7 @@ static void
 retro_core_view_class_init (RetroCoreViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = retro_core_view_finalize;
   object_class->get_property = retro_core_view_get_property;
@@ -436,6 +437,8 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
   g_object_class_install_properties (object_class,
                                      N_PROPS,
                                      properties);
+
+  gtk_widget_class_set_css_name (widget_class, "retrocoreview");
 }
 
 RetroCoreView* retro_core_view_construct (GType object_type) {

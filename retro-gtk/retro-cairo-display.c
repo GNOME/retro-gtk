@@ -196,6 +196,7 @@ static void
 retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   ((GtkWidgetClass *) klass)->draw = (gboolean (*) (GtkWidget *, cairo_t *)) retro_cairo_display_real_draw;
 
@@ -213,6 +214,8 @@ retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_PIXBUF, properties[PROP_PIXBUF]);
+
+  gtk_widget_class_set_css_name (widget_class, "retrocairodisplay");
 }
 
 static void

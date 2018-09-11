@@ -374,8 +374,11 @@ static void
 retro_gl_display_class_init (RetroGLDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = retro_gl_display_finalize;
+
+  gtk_widget_class_set_css_name (widget_class, "retrogldisplay");
 }
 
 static void

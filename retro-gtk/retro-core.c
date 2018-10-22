@@ -2064,8 +2064,6 @@ retro_core_set_keyboard (RetroCore *self,
   g_return_if_fail (RETRO_IS_CORE (self));
 
   if (self->keyboard_widget != NULL) {
-    g_signal_handler_disconnect (self->key_controller, self->key_pressed_id);
-    g_signal_handler_disconnect (self->key_controller, self->key_released_id);
     gtk_widget_remove_controller (self->keyboard_widget, self->key_controller);
     g_clear_object (&self->keyboard_widget);
     g_clear_object (&self->key_controller);
@@ -2075,18 +2073,16 @@ retro_core_set_keyboard (RetroCore *self,
     self->key_controller = gtk_event_controller_key_new ();
     gtk_widget_add_controller (widget, self->key_controller);
 
-    self->key_pressed_id =
-      g_signal_connect_object (self->key_controller,
-                               "key-pressed",
-                               G_CALLBACK (on_key_pressed),
-                               self,
-                               0);
-    self->key_released_id =
-      g_signal_connect_object (self->key_controller,
-                               "key-released",
-                               G_CALLBACK (on_key_released),
-                               self,
-                               0);
+    g_signal_connect_object (self->key_controller,
+                            "key-pressed",
+                             G_CALLBACK (on_key_pressed),
+                             self,
+                             0);
+    g_signal_connect_object (self->key_controller,
+                             "key-released",
+                              G_CALLBACK (on_key_released),
+                              self,
+                              0);
     self->keyboard_widget = g_object_ref (widget);
   }
 }

@@ -50,8 +50,6 @@ struct _RetroCore
   GHashTable *controllers;
   GtkWidget *keyboard_widget;
   GtkEventController *key_controller;
-  gulong key_pressed_id;
-  gulong key_released_id;
   GHashTable *options;
   gboolean variable_updated;
   guint runahead;

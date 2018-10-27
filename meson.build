@@ -21,14 +21,14 @@ retro_gtk_api_version = '0.14'
 retro_gtk_module = 'retro-gtk-' + retro_gtk_api_version
 
 glib_version = '>= 2.50'
-gtk_version = '>= 3.22'
+gtk_version = '>= 3.94'
 
 epoxy = dependency ('epoxy')
 gio = dependency ('gio-2.0', version: glib_version)
 glib = dependency ('glib-2.0', version: glib_version)
 gmodule = dependency ('gmodule-2.0', version: glib_version)
 gobject = dependency ('gobject-2.0', version: glib_version)
-gtk = dependency ('gtk+-3.0', version: gtk_version)
+gtk = dependency ('gtk4', version: gtk_version)
 libpulse_simple = dependency ('libpulse-simple')
 m = cc.find_library('m', required : false)
 

@@ -10,7 +10,7 @@
 
 struct _RetroCoreView
 {
-  GtkEventBox parent_instance;
+  GtkBin parent_instance;
   RetroCore *core;
   RetroGLDisplay *display;
   GBinding *sensitive_binding;
@@ -33,7 +33,7 @@ struct _RetroCoreView
   gdouble pointer_y;
 };
 
-G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_BIN)
 
 enum {
   PROP_CAN_GRAB_POINTER = 1,

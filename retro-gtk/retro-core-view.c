@@ -19,7 +19,7 @@
 
 struct _RetroCoreView
 {
-  GtkEventBox parent_instance;
+  GtkWidget parent_instance;
   RetroCore *core;
   RetroGLDisplay *display;
   gboolean can_grab_pointer;
@@ -28,7 +28,6 @@ struct _RetroCoreView
   GHashTable *keyval_state;
   RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
-  GdkScreen *grabbed_screen;
   GdkDevice *grabbed_device;
   gdouble mouse_x_delta;
   gdouble mouse_y_delta;
@@ -41,7 +40,7 @@ struct _RetroCoreView
   gdouble pointer_y;
 };
 
-G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_WIDGET)
 
 enum {
   PROP_CAN_GRAB_POINTER = 1,
@@ -111,8 +110,7 @@ axis_to_retro_axis (gdouble value)
 static void
 recenter_pointer (RetroCoreView *self)
 {
-  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
-                   self->screen_center_x, self->screen_center_y);
+  /* TODO: Reimplement this. See https://github.com/WebKit/webkit/blob/main/Source/WebKit/UIProcess/gtk/PointerLockManagerX11.cpp */
 }
 
 static gboolean
@@ -123,36 +121,11 @@ get_is_pointer_grabbed (RetroCoreView *self)
 
 static void
 grab (RetroCoreView *self,
-      GdkDevice     *device,
-      GdkWindow     *window,
-      GdkEvent      *event)
+      GdkDevice     *device)
 {
-  GdkSeat *seat;
-  GdkDisplay *display;
-  g_autoptr (GdkCursor) cursor = NULL;
-  GdkScreen *screen = NULL;
-  GdkMonitor *monitor;
-  GdkRectangle monitor_geometry;
-
-  g_assert (device != NULL);
-  g_assert (window != NULL);
-  g_assert (event != NULL);
-
-  seat = gdk_device_get_seat (device);
-  display = gdk_device_get_display (device);
-  cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
-  gdk_seat_grab (seat, window, GDK_SEAT_CAPABILITY_ALL_POINTING, FALSE, cursor, event, NULL, NULL);
-  monitor = gdk_display_get_monitor_at_window (display, window);
-  gdk_monitor_get_geometry (monitor, &monitor_geometry);
-
-  gdk_device_get_position (device, &screen, &self->position_on_grab_x, &self->position_on_grab_y);
-  self->screen_center_x = monitor_geometry.x + monitor_geometry.width / 2;
-  self->screen_center_y = monitor_geometry.y + monitor_geometry.height / 2;
-  self->mouse_x_delta = 0;
-  self->mouse_y_delta = 0;
+  /* TODO: Reimplement this. See https://github.com/WebKit/webkit/blob/main/Source/WebKit/UIProcess/gtk/PointerLockManagerX11.cpp */
 
   g_set_object (&self->grabbed_device, device);
-  g_set_object (&self->grabbed_screen, screen);
 
   recenter_pointer (self);
 
@@ -162,17 +135,9 @@ grab (RetroCoreView *self,
 static void
 ungrab (RetroCoreView *self)
 {
-  GdkSeat *seat;
-
-  g_assert (self->grabbed_device != NULL);
-
-  seat = gdk_device_get_seat (self->grabbed_device);
-  gdk_seat_ungrab (seat);
-  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
-                   self->position_on_grab_x, self->position_on_grab_y);
+  /* TODO: Reimplement this. See https://github.com/WebKit/webkit/blob/main/Source/WebKit/UIProcess/gtk/PointerLockManagerX11.cpp */
 
   g_clear_object (&self->grabbed_device);
-  g_clear_object (&self->grabbed_screen);
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 }
@@ -181,21 +146,22 @@ static gboolean get_key_state (RetroCoreView *self,
                                guint16        hardware_keycode);
 
 static gboolean
-key_press_event_cb (GtkWidget     *source,
-                    GdkEventKey   *event,
-                    RetroCoreView *self)
+key_pressed_cb (RetroCoreView   *self,
+                guint            keyval,
+                guint            keycode,
+                GdkModifierType  state)
 {
   gboolean changed;
 
-  if (event->keyval == GDK_KEY_Escape &&
-      (event->state & GDK_CONTROL_MASK) &&
+  if (keyval == GDK_KEY_Escape &&
+      (state & GDK_CONTROL_MASK) &&
       get_is_pointer_grabbed (self))
     ungrab (self);
 
-  changed = !get_key_state (self, event->hardware_keycode);
+  changed = !get_key_state (self, keycode);
 
-  set_input_pressed (self->key_state, event->hardware_keycode);
-  set_input_pressed (self->keyval_state, event->keyval);
+  set_input_pressed (self->key_state, keycode);
+  set_input_pressed (self->keyval_state, keyval);
 
   if (changed)
     g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
@@ -203,63 +169,72 @@ key_press_event_cb (GtkWidget     *source,
   return FALSE;
 }
 
-static gboolean
-key_release_event_cb (GtkWidget     *source,
-                      GdkEventKey   *event,
-                      RetroCoreView *self)
+static void
+key_released_cb (RetroCoreView   *self,
+                 guint            keyval,
+                 guint            keycode,
+                 GdkModifierType  state)
 {
-  set_input_released (self->key_state, event->hardware_keycode);
-  set_input_released (self->keyval_state, event->keyval);
+  set_input_released (self->key_state, keycode);
+  set_input_released (self->keyval_state, keyval);
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
-
-  return FALSE;
 }
 
-static gboolean
-button_press_event_cb (GtkWidget      *source,
-                       GdkEventButton *event,
-                       RetroCoreView  *self)
+static void
+pressed_cb (RetroCoreView *self,
+            gint           n_press,
+            gdouble        x,
+            gdouble        y,
+            GtkGesture    *gesture)
 {
-  gtk_widget_grab_focus (GTK_WIDGET (source));
+  guint button = gtk_gesture_single_get_current_button (GTK_GESTURE_SINGLE (gesture));
+
+  gtk_gesture_set_state (gesture, GTK_EVENT_SEQUENCE_CLAIMED);
+
+  gtk_widget_grab_focus (GTK_WIDGET (self));
 
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (get_is_pointer_grabbed (self))
-      set_input_pressed (self->mouse_button_state, event->button);
-    else
-      grab (self, event->device, event->window, (GdkEvent *) event);
+      set_input_pressed (self->mouse_button_state, button);
+    else {
+      GdkDevice *device = gtk_event_controller_get_current_event_device (GTK_EVENT_CONTROLLER (gesture));
+
+      grab (self, device);
+    }
   }
   else {
-    set_input_pressed (self->mouse_button_state, event->button);
+    set_input_pressed (self->mouse_button_state, button);
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
-                                                   event->x,
-                                                   event->y,
+                                                   x,
+                                                   y,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
   }
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
-
-  return FALSE;
 }
 
-static gboolean
-button_release_event_cb (GtkWidget      *source,
-                         GdkEventButton *event,
-                         RetroCoreView  *self)
+static void
+released_cb (RetroCoreView *self,
+             gint           n_press,
+             gdouble        x,
+             gdouble        y,
+             GtkGesture    *gesture)
+
 {
-  set_input_released (self->mouse_button_state, event->button);
+  guint button = gtk_gesture_single_get_current_button (GTK_GESTURE_SINGLE (gesture));
+
+  gtk_gesture_set_state (gesture, GTK_EVENT_SEQUENCE_CLAIMED);
+
+  set_input_released (self->mouse_button_state, button);
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
-
-  return FALSE;
 }
 
 static gboolean
-focus_out_event_cb (GtkWidget     *source,
-                    GdkEventFocus *event,
-                    RetroCoreView *self)
+leave_cb (RetroCoreView *self)
 {
   if (get_is_pointer_grabbed (self))
     ungrab (self);
@@ -269,28 +244,30 @@ focus_out_event_cb (GtkWidget     *source,
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
-  return FALSE;
+  return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
-motion_notify_event_cb (GtkWidget      *source,
-                        GdkEventMotion *event,
-                        RetroCoreView  *self)
+motion_cb (RetroCoreView      *self,
+           gdouble             x,
+           gdouble             y,
+           GtkEventController *controller)
 {
   if (retro_core_view_get_can_grab_pointer (self)) {
+    GdkDevice *device = gtk_event_controller_get_current_event_device (controller);
+
     if (get_is_pointer_grabbed (self) &&
-        event->device == self->grabbed_device) {
-      self->mouse_x_delta += event->x_root - (double) self->screen_center_x;
-      self->mouse_y_delta += event->y_root - (double) self->screen_center_y;
+        device == self->grabbed_device) {
+      self->mouse_x_delta += x - (double) self->screen_center_x;
+      self->mouse_y_delta += y - (double) self->screen_center_y;
 
       recenter_pointer (self);
     }
-  }
-  else {
+  } else {
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
-                                                   event->x,
-                                                   event->y,
+                                                   x,
+                                                   y,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
 
@@ -298,7 +275,7 @@ motion_notify_event_cb (GtkWidget      *source,
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
-  return FALSE;
+  return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
@@ -344,18 +321,27 @@ get_keyboard_key_state (RetroCoreView *self,
 }
 
 static void
+retro_core_view_dispose (GObject *object)
+{
+  RetroCoreView *self = RETRO_CORE_VIEW (object);
+
+  g_clear_pointer ((GtkWidget **) &self->display, gtk_widget_unparent);
+
+  g_clear_object (&self->grabbed_device);
+
+  G_OBJECT_CLASS (retro_core_view_parent_class)->dispose (object);
+}
+
+static void
 retro_core_view_finalize (GObject *object)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (object);
 
   g_clear_object (&self->core);
-  g_object_unref (self->display);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
   g_hash_table_unref (self->mouse_button_state);
-  g_clear_object (&self->grabbed_screen);
-  g_clear_object (&self->grabbed_device);
 
   G_OBJECT_CLASS (retro_core_view_parent_class)->finalize (object);
 }
@@ -414,6 +400,7 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->dispose = retro_core_view_dispose;
   object_class->finalize = retro_core_view_finalize;
   object_class->get_property = retro_core_view_get_property;
   object_class->set_property = retro_core_view_set_property;
@@ -463,24 +450,21 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
                   G_TYPE_NONE,
                   0);
 
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+
   gtk_widget_class_set_css_name (widget_class, "retrocoreview");
 }
 
 static void
 retro_core_view_init (RetroCoreView *self)
 {
-  g_object_set ((GtkWidget*) self, "can-default", TRUE, NULL);
-  g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
+  GtkEventController *controller;
 
-  gtk_widget_add_events (GTK_WIDGET (self),
-                         GDK_KEY_PRESS_MASK |
-                         GDK_KEY_RELEASE_MASK |
-                         GDK_TOUCH_MASK);
+  gtk_widget_set_focusable (GTK_WIDGET (self), TRUE);
 
   self->display = g_object_ref_sink (retro_gl_display_new ());
-  gtk_widget_set_visible (GTK_WIDGET (self->display), TRUE);
-  g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);
-  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->display));
+  gtk_widget_set_can_focus (GTK_WIDGET (self->display), FALSE);
+  gtk_widget_set_parent (GTK_WIDGET (self->display), GTK_WIDGET (self));
 
   g_object_bind_property (G_OBJECT (self), "sensitive",
                           G_OBJECT (self->display), "sensitive",
@@ -492,12 +476,23 @@ retro_core_view_init (RetroCoreView *self)
   self->key_joypad_mapping = retro_key_joypad_mapping_new_default ();
   self->mouse_button_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
 
-  g_signal_connect_object (self, "key-press-event", (GCallback) key_press_event_cb, self, 0);
-  g_signal_connect_object (self, "key-release-event", (GCallback) key_release_event_cb, self, 0);
-  g_signal_connect_object (self, "button-press-event", (GCallback) button_press_event_cb, self, 0);
-  g_signal_connect_object (self, "button-release-event", (GCallback) button_release_event_cb, self, 0);
-  g_signal_connect_object (self, "focus-out-event", (GCallback) focus_out_event_cb, self, 0);
-  g_signal_connect_object (self, "motion-notify-event", (GCallback) motion_notify_event_cb, self, 0);
+  controller = gtk_event_controller_key_new ();
+  g_signal_connect_swapped (controller, "key-pressed", G_CALLBACK (key_pressed_cb), self);
+  g_signal_connect_swapped (controller, "key-released", G_CALLBACK (key_released_cb), self);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
+
+  controller = gtk_event_controller_focus_new ();
+  g_signal_connect_swapped (controller, "leave", G_CALLBACK (leave_cb), self);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
+
+  controller = gtk_event_controller_motion_new ();
+  g_signal_connect_swapped (controller, "motion", G_CALLBACK (motion_cb), self);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
+
+  controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+  g_signal_connect_swapped (controller, "pressed", G_CALLBACK (pressed_cb), self);
+  g_signal_connect_swapped (controller, "released", G_CALLBACK (released_cb), self);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
 }
 
 /* Public */

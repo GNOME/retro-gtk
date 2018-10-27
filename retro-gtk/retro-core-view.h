@@ -17,7 +17,7 @@ G_BEGIN_DECLS
 
 #define RETRO_TYPE_CORE_VIEW (retro_core_view_get_type())
 
-G_DECLARE_FINAL_TYPE (RetroCoreView, retro_core_view, RETRO, CORE_VIEW, GtkEventBox)
+G_DECLARE_FINAL_TYPE (RetroCoreView, retro_core_view, RETRO, CORE_VIEW, GtkWidget)
 
 RetroCoreView *retro_core_view_new (void) G_GNUC_WARN_UNUSED_RESULT;
 

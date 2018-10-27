@@ -96,11 +96,11 @@ retro_demo_activate (GApplication *application)
 
   retro_core_set_keyboard (self->core, GTK_WIDGET (view));
 
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  window = gtk_window_new ();
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
-  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (view));
+  gtk_window_set_child (GTK_WINDOW (window), GTK_WIDGET (view));
+  gtk_window_present (GTK_WINDOW (window));
 
-  gtk_widget_show_all (GTK_WIDGET (window));
   gtk_application_add_window (GTK_APPLICATION (application),
                               GTK_WINDOW (window));
   g_signal_connect_swapped (self->core, "shutdown", G_CALLBACK (gtk_window_close), window);

@@ -87,8 +87,7 @@ struct _RetroCore
   gdouble speed_rate;
 
   GtkWidget *keyboard_widget;
-  gulong key_press_event_id;
-  gulong key_release_event_id;
+  GtkEventController *key_controller;
 
   RetroFramebuffer *framebuffer;
 };
@@ -664,11 +663,11 @@ exit_cb (RetroRunnerProcess *process,
 }
 
 static gboolean
-key_event_cb (GtkWidget   *widget,
-              GdkEventKey *event,
-              RetroCore   *self)
+key_event (RetroCore       *self,
+           guint            keyval,
+           GdkModifierType  state,
+           gboolean         pressed)
 {
-  gboolean pressed;
   RetroKeyboardKey retro_key;
   RetroKeyboardModifierKey retro_modifier_key;
   guint32 character;
@@ -678,10 +677,9 @@ key_event_cb (GtkWidget   *widget,
   if (!retro_core_get_is_initiated (self))
     return FALSE;
 
-  pressed = event->type == GDK_KEY_PRESS;
-  retro_key = retro_keyboard_key_converter (event->keyval);
-  retro_modifier_key = retro_keyboard_modifier_key_converter (event->keyval, event->state);
-  character = gdk_keyval_to_unicode (event->keyval);
+  retro_key = retro_keyboard_key_converter (keyval);
+  retro_modifier_key = retro_keyboard_modifier_key_converter (keyval, state);
+  character = gdk_keyval_to_unicode (keyval);
 
   proxy = retro_runner_process_get_proxy (self->process);
   if (!ipc_runner_call_key_event_sync (proxy, pressed, retro_key,
@@ -690,6 +688,24 @@ key_event_cb (GtkWidget   *widget,
     crash (self, error);
 
   return FALSE;
+}
+
+static gboolean
+key_pressed_cb (RetroCore       *self,
+                guint            keyval,
+                guint            keycode,
+                GdkModifierType  state)
+{
+  return key_event (self, keyval, state, TRUE);
+}
+
+static void
+key_released_cb (RetroCore       *self,
+                 guint            keyval,
+                 guint            keycode,
+                 GdkModifierType  state)
+{
+  key_event (self, keyval, state, FALSE);
 }
 
 /* Public */
@@ -1754,6 +1770,7 @@ static void
 keyboard_widget_notify (RetroCore *self,
                         GObject   *keyboard_widget)
 {
+  self->key_controller = NULL;
   self->keyboard_widget = NULL;
 }
 
@@ -1771,25 +1788,24 @@ retro_core_set_keyboard (RetroCore *self,
   g_return_if_fail (RETRO_IS_CORE (self));
 
   if (self->keyboard_widget != NULL) {
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_press_event_id);
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_release_event_id);
+    gtk_widget_remove_controller (self->keyboard_widget, self->key_controller);
+    self->key_controller = NULL;
+
     g_object_weak_unref (G_OBJECT (self->keyboard_widget), (GWeakNotify) keyboard_widget_notify, self);
     self->keyboard_widget = NULL;
   }
 
   if (widget != NULL) {
-    self->key_press_event_id =
-      g_signal_connect_object (widget,
-                               "key-press-event",
-                               G_CALLBACK (key_event_cb),
-                               self,
-                               0);
-    self->key_release_event_id =
-      g_signal_connect_object (widget,
-                               "key-release-event",
-                               G_CALLBACK (key_event_cb),
-                               self,
-                               0);
+    self->key_controller = gtk_event_controller_key_new ();
+    gtk_widget_add_controller (widget, self->key_controller);
+
+    g_signal_connect_object (self->key_controller, "key-pressed",
+                            G_CALLBACK (key_pressed_cb), self,
+                            G_CONNECT_SWAPPED);
+    g_signal_connect_object (self->key_controller, "key-released",
+                             G_CALLBACK (key_released_cb), self,
+                             G_CONNECT_SWAPPED);
+
     self->keyboard_widget = widget;
     g_object_weak_ref (G_OBJECT (widget), (GWeakNotify) keyboard_widget_notify, self);
   }

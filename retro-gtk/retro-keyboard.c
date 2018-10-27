@@ -12,7 +12,7 @@ retro_keyboard_modifier_key_converter (guint           keyval,
     retro_modifiers |= RETRO_KEYBOARD_MODIFIER_KEY_SHIFT;
   if (modifiers & GDK_CONTROL_MASK)
     retro_modifiers |= RETRO_KEYBOARD_MODIFIER_KEY_CTRL;
-  if (modifiers & GDK_MOD1_MASK)
+  if (modifiers & GDK_ALT_MASK)
     retro_modifiers |= RETRO_KEYBOARD_MODIFIER_KEY_ALT;
   if (modifiers & GDK_META_MASK)
     retro_modifiers |= RETRO_KEYBOARD_MODIFIER_KEY_META;

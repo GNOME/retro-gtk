@@ -76,9 +76,12 @@ retro_cairo_display_draw_background (RetroCairoDisplay *self,
   cairo_paint (cr);
 }
 
-static gboolean
-retro_cairo_display_real_draw (GtkWidget *base,
-                               cairo_t   *cr)
+static void
+retro_cairo_display_draw (GtkDrawingArea *base,
+                          cairo_t        *cr,
+                          gint            width,
+                          gint            height,
+                          gpointer        user_data)
 {
   RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (base);
   GdkPixbuf *to_draw;
@@ -95,13 +98,13 @@ retro_cairo_display_real_draw (GtkWidget *base,
   gdouble ys;
   cairo_pattern_t *source;
 
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (cr != NULL, FALSE);
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (cr != NULL);
 
   retro_cairo_display_draw_background (self, cr);
 
   if (self->pixbuf == NULL)
-    return FALSE;
+    return;
 
   if (gtk_widget_get_sensitive (GTK_WIDGET (self)))
     to_draw = g_object_ref (self->pixbuf);
@@ -136,8 +139,6 @@ retro_cairo_display_real_draw (GtkWidget *base,
 
   cairo_surface_destroy (surface);
   g_object_unref (to_draw);
-
-  return TRUE;
 }
 static void
 retro_cairo_display_finalize (GObject *object)
@@ -198,8 +199,6 @@ retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  ((GtkWidgetClass *) klass)->draw = (gboolean (*) (GtkWidget *, cairo_t *)) retro_cairo_display_real_draw;
-
   object_class->finalize = retro_cairo_display_finalize;
   object_class->get_property = retro_cairo_display_get_property;
   object_class->set_property = retro_cairo_display_set_property;
@@ -240,6 +239,11 @@ retro_cairo_display_init (RetroCairoDisplay *self)
                            (GCallback) queue_draw,
                            GTK_WIDGET (self),
                            0);
+
+  gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (self),
+                                  retro_cairo_display_draw,
+                                  NULL,
+                                  NULL);
 }
 
 static void

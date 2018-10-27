@@ -25,14 +25,8 @@ struct _RetroCoreView
   GtkEventController *key_controller;
   GtkEventController *motion_controller;
   GtkGesture *multi_press_gesture;
-  GdkScreen *grabbed_screen;
-  GdkDevice *grabbed_device;
   gdouble mouse_x_delta;
   gdouble mouse_y_delta;
-  gint screen_center_x;
-  gint screen_center_y;
-  gint position_on_grab_x;
-  gint position_on_grab_y;
   gboolean pointer_is_on_display;
   gdouble pointer_x;
   gdouble pointer_y;
@@ -98,82 +92,6 @@ axis_to_retro_axis (gdouble value)
   return (gint16) (value * G_MAXINT16);
 }
 
-static void
-recenter_pointer (RetroCoreView *self)
-{
-  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
-                   self->screen_center_x, self->screen_center_y);
-}
-
-static gboolean
-retro_core_view_get_is_pointer_grabbed (RetroCoreView *self)
-{
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-
-  return self->grabbed_device != NULL;
-}
-
-static void
-retro_core_view_grab (RetroCoreView *self,
-                      GdkDevice     *device,
-                      GdkWindow     *window,
-                      GdkEvent      *event)
-{
-  GdkSeat *seat;
-  GdkDisplay *display;
-  GdkCursor *cursor;
-  GdkScreen *screen = NULL;
-  GdkMonitor *monitor;
-  GdkRectangle monitor_geometry;
-
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-  g_return_if_fail (device != NULL);
-  g_return_if_fail (window != NULL);
-  g_return_if_fail (event != NULL);
-
-  if (self->grabbed_device != NULL)
-    g_object_unref (self->grabbed_device);
-
-  if (self->grabbed_screen != NULL)
-    g_object_unref (self->grabbed_screen);
-
-  self->grabbed_device = g_object_ref (device);
-  seat = gdk_device_get_seat (device);
-  display = gdk_device_get_display (device);
-  cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
-  gdk_seat_grab (seat, window, GDK_SEAT_CAPABILITY_ALL_POINTING, FALSE, cursor, event, NULL, NULL);
-  monitor = gdk_display_get_monitor_at_window (display, window);
-  gdk_monitor_get_geometry (monitor, &monitor_geometry);
-
-  gdk_device_get_position (device, &screen, &self->position_on_grab_x, &self->position_on_grab_y);
-  self->grabbed_screen = g_object_ref (screen);
-  self->screen_center_x = monitor_geometry.x + monitor_geometry.width / 2;
-  self->screen_center_y = monitor_geometry.y + monitor_geometry.height / 2;
-  self->mouse_x_delta = 0;
-  self->mouse_y_delta = 0;
-
-  recenter_pointer (self);
-
-  g_object_unref (cursor);
-}
-
-static void
-retro_core_view_ungrab (RetroCoreView *self)
-{
-  GdkSeat *seat;
-
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-  g_return_if_fail (self->grabbed_device != NULL);
-
-  seat = gdk_device_get_seat (self->grabbed_device);
-  gdk_seat_ungrab (seat);
-  gdk_device_warp (self->grabbed_device, self->grabbed_screen,
-                   self->position_on_grab_x, self->position_on_grab_y);
-
-  g_clear_object (&self->grabbed_device);
-  g_clear_object (&self->grabbed_screen);
-}
-
 static gboolean
 retro_core_view_on_key_pressed (GtkEventControllerKey *controller,
                                 guint                  keyval,
@@ -184,11 +102,6 @@ retro_core_view_on_key_pressed (GtkEventControllerKey *controller,
   RetroCoreView *self = RETRO_CORE_VIEW (data);
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-
-  if (keyval == GDK_KEY_Escape &&
-      (state & GDK_CONTROL_MASK) &&
-      retro_core_view_get_is_pointer_grabbed (self))
-    retro_core_view_ungrab (self);
 
   set_input_pressed (self->key_state, keycode);
   set_input_pressed (self->keyval_state, keyval);
@@ -229,24 +142,13 @@ retro_core_view_on_pressed (GtkGestureMultiPress *gesture,
 
   gtk_widget_grab_focus (GTK_WIDGET (self));
 
-  if (retro_core_view_get_can_grab_pointer (self)) {
-    if (retro_core_view_get_is_pointer_grabbed (self))
-      set_input_pressed (self->mouse_button_state, event->button);
-    else
-      retro_core_view_grab (self,
-                            event->device,
-                            event->window,
-                            (GdkEvent *) event);
-  }
-  else {
-    set_input_pressed (self->mouse_button_state, button);
-    self->pointer_is_on_display =
-      retro_gl_display_get_coordinates_on_display (self->display,
-                                                   x,
-                                                   y,
-                                                   &self->pointer_x,
-                                                   &self->pointer_y);
-  }
+  set_input_pressed (self->mouse_button_state, button);
+  self->pointer_is_on_display =
+    retro_gl_display_get_coordinates_on_display (self->display,
+                                                 x,
+                                                 y,
+                                                 &self->pointer_x,
+                                                 &self->pointer_y);
 }
 
 static void
@@ -274,9 +176,6 @@ retro_core_view_on_focus_out (GtkEventControllerKey *controller,
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
-  if (retro_core_view_get_is_pointer_grabbed (self))
-    retro_core_view_ungrab (self);
-
   reset_input (self->key_state);
   reset_input (self->mouse_button_state);
 
@@ -293,24 +192,12 @@ retro_core_view_on_motion (GtkEventControllerMotion *controller,
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
-  if (retro_core_view_get_can_grab_pointer (self)) {
-    if (retro_core_view_get_is_pointer_grabbed (self) &&
-        event->device == self->grabbed_device) {
-      self->mouse_x_delta += event->x_root - (double) self->screen_center_x;
-      self->mouse_y_delta += event->y_root - (double) self->screen_center_y;
-
-      recenter_pointer (self);
-    }
-  }
-  else {
-    self->pointer_is_on_display =
-      retro_gl_display_get_coordinates_on_display (self->display,
-                                                   x,
-                                                   y,
-                                                   &self->pointer_x,
-                                                   &self->pointer_y);
-
-  }
+  self->pointer_is_on_display =
+    retro_gl_display_get_coordinates_on_display (self->display,
+                                                 x,
+                                                 y,
+                                                 &self->pointer_x,
+                                                 &self->pointer_y);
 
   return FALSE;
 }
@@ -381,8 +268,6 @@ retro_core_view_finalize (GObject *object)
   g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
   g_hash_table_unref (self->mouse_button_state);
-  g_clear_object (&self->grabbed_screen);
-  g_clear_object (&self->grabbed_device);
 
   G_OBJECT_CLASS (retro_core_view_parent_class)->finalize (object);
 }
@@ -825,10 +710,6 @@ retro_core_view_set_can_grab_pointer (RetroCoreView *self,
     return;
 
   self->can_grab_pointer = can_grab_pointer;
-
-  if (can_grab_pointer == FALSE &&
-      retro_core_view_get_is_pointer_grabbed (self))
-    retro_core_view_ungrab (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CAN_GRAB_POINTER]);
 }

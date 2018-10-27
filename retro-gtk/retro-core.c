@@ -670,24 +670,23 @@ retro_core_send_input_key_event (RetroCore                *self,
 }
 
 static gboolean
-retro_core_key_event (RetroCore   *self,
-                      GdkEventKey *event)
+retro_core_key_event (RetroCore       *self,
+                      guint            keyval,
+                      GdkModifierType  state,
+                      gboolean         pressed)
 {
-  gboolean pressed;
   RetroKeyboardKey retro_key;
   RetroKeyboardModifierKey retro_modifier_key;
   guint32 character;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (!retro_core_get_is_initiated (self))
     return FALSE;
 
-  pressed = event->type == GDK_KEY_PRESS;
-  retro_key = retro_keyboard_key_converter (event->keyval);
-  retro_modifier_key = retro_keyboard_modifier_key_converter (event->keyval, event->state);
-  character = gdk_keyval_to_unicode (event->keyval);
+  retro_key = retro_keyboard_key_converter (keyval);
+  retro_modifier_key = retro_keyboard_modifier_key_converter (keyval, state);
+  character = gdk_keyval_to_unicode (keyval);
 
   retro_core_push_cb_data (self);
   retro_core_send_input_key_event (self,
@@ -1046,15 +1045,27 @@ void retro_core_set_environment_interface (RetroCore *self);
 void retro_core_set_callbacks (RetroCore *self);
 
 static gboolean
-on_key_event (GtkWidget   *widget,
-              GdkEventKey *event,
-              gpointer     self)
+on_key_pressed (GtkEventControllerKey *controller,
+                guint                  keyval,
+                guint                  keycode,
+                GdkModifierType        state,
+                gpointer               self)
 {
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
-  return retro_core_key_event (RETRO_CORE (self), event);
+  return retro_core_key_event (RETRO_CORE (self), keyval, state, TRUE);
+}
+
+static gboolean
+on_key_released (GtkEventControllerKey *controller,
+                 guint                  keyval,
+                 guint                  keycode,
+                 GdkModifierType        state,
+                 gpointer               self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
+
+  return retro_core_key_event (RETRO_CORE (self), keyval, state, FALSE);
 }
 
 static void
@@ -2053,24 +2064,25 @@ retro_core_set_keyboard (RetroCore *self,
   g_return_if_fail (RETRO_IS_CORE (self));
 
   if (self->keyboard_widget != NULL) {
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_press_event_id);
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_release_event_id);
+    gtk_widget_remove_controller (self->keyboard_widget, self->key_controller);
     g_clear_object (&self->keyboard_widget);
+    g_clear_object (&self->key_controller);
   }
 
   if (widget != NULL) {
-    self->key_press_event_id =
-      g_signal_connect_object (widget,
-                               "key-press-event",
-                               G_CALLBACK (on_key_event),
-                               self,
-                               0);
-    self->key_release_event_id =
-      g_signal_connect_object (widget,
-                               "key-release-event",
-                               G_CALLBACK (on_key_event),
-                               self,
-                               0);
+    self->key_controller = gtk_event_controller_key_new ();
+    gtk_widget_add_controller (widget, self->key_controller);
+
+    g_signal_connect_object (self->key_controller,
+                            "key-pressed",
+                             G_CALLBACK (on_key_pressed),
+                             self,
+                             0);
+    g_signal_connect_object (self->key_controller,
+                             "key-released",
+                              G_CALLBACK (on_key_released),
+                              self,
+                              0);
     self->keyboard_widget = g_object_ref (widget);
   }
 }

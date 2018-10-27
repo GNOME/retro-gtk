@@ -83,8 +83,8 @@ retro_cairo_display_real_draw (GtkWidget *base,
   RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (base);
   GdkPixbuf *to_draw;
   gboolean has_alpha;
-  gint width;
-  gint height;
+  gint pixbuf_width;
+  gint pixbuf_height;
 
   cairo_surface_t *surface;
   gdouble w = 0.0;
@@ -107,9 +107,9 @@ retro_cairo_display_real_draw (GtkWidget *base,
     to_draw = g_object_ref (self->pixbuf);
   else {
     has_alpha = gdk_pixbuf_get_has_alpha (self->pixbuf);
-    width = gdk_pixbuf_get_width (self->pixbuf);
-    height = gdk_pixbuf_get_height (self->pixbuf);
-    to_draw = gdk_pixbuf_new (GDK_COLORSPACE_RGB, has_alpha, 8, width, height);
+    pixbuf_width = gdk_pixbuf_get_width (self->pixbuf);
+    pixbuf_height = gdk_pixbuf_get_height (self->pixbuf);
+    to_draw = gdk_pixbuf_new (GDK_COLORSPACE_RGB, has_alpha, 8, pixbuf_width, pixbuf_height);
     gdk_pixbuf_saturate_and_pixelate (self->pixbuf, to_draw, 0.0f, FALSE);
   }
 

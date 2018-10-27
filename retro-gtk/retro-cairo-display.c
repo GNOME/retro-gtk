@@ -90,7 +90,6 @@ retro_cairo_display_draw (GtkDrawingArea *base,
   gint pixbuf_width;
   gint pixbuf_height;
 
-  cairo_surface_t *surface;
   gdouble w = 0.0;
   gdouble h = 0.0;
   gdouble x = 0.0;
@@ -117,13 +116,12 @@ retro_cairo_display_draw (GtkDrawingArea *base,
     gdk_pixbuf_saturate_and_pixelate (self->pixbuf, to_draw, 0.0f, FALSE);
   }
 
-  surface = gdk_cairo_surface_create_from_pixbuf (to_draw, 1, NULL);
   retro_cairo_display_get_video_box (self, &w, &h, &x, &y);
   xs = w / gdk_pixbuf_get_width (to_draw);
   ys = h / gdk_pixbuf_get_height (to_draw);
 
   cairo_scale (cr, xs, ys);
-  cairo_set_source_surface (cr, surface, x / xs, y / ys);
+  gdk_cairo_set_source_pixbuf (cr, to_draw, x / xs, y / ys);
   source = cairo_get_source (cr);
   switch (self->filter) {
   case RETRO_VIDEO_FILTER_SHARP:
@@ -138,7 +136,6 @@ retro_cairo_display_draw (GtkDrawingArea *base,
   }
   cairo_paint (cr);
 
-  cairo_surface_destroy (surface);
   g_object_unref (to_draw);
 }
 static void

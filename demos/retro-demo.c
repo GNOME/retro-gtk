@@ -101,6 +101,7 @@ retro_demo_activate (GApplication *application)
   view = retro_core_view_new ();
   retro_core_view_set_core (view, self->core);
   retro_core_view_set_as_default_controller (view, self->core);
+  retro_core_view_set_filter (view, RETRO_VIDEO_FILTER_LCD);
 
   retro_core_set_keyboard (self->core, GTK_WIDGET (view));
 

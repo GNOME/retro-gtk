@@ -1,0 +1,7 @@
+[GLSL Filter]
+Filter=Linear
+Wrap=Border
+Fragment=lcd-grid.fs
+Authors=hunterk;
+License=GPL-2.0+;
+URL=https://github.com/hizzlekizzle/quark-shaders/blob/master/LCD-cgwg.shader

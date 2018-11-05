@@ -42,6 +42,7 @@ retro_video_filter_get_type (void)
       { RETRO_VIDEO_FILTER_SMOOTH, "RETRO_VIDEO_FILTER_SMOOTH", "smooth" },
       { RETRO_VIDEO_FILTER_SHARP, "RETRO_VIDEO_FILTER_SHARP", "sharp" },
       { RETRO_VIDEO_FILTER_CRT, "RETRO_VIDEO_FILTER_CRT", "crt" },
+      { RETRO_VIDEO_FILTER_LCD, "RETRO_VIDEO_FILTER_LCD", "lcd" },
       { RETRO_VIDEO_FILTER_COUNT, "RETRO_VIDEO_FILTER_COUNT", "count" },
       { 0, NULL, NULL },
     };

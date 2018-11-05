@@ -20,6 +20,7 @@ GType retro_video_filter_get_type (void) G_GNUC_CONST;
  * @RETRO_VIDEO_FILTER_SMOOTH: a smooth but blurry video filer
  * @RETRO_VIDEO_FILTER_SHARP: a sharp video filter showing every pixel
  * @RETRO_VIDEO_FILTER_CRT: a video filter mimicking CRT screens
+ * @RETRO_VIDEO_FILTER_LCD: a video filter mimicking LCD screens
  * @RETRO_VIDEO_FILTER_COUNT: the number of video filters
  *
  * Represents the filters that can be applied to the video output.
@@ -29,6 +30,7 @@ typedef enum
   RETRO_VIDEO_FILTER_SMOOTH,
   RETRO_VIDEO_FILTER_SHARP,
   RETRO_VIDEO_FILTER_CRT,
+  RETRO_VIDEO_FILTER_LCD,
   RETRO_VIDEO_FILTER_COUNT,
 } RetroVideoFilter;
 

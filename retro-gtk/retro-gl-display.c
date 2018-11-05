@@ -48,6 +48,7 @@ static const gchar *filter_uris[] = {
   NULL,
   NULL,
   "resource:///org/gnome/Retro/glsl-filters/crt-simple.filter",
+  "resource:///org/gnome/Retro/glsl-filters/lcd-grid.filter",
 };
 
 /* Private */

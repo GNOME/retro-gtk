@@ -4,5 +4,7 @@
     <file>glsl-filters/crt-simple.filter</file>
     <file>glsl-filters/crt-simple.fs</file>
     <file>glsl-filters/crt-simple.vs</file>
+    <file>glsl-filters/lcd-grid.filter</file>
+    <file>glsl-filters/lcd-grid.fs</file>
   </gresource>
 </gresources>

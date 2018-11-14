@@ -6,6 +6,7 @@
 #include "retro-gl-display.h"
 #include "retro-controller-codes.h"
 #include "retro-core-view-controller.h"
+#include "retro-input-private.h"
 #include "retro-pa-player.h"
 
 struct _RetroCoreView
@@ -18,6 +19,7 @@ struct _RetroCoreView
   gboolean can_grab_pointer;
   gboolean snap_pointer_to_borders;
   GHashTable *key_state;
+  GHashTable *keyval_state;
   RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
   GdkScreen *grabbed_screen;
@@ -183,8 +185,8 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
       (event->state & GDK_CONTROL_MASK) &&
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
-
   set_input_pressed (self->key_state, event->hardware_keycode);
+  set_input_pressed (self->keyval_state, event->keyval);
 
   return FALSE;
 }
@@ -200,6 +202,7 @@ retro_core_view_on_key_release_event (GtkWidget   *source,
   g_return_val_if_fail (event != NULL, FALSE);
 
   set_input_released (self->key_state, event->hardware_keycode);
+  set_input_released (self->keyval_state, event->keyval);
 
   return FALSE;
 }
@@ -338,6 +341,22 @@ retro_core_view_get_mouse_button_state (RetroCoreView *self,
   return get_input_state (self->mouse_button_state, button);
 }
 
+static gboolean
+retro_core_view_get_keyboard_key_state (RetroCoreView *self,
+                                        guint16        key)
+{
+  guint16 keyval;
+
+  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
+
+  if (key >= RETRO_KEYBOARD_KEY_LAST)
+    return FALSE;
+
+  keyval = retro_keyboard_key_to_val_converter (key);
+
+  return get_input_state (self->keyval_state, keyval);
+}
+
 static void
 retro_core_view_finalize (GObject *object)
 {
@@ -348,6 +367,7 @@ retro_core_view_finalize (GObject *object)
   g_object_unref (self->sensitive_binding);
   g_object_unref (self->audio_player);
   g_hash_table_unref (self->key_state);
+  g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
   g_hash_table_unref (self->mouse_button_state);
   g_clear_object (&self->grabbed_screen);
@@ -464,6 +484,7 @@ retro_core_view_init (RetroCoreView *self)
   self->audio_player = retro_pa_player_new ();
 
   self->key_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
+  self->keyval_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->key_joypad_mapping = retro_key_joypad_mapping_new_default ();
   self->mouse_button_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
 
@@ -600,7 +621,8 @@ retro_core_view_get_key_joypad_mapping (RetroCoreView *self)
  *
  * Creates a new #RetroController exposing @self as the specified controller
  * type. The valid controller types are RETRO_CONTROLLER_TYPE_JOYPAD,
- * RETRO_CONTROLLER_TYPE_MOUSE and RETRO_CONTROLLER_TYPE_POINTER.
+ * RETRO_CONTROLLER_TYPE_MOUSE, RETRO_CONTROLLER_TYPE_KEYBOARD and
+ * RETRO_CONTROLLER_TYPE_POINTER.
  *
  * Returns: (transfer full): a new #RetroController
  */
@@ -669,6 +691,11 @@ retro_core_view_get_input_state (RetroCoreView *self,
       return 0;
 
     return retro_core_view_get_joypad_button_state (self, id) ? G_MAXINT16 : 0;
+  case RETRO_CONTROLLER_TYPE_KEYBOARD:
+    if (!retro_input_get_keyboard (input, &id))
+      return 0;
+
+    return retro_core_view_get_keyboard_key_state (self, id) ? G_MAXINT16 : 0;
   case RETRO_CONTROLLER_TYPE_MOUSE:
     if (!retro_input_get_mouse (input, &id))
       return 0;
@@ -734,6 +761,7 @@ retro_core_view_get_controller_capabilities (RetroCoreView *self)
 
   return 1 << RETRO_CONTROLLER_TYPE_JOYPAD |
          1 << RETRO_CONTROLLER_TYPE_MOUSE |
+         1 << RETRO_CONTROLLER_TYPE_KEYBOARD |
          1 << RETRO_CONTROLLER_TYPE_POINTER;
 }
 

@@ -8,12 +8,14 @@
 #endif
 
 #include "retro-input.h"
+#include "retro-keyboard-key.h"
 
 G_BEGIN_DECLS
 
 typedef struct _RetroInputAny RetroInputAny;
 typedef struct _RetroInputJoypad RetroInputJoypad;
 typedef struct _RetroInputMouse RetroInputMouse;
+typedef struct _RetroInputKeyboard RetroInputKeyboard;
 typedef struct _RetroInputLightgun RetroInputLightgun;
 typedef struct _RetroInputAnalog RetroInputAnalog;
 typedef struct _RetroInputPointer RetroInputPointer;
@@ -32,6 +34,11 @@ struct _RetroInputJoypad {
 struct _RetroInputMouse {
   RetroControllerType type;
   RetroMouseId id;
+};
+
+struct _RetroInputKeyboard {
+  RetroControllerType type;
+  RetroKeyboardKey key;
 };
 
 struct _RetroInputLightgun {
@@ -54,6 +61,7 @@ union _RetroInput {
   RetroInputAny any;
   RetroInputJoypad joypad;
   RetroInputMouse mouse;
+  RetroInputKeyboard keyboard;
   RetroInputLightgun lightgun;
   RetroInputAnalog analog;
   RetroInputPointer pointer;
@@ -63,6 +71,9 @@ void retro_input_init (RetroInput          *self,
                        RetroControllerType  controller_type,
                        guint                id,
                        guint                index);
+
+gboolean retro_input_get_keyboard (RetroInput       *self,
+                                   RetroKeyboardKey *key);
 
 G_END_DECLS
 

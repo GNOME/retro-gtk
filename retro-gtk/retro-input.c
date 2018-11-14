@@ -157,6 +157,33 @@ retro_input_get_mouse (RetroInput   *self,
 }
 
 /**
+ * retro_input_get_keyboard:
+ * @self: a #RetroInput
+ * @key: (out): return location for the key
+ *
+ * Gets the keyboard key of %self, if any.
+ *
+ * Returns: whether the key was retrieved
+ */
+gboolean
+retro_input_get_keyboard (RetroInput       *self,
+                          RetroKeyboardKey *key)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+  g_return_val_if_fail (key != NULL, FALSE);
+
+  if (self->any.type != RETRO_CONTROLLER_TYPE_KEYBOARD)
+    return FALSE;
+
+  if (self->keyboard.key >= RETRO_KEYBOARD_KEY_LAST)
+    return FALSE;
+
+  *key = self->keyboard.key;
+
+  return TRUE;
+}
+
+/**
  * retro_input_get_lightgun:
  * @self: a #RetroInput
  * @id: (out): return location for the id

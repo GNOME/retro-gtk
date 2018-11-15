@@ -47,8 +47,16 @@ build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
 
+test_bml_resources = gnome.compile_resources(
+  'test_bml_resources',
+  'test-bml.gresource.xml',
+  c_name: 'test_bml',
+  source_dir: '.',
+)
+
 tests = [
   ['RetroCore', 'test-core', [], [retro_dummy_lib]],
+  ['RetroBml', 'test-bml', [test_bml_resources[0]], []],
 ]
 
 foreach t : tests

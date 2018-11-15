@@ -1,0 +1,21 @@
+// This is comment and should not be parsed.
+
+// Test a hierachy with some depth and simple attributes.
+namespace name=Depth
+  namespace name=Test1
+    binary name=testfile1 file=test/testfile1.test
+  namespace name=Test2
+    binary name=testfile2a file=test/testfile2a.test
+    binary name=testfile2b file=test/testfile2b.test
+
+// Test quoted attrbiutes comments.
+attributes simple=simplevalue quoted="I am quoted" lineend:This is a line end attribute
+
+// Test multiline values.
+cartridge sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  :This is a multiline value.
+
+cartridge sha256:fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
+  :This multiline value
+  :actually is multiline.
+

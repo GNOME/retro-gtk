@@ -1,4 +1,4 @@
-/* test-core-descriptor.c
+/* test-core.c
  *
  * Copyright (C) 2018 Adrien Plazas <kekun.plazas@laposte.net>
  *

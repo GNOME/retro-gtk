@@ -37,10 +37,10 @@ G_DEFINE_TYPE (RetroReftestFile, retro_reftest_file, G_TYPE_OBJECT)
 
 #define RETRO_REFTEST_FILE_ERROR (retro_reftest_file_error_quark ())
 
-typedef enum
+enum
 {
   RETRO_REFTEST_FILE_ERROR_NOT_A_UINT,
-} ManetteMappingError;
+};
 
 GQuark retro_reftest_file_error_quark (void);
 

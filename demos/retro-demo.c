@@ -85,10 +85,14 @@ retro_demo_activate (GApplication *application)
   RetroDemoApplication *self;
   GtkWidget *window;
   RetroCoreView *view;
+  GtkSettings *settings;
 
   self = RETRO_DEMO_APPLICATION (application);
 
   g_signal_connect (self->core, "log", (GCallback) retro_g_log, NULL);
+
+  settings = gtk_settings_get_default ();
+  g_object_set (G_OBJECT (settings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 
   view = retro_core_view_new ();
   retro_core_view_set_core (view, self->core);

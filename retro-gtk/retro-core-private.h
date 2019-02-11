@@ -55,6 +55,8 @@ struct _RetroCore
   gboolean variable_updated;
   guint runahead;
   gssize run_remaining;
+  gint16 *audio_samples;
+  gulong audio_samples_length;
 };
 
 void retro_core_push_cb_data (RetroCore *self);

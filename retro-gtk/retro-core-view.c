@@ -23,6 +23,7 @@ struct _RetroCoreView
   RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
   GtkEventController *key_controller;
+  GtkEventController *motion_controller;
   GdkScreen *grabbed_screen;
   GdkDevice *grabbed_device;
   gdouble mouse_x_delta;
@@ -278,14 +279,14 @@ retro_core_view_on_focus_out (GtkEventControllerKey *controller,
 }
 
 static gboolean
-retro_core_view_on_motion_notify_event (GtkWidget      *source,
-                                        GdkEventMotion *event,
-                                        gpointer        data)
+retro_core_view_on_motion (GtkEventControllerMotion *controller,
+                           gdouble                   x,
+                           gdouble                   y,
+                           gpointer                  data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (retro_core_view_get_is_pointer_grabbed (self) &&
@@ -299,8 +300,8 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
   else {
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
-                                                   event->x,
-                                                   event->y,
+                                                   x,
+                                                   y,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
 
@@ -369,6 +370,7 @@ retro_core_view_finalize (GObject *object)
   g_object_unref (self->sensitive_binding);
   g_object_unref (self->audio_player);
   g_object_unref (self->key_controller);
+  g_object_unref (self->motion_controller);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
@@ -490,8 +492,10 @@ retro_core_view_init (RetroCoreView *self)
   self->audio_player = retro_pa_player_new ();
 
   self->key_controller = gtk_event_controller_key_new ();
+  self->motion_controller = gtk_event_controller_motion_new ();
 
   gtk_widget_add_controller (GTK_WIDGET (self), self->key_controller);
+  gtk_widget_add_controller (GTK_WIDGET (self), self->motion_controller);
 
   self->key_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->keyval_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
@@ -503,7 +507,7 @@ retro_core_view_init (RetroCoreView *self)
   g_signal_connect_object (self, "button-press-event", (GCallback) retro_core_view_on_button_press_event, self, 0);
   g_signal_connect_object (self, "button-release-event", (GCallback) retro_core_view_on_button_release_event, self, 0);
   g_signal_connect_object (self->key_controller, "focus-out", (GCallback) retro_core_view_on_focus_out, self, 0);
-  g_signal_connect_object (self, "motion-notify-event", (GCallback) retro_core_view_on_motion_notify_event, self, 0);
+  g_signal_connect_object (self->motion_controller, "motion", (GCallback) retro_core_view_on_motion, self, 0);
 }
 
 /* Public */

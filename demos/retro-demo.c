@@ -108,7 +108,7 @@ retro_demo_activate (GApplication *application)
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (view));
 
-  gtk_widget_show_all (GTK_WIDGET (window));
+  gtk_window_present (GTK_WINDOW (window));
   gtk_application_add_window (GTK_APPLICATION (application),
                               GTK_WINDOW (window));
 

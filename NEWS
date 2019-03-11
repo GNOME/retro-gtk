@@ -1,4 +1,15 @@
 ==============
+Version 0.16.1
+==============
+
+* RetroCoreView:
+ - Support RETRO_CONTROLLER_TYPE_KEYBOARD.
+* RetroCore:
+ - Bufferize single audio frames to emit them as batches for better
+   performances.
+* Add CSS names to widgets.
+
+==============
 Version 0.16.0
 ==============
 

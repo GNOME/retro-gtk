@@ -5,9 +5,9 @@ Core=/app/lib/libretro/test_libretro.so
 [Options]
 test_aspect=4:3;16:9;
 test_samplerate=30000;20000;
-test_opt0=false;true;
-test_opt1=0;
-test_opt2=0;1;foo;3;
+test_analog_mouse=true;false;
+test_analog_mouse_relative=false;true;
+test_audio_enable=true;false;
 
 [Frame 0]
 State=Refresh

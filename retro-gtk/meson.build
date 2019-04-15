@@ -6,7 +6,7 @@ retro_gtk_resources = gnome.compile_resources(
 )
 
 retro_gtk_sources = [
-  retro_gtk_resources[0],
+  retro_gtk_resources,
   'retro-cairo-display.c',
   'retro-controller.c',
   'retro-controller-codes.c',

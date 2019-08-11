@@ -319,8 +319,8 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
   rgba8888 *rgba8888_data;
   GdkPixbuf *pixbuf;
   gfloat x_dpi;
-  gchar *x_dpi_string;
-  gchar *y_dpi_string;
+  g_autofree gchar *x_dpi_string;
+  g_autofree gchar *y_dpi_string;
 
   g_return_val_if_fail (self != NULL, NULL);
 
@@ -348,8 +348,6 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
   y_dpi_string = g_strdup_printf ("%g", RETRO_CAIRO_DISPLAY_Y_DPI);
   gdk_pixbuf_set_option (pixbuf, "x-dpi", x_dpi_string);
   gdk_pixbuf_set_option (pixbuf, "y-dpi", y_dpi_string);
-  g_free (y_dpi_string);
-  g_free (x_dpi_string);
 
   return pixbuf;
 }

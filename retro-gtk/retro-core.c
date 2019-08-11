@@ -2174,6 +2174,22 @@ retro_core_iterate_options (RetroCore *self)
 }
 
 /**
+ * retro_core_get_aspect_ratio:
+ * @self: a #RetroCore
+ *
+ * Returns current aspect ratio of @self.
+ *
+ * Returns: the aspect ratio
+ */
+gfloat
+retro_core_get_aspect_ratio (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  return self->aspect_ratio;
+}
+
+/**
  * retro_core_new:
  * @filename: the filename of a Libretro core
  *

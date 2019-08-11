@@ -73,6 +73,7 @@ gboolean retro_core_has_option (RetroCore   *self,
 RetroOption *retro_core_get_option (RetroCore   *self,
                                     const gchar *key);
 RetroOptionIterator *retro_core_iterate_options (RetroCore *self);
+gfloat retro_core_get_aspect_ratio (RetroCore *self);
 
 G_END_DECLS
 

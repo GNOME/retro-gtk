@@ -321,6 +321,7 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
   gfloat x_dpi;
   g_autofree gchar *x_dpi_string;
   g_autofree gchar *y_dpi_string;
+  g_autofree gchar *aspect_ratio_string;
 
   g_return_val_if_fail (self != NULL, NULL);
 
@@ -343,11 +344,14 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
                                      self->width * sizeof (rgba8888),
                                      pixels_free, NULL);
 
+  /* x-dpi and y-dpi are deprecated, aspect-ratio should be used instead. */
   x_dpi = self->aspect_ratio * RETRO_CAIRO_DISPLAY_Y_DPI;
   x_dpi_string = g_strdup_printf ("%g", x_dpi);
   y_dpi_string = g_strdup_printf ("%g", RETRO_CAIRO_DISPLAY_Y_DPI);
+  aspect_ratio_string = g_strdup_printf ("%g", self->aspect_ratio);
   gdk_pixbuf_set_option (pixbuf, "x-dpi", x_dpi_string);
   gdk_pixbuf_set_option (pixbuf, "y-dpi", y_dpi_string);
+  gdk_pixbuf_set_option (pixbuf, "aspect-ratio", aspect_ratio_string);
 
   return pixbuf;
 }

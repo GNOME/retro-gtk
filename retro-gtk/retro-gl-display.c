@@ -5,6 +5,7 @@
 #include <epoxy/gl.h>
 #include "retro-glsl-filter.h"
 #include "retro-pixdata.h"
+#include "string.h"
 
 struct _RetroGLDisplay
 {
@@ -486,17 +487,43 @@ retro_gl_display_get_pixbuf (RetroGLDisplay *self)
   return self->pixbuf;
 }
 
+static gfloat
+get_pixbuf_aspect_ratio (GdkPixbuf *pixbuf)
+{
+  const gchar *x_dpi, *y_dpi;
+  gfloat x = 0, y = 0;
+
+  x_dpi = gdk_pixbuf_get_option (pixbuf, "x-dpi");
+  y_dpi = gdk_pixbuf_get_option (pixbuf, "y-dpi");
+
+  if (!x_dpi || !y_dpi)
+    return 0;
+
+  sscanf (x_dpi, "%g", &x);
+  sscanf (y_dpi, "%g", &y);
+
+  if (y == 0)
+    return 0;
+
+  return x / y;
+}
+
 /**
  * retro_gl_display_set_pixbuf:
  * @self: a #RetroGLDisplay
  * @pixbuf: a #GdkPixbuf
  *
- * Sets @pixbuf as the currently displayed video frame.
+ * Sets @pixbuf as the currently displayed video frame. "x-dpi" and "y-dpi"
+ * options can be used to specify aspect ratio for the pixbuf, with aspect
+ * ratio being calculated as "x / y". If they are not present, or are invalid,
+ * core's aspect ratio will be used.
  */
 void
 retro_gl_display_set_pixbuf (RetroGLDisplay *self,
                              GdkPixbuf      *pixbuf)
 {
+  float aspect_ratio;
+
   g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   if (self->pixbuf == pixbuf)
@@ -506,6 +533,10 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
+
+  aspect_ratio = get_pixbuf_aspect_ratio (pixbuf);
+  if (aspect_ratio != 0)
+    self->aspect_ratio = aspect_ratio;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }

@@ -3,6 +3,7 @@
 #include "retro-pixdata-private.h"
 
 #include <epoxy/gl.h>
+#include "retro-pixbuf.h"
 
 G_DEFINE_BOXED_TYPE (RetroPixdata, retro_pixdata, retro_pixdata_copy, retro_pixdata_free)
 
@@ -343,11 +344,15 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
                                      self->width * sizeof (rgba8888),
                                      pixels_free, NULL);
 
+  /* x-dpi and y-dpi are deprecated, retro_pixbuf_get_aspect_ratio() and
+   * retro_pixbuf_set_aspect_ratio() should be used instead. */
   x_dpi = self->aspect_ratio * RETRO_CAIRO_DISPLAY_Y_DPI;
   x_dpi_string = g_strdup_printf ("%g", x_dpi);
   y_dpi_string = g_strdup_printf ("%g", RETRO_CAIRO_DISPLAY_Y_DPI);
   gdk_pixbuf_set_option (pixbuf, "x-dpi", x_dpi_string);
   gdk_pixbuf_set_option (pixbuf, "y-dpi", y_dpi_string);
+
+  retro_pixbuf_set_aspect_ratio (pixbuf, self->aspect_ratio);
 
   return pixbuf;
 }

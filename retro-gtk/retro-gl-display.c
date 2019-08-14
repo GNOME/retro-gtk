@@ -4,6 +4,7 @@
 
 #include <epoxy/gl.h>
 #include "retro-glsl-filter.h"
+#include "retro-pixbuf.h"
 #include "retro-pixdata.h"
 
 struct _RetroGLDisplay
@@ -492,11 +493,16 @@ retro_gl_display_get_pixbuf (RetroGLDisplay *self)
  * @pixbuf: a #GdkPixbuf
  *
  * Sets @pixbuf as the currently displayed video frame.
+ *
+ * retro_pixbuf_set_aspect_ratio() can be used to specify the aspect ratio for
+ * the pixbuf. Otherwise the core's aspect ratio will be used.
  */
 void
 retro_gl_display_set_pixbuf (RetroGLDisplay *self,
                              GdkPixbuf      *pixbuf)
 {
+  gfloat aspect_ratio;
+
   g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   if (self->pixbuf == pixbuf)
@@ -506,6 +512,10 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
+
+  aspect_ratio = retro_pixbuf_get_aspect_ratio (pixbuf);
+  if (aspect_ratio != 0.f)
+    self->aspect_ratio = aspect_ratio;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }

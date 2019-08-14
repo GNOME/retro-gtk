@@ -537,6 +537,9 @@ retro_core_view_set_core (RetroCoreView *self,
  * @pixbuf: a #GdkPixbuf
  *
  * Sets @pixbuf as the currently displayed video frame.
+ *
+ * retro_pixbuf_set_aspect_ratio() can be used to specify the aspect ratio for
+ * the pixbuf. Otherwise the core's aspect ratio will be used.
  */
 void
 retro_core_view_set_pixbuf (RetroCoreView *self,

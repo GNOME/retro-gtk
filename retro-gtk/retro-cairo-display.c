@@ -2,6 +2,7 @@
 
 #include "retro-cairo-display.h"
 
+#include "retro-pixbuf.h"
 #include "retro-pixdata.h"
 
 struct _RetroCairoDisplay
@@ -311,12 +312,17 @@ retro_cairo_display_get_pixbuf (RetroCairoDisplay *self)
  * @self: a #RetroCairoDisplay
  * @pixbuf: a #GdkPixbuf
  *
- * Sets @pixbuf as the currently displayed video frame.
+ * Sets @pixbuf as the currently displayed video frame. The "aspect-ratio"
+ * pixbuf option or retro_pixbuf_set_aspect_ratio() can be used to specify the
+ * aspect ratio for the pixbuf. If the aspect ratio is not specified, the
+ * core's aspect ratio will be used.
  */
 void
 retro_cairo_display_set_pixbuf (RetroCairoDisplay *self,
                                 GdkPixbuf         *pixbuf)
 {
+  gfloat aspect_ratio;
+
   g_return_if_fail (self != NULL);
 
   if (self->pixbuf == pixbuf)
@@ -326,6 +332,10 @@ retro_cairo_display_set_pixbuf (RetroCairoDisplay *self,
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
+
+  aspect_ratio = retro_pixbuf_get_aspect_ratio (pixbuf);
+  if (aspect_ratio != 0.f)
+    self->aspect_ratio = aspect_ratio;
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PIXBUF]);
 }

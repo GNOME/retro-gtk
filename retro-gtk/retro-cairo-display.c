@@ -306,17 +306,37 @@ retro_cairo_display_get_pixbuf (RetroCairoDisplay *self)
   return self->pixbuf;
 }
 
+static gfloat
+get_pixbuf_aspect_ratio (GdkPixbuf *pixbuf)
+{
+  const gchar *aspect_ratio_str;
+  gfloat result = 0.f;
+
+  aspect_ratio_str = gdk_pixbuf_get_option (pixbuf, "aspect-ratio");
+
+  if (!aspect_ratio_str)
+    return 0.f;
+
+  sscanf (aspect_ratio_str, "%g", &result);
+
+  return result;
+}
+
 /**
  * retro_cairo_display_set_pixbuf:
  * @self: a #RetroCairoDisplay
  * @pixbuf: a #GdkPixbuf
  *
- * Sets @pixbuf as the currently displayed video frame.
+ * Sets @pixbuf as the currently displayed video frame. The "aspect-ratio"
+ * pixbuf option can be used to specify the aspect ratio for the pixbuf. If
+ * it's not present, or it is invalid, the core's aspect ratio will be used.
  */
 void
 retro_cairo_display_set_pixbuf (RetroCairoDisplay *self,
                                 GdkPixbuf         *pixbuf)
 {
+  gfloat aspect_ratio;
+
   g_return_if_fail (self != NULL);
 
   if (self->pixbuf == pixbuf)
@@ -326,6 +346,10 @@ retro_cairo_display_set_pixbuf (RetroCairoDisplay *self,
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
+
+  aspect_ratio = get_pixbuf_aspect_ratio (pixbuf);
+  if (aspect_ratio != 0.f)
+    self->aspect_ratio = aspect_ratio;
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PIXBUF]);
 }

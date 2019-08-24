@@ -170,6 +170,8 @@ retro_core_view_on_released (GtkGestureClick *gesture,
 
 static gboolean
 retro_core_view_on_focus_out (GtkEventControllerKey *controller,
+                              GdkCrossingMode        mode,
+                              GdkNotifyType          detail,
                               gpointer               data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);

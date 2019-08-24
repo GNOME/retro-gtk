@@ -368,7 +368,6 @@ RetroCoreView* retro_core_view_construct (GType object_type) {
 static void
 retro_core_view_init (RetroCoreView *self)
 {
-  g_object_set ((GtkWidget*) self, "can-default", TRUE, NULL);
   g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
 
   self->display = g_object_ref_sink (retro_gl_display_new ());

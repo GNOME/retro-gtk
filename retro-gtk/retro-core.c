@@ -2067,7 +2067,7 @@ retro_core_set_keyboard (RetroCore *self,
   if (self->keyboard_widget != NULL) {
     gtk_widget_remove_controller (self->keyboard_widget, self->key_controller);
     g_clear_object (&self->keyboard_widget);
-    g_clear_object (&self->key_controller);
+    self->key_controller = NULL;
   }
 
   if (widget != NULL) {

@@ -22,9 +22,6 @@ struct _RetroCoreView
   GHashTable *keyval_state;
   RetroKeyJoypadMapping *key_joypad_mapping;
   GHashTable *mouse_button_state;
-  GtkEventController *key_controller;
-  GtkEventController *motion_controller;
-  GtkGesture *click_gesture;
   gdouble mouse_x_delta;
   gdouble mouse_y_delta;
   gboolean pointer_is_on_display;
@@ -263,9 +260,6 @@ retro_core_view_finalize (GObject *object)
   g_object_unref (self->display);
   g_object_unref (self->sensitive_binding);
   g_object_unref (self->audio_player);
-  g_object_unref (self->key_controller);
-  g_object_unref (self->motion_controller);
-  g_object_unref (self->click_gesture);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
@@ -368,6 +362,9 @@ RetroCoreView* retro_core_view_construct (GType object_type) {
 static void
 retro_core_view_init (RetroCoreView *self)
 {
+  GtkEventController *key_controller, *motion_controller;
+  GtkGesture *click_gesture;
+
   g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
 
   self->display = g_object_ref_sink (retro_gl_display_new ());
@@ -383,25 +380,25 @@ retro_core_view_init (RetroCoreView *self)
 
   self->audio_player = retro_pa_player_new ();
 
-  self->key_controller = gtk_event_controller_key_new ();
-  self->motion_controller = gtk_event_controller_motion_new ();
-  self->click_gesture = gtk_gesture_click_new ();
+  key_controller = gtk_event_controller_key_new ();
+  motion_controller = gtk_event_controller_motion_new ();
+  click_gesture = gtk_gesture_click_new ();
 
-  gtk_widget_add_controller (GTK_WIDGET (self), self->key_controller);
-  gtk_widget_add_controller (GTK_WIDGET (self), self->motion_controller);
-  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (self->click_gesture));
+  gtk_widget_add_controller (GTK_WIDGET (self), key_controller);
+  gtk_widget_add_controller (GTK_WIDGET (self), motion_controller);
+  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (click_gesture));
 
   self->key_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->keyval_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->key_joypad_mapping = retro_key_joypad_mapping_new_default ();
   self->mouse_button_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
 
-  g_signal_connect_object (self->key_controller, "key-pressed", (GCallback) retro_core_view_on_key_pressed, self, 0);
-  g_signal_connect_object (self->key_controller, "key-released", (GCallback) retro_core_view_on_key_released, self, 0);
-  g_signal_connect_object (self->click_gesture, "pressed", (GCallback) retro_core_view_on_pressed, self, 0);
-  g_signal_connect_object (self->click_gesture, "released", (GCallback) retro_core_view_on_released, self, 0);
-  g_signal_connect_object (self->key_controller, "focus-out", (GCallback) retro_core_view_on_focus_out, self, 0);
-  g_signal_connect_object (self->motion_controller, "motion", (GCallback) retro_core_view_on_motion, self, 0);
+  g_signal_connect_object (key_controller, "key-pressed", (GCallback) retro_core_view_on_key_pressed, self, 0);
+  g_signal_connect_object (key_controller, "key-released", (GCallback) retro_core_view_on_key_released, self, 0);
+  g_signal_connect_object (click_gesture, "pressed", (GCallback) retro_core_view_on_pressed, self, 0);
+  g_signal_connect_object (click_gesture, "released", (GCallback) retro_core_view_on_released, self, 0);
+  g_signal_connect_object (key_controller, "focus-out", (GCallback) retro_core_view_on_focus_out, self, 0);
+  g_signal_connect_object (motion_controller, "motion", (GCallback) retro_core_view_on_motion, self, 0);
 }
 
 /* Public */

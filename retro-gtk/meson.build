@@ -126,7 +126,7 @@ if get_option('introspection')
     'GLib-2.0',
     'GModule-2.0',
     'GObject-2.0',
-    'Gtk-3.0',
+    'Gtk-4.0',
   ]
 
   retro_gtk_gir = gnome.generate_gir(
@@ -148,7 +148,7 @@ if get_option('introspection')
     'glib-2.0',
     'gmodule-2.0',
     'gobject-2.0',
-    'gtk+-3.0',
+    'gtk4',
     # 'libpulse-simple',
   ]
 

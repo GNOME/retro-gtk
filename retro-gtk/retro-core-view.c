@@ -177,6 +177,7 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
                                     gpointer     data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
+  GdkModifierType modifiers;
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
@@ -186,8 +187,13 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
 
-  set_input_pressed (self->key_state, event->hardware_keycode);
-  set_input_pressed (self->keyval_state, event->keyval);
+  modifiers = gtk_accelerator_get_default_mod_mask ();
+
+  // Skip event if any modifier key is pressed
+  if ((event->state & modifiers) == 0) {
+    set_input_pressed (self->key_state, event->hardware_keycode);
+    set_input_pressed (self->keyval_state, event->keyval);
+  }
 
   return FALSE;
 }

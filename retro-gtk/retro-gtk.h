@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef __RETRO_GTK_H__
-#define __RETRO_GTK_H__
+#pragma once
 
 #define __RETRO_GTK_INSIDE__
 
@@ -30,5 +29,3 @@
 #include "retro-video-filter.h"
 
 #undef __RETRO_GTK_INSIDE__
-
-#endif

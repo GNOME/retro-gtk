@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_GAME_INFO_H
-#define RETRO_GAME_INFO_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -32,5 +31,3 @@ void retro_game_info_free (RetroGameInfo *self);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroGameInfo, retro_game_info_free)
 
 G_END_DECLS
-
-#endif /* RETRO_GAME_INFO_H */

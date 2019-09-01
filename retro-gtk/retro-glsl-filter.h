@@ -1,5 +1,6 @@
-#ifndef RETRO_GLSL_FILTER_H
-#define RETRO_GLSL_FILTER_H
+// This file is part of retro-gtk. License: GPL-3.0+.
+
+#pragma once
 
 #include <epoxy/gl.h>
 #include <gio/gio.h>
@@ -35,6 +36,3 @@ void retro_glsl_filter_set_uniform_4f (RetroGLSLFilter *self,
                                        gfloat           v3);
 
 G_END_DECLS
-
-#endif /* RETRO_GLSL_FILTER_H */
-

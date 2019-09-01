@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_CONTROLLER_ITERATOR_H
-#define RETRO_CONTROLLER_ITERATOR_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -16,11 +15,10 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroControllerIterator, retro_controller_iterator, RETRO, CONTROLLER_ITERATOR, GObject)
 
+RetroControllerIterator *retro_controller_iterator_new (GHashTable *controllers);
+
 gboolean retro_controller_iterator_next (RetroControllerIterator  *self,
                                          guint                   **port,
                                          RetroController         **controller);
 
 G_END_DECLS
-
-#endif /* RETRO_CONTROLLER_ITERATOR_H */
-

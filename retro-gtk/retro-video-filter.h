@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_VIDEO_FILTER_H
-#define RETRO_VIDEO_FILTER_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -35,5 +34,3 @@ typedef enum
 RetroVideoFilter retro_video_filter_from_string (const gchar *filter);
 
 G_END_DECLS
-
-#endif /* RETRO_VIDEO_FILTER_H */

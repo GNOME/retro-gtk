@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_CORE_PRIVATE_H
-#define RETRO_CORE_PRIVATE_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -87,5 +86,3 @@ void retro_core_insert_variable (RetroCore           *self,
 gboolean retro_core_get_variable_update (RetroCore *self);
 
 G_END_DECLS
-
-#endif /* RETRO_CORE_PRIVATE_H */

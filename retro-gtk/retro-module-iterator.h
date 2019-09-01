@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_MODULE_ITERATOR_H
-#define RETRO_MODULE_ITERATOR_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -22,6 +21,3 @@ RetroCoreDescriptor *retro_module_iterator_get (RetroModuleIterator *self);
 gboolean retro_module_iterator_next (RetroModuleIterator *self);
 
 G_END_DECLS
-
-#endif /* RETRO_MODULE_ITERATOR_H */
-

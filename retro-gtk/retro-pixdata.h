@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_PIXDATA_H
-#define RETRO_PIXDATA_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -29,5 +28,3 @@ gboolean retro_pixdata_load_gl_texture (RetroPixdata *self);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroPixdata, retro_pixdata_free)
 
 G_END_DECLS
-
-#endif /* RETRO_PIXDATA_H */

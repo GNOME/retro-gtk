@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_PIXEL_FORMAT_H
-#define RETRO_PIXEL_FORMAT_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -33,5 +32,3 @@ typedef enum
 } RetroPixelFormat;
 
 G_END_DECLS
-
-#endif /* RETRO_PIXEL_FORMAT_H */

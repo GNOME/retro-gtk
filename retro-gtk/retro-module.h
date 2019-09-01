@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_MODULE_H
-#define RETRO_MODULE_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -62,5 +61,3 @@ RetroGetMemoryData retro_module_get_get_memory_data (RetroModule *self);
 RetroGetMemorySize retro_module_get_get_memory_size (RetroModule *self);
 
 G_END_DECLS
-
-#endif /* RETRO_MODULE_H */

@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_GTK_VERSION_H
-#define RETRO_GTK_VERSION_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -77,5 +76,3 @@
          (RETRO_GTK_MAJOR_VERSION == (major) && RETRO_GTK_MINOR_VERSION > (minor)) || \
          (RETRO_GTK_MAJOR_VERSION == (major) && RETRO_GTK_MINOR_VERSION == (minor) && \
           RETRO_GTK_MICRO_VERSION >= (micro)))
-
-#endif /* RETRO_GTK_VERSION_H */

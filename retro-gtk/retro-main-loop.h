@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_MAIN_LOOP_H
-#define RETRO_MAIN_LOOP_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -27,5 +26,3 @@ void retro_main_loop_set_speed_rate (RetroMainLoop *self,
                                      gdouble        speed_rate);
 
 G_END_DECLS
-
-#endif /* RETRO_MAIN_LOOP_H */

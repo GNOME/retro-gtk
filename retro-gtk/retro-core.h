@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_CORE_H
-#define RETRO_CORE_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -75,5 +74,3 @@ RetroOption *retro_core_get_option (RetroCore   *self,
 RetroOptionIterator *retro_core_iterate_options (RetroCore *self);
 
 G_END_DECLS
-
-#endif /* RETRO_CORE_H */

@@ -1,7 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#ifndef RETRO_CORE_DESCRIPTOR_H
-#define RETRO_CORE_DESCRIPTOR_H
+#pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
@@ -71,5 +70,3 @@ gboolean retro_core_descriptor_get_platform_supports_mime_types (RetroCoreDescri
                                                                  GError              **error);
 
 G_END_DECLS
-
-#endif /* RETRO_CORE_DESCRIPTOR_H */

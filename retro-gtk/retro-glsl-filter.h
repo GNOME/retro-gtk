@@ -1,3 +1,5 @@
+// This file is part of retro-gtk. License: GPL-3.0+.
+
 #pragma once
 
 #include <epoxy/gl.h>

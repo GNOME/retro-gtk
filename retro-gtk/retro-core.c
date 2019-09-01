@@ -3,7 +3,7 @@
 #include "retro-core-private.h"
 
 #include <string.h>
-#include "retro-controller-iterator-private.h"
+#include "retro-controller-iterator.h"
 #include "retro-keyboard-key.h"
 #include "retro-option-iterator-private.h"
 #include "retro-pixdata.h"

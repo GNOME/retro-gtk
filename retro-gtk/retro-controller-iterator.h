@@ -15,6 +15,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroControllerIterator, retro_controller_iterator, RETRO, CONTROLLER_ITERATOR, GObject)
 
+RetroControllerIterator *retro_controller_iterator_new (GHashTable *controllers);
+
 gboolean retro_controller_iterator_next (RetroControllerIterator  *self,
                                          guint                   **port,
                                          RetroController         **controller);

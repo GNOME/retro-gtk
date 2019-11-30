@@ -8,6 +8,7 @@
 
 #include <gtk/gtk.h>
 #include "retro-core.h"
+#include "retro-screen.h"
 #include "retro-video-filter.h"
 
 G_BEGIN_DECLS
@@ -22,6 +23,9 @@ void retro_gl_display_set_pixbuf (RetroGLDisplay *self,
                                   GdkPixbuf      *pixbuf);
 void retro_gl_display_set_core (RetroGLDisplay *self,
                                 RetroCore      *core);
+RetroScreen *retro_gl_display_get_screen (RetroGLDisplay *self);
+void retro_gl_display_set_screen (RetroGLDisplay *self,
+                                  RetroScreen    *screen);
 void retro_gl_display_set_filter (RetroGLDisplay   *self,
                                   RetroVideoFilter  filter);
 gboolean retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,

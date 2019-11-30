@@ -37,6 +37,7 @@ retro_gtk_sources = [
   'retro-pixdata.c',
   'retro-pixel-format.c',
   'retro-rumble-effect.c',
+  'retro-screen.c',
   'retro-video-filter.c',
 ]
 
@@ -62,6 +63,7 @@ retro_gtk_headers = [
   'retro-pixbuf.h',
   'retro-pixdata.h',
   'retro-rumble-effect.h',
+  'retro-screen.h',
   'retro-video-filter.h',
 ]
 

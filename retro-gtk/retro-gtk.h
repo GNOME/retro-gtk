@@ -27,6 +27,7 @@
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
 #include "retro-rumble-effect.h"
+#include "retro-screen.h"
 #include "retro-video-filter.h"
 
 #undef __RETRO_GTK_INSIDE__

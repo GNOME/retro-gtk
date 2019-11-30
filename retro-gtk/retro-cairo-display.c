@@ -209,12 +209,13 @@ retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
     g_param_spec_object ("pixbuf",
                          "Pixbuf",
                          "The displayed pixbuf",
-                         gdk_pixbuf_get_type (),
+                         GDK_TYPE_PIXBUF,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);
-  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_PIXBUF, properties[PROP_PIXBUF]);
+
+  g_object_class_install_properties (G_OBJECT_CLASS (klass), N_PROPS, properties);
 
   gtk_widget_class_set_css_name (widget_class, "retrocairodisplay");
 }

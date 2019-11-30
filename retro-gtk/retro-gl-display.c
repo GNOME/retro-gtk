@@ -13,6 +13,7 @@ struct _RetroGLDisplay
   RetroCore *core;
   RetroPixdata *pixdata;
   GdkPixbuf *pixbuf;
+  RetroScreen *screen;
   RetroVideoFilter filter;
   gfloat aspect_ratio;
   gulong on_video_output_id;
@@ -23,6 +24,27 @@ struct _RetroGLDisplay
 };
 
 G_DEFINE_TYPE (RetroGLDisplay, retro_gl_display, GTK_TYPE_GL_AREA)
+
+enum {
+  PROP_0,
+  PROP_PIXBUF,
+  PROP_SCREEN,
+  N_PROPS,
+};
+
+static GParamSpec *properties [N_PROPS];
+
+typedef struct {
+  guint width;
+  guint height;
+} RetroTextureSize;
+
+typedef struct {
+  gdouble x;
+  gdouble y;
+  gdouble width;
+  gdouble height;
+} RetroRectangleF64;
 
 typedef struct {
   struct {
@@ -78,24 +100,53 @@ retro_gl_display_set_pixdata (RetroGLDisplay *self,
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-static void
-retro_gl_display_get_video_box (RetroGLDisplay *self,
-                                gdouble        *width,
-                                gdouble        *height,
-                                gdouble        *x,
-                                gdouble        *y)
+static RetroTextureSize
+retro_gl_display_get_view_size (RetroGLDisplay *self)
 {
+  if (self->screen) {
+    const GdkRectangle *view = retro_screen_get_view (self->screen);
+
+    return (RetroTextureSize) { view->width, view->height };
+  }
+
+  return (RetroTextureSize) {
+    retro_pixdata_get_width (self->pixdata),
+    retro_pixdata_get_height (self->pixdata),
+  };
+}
+
+static GdkRectangle
+retro_gl_display_get_view (RetroGLDisplay *self)
+{
+  if (self->screen) {
+    const GdkRectangle *view = retro_screen_get_view (self->screen);
+
+    return *view;
+  }
+
+  return (GdkRectangle) {
+    0,
+    0,
+    retro_pixdata_get_width (self->pixdata),
+    retro_pixdata_get_height (self->pixdata),
+  };
+}
+
+static RetroRectangleF64
+retro_gl_display_get_video_box (RetroGLDisplay   *self,
+                                RetroTextureSize  texture_size)
+{
+  RetroRectangleF64 video_box = { 0.0, 0.0, 0.0, 0.0 };
   gdouble w;
   gdouble h;
-  gdouble display_ratio;
+  gdouble texture_ratio, view_ratio, display_ratio;
   gdouble allocated_ratio;
   gint scale;
+  RetroTextureSize view_size = retro_gl_display_get_view_size (self);
 
-  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
-  g_return_if_fail (width != NULL);
-  g_return_if_fail (height != NULL);
-  g_return_if_fail (x != NULL);
-  g_return_if_fail (y != NULL);
+  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), video_box);
+  g_return_val_if_fail (texture_size.width > 0, video_box);
+  g_return_val_if_fail (texture_size.height > 0, video_box);
 
   scale = gtk_widget_get_scale_factor (GTK_WIDGET (self));
 
@@ -103,68 +154,88 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   h = (gdouble) gtk_widget_get_allocated_height (GTK_WIDGET (self)) * scale;
 
   // Set the size of the display.
-  display_ratio = (gdouble) self->aspect_ratio;
+  texture_ratio = (gdouble) texture_size.width / (gdouble) texture_size.height;
+  view_ratio = (gdouble) view_size.width / (gdouble) view_size.height;
+  display_ratio = (gdouble) self->aspect_ratio / texture_ratio * view_ratio;
   allocated_ratio = w / h;
 
   // If the screen is wider than the video…
   if (allocated_ratio > display_ratio) {
-    *height = h;
-    *width = (gdouble) (h * display_ratio);
+    video_box.height = h;
+    video_box.width = (gdouble) (h * display_ratio);
   }
   else {
-    *width = w;
-    *height = (gdouble) (w / display_ratio);
+    video_box.width = w;
+    video_box.height = (gdouble) (w / display_ratio);
   }
 
   // Set the position of the display.
-  *x = (w - *width) / 2;
-  *y = (h - *height) / 2;
+  video_box.x = (w - video_box.width) / 2;
+  video_box.y = (h - video_box.height) / 2;
+
+  return video_box;
+}
+
+static RetroTextureSize
+retro_gl_display_get_texture_size (RetroGLDisplay *self)
+{
+  if (self->pixdata != NULL)
+    return (RetroTextureSize) {
+      retro_pixdata_get_width (self->pixdata),
+      retro_pixdata_get_height (self->pixdata),
+    };
+
+  if (self->pixbuf != NULL)
+    return (RetroTextureSize) {
+      gdk_pixbuf_get_width (self->pixbuf),
+      gdk_pixbuf_get_height (self->pixbuf),
+    };
+
+  return (RetroTextureSize) { 0, 0 };
 }
 
 static gboolean
-retro_gl_display_load_texture (RetroGLDisplay *self,
-                               gint           *texture_width,
-                               gint           *texture_height)
+retro_gl_display_load_texture (RetroGLDisplay *self)
 {
+  GdkRectangle view = retro_gl_display_get_view (self);
+
   glBindTexture (GL_TEXTURE_2D, self->texture);
 
-  if (self->pixdata != NULL) {
-    *texture_width = retro_pixdata_get_width (self->pixdata);
-    *texture_height = retro_pixdata_get_height (self->pixdata);
-
-    return retro_pixdata_load_gl_texture (self->pixdata);
-  }
+  if (self->pixdata != NULL)
+    return retro_pixdata_load_gl_texture_full (self->pixdata, &view);
 
   if (retro_gl_display_get_pixbuf (self) == NULL)
     return FALSE;
 
-  *texture_width = gdk_pixbuf_get_width (self->pixbuf),
-  *texture_height = gdk_pixbuf_get_height (self->pixbuf),
-
   glTexImage2D (GL_TEXTURE_2D,
                 0,
                 GL_RGB,
-                *texture_width,
-                *texture_height,
+                view.width,
+                view.height,
                 0,
                 GL_RGBA, GL_UNSIGNED_BYTE,
-                gdk_pixbuf_get_pixels (self->pixbuf));
+                gdk_pixbuf_get_pixels (self->pixbuf) + (view.y * view.width + view.x) * 4);
 
   return TRUE;
 }
 
 static void
-retro_gl_display_blit_texture (RetroGLDisplay *self,
-                               GLenum          filter,
-                               gint            texture_width,
-                               gint            texture_height)
+retro_gl_display_blit_texture (RetroGLDisplay   *self,
+                               GLenum            filter)
 {
-  gdouble w = 0.0;
-  gdouble h = 0.0;
-  gdouble x = 0.0;
-  gdouble y = 0.0;
+  RetroTextureSize texture_size;
+  GdkRectangle view;
+  RetroRectangleF64 video_box;
 
-  retro_gl_display_get_video_box (self, &w, &h, &x, &y);
+  texture_size = retro_gl_display_get_texture_size (self);
+  if (texture_size.width == 0 || texture_size.height == 0)
+    return;
+
+  view = retro_gl_display_get_view (self);
+  if (view.width == 0 || view.height == 0)
+    return;
+
+  video_box = retro_gl_display_get_video_box (self, texture_size);
 
   glBindFramebuffer(GL_READ_FRAMEBUFFER, self->framebuffer);
   glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -173,9 +244,12 @@ retro_gl_display_blit_texture (RetroGLDisplay *self,
 
   glBindFramebuffer (GL_READ_FRAMEBUFFER, self->framebuffer);
   glBlitFramebuffer (0, 0,
-                     texture_width,
-                     texture_height,
-                     (GLint) x, (GLint) (y + h), (GLint) (x + w), (GLint) y,
+                     view.width,
+                     view.height,
+                     (GLint) video_box.x,
+                     (GLint) (video_box.y + video_box.height),
+                     (GLint) (video_box.x + video_box.width),
+                     (GLint) video_box.y,
                      GL_COLOR_BUFFER_BIT,
                      filter);
   glBindFramebuffer (GL_READ_FRAMEBUFFER, 0);
@@ -204,8 +278,10 @@ retro_gl_display_draw_texture (RetroGLDisplay  *self,
   source_height = (GLfloat) texture_height;
   target_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
   target_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
-  output_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
-  output_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
+  output_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self)) / 8;
+  output_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self)) / 8;
+
+  /* FIXME Implement screen sizes. */
 
   retro_glsl_filter_set_uniform_4f (filter, "sourceSize[0]",
                                     source_width, source_height,
@@ -316,8 +392,7 @@ static gboolean
 retro_gl_display_render (RetroGLDisplay *self)
 {
   RetroVideoFilter filter;
-  gint texture_width;
-  gint texture_height;
+  RetroTextureSize view_size;
 
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
 
@@ -327,28 +402,29 @@ retro_gl_display_render (RetroGLDisplay *self)
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  if (!retro_gl_display_load_texture (self, &texture_width, &texture_height))
+  if (!retro_gl_display_load_texture (self))
     return FALSE;
 
   if (filter == RETRO_VIDEO_FILTER_SMOOTH) {
-    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
+    retro_gl_display_blit_texture (self, GL_LINEAR);
 
     return FALSE;
   }
 
   if (filter == RETRO_VIDEO_FILTER_SHARP) {
-    retro_gl_display_blit_texture (self, GL_NEAREST, texture_width, texture_height);
+    retro_gl_display_blit_texture (self, GL_NEAREST);
 
     return FALSE;
   }
 
   if (self->glsl_filter[filter] == NULL) {
-    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
+    retro_gl_display_blit_texture (self, GL_LINEAR);
 
     return FALSE;
   }
 
-  retro_gl_display_draw_texture (self, self->glsl_filter[filter], texture_width, texture_height);
+  view_size = retro_gl_display_get_view_size (self);
+  retro_gl_display_draw_texture (self, self->glsl_filter[filter], view_size.width, view_size.height);
 
   return FALSE;
 }
@@ -367,8 +443,58 @@ retro_gl_display_finalize (GObject *object)
     g_object_unref (self->core);
   if (self->pixbuf != NULL)
     g_object_unref (self->pixbuf);
+  if (self->screen != NULL)
+    g_object_unref (self->screen);
 
   G_OBJECT_CLASS (retro_gl_display_parent_class)->finalize (object);
+}
+
+static void
+retro_gl_display_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
+{
+  RetroGLDisplay *self = RETRO_GL_DISPLAY (object);
+
+  switch (prop_id) {
+  case PROP_PIXBUF:
+    g_value_set_object (value, retro_gl_display_get_pixbuf (self));
+
+    break;
+  case PROP_SCREEN:
+    g_value_set_object (value, retro_gl_display_get_screen (self));
+
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+
+    break;
+  }
+}
+
+static void
+retro_gl_display_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
+{
+  RetroGLDisplay *self = RETRO_GL_DISPLAY (object);
+
+  switch (prop_id) {
+  case PROP_PIXBUF:
+    retro_gl_display_set_pixbuf (self, g_value_get_object (value));
+
+    break;
+  case PROP_SCREEN:
+    retro_gl_display_set_screen (self, g_value_get_object (value));
+
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+
+    break;
+  }
 }
 
 static void
@@ -378,6 +504,31 @@ retro_gl_display_class_init (RetroGLDisplayClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = retro_gl_display_finalize;
+  object_class->get_property = retro_gl_display_get_property;
+  object_class->set_property = retro_gl_display_set_property;
+
+
+  properties[PROP_PIXBUF] =
+    g_param_spec_object ("pixbuf",
+                         "Pixbuf",
+                         "The displayed pixbuf",
+                         GDK_TYPE_PIXBUF,
+                         G_PARAM_READWRITE |
+                         G_PARAM_STATIC_NAME |
+                         G_PARAM_STATIC_NICK |
+                         G_PARAM_STATIC_BLURB);
+
+  properties[PROP_SCREEN] =
+    g_param_spec_object ("screen",
+                         "Screen",
+                         "The screen",
+                         RETRO_TYPE_SCREEN,
+                         G_PARAM_READWRITE |
+                         G_PARAM_STATIC_NAME |
+                         G_PARAM_STATIC_NICK |
+                         G_PARAM_STATIC_BLURB);
+
+  g_object_class_install_properties (G_OBJECT_CLASS (klass), N_PROPS, properties);
 
   gtk_widget_class_set_css_name (widget_class, "retrogldisplay");
 }
@@ -521,6 +672,44 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
 }
 
 /**
+ * retro_gl_display_get_screen:
+ * @self: a #RetroGLDisplay
+ *
+ * Gets the screen of @self.
+ *
+ * Returns: (transfer none): the screen of @self
+ */
+RetroScreen *
+retro_gl_display_get_screen (RetroGLDisplay *self)
+{
+  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), NULL);
+
+  return self->screen;
+}
+
+/**
+ * retro_gl_display_set_screen:
+ * @self: a #RetroGLDisplay
+ * @screen: the screen
+ *
+ * Sets the screen for @self.
+ */
+void
+retro_gl_display_set_screen (RetroGLDisplay *self,
+                             RetroScreen    *screen)
+{
+  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
+  g_return_if_fail (RETRO_IS_SCREEN (screen));
+
+  if (self->screen == screen)
+    return;
+
+  g_set_object (&self->screen, screen);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SCREEN]);
+}
+
+/**
  * retro_gl_display_set_filter:
  * @self: a #RetroGLDisplay
  * @filter: a #RetroVideoFilter
@@ -557,25 +746,29 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
                                              gdouble        *display_x,
                                              gdouble        *display_y)
 {
-  gdouble w = 0.0;
-  gdouble h = 0.0;
-  gdouble x = 0.0;
-  gdouble y = 0.0;
+  RetroTextureSize texture_size;
+  RetroRectangleF64 video_box;
   gint scale_factor;
 
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 
-  retro_gl_display_get_video_box (self, &w, &h, &x, &y);
+  texture_size = retro_gl_display_get_texture_size (self);
+  if (texture_size.width == 0 || texture_size.height == 0)
+    return FALSE;
+
+  video_box = retro_gl_display_get_video_box (self, texture_size);
 
   scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
   widget_x *= scale_factor;
   widget_y *= scale_factor;
 
+  /* FIXME take the view into account. */
+
   // Return coordinates as a [-1.0, 1.0] scale, (0.0, 0.0) is the center.
-  *display_x = ((widget_x - x) * 2.0 - w) / w;
-  *display_y = ((widget_y - y) * 2.0 - h) / h;
+  *display_x = ((widget_x - video_box.x) * 2.0 - video_box.width) / video_box.width;
+  *display_y = ((widget_y - video_box.y) * 2.0 - video_box.height) / video_box.height;
 
   return (-1.0 <= *display_x) && (*display_x <= 1.0) &&
          (-1.0 <= *display_y) && (*display_y <= 1.0);

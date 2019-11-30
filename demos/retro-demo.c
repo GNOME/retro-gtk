@@ -85,13 +85,20 @@ retro_demo_activate (GApplication *application)
   RetroDemoApplication *self;
   GtkWidget *window;
   RetroCoreView *view;
+  g_autoptr (RetroScreen) screen;
+  GdkRectangle view_size = (GdkRectangle) { 140, 60, 40, 120 };
 
   self = RETRO_DEMO_APPLICATION (application);
 
   g_signal_connect (self->core, "log", (GCallback) retro_g_log, NULL);
 
+  screen = retro_screen_new ();
+  retro_screen_set_view (screen, &view_size);
+
   view = retro_core_view_new ();
   retro_core_view_set_core (view, self->core);
+  retro_core_view_set_screen (view, screen);
+  /* retro_core_view_set_filter (view, RETRO_VIDEO_FILTER_CRT); */
   retro_core_view_set_as_default_controller (view, self->core);
 
   retro_core_set_keyboard (self->core, GTK_WIDGET (view));

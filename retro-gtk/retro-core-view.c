@@ -611,6 +611,39 @@ retro_core_view_get_pixbuf (RetroCoreView *self)
 }
 
 /**
+ * retro_core_view_set_screen:
+ * @self: a #RetroCoreView
+ * @screen: the screen
+ *
+ * Sets the screen for @self.
+ */
+void
+retro_core_view_set_screen (RetroCoreView *self,
+                            RetroScreen   *screen)
+{
+  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
+  g_return_if_fail (RETRO_IS_SCREEN (screen));
+
+  retro_gl_display_set_screen (self->display, screen);
+}
+
+/**
+ * retro_core_view_get_screen:
+ * @self: a #RetroCoreView
+ *
+ * Gets the screen of @self.
+ *
+ * Returns: (transfer none): the screen of @self
+ */
+RetroScreen *
+retro_core_view_get_screen (RetroCoreView *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), NULL);
+
+  return retro_gl_display_get_screen (self->display);
+}
+
+/**
  * retro_core_view_set_filter:
  * @self: a #RetroCoreView
  * @filter: a #RetroVideoFilter

@@ -59,10 +59,6 @@ static gint retro_core_i = 0;
 
 static void retro_core_set_filename (RetroCore   *self,
                                      const gchar *filename);
-static void retro_core_set_is_initiated (RetroCore *self,
-                                         gboolean   is_initiated);
-static void retro_core_set_game_loaded (RetroCore *self,
-                                        gboolean   game_loaded);
 
 /* Private */
 
@@ -230,18 +226,6 @@ retro_core_set_property (GObject      *object,
     break;
   case PROP_SAVE_DIRECTORY:
     retro_core_set_save_directory (self, g_value_get_string (value));
-
-    break;
-  case PROP_IS_INITIATED:
-    retro_core_set_is_initiated (self, g_value_get_boolean (value));
-
-    break;
-  case PROP_GAME_LOADED:
-    retro_core_set_game_loaded (self, g_value_get_boolean (value));
-
-    break;
-  case PROP_SUPPORT_NO_GAME:
-    retro_core_set_support_no_game (self, g_value_get_boolean (value));
 
     break;
   case PROP_RUNAHEAD:

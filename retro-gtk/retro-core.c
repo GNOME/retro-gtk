@@ -174,6 +174,7 @@ retro_core_finalize (GObject *object)
       g_object_unref (self->default_controllers[i]);
   g_hash_table_unref (self->controllers);
   g_hash_table_unref (self->options);
+  g_hash_table_unref (self->option_overrides);
 
   g_free (self->filename);
   g_free (self->system_directory);
@@ -549,6 +550,8 @@ retro_core_init (RetroCore *self)
 {
   self->options = g_hash_table_new_full (g_str_hash, g_str_equal,
                                          g_free, g_object_unref);
+  self->option_overrides = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                  g_free, g_free);
 
   self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
                                              g_free, g_object_unref);
@@ -1098,6 +1101,16 @@ retro_core_insert_variable (RetroCore           *self,
   }
 
   key = retro_option_get_key (option);
+
+  if (g_hash_table_contains (self->option_overrides, key)) {
+    const gchar *value = g_hash_table_lookup (self->option_overrides, key);
+
+    retro_option_set_value (option, value, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_warning ("%s", tmp_error->message);
+      g_clear_error (&tmp_error);
+    }
+  }
 
   g_hash_table_insert (self->options, g_strdup (key), option);
 
@@ -2168,6 +2181,30 @@ retro_core_iterate_options (RetroCore *self)
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
   return retro_option_iterator_new (self->options);
+}
+
+/**
+ * retro_core_override_option_default:
+ * @self: a #RetroCore
+ * @key: the key of the option
+ * @value: the default value
+ *
+ * Overrides default value for the option @key. This can be used to set value
+ * for a startup-only option.
+ *
+ * You can use this before booting the core.
+ */
+void
+retro_core_override_option_default (RetroCore   *self,
+                                    const gchar *key,
+                                    const gchar *value)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (key != NULL);
+  g_return_if_fail (key != NULL);
+  g_return_if_fail (!retro_core_get_is_initiated (self));
+
+  g_hash_table_replace (self->option_overrides, g_strdup (key), g_strdup (value));
 }
 
 /**

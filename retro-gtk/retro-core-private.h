@@ -51,6 +51,7 @@ struct _RetroCore
   gulong key_press_event_id;
   gulong key_release_event_id;
   GHashTable *options;
+  GHashTable *option_overrides;
   gboolean variable_updated;
   guint runahead;
   gssize run_remaining;

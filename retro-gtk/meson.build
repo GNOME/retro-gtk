@@ -162,10 +162,12 @@ if get_option('introspection')
   retro_gtk_dep_sources += retro_gtk_gir
 endif
 
+retro_gtk_inc = include_directories('.')
+
 retro_gtk_dep = declare_dependency(
   link_with: retro_gtk_lib,
   sources: retro_gtk_dep_sources,
-  include_directories: confinc,
+  include_directories: [ confinc, retro_gtk_inc ],
   dependencies: retro_gtk_deps,
 )
 

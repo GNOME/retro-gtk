@@ -10,6 +10,10 @@
 
 G_BEGIN_DECLS
 
+#define RETRO_TYPE_RUMBLE_EFFECT (retro_rumble_effect_get_type ())
+
+GType retro_rumble_effect_get_type (void) G_GNUC_CONST;
+
 /**
  * RetroRumbleEffect:
  * @RETRO_RUMBLE_EFFECT_STRONG: the strong rumble effect

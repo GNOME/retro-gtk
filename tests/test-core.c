@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../retro-gtk/retro-core.h"
+#include <retro-gtk.h>
 
 static gchar *arg_core_filename = NULL;
 

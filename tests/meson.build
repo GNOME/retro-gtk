@@ -16,7 +16,6 @@ retro_reftest = executable('retro-reftest',
   retro_reftest_sources,
   c_args: retro_gtk_c_args,
   dependencies: retro_gtk_dep,
-  include_directories: [ confinc, srcinc ],
   install: get_option('install-tests'),
   install_dir: installed_test_bindir,
 )
@@ -47,6 +46,10 @@ build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
 build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
 
+test_c_args = [
+  '-DRETRO_GTK_USE_UNSTABLE_API',
+]
+
 tests = [
   ['RetroCore', 'test-core', [], [retro_dummy_lib]],
 ]
@@ -58,9 +61,8 @@ foreach t : tests
   test_args = t.get(3)
 
   test_exe = executable(test_display_name, test_srcs,
-    c_args: retro_gtk_c_args,
-    dependencies: retro_gtk_deps,
-    link_with: retro_gtk_lib,
+    c_args: test_c_args,
+    dependencies: retro_gtk_dep,
     install: get_option('install-tests'),
     install_dir: installed_test_bindir,
   )

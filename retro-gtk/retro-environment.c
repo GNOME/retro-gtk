@@ -366,10 +366,9 @@ static gboolean
 set_message (RetroCore          *self,
              const RetroMessage *message)
 {
-  gboolean result = FALSE;
-  g_signal_emit_by_name (self, "message", message->msg, message->frames, &result);
+  g_signal_emit_by_name (self, "message", message->msg, message->frames);
 
-  return result;
+  return TRUE;
 }
 
 static gboolean

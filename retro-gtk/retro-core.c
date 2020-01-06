@@ -521,14 +521,12 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The ::message signal is emitted each time the core emits a message to
    * display during a given amount of frames.
-   *
-   * Returns: whether the request got fulfilled
    */
   signals[SIG_MESSAGE_SIGNAL] =
     g_signal_new ("message", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
-                  G_TYPE_BOOLEAN,
+                  G_TYPE_NONE,
                   2,
                   G_TYPE_STRING,
                   G_TYPE_UINT);

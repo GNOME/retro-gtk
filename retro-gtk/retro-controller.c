@@ -91,7 +91,6 @@ retro_controller_get_controller_type (RetroController *self)
 guint64
 retro_controller_get_capabilities (RetroController *self)
 {
-
   RetroControllerInterface *iface;
 
   g_return_val_if_fail (RETRO_IS_CONTROLLER (self), 0);

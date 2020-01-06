@@ -55,6 +55,8 @@ struct _RetroCore
   gboolean variable_updated;
   guint runahead;
   gssize run_remaining;
+  gdouble speed_rate;
+  glong main_loop;
   gint16 *audio_samples;
   gulong audio_samples_length;
 };

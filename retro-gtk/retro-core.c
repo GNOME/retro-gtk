@@ -37,6 +37,7 @@ enum {
   PROP_SUPPORT_NO_GAME,
   PROP_FRAMES_PER_SECOND,
   PROP_RUNAHEAD,
+  PROP_SPEED_RATE,
   N_PROPS,
 };
 
@@ -159,6 +160,8 @@ retro_core_finalize (GObject *object)
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
+  retro_core_stop (self);
+
   retro_core_push_cb_data (self);
   if (retro_core_get_game_loaded (self)) {
     unload_game = retro_module_get_unload_game (self->module);
@@ -227,6 +230,10 @@ retro_core_get_property (GObject    *object,
     g_value_set_uint (value, retro_core_get_runahead (self));
 
     break;
+  case PROP_SPEED_RATE:
+    g_value_set_double (value, retro_core_get_speed_rate (self));
+
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 
@@ -261,6 +268,10 @@ retro_core_set_property (GObject      *object,
     break;
   case PROP_RUNAHEAD:
     retro_core_set_runahead (self, g_value_get_uint (value));
+
+    break;
+  case PROP_SPEED_RATE:
+    retro_core_set_speed_rate (self, g_value_get_double (value));
 
     break;
   default:
@@ -438,6 +449,21 @@ retro_core_class_init (RetroCoreClass *klass)
                        G_PARAM_STATIC_NICK |
                        G_PARAM_STATIC_BLURB);
 
+  /**
+   * RetroCore:speed-rate:
+   *
+   * The speed ratio at wich the core will run.
+   */
+  properties[PROP_SPEED_RATE] =
+    g_param_spec_double ("speed-rate",
+                         "Speed rate",
+                         "The speed ratio at wich the core will run",
+                         -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                         G_PARAM_READWRITE |
+                         G_PARAM_STATIC_NAME |
+                         G_PARAM_STATIC_NICK |
+                         G_PARAM_STATIC_BLURB);
+
   g_object_class_install_properties (G_OBJECT_CLASS (klass), N_PROPS, properties);
 
   /**
@@ -544,6 +570,9 @@ retro_core_init (RetroCore *self)
 
   self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
                                              g_free, g_object_unref);
+
+  self->main_loop = -1;
+  self->speed_rate = 1;
 }
 
 static void
@@ -618,6 +647,16 @@ retro_core_get_needs_full_path (RetroCore *self)
   return system_info.need_fullpath;
 }
 
+static void
+restart (RetroCore *self)
+{
+  if (self->main_loop < 0)
+    return;
+
+  retro_core_stop (self);
+  retro_core_start (self);
+}
+
 void
 retro_core_set_system_av_info (RetroCore         *self,
                                RetroSystemAvInfo *system_av_info)
@@ -625,6 +664,7 @@ retro_core_set_system_av_info (RetroCore         *self,
   if (self->frames_per_second != system_av_info->timing.fps) {
     self->frames_per_second = system_av_info->timing.fps;
     g_object_notify (G_OBJECT (self), "frames-per-second");
+    restart (self);
   }
   retro_core_set_geometry (self, &system_av_info->geometry);
   self->sample_rate = system_av_info->timing.sample_rate;
@@ -1501,6 +1541,65 @@ retro_core_set_controller_port_device (RetroCore           *self,
   retro_core_pop_cb_data ();
 }
 
+static gboolean
+run_main_loop (RetroCore *self)
+{
+  if (self->main_loop < 0)
+    return FALSE;
+
+  retro_core_run (self);
+
+  return TRUE;
+}
+
+/**
+ * retro_core_start:
+ * @self: a #RetroCore
+ *
+ * Starts running the core. If the core was stopped, it will restart from this
+ * moment.
+ */
+void
+retro_core_start (RetroCore *self)
+{
+  gdouble fps;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  if (self->main_loop >= 0 || self->speed_rate <= 0)
+    return;
+
+  // TODO What if fps <= 0?
+  fps = retro_core_get_frames_per_second (self);
+  /* Do not make the timeout source hold a reference on the RetroCore, so
+   * destroying the RetroCore while it is still running will stop it instead
+   * of leaking a reference.
+   */
+  self->main_loop =
+    g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
+                        (guint) (1000 / (fps * self->speed_rate)),
+                        (GSourceFunc) run_main_loop,
+                        self, NULL);
+}
+
+/**
+ * retro_core_stop:
+ * @self: a #RetroCore
+ *
+ * Stops running the core.
+ */
+void
+retro_core_stop (RetroCore *self)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  if (self->main_loop < 0)
+    return;
+
+  g_source_remove (self->main_loop);
+  self->main_loop = -1;
+}
+
 /**
  * retro_core_reset:
  * @self: a #RetroCore
@@ -2157,6 +2256,44 @@ gboolean
 retro_core_is_running_ahead (RetroCore *self)
 {
   return self->run_remaining > 0;
+}
+
+/**
+ * retro_core_get_speed_rate:
+ * @self: a #RetroCore
+ *
+ * Gets the speed rate at which to run the core.
+ *
+ * Returns: the speed rate
+ */
+gdouble
+retro_core_get_speed_rate (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 1.0);
+
+  return self->speed_rate;
+}
+
+/**
+ * retro_core_set_speed_rate:
+ * @self: a #RetroCore
+ * @speed_rate: a speed rate
+ *
+ * Sets the speed rate at which to run the core.
+ */
+void
+retro_core_set_speed_rate (RetroCore *self,
+                           gdouble    speed_rate)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  if (self->speed_rate == speed_rate)
+    return;
+
+  self->speed_rate = speed_rate;
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SPEED_RATE]);
+
+  restart (self);
 }
 
 /**

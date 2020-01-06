@@ -11,7 +11,6 @@ struct _RetroDemoApplication
   GtkApplication parent_instance;
 
   RetroCore *core;
-  RetroMainLoop *loop;
 };
 
 G_DEFINE_TYPE (RetroDemoApplication, retro_demo_application, GTK_TYPE_APPLICATION)
@@ -79,9 +78,6 @@ retro_demo_application_finalize (GObject *object)
   if (self->core != NULL)
     g_object_unref (self->core);
 
-  if (self->loop != NULL)
-    g_object_unref (self->loop);
-
   G_OBJECT_CLASS (retro_demo_application_parent_class)->finalize (object);
 }
 
@@ -110,8 +106,7 @@ retro_demo_activate (GApplication *application)
   gtk_application_add_window (GTK_APPLICATION (application),
                               GTK_WINDOW (window));
 
-  self->loop = retro_main_loop_new (self->core);
-  retro_main_loop_start (self->loop);
+  retro_core_start (self->core);
 }
 
 static void

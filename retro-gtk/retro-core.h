@@ -40,6 +40,8 @@ void retro_core_set_medias (RetroCore           *self,
 void retro_core_set_current_media (RetroCore  *self,
                                    guint       media_index,
                                    GError    **error);
+void retro_core_start (RetroCore *self);
+void retro_core_stop (RetroCore *self);
 void retro_core_reset (RetroCore *self);
 void retro_core_run (RetroCore *self);
 gboolean retro_core_get_can_access_state (RetroCore *self);
@@ -71,6 +73,9 @@ RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
 guint retro_core_get_runahead (RetroCore *self);
 void retro_core_set_runahead (RetroCore *self,
                               guint      runahead);
+gdouble retro_core_get_speed_rate (RetroCore *self);
+void retro_core_set_speed_rate (RetroCore *self,
+                                gdouble    speed_rate);
 gboolean retro_core_has_option (RetroCore   *self,
                                 const gchar *key);
 RetroOption *retro_core_get_option (RetroCore   *self,

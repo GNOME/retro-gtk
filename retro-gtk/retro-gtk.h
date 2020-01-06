@@ -19,7 +19,6 @@
 #include "retro-input.h"
 #include "retro-key-joypad-mapping.h"
 #include "retro-log.h"
-#include "retro-main-loop.h"
 #include "retro-memory-type.h"
 #include "retro-module-iterator.h"
 #include "retro-module-query.h"

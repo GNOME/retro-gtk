@@ -503,14 +503,12 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::shutdown signal is emitted when the core shut down.
    *
    * The core must be released or re-started in order to function anew.
-   *
-   * Returns: whether the request got fulfilled
    */
   signals[SIG_SHUTDOWN_SIGNAL] =
     g_signal_new ("shutdown", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
-                  G_TYPE_BOOLEAN,
+                  G_TYPE_NONE,
                   0);
 
   /**

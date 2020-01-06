@@ -424,10 +424,9 @@ set_variables (RetroCore     *self,
 static gboolean
 shutdown (RetroCore *self)
 {
-  gboolean result = FALSE;
-  g_signal_emit_by_name (self, "shutdown", &result);
+  g_signal_emit_by_name (self, "shutdown");
 
-  return result;
+  return TRUE;
 }
 
 static gboolean

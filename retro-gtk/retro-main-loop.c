@@ -278,7 +278,7 @@ retro_main_loop_set_speed_rate (RetroMainLoop *self,
  * retro_main_loop_start:
  * @self: a #RetroMainLoop
  *
- * Starts runing the core. If the core was stopped, it will restart from this moment.
+ * Starts running the core. If the core was stopped, it will restart from this moment.
  */
 void
 retro_main_loop_start (RetroMainLoop *self)
@@ -323,7 +323,7 @@ retro_main_loop_reset (RetroMainLoop *self)
  * retro_main_loop_stop:
  * @self: a #RetroMainLoop
  *
- * Stops runing the core.
+ * Stops running the core.
  */
 void
 retro_main_loop_stop (RetroMainLoop *self)

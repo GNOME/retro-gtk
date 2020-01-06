@@ -86,7 +86,6 @@ retro_demo_application_finalize (GObject *object)
   G_OBJECT_CLASS (retro_demo_application_parent_class)->finalize (object);
 }
 
-
 static void
 retro_demo_activate (GApplication *application)
 {

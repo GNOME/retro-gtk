@@ -123,6 +123,29 @@ retro_core_get_cb_data (void)
   return result;
 }
 
+void retro_core_set_callbacks (RetroCore *self);
+
+static void
+retro_core_constructed (GObject *object)
+{
+  RetroCore *self = RETRO_CORE (object);
+  g_autoptr (GFile) file = NULL;
+  g_autoptr (GFile) relative_path_file = NULL;
+
+  if (G_UNLIKELY (!self->filename))
+    g_error ("A RetroCore's 'filename' property my be set when constructing it.");
+
+  file = g_file_new_for_path (self->filename);
+  relative_path_file = g_file_resolve_relative_path (file, "");
+
+  self->libretro_path = g_file_get_path (relative_path_file);
+  self->module = retro_module_new (self->libretro_path);
+
+  retro_core_set_callbacks (self);
+
+  G_OBJECT_CLASS (retro_core_parent_class)->constructed (object);
+}
+
 static void
 retro_core_finalize (GObject *object)
 {
@@ -174,6 +197,10 @@ retro_core_get_property (GObject    *object,
   switch (prop_id) {
   case PROP_API_VERSION:
     g_value_set_uint (value, retro_core_get_api_version (self));
+
+    break;
+  case PROP_FILENAME:
+    g_value_set_string (value, retro_core_get_filename (self));
 
     break;
   case PROP_SYSTEM_DIRECTORY:
@@ -244,6 +271,7 @@ retro_core_class_init (RetroCoreClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->constructed = retro_core_constructed;
   object_class->finalize = retro_core_finalize;
   object_class->get_property = retro_core_get_property;
   object_class->set_property = retro_core_set_property;
@@ -275,7 +303,8 @@ retro_core_class_init (RetroCoreClass *klass)
                          "Filename",
                          "The module filename",
                          NULL,
-                         G_PARAM_READABLE |
+                         G_PARAM_READWRITE |
+                         G_PARAM_CONSTRUCT_ONLY |
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);
@@ -524,6 +553,9 @@ retro_core_init (RetroCore *self)
 {
   self->options = g_hash_table_new_full (g_str_hash, g_str_equal,
                                          g_free, g_object_unref);
+
+  self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
+                                             g_free, g_object_unref);
 }
 
 static void
@@ -1028,7 +1060,6 @@ retro_core_load_medias (RetroCore *self,
 }
 
 void retro_core_set_environment_interface (RetroCore *self);
-void retro_core_set_callbacks (RetroCore *self);
 
 static gboolean
 on_key_event (GtkWidget   *widget,
@@ -2165,30 +2196,7 @@ retro_core_iterate_options (RetroCore *self)
 RetroCore *
 retro_core_new (const gchar *filename)
 {
-  RetroCore *self;
-  GFile *file;
-  GFile *relative_path_file;
-
   g_return_val_if_fail (filename != NULL, NULL);
 
-  self = g_object_new (RETRO_TYPE_CORE, NULL);
-
-  retro_core_set_filename (self, filename);
-
-  file = g_file_new_for_path (filename);
-  relative_path_file = g_file_resolve_relative_path (file, "");
-
-  g_object_unref (file);
-
-  self->libretro_path = g_file_get_path (relative_path_file);
-
-  g_object_unref (relative_path_file);
-
-  self->module = retro_module_new (self->libretro_path);
-
-  retro_core_set_callbacks (self);
-  self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
-                                             g_free, g_object_unref);
-
-  return self;
+  return g_object_new (RETRO_TYPE_CORE, "filename", filename, NULL);
 }

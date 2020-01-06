@@ -43,18 +43,22 @@ void retro_core_set_current_media (RetroCore  *self,
 void retro_core_reset (RetroCore *self);
 void retro_core_run (RetroCore *self);
 gboolean retro_core_get_can_access_state (RetroCore *self);
-GBytes *retro_core_get_state (RetroCore  *self,
-                              GError    **error);
-void retro_core_set_state (RetroCore  *self,
-                           GBytes     *bytes,
-                           GError    **error);
+void retro_core_save_state (RetroCore    *self,
+                            const gchar  *filename,
+                            GError      **error);
+void retro_core_load_state (RetroCore    *self,
+                            const gchar  *filename,
+                            GError      **error);
 gsize retro_core_get_memory_size (RetroCore       *self,
                                   RetroMemoryType  memory_type);
-GBytes *retro_core_get_memory (RetroCore       *self,
-                               RetroMemoryType  memory_type);
-void retro_core_set_memory (RetroCore       *self,
-                            RetroMemoryType  memory_type,
-                            GBytes          *bytes);
+void retro_core_save_memory (RetroCore        *self,
+                             RetroMemoryType   memory_type,
+                             const gchar      *filename,
+                             GError          **error);
+void retro_core_load_memory (RetroCore        *self,
+                             RetroMemoryType   memory_type,
+                             const gchar      *filename,
+                             GError          **error);
 void retro_core_set_default_controller (RetroCore           *self,
                                         RetroControllerType  controller_type,
                                         RetroController     *controller);

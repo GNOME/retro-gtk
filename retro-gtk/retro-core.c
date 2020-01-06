@@ -11,10 +11,14 @@
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
 
 enum {
+  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
   RETRO_CORE_ERROR_COULDNT_SERIALIZE,
   RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
   RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
   RETRO_CORE_ERROR_NO_CALLBACK,
+  RETRO_CORE_ERROR_NO_MEMORY_REGION,
+  RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
+  RETRO_CORE_ERROR_SIZE_MISMATCH,
 };
 
 G_DEFINE_QUARK (retro-core-error, retro_core_error)
@@ -1656,25 +1660,27 @@ retro_core_get_can_access_state (RetroCore *self)
 }
 
 /**
- * retro_core_get_state:
+ * retro_core_save_state:
  * @self: a #RetroCore
+ * @filename: the file to save the state to
  * @error: return location for a #GError, or %NULL
  *
- * Gets the state of @self.
- *
- * Returns: (transfer full): a #GBytes, or %NULL
+ * Saves the state of @self.
  */
-GBytes *
-retro_core_get_state (RetroCore  *self,
-                      GError    **error)
+void
+retro_core_save_state (RetroCore    *self,
+                       const gchar  *filename,
+                       GError      **error)
 {
   RetroSerializeSize serialize_size = NULL;
   RetroSerialize serialize = NULL;
-  guint8 *data;
+  g_autofree guint8 *data = NULL;
   gsize size;
   gboolean success;
+  g_autoptr (GError) tmp_error = NULL;
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+  g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (filename != NULL);
 
   serialize_size = retro_module_get_serialize_size (self->module);
 
@@ -1688,7 +1694,7 @@ retro_core_get_state (RetroCore  *self,
                  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
                  "Couldn't serialize the internal state: serialization not supported.");
 
-    return NULL;
+    return;
   }
 
   serialize = retro_module_get_serialize (self->module);
@@ -1703,46 +1709,58 @@ retro_core_get_state (RetroCore  *self,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_SERIALIZE,
                  "Couldn't serialize the internal state: serialization failed.");
-    g_free (data);
 
-    return NULL;
+    return;
   }
 
-  return g_bytes_new_take (data, size);
+  g_file_set_contents (filename, (gchar *) data, size, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL))
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+                 "Couldn't serialize the internal state: %s", tmp_error->message);
 }
 
 /**
- * retro_core_set_state:
+ * retro_core_load_state:
  * @self: a #RetroCore
- * @bytes: a #GBytes
+ * @filename: the file to load the state from
  * @error: return location for a #GError, or %NULL
  *
- * Sets the state of the @self.
+ * Loads the state of the @self.
  */
 void
-retro_core_set_state (RetroCore  *self,
-                      GBytes     *bytes,
-                      GError    **error)
+retro_core_load_state (RetroCore    *self,
+                       const gchar  *filename,
+                       GError      **error)
 {
   RetroSerializeSize serialize_size = NULL;
   RetroUnserialize unserialize = NULL;
-  gsize size;
-  gconstpointer bytes_data;
-  gsize bytes_size;
+  gsize expected_size, data_size;
+  g_autofree gchar *data = NULL;
   gboolean success;
+  g_autoptr (GError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (bytes != NULL);
+  g_return_if_fail (filename != NULL);
+
+  g_file_get_contents (filename, &data, &data_size, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+                 "Couldn't deserialize the internal state: %s", tmp_error->message);
+
+    return;
+  }
 
   serialize_size = retro_module_get_serialize_size (self->module);
 
   retro_core_push_cb_data (self);
-  size = serialize_size ();
+  expected_size = serialize_size ();
   retro_core_pop_cb_data ();
 
-  bytes_data = g_bytes_get_data (bytes, &bytes_size);
-
-  if (size == 0) {
+  if (expected_size == 0) {
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
@@ -1751,14 +1769,14 @@ retro_core_set_state (RetroCore  *self,
     return;
   }
 
-  if (bytes_size > size) {
+  if (data_size > expected_size) {
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
                  "Couldn't deserialize the internal state: expected at most %"
                  G_GSIZE_FORMAT" bytes, got %"G_GSIZE_FORMAT".",
-                 size,
-                 bytes_size);
+                 expected_size,
+                 data_size);
 
     return;
   }
@@ -1766,7 +1784,7 @@ retro_core_set_state (RetroCore  *self,
   unserialize = retro_module_get_unserialize (self->module);
 
   retro_core_push_cb_data (self);
-  success = unserialize ((guint8 *) bytes_data, bytes_size);
+  success = unserialize ((guint8 *) data, data_size);
   retro_core_pop_cb_data ();
 
   if (!success) {
@@ -1804,24 +1822,28 @@ retro_core_get_memory_size (RetroCore       *self,
 }
 
 /**
- * retro_core_get_memory:
+ * retro_core_save_memory:
  * @self: a #RetroCore
  * @memory_type: the type of memory
+ * @filename: a file to save the data to
+ * @error: return location for a #GError, or %NULL
  *
- * Gets a memory region of @self.
- *
- * Returns: (transfer full): a #GBytes, or %NULL
+ * Saves a memory region of @self.
  */
-GBytes *
-retro_core_get_memory (RetroCore       *self,
-                       RetroMemoryType  memory_type)
+void
+retro_core_save_memory (RetroCore        *self,
+                        RetroMemoryType   memory_type,
+                        const gchar      *filename,
+                        GError          **error)
 {
   RetroGetMemoryData get_mem_data;
   RetroGetMemorySize get_mem_size;
-  guint8 *data;
+  gchar *data;
   gsize size;
+  g_autoptr (GError) tmp_error = NULL;
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+  g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (filename != NULL);
 
   get_mem_data = retro_module_get_get_memory_data (self->module);
   get_mem_size = retro_module_get_get_memory_size (self->module);
@@ -1831,31 +1853,39 @@ retro_core_get_memory (RetroCore       *self,
   size = get_mem_size (memory_type);
   retro_core_pop_cb_data ();
 
-  return g_bytes_new (data, size);
+  g_file_set_contents (filename, data, size, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL))
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+                 "Couldn't save the memory state: %s", tmp_error->message);
 }
 
 /**
- * retro_core_set_memory:
+ * retro_core_load_memory:
  * @self: a #RetroCore
  * @memory_type: the type of memory
- * @bytes: a #GBytes
+ * @filename: a file to load the data from
+ * @error: return location for a #GError, or %NULL
  *
- * Sets a memory region of @self.
+ * Loads a memory region of @self.
  */
 void
-retro_core_set_memory (RetroCore       *self,
-                       RetroMemoryType  memory_type,
-                       GBytes          *bytes)
+retro_core_load_memory (RetroCore        *self,
+                        RetroMemoryType   memory_type,
+                        const gchar      *filename,
+                        GError          **error)
 {
   RetroGetMemoryData get_mem_region;
   RetroGetMemorySize get_mem_region_size;
   guint8 *memory_region;
   gsize memory_region_size;
-  gconstpointer data;
-  gsize size;
+  g_autofree gchar *data = NULL;
+  gsize data_size;
+  GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (bytes != NULL);
+  g_return_if_fail (filename != NULL);
 
   get_mem_region = retro_module_get_get_memory_data (self->module);
   get_mem_region_size = retro_module_get_get_memory_size (self->module);
@@ -1865,48 +1895,64 @@ retro_core_set_memory (RetroCore       *self,
   memory_region_size = get_mem_region_size (memory_type);
   retro_core_pop_cb_data ();
 
-  data = g_bytes_get_data (bytes, &size);
+  g_file_get_contents (filename, &data, &data_size, &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+                 "Couldn't load the memory state: %s", tmp_error->message);
+
+    return;
+  }
 
   if (memory_region == NULL) {
-    g_debug ("%s doesn't have memory region %d.",
-             retro_core_get_name (self),
-             memory_type);
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_NO_MEMORY_REGION,
+                 "Couldn't load the memory state: %s doesn't have memory region %d",
+                 retro_core_get_name (self),
+                 memory_type);
 
     return;
   }
 
   if (memory_region_size == 0) {
-    g_debug ("%s has an unexpected 0-sized non-null memory region %d. Aborting "
-             "setting the memory region.",
-             retro_core_get_name (self),
-             memory_type);
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
+                 "Couldn't load the memory state: %s has an unexpected 0-sized non-null memory region %d",
+                 retro_core_get_name (self),
+                 memory_type);
 
     return;
   }
 
-  if (memory_region_size < size) {
-    g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %"
-             G_GSIZE_FORMAT" bytes were passed. Aborting setting the memory "
-             "region.",
-             retro_core_get_name (self),
-             memory_region_size,
-             memory_type,
-             size);
+  if (memory_region_size < data_size) {
+    g_set_error (error,
+                 RETRO_CORE_ERROR,
+                 RETRO_CORE_ERROR_SIZE_MISMATCH,
+                 "Couldn't load the memory state: %s expects %"G_GSIZE_FORMAT
+                 " bytes for memory region %d: %"G_GSIZE_FORMAT
+                 " bytes were passed",
+                 retro_core_get_name (self),
+                 memory_region_size,
+                 memory_type,
+                 data_size);
 
     return;
   }
 
-  if (memory_region_size != size)
+  if (memory_region_size != data_size)
     g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %"
-             G_GSIZE_FORMAT" bytes were passed. The excess will be filled with"
+             G_GSIZE_FORMAT" bytes were passed. The excess will be filled with "
              "zeros.",
              retro_core_get_name (self),
              memory_region_size,
              memory_type,
-             size);
+             data_size);
 
-  memcpy (memory_region, data, size);
-  memset (memory_region + size, 0, memory_region_size - size);
+  memcpy (memory_region, data, data_size);
+  memset (memory_region + data_size, 0, memory_region_size - data_size);
 }
 
 /**

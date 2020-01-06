@@ -20,6 +20,7 @@
 
 #include "retro-reftest-file.h"
 #include "retro-test-controller.h"
+#include <glib/gstdio.h>
 
 typedef struct {
   guint refs;
@@ -416,7 +417,7 @@ retro_reftest_test_state_none (RetroReftestData *data)
 static void
 retro_reftest_test_state_refresh (RetroReftestData *data)
 {
-  GBytes *state;
+  g_autofree gchar *filename = NULL, *tmpname = NULL;
   GError *error = NULL;
 
   if (!retro_core_get_can_access_state (data->core)) {
@@ -425,12 +426,15 @@ retro_reftest_test_state_refresh (RetroReftestData *data)
     return;
   }
 
-  state = retro_core_get_state (data->core, &error);
+  tmpname = g_strdup_printf ("retro-reftest-state-%d", g_random_int ());
+  filename = g_build_filename (g_get_tmp_dir (), tmpname, NULL);
+
+  retro_core_save_state (data->core, filename, &error);
   g_assert_no_error (error);
-  retro_core_set_state (data->core, state, &error);
+  retro_core_load_state (data->core, filename, &error);
   g_assert_no_error (error);
 
-  g_bytes_unref (state);
+  g_remove (filename);
 }
 
 static void

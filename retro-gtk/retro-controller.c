@@ -127,19 +127,15 @@ retro_controller_has_capability (RetroController     *self,
 }
 
 /**
- * retro_controller_set_rumble_state:
+ * retro_controller_get_supports_rumble:
  * @self: a #RetroController
- * @effect: the rumble effect
- * @strength: the rumble effect strength
  *
- * Sets the rumble state of @self.
+ * Gets whether @self supports rumble effects.
  *
- * Returns: whether the rumble state has been successfully set.
+ * Returns: whether @self supports rumble effects.
  */
 gboolean
-retro_controller_set_rumble_state (RetroController   *self,
-                                   RetroRumbleEffect  effect,
-                                   guint16            strength)
+retro_controller_get_supports_rumble (RetroController *self)
 {
   RetroControllerInterface *iface;
 
@@ -147,7 +143,31 @@ retro_controller_set_rumble_state (RetroController   *self,
 
   iface = RETRO_CONTROLLER_GET_IFACE (self);
 
-  g_return_val_if_fail (iface->set_rumble_state != NULL, FALSE);
+  g_return_val_if_fail (iface->get_supports_rumble != NULL, FALSE);
 
-  return iface->set_rumble_state (self, effect, strength);
+  return iface->get_supports_rumble (self);
+}
+
+/**
+ * retro_controller_set_rumble_state:
+ * @self: a #RetroController
+ * @effect: the rumble effect
+ * @strength: the rumble effect strength
+ *
+ * Sets the rumble state of @self.
+ */
+void
+retro_controller_set_rumble_state (RetroController   *self,
+                                   RetroRumbleEffect  effect,
+                                   guint16            strength)
+{
+  RetroControllerInterface *iface;
+
+  g_return_if_fail (RETRO_IS_CONTROLLER (self));
+
+  iface = RETRO_CONTROLLER_GET_IFACE (self);
+
+  g_return_if_fail (iface->set_rumble_state != NULL);
+
+  iface->set_rumble_state (self, effect, strength);
 }

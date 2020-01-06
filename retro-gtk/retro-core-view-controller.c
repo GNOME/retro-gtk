@@ -81,11 +81,16 @@ retro_core_view_controller_get_capabilities (RetroController *base)
 }
 
 static gboolean
+retro_core_view_controller_get_supports_rumble (RetroController *self)
+{
+  return FALSE;
+}
+
+static void
 retro_core_view_controller_set_rumble_state (RetroController   *self,
                                              RetroRumbleEffect  effect,
                                              guint16            strength)
 {
-  return FALSE;
 }
 
 static void
@@ -118,6 +123,7 @@ retro_controller_interface_init (RetroControllerInterface *iface)
   iface->get_input_state =  retro_core_view_controller_get_input_state;
   iface->get_controller_type = retro_core_view_controller_get_controller_type;
   iface->get_capabilities = retro_core_view_controller_get_capabilities;
+  iface->get_supports_rumble = retro_core_view_controller_get_supports_rumble;
   iface->set_rumble_state = retro_core_view_controller_set_rumble_state;
 }
 

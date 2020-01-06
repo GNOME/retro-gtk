@@ -114,7 +114,12 @@ rumble_callback_set_rumble_state (guint             port,
   if (controller == NULL)
     return FALSE;
 
-  return retro_controller_set_rumble_state (controller, effect, strength);
+  if (!retro_controller_get_supports_rumble (controller))
+    return FALSE;
+
+  retro_controller_set_rumble_state (controller, effect, strength);
+
+  return TRUE;
 }
 
 static void

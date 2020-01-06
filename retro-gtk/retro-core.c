@@ -1415,7 +1415,6 @@ void
 retro_core_set_medias (RetroCore           *self,
                        const gchar * const *uris)
 {
-
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (!retro_core_get_is_initiated (self));
 
@@ -2088,7 +2087,6 @@ retro_core_set_keyboard (RetroCore *self,
 RetroControllerIterator *
 retro_core_iterate_controllers (RetroCore *self)
 {
-
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
   return retro_controller_iterator_new (self->controllers);
@@ -2167,7 +2165,6 @@ retro_core_get_option (RetroCore    *self,
 RetroOptionIterator *
 retro_core_iterate_options (RetroCore *self)
 {
-
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
   return retro_option_iterator_new (self->options);

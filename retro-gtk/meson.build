@@ -176,12 +176,14 @@ install_headers(retro_gtk_headers, subdir: 'retro-gtk')
 pkg = import('pkgconfig')
 
 pkg.generate(
-  description: 'A simple GObject game controller library',
-    libraries: retro_gtk_lib,
-         name: 'retro-gtk',
-     filebase: 'retro-gtk-' + retro_gtk_api_version,
-      version: meson.project_version(),
-      subdirs: 'retro-gtk',
-     requires: 'glib-2.0',
-  install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+    description: 'A simple GObject game controller library',
+      libraries: retro_gtk_lib,
+           name: 'retro-gtk',
+      namespace: 'Retro',
+export_packages: 'retro-gtk',
+       filebase: 'retro-gtk-' + retro_gtk_api_version,
+        version: meson.project_version(),
+        subdirs: 'retro-gtk',
+       requires: 'glib-2.0',
+    install_dir: join_paths(get_option('libdir'), 'pkgconfig')
 )

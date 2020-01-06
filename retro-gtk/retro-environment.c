@@ -416,8 +416,6 @@ set_variables (RetroCore     *self,
   for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
     retro_core_insert_variable (self, &variable_array[i]);
 
-  g_signal_emit_by_name (self, "options-set", 0);
-
   return TRUE;
 }
 

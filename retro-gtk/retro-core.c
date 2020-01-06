@@ -44,7 +44,6 @@ enum {
   SIG_LOG_SIGNAL,
   SIG_SHUTDOWN_SIGNAL,
   SIG_MESSAGE_SIGNAL,
-  SIG_OPTIONS_SET_SIGNAL,
   N_SIGNALS,
 };
 
@@ -529,20 +528,6 @@ retro_core_class_init (RetroCoreClass *klass)
                   2,
                   G_TYPE_STRING,
                   G_TYPE_UINT);
-
-  /**
-   * RetroCore::options-set:
-   * @self: the #RetroCore
-   *
-   * The ::options-set signal is emitted when the core sets the
-   * options during boot.
-   */
-  signals[SIG_OPTIONS_SET_SIGNAL] =
-    g_signal_new ("options-set", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL,
-                  NULL,
-                  G_TYPE_NONE,
-                  0);
 }
 
 static void

@@ -16,7 +16,8 @@
         "--socket=x11",
         "--socket=wayland",
         "--device=dri",
-        "--socket=pulseaudio"
+        "--socket=pulseaudio",
+        "--talk-name=org.a11y.*"
     ],
     "build-options" : {
         "cflags" : "-O2 -g",

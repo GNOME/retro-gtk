@@ -22,7 +22,7 @@ retro_gtk_sources = [
   'retro-glsl-filter.c',
   'retro-input.c',
   'retro-input-descriptor.c',
-  'retro-keyboard-key.c',
+  'retro-keyboard.c',
   'retro-key-joypad-mapping.c',
   'retro-log.c',
   'retro-main-loop.c',

@@ -7,6 +7,7 @@
 #include "retro-controller-codes.h"
 #include "retro-core-view-controller.h"
 #include "retro-input-private.h"
+#include "retro-keyboard.h"
 #include "retro-pa-player.h"
 
 struct _RetroCoreView

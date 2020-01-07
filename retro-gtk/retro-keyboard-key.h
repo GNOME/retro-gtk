@@ -6,7 +6,7 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
@@ -165,10 +165,5 @@ typedef enum {
   RETRO_KEYBOARD_MODIFIER_KEY_CAPSLOCK = 0x20,
   RETRO_KEYBOARD_MODIFIER_KEY_SCROLLOCK = 0x40
 } RetroKeyboardModifierKey;
-
-RetroKeyboardModifierKey retro_keyboard_modifier_key_converter (guint keyval,
-                                                                GdkModifierType modifiers);
-RetroKeyboardKey retro_keyboard_key_converter (guint keyval);
-guint retro_keyboard_key_to_val_converter (RetroKeyboardKey key);
 
 G_END_DECLS

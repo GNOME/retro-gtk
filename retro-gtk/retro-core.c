@@ -4,7 +4,7 @@
 
 #include <string.h>
 #include "retro-controller-iterator-private.h"
-#include "retro-keyboard-key.h"
+#include "retro-keyboard.h"
 #include "retro-option-iterator-private.h"
 #include "retro-pixdata.h"
 

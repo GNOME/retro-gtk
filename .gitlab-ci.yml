@@ -8,13 +8,13 @@ api-visibility:
   stage: lint
   script:
     # Check that private headers aren't included in public ones.
-    - if grep "include.*private.h" $(ls retro-gtk/*.h | grep -v private);
+    - if grep "include.*private.h" $(ls retro-gtk/*.h shared/*.h | grep -v private);
       then
         echo "Private headers shouldn't be included in public ones.";
         exit 1;
       fi
     # Check that retro-gtk.h contains all the public headers.
-    - for header in $(ls retro-gtk | grep \.h$ | grep -v private | grep -v retro-gtk.h);
+    - for header in $(ls retro-gtk shared | grep \.h$ | grep -v private | grep -v retro-gtk.h);
       do
         if ! grep -q "$header" retro-gtk/retro-gtk.h;
         then

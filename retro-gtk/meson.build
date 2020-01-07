@@ -6,12 +6,11 @@ retro_gtk_resources = gnome.compile_resources(
 )
 
 retro_gtk_sources = [
+  shared_sources,
   retro_gtk_resources,
   'retro-cairo-display.c',
   'retro-controller.c',
-  'retro-controller-codes.c',
   'retro-controller-iterator.c',
-  'retro-controller-type.c',
   'retro-core.c',
   'retro-core-descriptor.c',
   'retro-core-view.c',
@@ -20,13 +19,11 @@ retro_gtk_sources = [
   'retro-game-info.c',
   'retro-gl-display.c',
   'retro-glsl-filter.c',
-  'retro-input.c',
   'retro-input-descriptor.c',
   'retro-keyboard.c',
   'retro-key-joypad-mapping.c',
   'retro-log.c',
   'retro-main-loop-source.c',
-  'retro-memory-type.c',
   'retro-module.c',
   'retro-module-iterator.c',
   'retro-module-query.c',
@@ -35,33 +32,27 @@ retro_gtk_sources = [
   'retro-pa-player.c',
   'retro-pixbuf.c',
   'retro-pixdata.c',
-  'retro-pixel-format.c',
-  'retro-rumble-effect.c',
   'retro-video-filter.c',
 ]
 
 retro_gtk_main_header = 'retro-gtk.h'
 
 retro_gtk_headers = [
+  shared_headers,
   retro_gtk_main_header,
   'retro-controller.h',
-  'retro-controller-codes.h',
   'retro-controller-iterator.h',
-  'retro-controller-type.h',
   'retro-core.h',
   'retro-core-descriptor.h',
   'retro-core-view.h',
-  'retro-input.h',
   'retro-key-joypad-mapping.h',
   'retro-log.h',
-  'retro-memory-type.h',
   'retro-module-iterator.h',
   'retro-module-query.h',
   'retro-option.h',
   'retro-option-iterator.h',
   'retro-pixbuf.h',
   'retro-pixdata.h',
-  'retro-rumble-effect.h',
   'retro-video-filter.h',
 ]
 
@@ -107,7 +98,7 @@ retro_gtk_lib = shared_library(
   retro_gtk_sources,
   c_args: retro_gtk_c_args,
   dependencies: retro_gtk_deps,
-  include_directories: confinc,
+  include_directories: [ confinc, shared_inc ],
   install: true,
   soversion: 0,
 )
@@ -118,7 +109,8 @@ retro_gtk_dep_sources = [
 
 if get_option('introspection')
   retro_gtk_gir_args = [
-     '--quiet',
+    '--quiet',
+    '-DRETRO_GTK_COMPILATION',
     '-DRETRO_GTK_USE_UNSTABLE_API',
   ]
 
@@ -168,7 +160,7 @@ retro_gtk_inc = include_directories('.')
 retro_gtk_dep = declare_dependency(
   link_with: retro_gtk_lib,
   sources: retro_gtk_dep_sources,
-  include_directories: [ confinc, retro_gtk_inc ],
+  include_directories: [ confinc, shared_inc, retro_gtk_inc ],
   dependencies: retro_gtk_deps,
 )
 

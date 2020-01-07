@@ -14,6 +14,7 @@ libdir = join_paths(prefix, get_option('libdir'))
 libretrodir = join_paths(libdir, 'libretro')
 
 confinc = include_directories('.')
+shared_inc = include_directories('shared')
 
 retro_gtk_version = meson.project_version()
 retro_gtk_api_version = '1'
@@ -40,6 +41,7 @@ configure_file(
   configuration: config_h,
 )
 
+subdir('shared')
 subdir('retro-gtk')
 if get_option('build-tests')
   subdir('tests')

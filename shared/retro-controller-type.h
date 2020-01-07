@@ -41,4 +41,7 @@ typedef enum
   RETRO_CONTROLLER_TYPE_TYPE_MASK = 0xff,
 } RetroControllerType;
 
+int retro_controller_type_get_id_count (RetroControllerType type);
+int retro_controller_type_get_index_count (RetroControllerType type);
+
 G_END_DECLS

@@ -154,21 +154,6 @@
                 },
                 {
                     "type" : "file",
-                    "path" : "testgl.reftest",
-                    "dest-filename" : "testgl.reftest"
-                },
-                {
-                    "type" : "file",
-                    "path" : "testgl_compute_shaders.reftest",
-                    "dest-filename" : "testgl_compute_shaders.reftest"
-                },
-                {
-                    "type" : "file",
-                    "path" : "testgl_ff.reftest",
-                    "dest-filename" : "testgl_ff.reftest"
-                },
-                {
-                    "type" : "file",
                     "path" : "test.png",
                     "dest-filename" : "test.png"
                 },

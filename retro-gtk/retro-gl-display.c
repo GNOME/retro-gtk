@@ -561,12 +561,17 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
   gdouble h = 0.0;
   gdouble x = 0.0;
   gdouble y = 0.0;
+  gint scale_factor;
 
   g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 
   retro_gl_display_get_video_box (self, &w, &h, &x, &y);
+
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
+  widget_x *= scale_factor;
+  widget_y *= scale_factor;
 
   // Return coordinates as a [-1.0, 1.0] scale, (0.0, 0.0) is the center.
   *display_x = ((widget_x - x) * 2.0 - w) / w;

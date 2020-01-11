@@ -15,7 +15,6 @@ struct _RetroCoreView
   GtkEventBox parent_instance;
   RetroCore *core;
   RetroGLDisplay *display;
-  GBinding *sensitive_binding;
   RetroPaPlayer *audio_player;
   gboolean can_grab_pointer;
   gboolean snap_pointer_to_borders;
@@ -366,7 +365,6 @@ retro_core_view_finalize (GObject *object)
 
   g_clear_object (&self->core);
   g_object_unref (self->display);
-  g_object_unref (self->sensitive_binding);
   g_object_unref (self->audio_player);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->keyval_state);
@@ -480,11 +478,10 @@ retro_core_view_init (RetroCoreView *self)
   g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);
   gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->display));
 
-  self->sensitive_binding =
-    g_object_bind_property (G_OBJECT (self), "sensitive",
-                            G_OBJECT (self->display), "sensitive",
-                            G_BINDING_BIDIRECTIONAL |
-                            G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (self), "sensitive",
+                          G_OBJECT (self->display), "sensitive",
+                          G_BINDING_BIDIRECTIONAL |
+                          G_BINDING_SYNC_CREATE);
 
   self->audio_player = retro_pa_player_new ();
 

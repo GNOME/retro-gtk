@@ -25,7 +25,7 @@
 #include "retro-option.h"
 #include "retro-option-iterator.h"
 #include "retro-pixbuf.h"
-#include "retro-pixdata.h"
+#include "retro-pixdata-private.h"
 #include "retro-video-filter.h"
 
 #undef __RETRO_GTK_INSIDE__

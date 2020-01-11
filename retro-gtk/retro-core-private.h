@@ -7,13 +7,13 @@
 #endif
 
 #include "retro-core.h"
-#include "retro-disk-control-callback.h"
+#include "retro-disk-control-callback-private.h"
 #include "retro-input.h"
-#include "retro-input-descriptor.h"
-#include "retro-module.h"
+#include "retro-input-descriptor-private.h"
+#include "retro-module-private.h"
 #include "retro-option-private.h"
-#include "retro-pixel-format.h"
-#include "retro-rotation.h"
+#include "retro-pixel-format-private.h"
+#include "retro-rotation-private.h"
 
 G_BEGIN_DECLS
 

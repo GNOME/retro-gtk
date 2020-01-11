@@ -7,7 +7,7 @@
 #endif
 
 #include <gdk/gdk.h>
-#include "retro-keyboard-key.h"
+#include "retro-keyboard-key-private.h"
 
 G_BEGIN_DECLS
 

@@ -8,7 +8,7 @@
 
 #include "retro-pixdata.h"
 
-#include "retro-pixel-format.h"
+#include "retro-pixel-format-private.h"
 
 G_BEGIN_DECLS
 

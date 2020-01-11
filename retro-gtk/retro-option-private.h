@@ -7,7 +7,7 @@
 #endif
 
 #include "retro-option.h"
-#include "retro-variable.h"
+#include "retro-variable-private.h"
 
 G_BEGIN_DECLS
 

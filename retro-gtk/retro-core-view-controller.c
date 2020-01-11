@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-core-view-controller.h"
+#include "retro-core-view-controller-private.h"
 
 #include "retro-controller.h"
 

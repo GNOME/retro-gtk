@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-cairo-display.h"
+#include "retro-cairo-display-private.h"
 
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"

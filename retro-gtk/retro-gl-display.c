@@ -1,9 +1,9 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-gl-display.h"
+#include "retro-gl-display-private.h"
 
 #include <epoxy/gl.h>
-#include "retro-glsl-filter.h"
+#include "retro-glsl-filter-private.h"
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
 

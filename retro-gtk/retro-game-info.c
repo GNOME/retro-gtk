@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-game-info.h"
+#include "retro-game-info-private.h"
 
 G_DEFINE_BOXED_TYPE (RetroGameInfo, retro_game_info, retro_game_info_copy, retro_game_info_free)
 

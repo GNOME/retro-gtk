@@ -6,7 +6,7 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
-#include "retro-game-info.h"
+#include "retro-game-info-private.h"
 
 G_BEGIN_DECLS
 

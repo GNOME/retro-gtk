@@ -2,13 +2,13 @@
 
 #include "retro-core-view.h"
 
-#include "retro-cairo-display.h"
-#include "retro-gl-display.h"
+#include "retro-cairo-display-private.h"
+#include "retro-gl-display-private.h"
 #include "retro-controller-codes.h"
-#include "retro-core-view-controller.h"
+#include "retro-core-view-controller-private.h"
 #include "retro-input-private.h"
-#include "retro-keyboard.h"
-#include "retro-pa-player.h"
+#include "retro-keyboard-private.h"
+#include "retro-pa-player-private.h"
 
 struct _RetroCoreView
 {

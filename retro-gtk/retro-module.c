@@ -9,7 +9,7 @@
 #include <gio/gio.h>
 #include <gmodule.h>
 #include <stdio.h>
-#include "retro-module.h"
+#include "retro-module-private.h"
 
 static GHashTable *retro_module_loaded_modules;
 

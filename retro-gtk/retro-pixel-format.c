@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-pixel-format.h"
+#include "retro-pixel-format-private.h"
 
 GType
 retro_pixel_format_get_type (void)

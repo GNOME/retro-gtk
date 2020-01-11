@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-input-descriptor.h"
+#include "retro-input-descriptor-private.h"
 
 G_DEFINE_BOXED_TYPE (RetroInputDescriptor, retro_input_descriptor, retro_input_descriptor_copy, retro_input_descriptor_free)
 

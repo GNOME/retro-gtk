@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-pa-player.h"
+#include "retro-pa-player-private.h"
 
 #include <pulse/simple.h>
 #include <pulse/pulseaudio.h>

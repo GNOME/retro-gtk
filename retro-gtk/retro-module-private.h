@@ -8,10 +8,10 @@
 
 #include <glib-object.h>
 #include "retro-controller-type.h"
-#include "retro-game-info.h"
+#include "retro-game-info-private.h"
 #include "retro-memory-type.h"
-#include "retro-system-av-info.h"
-#include "retro-system-info.h"
+#include "retro-system-av-info-private.h"
+#include "retro-system-info-private.h"
 
 G_BEGIN_DECLS
 

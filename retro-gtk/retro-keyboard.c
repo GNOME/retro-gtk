@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-keyboard.h"
+#include "retro-keyboard-private.h"
 
 RetroKeyboardModifierKey
 retro_keyboard_modifier_key_converter (guint           keyval,

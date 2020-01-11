@@ -1,6 +1,6 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-glsl-filter.h"
+#include "retro-glsl-filter-private.h"
 
 struct _RetroGLSLFilter
 {

@@ -1,7 +1,13 @@
 stages:
+  - lint
   - build
   - test
   - review
+
+api-visibility:
+  stage: lint
+  script:
+    - if grep "include.*private.h" $(ls retro-gtk/*.h | grep -v private); then return 1; fi
 
 variables:
   BUNDLE: "retro-demo-samples-test-git.flatpak"

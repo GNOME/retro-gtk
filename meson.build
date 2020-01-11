@@ -1,6 +1,6 @@
 project('retro-gtk','c',
   version: '0.18.0',
-  meson_version: '>= 0.43.0',
+  meson_version: '>= 0.50.0',
 )
 
 retro_gtk_prefix = get_option('prefix')

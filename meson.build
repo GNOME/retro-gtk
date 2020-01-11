@@ -16,7 +16,7 @@ libretrodir = join_paths(libdir, 'libretro')
 confinc = include_directories('.')
 
 retro_gtk_version = meson.project_version()
-retro_gtk_api_version = '0.14'
+retro_gtk_api_version = '1'
 retro_gtk_module = 'retro-gtk-' + retro_gtk_api_version
 
 glib_version = '>= 2.50'

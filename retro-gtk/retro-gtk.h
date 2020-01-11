@@ -10,6 +10,7 @@
 
 #include "retro-controller.h"
 #include "retro-controller-codes.h"
+#include "retro-controller-iterator.h"
 #include "retro-controller-type.h"
 #include "retro-core.h"
 #include "retro-core-descriptor.h"
@@ -26,6 +27,7 @@
 #include "retro-option-iterator.h"
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
+#include "retro-rumble-effect.h"
 #include "retro-video-filter.h"
 
 #undef __RETRO_GTK_INSIDE__

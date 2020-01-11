@@ -13,6 +13,15 @@ api-visibility:
         echo "Private headers shouldn't be included in public ones.";
         exit 1;
       fi
+    # Check that retro-gtk.h contains all the public headers.
+    - for header in $(ls retro-gtk | grep \.h$ | grep -v private | grep -v retro-gtk.h);
+      do
+        if ! grep -q "$header" retro-gtk/retro-gtk.h;
+        then
+          echo "The public header" $header "should be included in retro-gtk.h.";
+          exit 1;
+        fi;
+      done
 
 variables:
   BUNDLE: "retro-demo-samples-test-git.flatpak"

@@ -7,7 +7,7 @@ stages:
 api-visibility:
   stage: lint
   script:
-    - if grep "include.*private.h" $(ls retro-gtk/*.h | grep -v private); then return 1; fi
+    - if grep "include.*private.h" $(ls retro-gtk/*.h | grep -v private); then echo "Private headers shouldn't be included in public ones."; exit 1; fi
 
 variables:
   BUNDLE: "retro-demo-samples-test-git.flatpak"

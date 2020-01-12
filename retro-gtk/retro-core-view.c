@@ -512,12 +512,6 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
   gtk_widget_class_set_css_name (widget_class, "retrocoreview");
 }
 
-RetroCoreView* retro_core_view_construct (GType object_type) {
-  RetroCoreView * self = NULL;
-  self = (RetroCoreView*) g_object_new (object_type, NULL);
-  return self;
-}
-
 static void
 retro_core_view_init (RetroCoreView *self)
 {

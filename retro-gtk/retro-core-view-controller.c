@@ -19,11 +19,6 @@ G_DEFINE_TYPE_WITH_CODE (RetroCoreViewController, retro_core_view_controller, G_
 
 /* Private */
 
-static void
-retro_core_view_controller_poll (RetroController *base)
-{
-}
-
 static gint16
 retro_core_view_controller_get_input_state (RetroController *base,
                                             RetroInput      *input)
@@ -119,7 +114,6 @@ retro_core_view_controller_init (RetroCoreViewController *self)
 static void
 retro_controller_interface_init (RetroControllerInterface *iface)
 {
-  iface->poll = retro_core_view_controller_poll;
   iface->get_input_state =  retro_core_view_controller_get_input_state;
   iface->get_controller_type = retro_core_view_controller_get_controller_type;
   iface->get_capabilities = retro_core_view_controller_get_capabilities;

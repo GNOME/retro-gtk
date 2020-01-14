@@ -39,11 +39,6 @@ G_DEFINE_TYPE_WITH_CODE (RetroTestController, retro_test_controller, G_TYPE_OBJE
 
 /* Private */
 
-static void
-retro_test_controller_poll (RetroController *base)
-{
-}
-
 static gint16
 retro_test_controller_get_input_state (RetroController *base,
                                        RetroInput      *input)
@@ -166,7 +161,6 @@ retro_test_controller_init (RetroTestController *self)
 static void
 retro_controller_interface_init (RetroControllerInterface *iface)
 {
-  iface->poll = retro_test_controller_poll;
   iface->get_input_state =  retro_test_controller_get_input_state;
   iface->get_controller_type = retro_test_controller_get_controller_type;
   iface->get_capabilities = retro_test_controller_get_capabilities;

@@ -20,7 +20,6 @@ struct _RetroControllerInterface
 {
   GTypeInterface parent_iface;
 
-  void (*poll) (RetroController *self);
   gint16 (*get_input_state) (RetroController *self,
                              RetroInput      *input);
   RetroControllerType (*get_controller_type) (RetroController *self);
@@ -31,7 +30,6 @@ struct _RetroControllerInterface
                             guint16            strength);
 };
 
-void retro_controller_poll (RetroController *self);
 gint16 retro_controller_get_input_state (RetroController *self,
                                          RetroInput      *input);
 RetroControllerType retro_controller_get_controller_type (RetroController *self);

@@ -10,26 +10,6 @@ retro_controller_default_init (RetroControllerInterface *iface)
 }
 
 /**
- * retro_controller_poll:
- * @self: a #RetroController
- *
- * Polls the pending input events for @self.
- */
-void
-retro_controller_poll (RetroController *self)
-{
-  RetroControllerInterface *iface;
-
-  g_return_if_fail (RETRO_IS_CONTROLLER (self));
-
-  iface = RETRO_CONTROLLER_GET_IFACE (self);
-
-  g_return_if_fail (iface->poll != NULL);
-
-  iface->poll (self);
-}
-
-/**
  * retro_controller_get_input_state:
  * @self: a #RetroController
  * @input: a #RetroInput to query @self

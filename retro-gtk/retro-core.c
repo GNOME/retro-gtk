@@ -1924,17 +1924,6 @@ retro_core_set_memory (RetroCore       *self,
 void
 retro_core_poll_controllers (RetroCore *self)
 {
-  RetroControllerIterator *iterator;
-  guint *port;
-  RetroController *controller;
-
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  iterator = retro_core_iterate_controllers (self);
-  while (retro_controller_iterator_next (iterator, &port, &controller))
-    if (controller != NULL)
-      retro_controller_poll (controller);
-  g_object_unref (iterator);
 }
 
 /**

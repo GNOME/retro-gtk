@@ -45,6 +45,13 @@ enum {
 
 static GParamSpec *properties [N_PROPS];
 
+enum {
+  SIG_CONTROLLER_STATE_CHANGED_SIGNAL,
+  N_SIGNALS,
+};
+
+static guint signals [N_SIGNALS];
+
 /* Private */
 
 static void
@@ -151,6 +158,8 @@ retro_core_view_grab (RetroCoreView *self,
 
   recenter_pointer (self);
 
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+
   g_object_unref (cursor);
 }
 
@@ -169,7 +178,12 @@ retro_core_view_ungrab (RetroCoreView *self)
 
   g_clear_object (&self->grabbed_device);
   g_clear_object (&self->grabbed_screen);
+
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 }
+
+static gboolean retro_core_view_get_key_state (RetroCoreView *self,
+                                               guint16        hardware_keycode);
 
 static gboolean
 retro_core_view_on_key_press_event (GtkWidget   *source,
@@ -177,6 +191,7 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
                                     gpointer     data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
+  gboolean changed;
 
   g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
@@ -186,8 +201,13 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
       retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
 
+  changed = !retro_core_view_get_key_state (self, event->hardware_keycode);
+
   set_input_pressed (self->key_state, event->hardware_keycode);
   set_input_pressed (self->keyval_state, event->keyval);
+
+  if (changed)
+    g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 
   return FALSE;
 }
@@ -204,6 +224,8 @@ retro_core_view_on_key_release_event (GtkWidget   *source,
 
   set_input_released (self->key_state, event->hardware_keycode);
   set_input_released (self->keyval_state, event->keyval);
+
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 
   return FALSE;
 }
@@ -239,6 +261,8 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
                                                    &self->pointer_y);
   }
 
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+
   return FALSE;
 }
 
@@ -253,6 +277,8 @@ retro_core_view_on_button_release_event (GtkWidget      *source,
   g_return_val_if_fail (event != NULL, FALSE);
 
   set_input_released (self->mouse_button_state, event->button);
+
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 
   return FALSE;
 }
@@ -272,6 +298,8 @@ retro_core_view_on_focus_out_event (GtkWidget     *source,
 
   reset_input (self->key_state);
   reset_input (self->mouse_button_state);
+
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 
   return FALSE;
 }
@@ -304,6 +332,8 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
                                                    &self->pointer_y);
 
   }
+
+  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
 
   return FALSE;
 }
@@ -457,6 +487,27 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
   g_object_class_install_properties (object_class,
                                      N_PROPS,
                                      properties);
+
+  /**
+   * RetroCoreView::controller-state-changed:
+   * @self: the #RetroCoreView
+   *
+   * The ::controller-state-changed signal is emitted when a key is pressed
+   * or released, mouse pointer is moved, or a mouse button is pressed or
+   * released.
+   *
+   * Applications should not connect to it.
+   *
+   * Stability: Private
+   */
+  signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL] =
+    g_signal_new ("controller-state-changed",
+                  RETRO_TYPE_CORE_VIEW,
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  0);
 
   gtk_widget_class_set_css_name (widget_class, "retrocoreview");
 }

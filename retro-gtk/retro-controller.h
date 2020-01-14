@@ -40,5 +40,6 @@ gboolean retro_controller_get_supports_rumble (RetroController *self);
 void retro_controller_set_rumble_state (RetroController   *self,
                                         RetroRumbleEffect  effect,
                                         guint16            strength);
+void retro_controller_emit_state_changed (RetroController *self);
 
 G_END_DECLS

@@ -4,9 +4,24 @@
 
 G_DEFINE_INTERFACE (RetroController, retro_controller, G_TYPE_OBJECT);
 
+enum {
+  SIG_STATE_CHANGED_SIGNAL,
+  N_SIGNALS,
+};
+
+static guint signals[N_SIGNALS];
+
 static void
 retro_controller_default_init (RetroControllerInterface *iface)
 {
+  signals[SIG_STATE_CHANGED_SIGNAL] =
+    g_signal_new ("state-changed",
+                  G_TYPE_FROM_INTERFACE (iface),
+                  G_SIGNAL_RUN_FIRST,
+                  0,
+                  NULL, NULL, NULL,
+                  G_TYPE_NONE,
+                  0);
 }
 
 /**
@@ -150,4 +165,12 @@ retro_controller_set_rumble_state (RetroController   *self,
   g_return_if_fail (iface->set_rumble_state != NULL);
 
   iface->set_rumble_state (self, effect, strength);
+}
+
+void
+retro_controller_emit_state_changed (RetroController *self)
+{
+  g_return_if_fail (RETRO_IS_CONTROLLER (self));
+
+  g_signal_emit (self, signals[SIG_STATE_CHANGED_SIGNAL], 0);
 }

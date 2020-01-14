@@ -135,5 +135,11 @@ retro_core_view_controller_new (RetroCoreView       *view,
   g_weak_ref_init (&self->view, view);
   self->controller_type = controller_type;
 
+  g_signal_connect_object (view,
+                           "controller-state-changed",
+                           G_CALLBACK (retro_controller_emit_state_changed),
+                           self,
+                           G_CONNECT_SWAPPED);
+
   return self;
 }

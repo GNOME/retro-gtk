@@ -199,28 +199,38 @@ retro_test_controller_set_input_state (RetroTestController  *self,
 
   switch (state->type & RETRO_CONTROLLER_TYPE_TYPE_MASK) {
   case RETRO_CONTROLLER_TYPE_JOYPAD:
-    if (state->id < RETRO_JOYPAD_ID_COUNT)
+    if (state->id < RETRO_JOYPAD_ID_COUNT) {
       self->state[RETRO_CONTROLLER_TYPE_JOYPAD][state->id] = state->value;
+      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
+    }
 
     break;
   case RETRO_CONTROLLER_TYPE_MOUSE:
-    if (state->id < RETRO_MOUSE_ID_COUNT)
+    if (state->id < RETRO_MOUSE_ID_COUNT) {
       self->state[RETRO_CONTROLLER_TYPE_MOUSE][state->id] = state->value;
+      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
+    }
 
     break;
   case RETRO_CONTROLLER_TYPE_LIGHTGUN:
-    if (state->id < RETRO_LIGHTGUN_ID_COUNT)
+    if (state->id < RETRO_LIGHTGUN_ID_COUNT) {
       self->state[RETRO_CONTROLLER_TYPE_LIGHTGUN][state->id] = state->value;
+      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
+    }
 
     break;
   case RETRO_CONTROLLER_TYPE_ANALOG:
-    if (state->id < RETRO_ANALOG_ID_COUNT && state->index < RETRO_ANALOG_INDEX_COUNT)
+    if (state->id < RETRO_ANALOG_ID_COUNT && state->index < RETRO_ANALOG_INDEX_COUNT) {
       self->state[RETRO_CONTROLLER_TYPE_ANALOG][RETRO_ANALOG_ID_INDEX (state->id, state->index)] = state->value;
+      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
+    }
 
     break;
   case RETRO_CONTROLLER_TYPE_POINTER:
-    if (state->id < RETRO_POINTER_ID_COUNT)
+    if (state->id < RETRO_POINTER_ID_COUNT) {
       self->state[RETRO_CONTROLLER_TYPE_POINTER][state->id] = state->value;
+      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
+    }
 
     break;
   case RETRO_CONTROLLER_TYPE_NONE:

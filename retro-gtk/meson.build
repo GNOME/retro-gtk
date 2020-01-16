@@ -25,6 +25,7 @@ retro_gtk_sources = [
   'retro-keyboard.c',
   'retro-key-joypad-mapping.c',
   'retro-log.c',
+  'retro-main-loop-source.c',
   'retro-memory-type.c',
   'retro-module.c',
   'retro-module-iterator.c',

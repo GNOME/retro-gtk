@@ -97,6 +97,7 @@ retro_gtk_deps = [
   gobject,
   gtk,
   libpulse_simple,
+  m,
 ]
 
 retro_gtk_lib = shared_library(

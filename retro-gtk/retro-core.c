@@ -5,6 +5,7 @@
 #include <string.h>
 #include "retro-controller-iterator-private.h"
 #include "retro-keyboard-private.h"
+#include "retro-main-loop-source-private.h"
 #include "retro-option-iterator-private.h"
 #include "retro-pixdata.h"
 
@@ -1576,6 +1577,7 @@ void
 retro_core_start (RetroCore *self)
 {
   gdouble fps;
+  GSource *source;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
@@ -1588,11 +1590,10 @@ retro_core_start (RetroCore *self)
    * destroying the RetroCore while it is still running will stop it instead
    * of leaking a reference.
    */
-  self->main_loop =
-    g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
-                        (guint) (1000 / (fps * self->speed_rate)),
-                        (GSourceFunc) run_main_loop,
-                        self, NULL);
+  source = retro_main_loop_source_new (fps * self->speed_rate);
+  g_source_set_callback (source, (GSourceFunc) run_main_loop, self, NULL);
+  self->main_loop = g_source_attach (source, g_main_context_default ());
+  g_source_unref (source);
 }
 
 /**

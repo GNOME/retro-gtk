@@ -663,7 +663,7 @@ retro_core_set_system_av_info (RetroCore         *self,
 {
   if (self->frames_per_second != system_av_info->timing.fps) {
     self->frames_per_second = system_av_info->timing.fps;
-    g_object_notify (G_OBJECT (self), "frames-per-second");
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FRAMES_PER_SECOND]);
     restart (self);
   }
   retro_core_set_geometry (self, &system_av_info->geometry);

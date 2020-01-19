@@ -458,7 +458,7 @@ retro_core_class_init (RetroCoreClass *klass)
     g_param_spec_double ("speed-rate",
                          "Speed rate",
                          "The speed ratio at wich the core will run",
-                         -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                         0.0, G_MAXDOUBLE, 1.0,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |

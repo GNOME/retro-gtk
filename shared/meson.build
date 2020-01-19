@@ -2,6 +2,7 @@ shared_sources = files([
   'retro-controller-codes.c',
   'retro-controller-state.c',
   'retro-controller-type.c',
+  'retro-framebuffer.c',
   'retro-input.c',
   'retro-memfd.c',
   'retro-memory-type.c',

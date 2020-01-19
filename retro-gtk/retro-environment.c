@@ -613,7 +613,7 @@ on_audio_sample (gint16 left,
 
 static gsize
 on_audio_sample_batch (gint16 *data,
-                       int     frames)
+                       gint    frames)
 {
   RetroCore *self;
 
@@ -623,16 +623,14 @@ on_audio_sample_batch (gint16 *data,
     g_return_val_if_reached (0);
 
   if (retro_core_is_running_ahead (self))
-    // FIXME What should be returned?
-    return 0;
+    return frames;
 
   if (self->sample_rate <= 0.0)
     return 0;
 
   g_signal_emit_by_name (self, "audio_output", data, frames * 2, self->sample_rate);
 
-  // FIXME What should be returned?
-  return 0;
+  return frames;
 }
 
 static void

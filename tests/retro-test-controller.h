@@ -20,7 +20,6 @@
 
 #pragma once
 
-#define RETRO_GTK_USE_UNSTABLE_API
 #include <retro-gtk/retro-gtk.h>
 
 G_BEGIN_DECLS

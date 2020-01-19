@@ -4,10 +4,6 @@
 
 #define __RETRO_GTK_INSIDE__
 
-#ifndef RETRO_GTK_USE_UNSTABLE_API
-#error    retro-gtk is unstable API. You must define RETRO_GTK_USE_UNSTABLE_API before including retro-gtk.h
-#endif
-
 #include "retro-controller.h"
 #include "retro-controller-codes.h"
 #include "retro-controller-iterator.h"

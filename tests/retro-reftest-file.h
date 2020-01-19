@@ -21,7 +21,6 @@
 #pragma once
 
 #include <gio/gio.h>
-#define RETRO_GTK_USE_UNSTABLE_API
 #include <retro-gtk/retro-gtk.h>
 
 G_BEGIN_DECLS

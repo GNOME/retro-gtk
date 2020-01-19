@@ -128,7 +128,6 @@ if get_option('introspection')
   retro_gtk_gir_args = [
     '--quiet',
     '-DRETRO_GTK_COMPILATION',
-    '-DRETRO_GTK_USE_UNSTABLE_API',
   ]
 
   retro_gtk_gir_includes = [

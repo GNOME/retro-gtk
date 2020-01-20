@@ -1187,6 +1187,14 @@ retro_core_get_variable_update (RetroCore *self)
   return TRUE;
 }
 
+gdouble
+retro_core_get_sample_rate (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  return self->sample_rate;
+}
+
 /* Public */
 
 /**

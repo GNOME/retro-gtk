@@ -87,5 +87,6 @@ gboolean retro_core_is_running_ahead (RetroCore *self);
 void retro_core_insert_variable (RetroCore           *self,
                                  const RetroVariable *variable);
 gboolean retro_core_get_variable_update (RetroCore *self);
+gdouble retro_core_get_sample_rate (RetroCore *self);
 
 G_END_DECLS

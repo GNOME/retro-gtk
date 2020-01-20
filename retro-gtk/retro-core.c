@@ -223,6 +223,18 @@ retro_core_get_property (GObject    *object,
     g_value_set_string (value, retro_core_get_save_directory (self));
 
     break;
+  case PROP_IS_INITIATED:
+    g_value_set_boolean (value, retro_core_get_is_initiated (self));
+
+    break;
+  case PROP_GAME_LOADED:
+    g_value_set_boolean (value, retro_core_get_game_loaded (self));
+
+    break;
+  case PROP_SUPPORT_NO_GAME:
+    g_value_set_boolean (value, retro_core_get_support_no_game (self));
+
+    break;
   case PROP_FRAMES_PER_SECOND:
     g_value_set_double (value, retro_core_get_frames_per_second (self));
 

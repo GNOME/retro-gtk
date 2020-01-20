@@ -99,6 +99,7 @@ retro_gtk_deps = [
   gtk,
   libpulse_simple,
   m,
+  samplerate,
 ]
 
 retro_gtk_lib = shared_library(

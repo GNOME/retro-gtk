@@ -47,6 +47,7 @@ static GParamSpec *properties [N_PROPS];
 enum {
   SIG_VIDEO_OUTPUT_SIGNAL,
   SIG_AUDIO_OUTPUT_SIGNAL,
+  SIG_ITERATED_SIGNAL,
   SIG_LOG_SIGNAL,
   SIG_SHUTDOWN_SIGNAL,
   SIG_MESSAGE_SIGNAL,
@@ -520,6 +521,13 @@ retro_core_class_init (RetroCoreClass *klass)
                   G_TYPE_POINTER,
                   G_TYPE_ULONG,
                   G_TYPE_DOUBLE);
+
+  signals[SIG_ITERATED_SIGNAL] =
+    g_signal_new ("iterated", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  0);
 
   /**
    * RetroCore::log:
@@ -1661,6 +1669,8 @@ retro_core_run (RetroCore *self)
     run ();
     retro_core_pop_cb_data ();
 
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
+
     return;
   }
 
@@ -1677,6 +1687,8 @@ retro_core_run (RetroCore *self)
     retro_core_pop_cb_data ();
 
     g_critical ("Couldn't run ahead: serialization not supported.");
+
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
     return;
   }
@@ -1696,6 +1708,8 @@ retro_core_run (RetroCore *self)
                 G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
                 new_size, size);
 
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
+
     return;
   }
 
@@ -1711,6 +1725,8 @@ retro_core_run (RetroCore *self)
     g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
 
     g_free (data);
+
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
     return;
   }
@@ -1729,6 +1745,8 @@ retro_core_run (RetroCore *self)
 
     g_free (data);
 
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
+
     return;
   }
 
@@ -1737,15 +1755,21 @@ retro_core_run (RetroCore *self)
   success = unserialize ((guint8 *) data, size);
   retro_core_pop_cb_data ();
 
+  g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
+
   if (!success) {
     g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
 
     g_free (data);
 
+    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
+
     return;
   }
 
   g_free (data);
+
+  g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 }
 
 /**

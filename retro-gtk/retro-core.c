@@ -191,7 +191,6 @@ retro_core_finalize (GObject *object)
   g_free (self->content_directory);
   g_free (self->save_directory);
   g_clear_object (&self->keyboard_widget);
-  g_free (self->audio_samples);
 
   G_OBJECT_CLASS (retro_core_parent_class)->finalize (object);
 }

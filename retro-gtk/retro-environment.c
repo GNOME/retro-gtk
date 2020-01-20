@@ -6,8 +6,6 @@
 #include "retro-input-private.h"
 #include "retro-pixdata-private.h"
 
-#define AUDIO_SAMPLES_LENGTH 512
-
 #define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000
 #define RETRO_ENVIRONMENT_PRIVATE 0x20000
 #define RETRO_ENVIRONMENT_SET_ROTATION 1
@@ -584,6 +582,7 @@ on_audio_sample (gint16 left,
                  gint16 right)
 {
   RetroCore *self;
+  gint16 samples[] = { left, right };
 
   self = retro_core_get_cb_data ();
 
@@ -596,19 +595,7 @@ on_audio_sample (gint16 left,
   if (self->sample_rate <= 0.0)
     return;
 
-  if (self->audio_samples == NULL) {
-    self->audio_samples = g_malloc (AUDIO_SAMPLES_LENGTH * sizeof (gint16));
-    self->audio_samples_length = 0;
-  }
-
-  self->audio_samples[self->audio_samples_length] = left;
-  self->audio_samples[self->audio_samples_length + 1] = right;
-  self->audio_samples_length += 2;
-
-  if (self->audio_samples_length == AUDIO_SAMPLES_LENGTH) {
-    g_signal_emit_by_name (self, "audio_output", self->audio_samples, AUDIO_SAMPLES_LENGTH, self->sample_rate);
-    self->audio_samples_length = 0;
-  }
+  g_signal_emit_by_name (self, "audio_output", samples, 2, self->sample_rate);
 }
 
 static gsize

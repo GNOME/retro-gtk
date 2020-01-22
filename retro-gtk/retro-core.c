@@ -161,6 +161,7 @@ retro_core_finalize (GObject *object)
   g_return_if_fail (RETRO_IS_CORE (self));
 
   retro_core_stop (self);
+  retro_core_set_keyboard (self, NULL);
 
   retro_core_push_cb_data (self);
   if (retro_core_get_game_loaded (self)) {
@@ -2182,6 +2183,13 @@ retro_core_set_controller (RetroCore       *self,
   retro_core_set_controller_port_device (self, port, controller_type);
 }
 
+void
+keyboard_widget_notify (RetroCore *self,
+                        GObject   *keyboard_widget)
+{
+  self->keyboard_widget = NULL;
+}
+
 /**
  * retro_core_set_keyboard:
  * @self: a #RetroCore
@@ -2198,7 +2206,8 @@ retro_core_set_keyboard (RetroCore *self,
   if (self->keyboard_widget != NULL) {
     g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_press_event_id);
     g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_release_event_id);
-    g_clear_object (&self->keyboard_widget);
+    g_object_weak_unref (G_OBJECT (self->keyboard_widget), (GWeakNotify) keyboard_widget_notify, self);
+    self->keyboard_widget = NULL;
   }
 
   if (widget != NULL) {
@@ -2214,7 +2223,8 @@ retro_core_set_keyboard (RetroCore *self,
                                G_CALLBACK (on_key_event),
                                self,
                                0);
-    self->keyboard_widget = g_object_ref (widget);
+    self->keyboard_widget = widget;
+    g_object_weak_ref (G_OBJECT (widget), (GWeakNotify) keyboard_widget_notify, self);
   }
 }
 

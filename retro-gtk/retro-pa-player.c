@@ -2,6 +2,7 @@
 
 #include "retro-pa-player-private.h"
 
+#include "retro-core-private.h"
 #include <pulse/simple.h>
 #include <pulse/pulseaudio.h>
 
@@ -10,6 +11,8 @@ struct _RetroPaPlayer
   GObject parent_instance;
   RetroCore *core;
   gulong on_audio_output_id;
+  gulong on_iterated_id;
+  GArray *buffer;
   gdouble sample_rate;
   pa_simple *simple;
 };
@@ -30,6 +33,8 @@ retro_pa_player_finalize (GObject *object)
     self->simple = NULL;
   }
 
+  g_array_unref (self->buffer);
+
   G_OBJECT_CLASS (retro_pa_player_parent_class)->finalize (object);
 }
 
@@ -44,6 +49,7 @@ retro_pa_player_class_init (RetroPaPlayerClass *klass)
 static void
 retro_pa_player_init (RetroPaPlayer *self)
 {
+  self->buffer = g_array_new (FALSE, FALSE, sizeof (gint16));
 }
 
 static void
@@ -81,7 +87,19 @@ retro_pa_player_on_audio_output (RetroCore *sender,
 {
   RetroPaPlayer *self = RETRO_PA_PLAYER (user_data);
 
-  g_return_if_fail (RETRO_IS_PA_PLAYER (self));
+  g_array_append_vals (self->buffer, data, length);
+}
+
+static void
+on_iterated (RetroCore     *core,
+             RetroPaPlayer *self)
+{
+  gdouble sample_rate;
+
+  if (retro_core_is_running_ahead (self->core))
+    return;
+
+  sample_rate = retro_core_get_sample_rate (self->core);
 
   if (self->simple == NULL || sample_rate != self->sample_rate)
     retro_pa_player_prepare_for_sample_rate (self, sample_rate);
@@ -89,7 +107,12 @@ retro_pa_player_on_audio_output (RetroCore *sender,
   if (self->simple == NULL)
     return;
 
-  pa_simple_write (self->simple, data, sizeof (gint16) * length, NULL);
+  pa_simple_write (self->simple,
+                   self->buffer->data,
+                   self->buffer->len * sizeof (gint16),
+                   NULL);
+
+  g_array_set_size (self->buffer, 0);
 }
 
 /* Public */
@@ -113,6 +136,8 @@ retro_pa_player_set_core (RetroPaPlayer *self,
   if (self->core != NULL) {
     g_signal_handler_disconnect (G_OBJECT (self->core),
                                  self->on_audio_output_id);
+    g_signal_handler_disconnect (G_OBJECT (self->core),
+                                 self->on_iterated_id);
     g_clear_object (&self->core);
   }
 
@@ -122,6 +147,12 @@ retro_pa_player_set_core (RetroPaPlayer *self,
       g_signal_connect_object (core,
                                "audio-output",
                                (GCallback) retro_pa_player_on_audio_output,
+                               self,
+                               0);
+    self->on_iterated_id =
+      g_signal_connect_object (core,
+                               "iterated",
+                               (GCallback) on_iterated,
                                self,
                                0);
   }

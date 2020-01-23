@@ -40,7 +40,7 @@ void retro_core_set_medias (RetroCore           *self,
 void retro_core_set_current_media (RetroCore  *self,
                                    guint       media_index,
                                    GError    **error);
-void retro_core_start (RetroCore *self);
+void retro_core_run (RetroCore *self);
 void retro_core_stop (RetroCore *self);
 void retro_core_reset (RetroCore *self);
 void retro_core_iteration (RetroCore *self);

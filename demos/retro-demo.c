@@ -104,7 +104,7 @@ retro_demo_activate (GApplication *application)
   gtk_application_add_window (GTK_APPLICATION (application),
                               GTK_WINDOW (window));
 
-  retro_core_start (self->core);
+  retro_core_run (self->core);
 }
 
 static void

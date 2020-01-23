@@ -675,7 +675,7 @@ restart (RetroCore *self)
     return;
 
   retro_core_stop (self);
-  retro_core_start (self);
+  retro_core_run (self);
 }
 
 void
@@ -1582,14 +1582,14 @@ run_main_loop (RetroCore *self)
 }
 
 /**
- * retro_core_start:
+ * retro_core_run:
  * @self: a #RetroCore
  *
  * Starts running the core. If the core was stopped, it will restart from this
  * moment.
  */
 void
-retro_core_start (RetroCore *self)
+retro_core_run (RetroCore *self)
 {
   gdouble fps;
   GSource *source;

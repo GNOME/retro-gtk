@@ -43,7 +43,7 @@ void retro_core_set_current_media (RetroCore  *self,
 void retro_core_start (RetroCore *self);
 void retro_core_stop (RetroCore *self);
 void retro_core_reset (RetroCore *self);
-void retro_core_run (RetroCore *self);
+void retro_core_iteration (RetroCore *self);
 gboolean retro_core_get_can_access_state (RetroCore *self);
 void retro_core_save_state (RetroCore    *self,
                             const gchar  *filename,

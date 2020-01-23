@@ -1576,7 +1576,7 @@ run_main_loop (RetroCore *self)
   if (self->main_loop < 0)
     return FALSE;
 
-  retro_core_run (self);
+  retro_core_iteration (self);
 
   return TRUE;
 }
@@ -1649,13 +1649,13 @@ retro_core_reset (RetroCore *self)
 }
 
 /**
- * retro_core_run:
+ * retro_core_iteration:
  * @self: a #RetroCore
  *
  * Iterate @self for a frame.
  */
 void
-retro_core_run (RetroCore *self)
+retro_core_iteration (RetroCore *self)
 {
   RetroRun run;
   RetroSerializeSize serialize_size = NULL;

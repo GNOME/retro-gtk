@@ -356,7 +356,7 @@ retro_reftest_test_fast_forward (RetroReftestRun *run)
   g_assert_cmpuint (next_frame, <, target_frame);
 
   for (; next_frame < target_frame; next_frame++)
-    retro_core_run (run->data->core);
+    retro_core_iteration (run->data->core);
 
   run->data->next_frame = next_frame;
 
@@ -399,7 +399,7 @@ retro_reftest_test_run (RetroReftestRun *run)
     }
   }
 
-  retro_core_run (run->data->core);
+  retro_core_iteration (run->data->core);
   next_frame++;
 
   run->data->next_frame = next_frame;

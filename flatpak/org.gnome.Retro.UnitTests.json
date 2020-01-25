@@ -19,12 +19,6 @@
         "--socket=pulseaudio",
         "--talk-name=org.a11y.*"
     ],
-    "build-options" : {
-        "cflags" : "-O2 -g",
-        "cxxflags" : "-O2 -g",
-        "env" : {
-        }
-    },
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",

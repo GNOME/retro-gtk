@@ -1571,6 +1571,13 @@ retro_core_reset (RetroCore *self)
   reset ();
 }
 
+static inline void
+emit_iterated (RetroCore **self)
+{
+  if (*self)
+    g_signal_emit (*self, signals[SIG_ITERATED_SIGNAL], 0);
+}
+
 /**
  * retro_core_iteration:
  * @self: a #RetroCore
@@ -1588,16 +1595,16 @@ retro_core_iteration (RetroCore *self)
   gsize size;
   gsize new_size;
   gboolean success;
+  RetroCore *iterated __attribute__((cleanup(emit_iterated))) = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
+  iterated = self;
   run = retro_module_get_run (self->module);
 
   if (self->runahead == 0) {
     self->run_remaining = 0;
     run ();
-
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
     return;
   }
@@ -1610,8 +1617,6 @@ retro_core_iteration (RetroCore *self)
     run ();
 
     g_critical ("Couldn't run ahead: serialization not supported.");
-
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
     return;
   }
@@ -1628,8 +1633,6 @@ retro_core_iteration (RetroCore *self)
                 G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
                 new_size, size);
 
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
-
     return;
   }
 
@@ -1643,8 +1646,6 @@ retro_core_iteration (RetroCore *self)
     g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
 
     g_free (data);
-
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
     return;
   }
@@ -1661,8 +1662,6 @@ retro_core_iteration (RetroCore *self)
 
     g_free (data);
 
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
-
     return;
   }
 
@@ -1674,14 +1673,10 @@ retro_core_iteration (RetroCore *self)
 
     g_free (data);
 
-    g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
-
     return;
   }
 
   g_free (data);
-
-  g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 }
 
 /**

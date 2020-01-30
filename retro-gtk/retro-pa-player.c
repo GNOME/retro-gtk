@@ -109,7 +109,7 @@ resample (RetroPaPlayer *self,
 
   frames_used_in = 0;
   frames_used_out = 0;
-  while (frames_used_in < length) {
+  while (frames_used_in < length / 2) {
     SRC_DATA data;
 
     data.data_in = data_in + frames_used_in * sizeof (gfloat);

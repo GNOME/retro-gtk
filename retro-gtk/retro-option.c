@@ -2,6 +2,8 @@
 
 #include "retro-option-private.h"
 
+#include "retro-error-private.h"
+
 struct _RetroOption
 {
   GObject parent_instance;
@@ -157,16 +159,11 @@ retro_option_set_value (RetroOption  *self,
     if (g_strcmp0 (self->values[i], value) == 0)
       break;
 
-  if (G_UNLIKELY (self->values[i] == NULL)) {
-    g_set_error (error,
-                 RETRO_OPTION_ERROR,
-                 RETRO_OPTION_ERROR_INVALID_VALUE,
-                 "Unexpected option value: option %s doesn’t have value %s.",
-                 self->key,
-                 value);
-
-    return;
-  }
+  retro_throw_if_fail (error,
+    self->values[i] != NULL,
+    RETRO_OPTION_ERROR, RETRO_OPTION_ERROR_INVALID_VALUE,
+    "Unexpected option value: option %s doesn’t have value %s.",
+    self->key, value);
 
   self->value = i;
 
@@ -178,41 +175,31 @@ retro_option_new (const gchar  *key,
                   const gchar  *definition,
                   GError      **error)
 {
-  RetroOption *self;
+  g_autoptr (RetroOption) self;
   gchar *description_separator;
-  gchar **values;
+  g_auto(GStrv) values = NULL;
 
   g_return_val_if_fail (key != NULL, NULL);
   g_return_val_if_fail (definition != NULL, NULL);
 
   description_separator = g_strstr_len (definition, -1, "; ");
-  if (G_UNLIKELY (description_separator == NULL)) {
-    g_set_error_literal (error,
-                         RETRO_OPTION_ERROR,
-                         RETRO_OPTION_ERROR_NO_DESCRIPTION_SEPARATOR,
-                         "Unexpected variable format: no description separator found.");
-
-    return NULL;
-  }
+  retro_throw_val_if_fail (error,
+    description_separator != NULL, NULL,
+    RETRO_OPTION_ERROR, RETRO_OPTION_ERROR_NO_DESCRIPTION_SEPARATOR,
+    "Unexpected variable format: no description separator found.");
 
   values = g_strsplit (description_separator + 2, "|", 0);
-  if (G_UNLIKELY (*values == NULL)) {
-    g_strfreev (values);
-
-    g_set_error_literal (error,
-                         RETRO_OPTION_ERROR,
-                         RETRO_OPTION_ERROR_NO_VALUES,
-                         "Unexpected variable format: no values.");
-
-    return NULL;
-  }
+  retro_throw_val_if_fail (error,
+    *values != NULL, NULL,
+    RETRO_OPTION_ERROR, RETRO_OPTION_ERROR_NO_VALUES,
+    "Unexpected variable format: no values.");
 
   self = g_object_new (RETRO_TYPE_OPTION, NULL);
 
   self->key = g_strdup (key);
   self->description = g_strndup (definition,
                                  description_separator - definition);
-  self->values = values;
+  self->values = g_steal_pointer (&values);
 
-  return self;
+  return g_steal_pointer (&self);
 }

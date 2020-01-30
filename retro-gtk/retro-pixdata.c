@@ -368,6 +368,26 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
 gboolean
 retro_pixdata_load_gl_texture (RetroPixdata *self)
 {
+  GdkRectangle view = { 0, 0, self->width, self->height };
+
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  return retro_pixdata_load_gl_texture_full (self, &view);
+}
+
+/**
+ * retro_pixdata_load_gl_texture_full:
+ * @self: the #RetroPixdata
+ * @view: a view in the pixbuf
+ *
+ * Loads an OpenGL texture from a view in @self.
+ *
+ * Returns: whether the loading was successful
+ */
+gboolean
+retro_pixdata_load_gl_texture_full (RetroPixdata       *self,
+                                    const GdkRectangle *view)
+{
   GLenum format;
   GLenum type;
   gint pixel_size;
@@ -401,11 +421,11 @@ retro_pixdata_load_gl_texture (RetroPixdata *self)
   glTexImage2D (GL_TEXTURE_2D,
                 0,
                 GL_RGB,
-                self->width,
-                self->height,
+                view->width,
+                view->height,
                 0,
                 format, type,
-                self->data);
+                self->data + view->y * self->rowstride + view->x * pixel_size);
   glPixelStorei (GL_UNPACK_ROW_LENGTH, 0);
 
   return TRUE;

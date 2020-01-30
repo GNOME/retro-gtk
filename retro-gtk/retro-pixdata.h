@@ -6,6 +6,7 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
+#include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib-object.h>
 
@@ -24,6 +25,8 @@ gint retro_pixdata_get_height (RetroPixdata *self);
 gfloat retro_pixdata_get_aspect_ratio (RetroPixdata *self);
 GdkPixbuf *retro_pixdata_to_pixbuf (RetroPixdata *self);
 gboolean retro_pixdata_load_gl_texture (RetroPixdata *self);
+gboolean retro_pixdata_load_gl_texture_full (RetroPixdata       *self,
+                                             const GdkRectangle *view);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroPixdata, retro_pixdata_free)
 

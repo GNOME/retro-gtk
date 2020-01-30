@@ -11,6 +11,7 @@ retro_runner_sources = [
   'retro-main-loop-source.c',
   'retro-module.c',
   'retro-pa-player.c',
+  'retro-renderer.c',
 
   ipc_runner_src,
 ]

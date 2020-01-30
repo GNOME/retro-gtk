@@ -1762,8 +1762,6 @@ retro_core_iteration (RetroCore *self)
   success = unserialize ((guint8 *) data, size);
   retro_core_pop_cb_data ();
 
-  g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
-
   if (!success) {
     g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
 

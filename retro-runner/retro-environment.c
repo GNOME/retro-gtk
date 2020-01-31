@@ -540,7 +540,8 @@ on_video_refresh (guint8 *data,
                               width, height, self->aspect_ratio, data);
   retro_framebuffer_unlock (self->framebuffer);
 
-  g_signal_emit_by_name (self, "video-output");
+  if (!self->block_video_signal)
+    g_signal_emit_by_name (self, "video-output");
 }
 
 // TODO This is internal, make it private as soon as possible.

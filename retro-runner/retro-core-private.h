@@ -57,6 +57,9 @@ struct _RetroCore
   gssize run_remaining;
   gdouble speed_rate;
   glong main_loop;
+
+  gboolean has_run;
+  gboolean block_video_signal;
 };
 
 RetroCore *retro_core_get_instance (void);

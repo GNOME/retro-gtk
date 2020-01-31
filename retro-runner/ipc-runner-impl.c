@@ -21,7 +21,6 @@ struct _IpcRunnerImpl
 #endif
 
   GVariant *variables;
-  gboolean block_video_signal;
 };
 
 static void ipc_runner_iface_init (IpcRunnerIface *iface);
@@ -212,9 +211,9 @@ ipc_runner_impl_handle_iteration (IpcRunner             *runner,
   /* For this call UI process will do the video handling itself
    * to ensure it's synchronous, no signal emission needed.
    * See retro_core_iteration() in retro-core/retro-core.c */
-  self->block_video_signal = TRUE;
+  self->core->block_video_signal = TRUE;
   retro_core_iteration (self->core);
-  self->block_video_signal = FALSE;
+  self->core->block_video_signal = FALSE;
 
   ipc_runner_complete_iteration (runner, invocation);
 
@@ -522,8 +521,7 @@ static void
 video_output_cb (RetroCore     *core,
                  IpcRunnerImpl *self)
 {
-  if (!self->block_video_signal)
-    ipc_runner_emit_video_output (IPC_RUNNER (self));
+  ipc_runner_emit_video_output (IPC_RUNNER (self));
 }
 
 static void

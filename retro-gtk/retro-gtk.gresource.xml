@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/gnome/Retro">
+    <file>glsl-filters/bicubic.filter</file>
+    <file>glsl-filters/bicubic.fs</file>
     <file>glsl-filters/crt-simple.filter</file>
     <file>glsl-filters/crt-simple.fs</file>
     <file>glsl-filters/crt-simple.vs</file>
+    <file>glsl-filters/sharp.filter</file>
+    <file>glsl-filters/sharp.fs</file>
+    <file>glsl-filters/sharp.vs</file>
   </gresource>
 </gresources>

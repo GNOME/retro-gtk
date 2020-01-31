@@ -1,0 +1,8 @@
+[GLSL Filter]
+Filter=Linear
+Wrap=Border
+Vertex=sharp.vs
+Fragment=bicubic.fs
+Authors=hunterk;
+License=GPL-2.0+;
+URL=https://github.com/hizzlekizzle/quark-shaders/tree/master/Bicubic.shader

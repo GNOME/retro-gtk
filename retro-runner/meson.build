@@ -7,6 +7,7 @@ retro_runner_sources = [
   'retro-core.c',
   'retro-environment.c',
   'retro-game-info.c',
+  'retro-gl-renderer.c',
   'retro-input-descriptor.c',
   'retro-main-loop-source.c',
   'retro-module.c',
@@ -17,6 +18,7 @@ retro_runner_sources = [
 ]
 
 retro_runner_deps = [
+  epoxy,
   gio,
   gio_unix,
   gmodule,

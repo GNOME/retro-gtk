@@ -232,6 +232,14 @@ retro_framebuffer_set_data (RetroFramebuffer *self,
     memcpy (self->framebuffer, data, size);
 }
 
+gpointer
+retro_framebuffer_get_pixels (RetroFramebuffer *self)
+{
+  g_return_val_if_fail (RETRO_IS_FRAMEBUFFER (self), NULL);
+
+  return self->framebuffer;
+}
+
 #else
 
 gboolean

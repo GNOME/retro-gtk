@@ -31,6 +31,7 @@ void retro_framebuffer_set_data (RetroFramebuffer *self,
                                  guint             height,
                                  gfloat            aspect_ratio,
                                  gpointer          data);
+gpointer retro_framebuffer_get_pixels (RetroFramebuffer *self);
 
 #else
 

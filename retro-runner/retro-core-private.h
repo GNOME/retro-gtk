@@ -14,6 +14,7 @@
 #include "retro-input-descriptor-private.h"
 #include "retro-module-private.h"
 #include "retro-pixel-format-private.h"
+#include "retro-renderer-private.h"
 #include "retro-rotation-private.h"
 #include "retro-variable-private.h"
 
@@ -47,6 +48,7 @@ struct _RetroCore
   gdouble sample_rate;
 
   RetroFramebuffer *framebuffer;
+  RetroRenderer *renderer;
   RetroKeyboardCallback keyboard_callback;
   RetroControllerState *default_controller;
   GHashTable *controllers;

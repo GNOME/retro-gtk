@@ -4,6 +4,8 @@
 
 #include <stdbool.h>
 #include "retro-input-private.h"
+#include "retro-gl-renderer-private.h"
+#include "retro-hw-render-callback-private.h"
 #include "retro-rumble-effect.h"
 
 #define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000
@@ -303,6 +305,51 @@ get_variable_update (RetroCore *self,
   return TRUE;
 }
 
+static RetroProcAddress
+hw_rendering_callback_get_proc_address (const gchar *sym)
+{
+  RetroCore *self = retro_core_get_instance ();
+
+  return retro_renderer_get_proc_address (self->renderer, sym);
+}
+
+static guintptr
+hw_rendering_callback_get_current_framebuffer ()
+{
+  RetroCore *self = retro_core_get_instance ();
+
+  return retro_renderer_get_current_framebuffer (self->renderer);
+}
+
+static gboolean
+set_hw_render (RetroCore             *self,
+               RetroHWRenderCallback *callback)
+{
+  switch (callback->context_type) {
+  case RETRO_HW_CONTEXT_OPENGL:
+  case RETRO_HW_CONTEXT_OPENGL_CORE:
+  case RETRO_HW_CONTEXT_OPENGLES2:
+  case RETRO_HW_CONTEXT_OPENGLES3:
+  case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+    self->renderer = retro_gl_renderer_new (self, callback);
+    break;
+
+  case RETRO_HW_CONTEXT_VULKAN:
+    g_critical ("Vulkan support isn't implemented");
+
+    return FALSE;
+  default:
+    g_critical ("Unknown context type: %d", callback->context_type);
+
+    return FALSE;
+  }
+
+  callback->get_current_framebuffer = hw_rendering_callback_get_current_framebuffer;
+  callback->get_proc_address = hw_rendering_callback_get_proc_address;
+
+  return TRUE;
+}
+
 static gboolean
 set_disk_control_interface (RetroCore                *self,
                             RetroDiskControlCallback *callback)
@@ -460,6 +507,9 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_GEOMETRY:
     return set_geometry (self, (RetroGameGeometry *) data);
 
+  case RETRO_ENVIRONMENT_SET_HW_RENDER:
+    return set_hw_render (self, (RetroHWRenderCallback *) data);
+
   case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
     return set_input_descriptors (self, (RetroInputDescriptor *) data);
 
@@ -497,7 +547,6 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
   case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
   case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:
-  case RETRO_ENVIRONMENT_SET_HW_RENDER:
   case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE:
   case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
   case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
@@ -536,8 +585,33 @@ video_refresh_cb (guint8 *data,
     return;
 
   retro_framebuffer_lock (self->framebuffer);
-  retro_framebuffer_set_data (self->framebuffer, self->pixel_format, pitch,
-                              width, height, self->aspect_ratio, data);
+
+  if (self->renderer) {
+    gint pixel_size;
+
+    if (data && data != RETRO_HW_FRAME_BUFFER_VALID) {
+      g_critical ("Video data must be NULL or RETRO_HW_FRAME_BUFFER_VALID if "
+                  "rendering to hardware.");
+
+      return;
+    }
+
+    if (!retro_pixel_format_to_gl (self->pixel_format, NULL, NULL, &pixel_size))
+      return;
+
+    pitch = width * pixel_size;
+
+    retro_framebuffer_set_data (self->framebuffer, self->pixel_format, pitch,
+                                width, height, self->aspect_ratio, NULL);
+
+    data = retro_framebuffer_get_pixels (self->framebuffer);
+
+    retro_renderer_snapshot (self->renderer, self->pixel_format, width, height, pitch, data);
+  }
+  else
+    retro_framebuffer_set_data (self->framebuffer, self->pixel_format, pitch,
+                                width, height, self->aspect_ratio, data);
+
   retro_framebuffer_unlock (self->framebuffer);
 
   if (!self->block_video_signal)

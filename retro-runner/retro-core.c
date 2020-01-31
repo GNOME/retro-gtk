@@ -132,6 +132,7 @@ retro_core_finalize (GObject *object)
   g_free (self->libretro_path);
   g_free (self->content_directory);
   g_free (self->save_directory);
+  g_clear_object (&self->renderer);
 
   G_OBJECT_CLASS (retro_core_parent_class)->finalize (object);
 }
@@ -918,6 +919,8 @@ load_game (RetroCore     *self,
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
+  if (self->renderer)
+    retro_renderer_realize (self->renderer, info.geometry.max_width, info.geometry.max_height);
 
   return game_loaded;
 }
@@ -935,6 +938,8 @@ prepare (RetroCore *self) {
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
+  if (self->renderer)
+    retro_renderer_realize (self->renderer, info.geometry.max_width, info.geometry.max_height);
 
   return game_loaded;
 }

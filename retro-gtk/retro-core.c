@@ -903,7 +903,7 @@ video_output_cb (IpcRunner *runner,
   gsize rowstride;
   guint width, height;
   gdouble aspect_ratio;
-  gpointer pixels;
+  gconstpointer pixels;
 
   retro_framebuffer_lock (self->framebuffer);
 

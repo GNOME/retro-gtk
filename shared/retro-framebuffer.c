@@ -282,7 +282,7 @@ retro_framebuffer_get_aspect_ratio (RetroFramebuffer *self)
   return self->metadata->aspect_ratio;
 }
 
-gpointer
+gconstpointer
 retro_framebuffer_get_pixels (RetroFramebuffer *self)
 {
   gsize size;

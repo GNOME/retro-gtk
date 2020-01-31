@@ -18,7 +18,6 @@ struct _RetroGLDisplay
   gulong on_video_output_id;
 
   RetroGLSLFilter *glsl_filter[RETRO_VIDEO_FILTER_COUNT];
-  GLuint framebuffer;
   GLuint texture;
 };
 
@@ -46,8 +45,8 @@ static GLuint elements[] = {
 };
 
 static const gchar *filter_uris[] = {
-  NULL,
-  NULL,
+  "resource:///org/gnome/Retro/glsl-filters/bicubic.filter",
+  "resource:///org/gnome/Retro/glsl-filters/sharp.filter",
   "resource:///org/gnome/Retro/glsl-filters/crt-simple.filter",
 };
 
@@ -154,34 +153,6 @@ retro_gl_display_load_texture (RetroGLDisplay *self,
 }
 
 static void
-retro_gl_display_blit_texture (RetroGLDisplay *self,
-                               GLenum          filter,
-                               gint            texture_width,
-                               gint            texture_height)
-{
-  gdouble w = 0.0;
-  gdouble h = 0.0;
-  gdouble x = 0.0;
-  gdouble y = 0.0;
-
-  retro_gl_display_get_video_box (self, &w, &h, &x, &y);
-
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, self->framebuffer);
-  glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                         GL_TEXTURE_2D, self->texture, 0);
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-  glBindFramebuffer (GL_READ_FRAMEBUFFER, self->framebuffer);
-  glBlitFramebuffer (0, 0,
-                     texture_width,
-                     texture_height,
-                     (GLint) x, (GLint) (y + h), (GLint) (x + w), (GLint) y,
-                     GL_COLOR_BUFFER_BIT,
-                     filter);
-  glBindFramebuffer (GL_READ_FRAMEBUFFER, 0);
-}
-
-static void
 retro_gl_display_draw_texture (RetroGLDisplay  *self,
                                RetroGLSLFilter *filter,
                                gint             texture_width,
@@ -220,7 +191,6 @@ retro_gl_display_draw_texture (RetroGLDisplay  *self,
                                     1.0f / output_width, 1.0f / output_height);
 
   glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 }
 
 static void
@@ -246,9 +216,6 @@ retro_gl_display_realize (RetroGLDisplay *self)
   glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (elements), elements, GL_STATIC_DRAW);
 
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
-    if (filter_uris[filter] == NULL)
-      continue;
-
     self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], NULL);
     retro_glsl_filter_prepare_program (self->glsl_filter[filter], &inner_error);
     if (G_UNLIKELY (inner_error != NULL)) {
@@ -278,10 +245,6 @@ retro_gl_display_realize (RetroGLDisplay *self)
                                              (const GLvoid *) offsetof (RetroVertex, texture_coordinates));
   }
 
-  glDeleteFramebuffers (1, &self->framebuffer);
-  self->framebuffer = 0;
-  glGenFramebuffers(1, &self->framebuffer);
-
   glDeleteTextures (1, &self->texture);
   self->texture = 0;
   glGenTextures (1, &self->texture);
@@ -304,8 +267,6 @@ retro_gl_display_unrealize (RetroGLDisplay *self)
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
-  glDeleteFramebuffers (1, &self->framebuffer);
-  self->framebuffer = 0;
   glDeleteTextures (1, &self->texture);
   self->texture = 0;
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
@@ -327,26 +288,10 @@ retro_gl_display_render (RetroGLDisplay *self)
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
+  g_assert (self->glsl_filter[filter] != NULL);
+
   if (!retro_gl_display_load_texture (self, &texture_width, &texture_height))
     return FALSE;
-
-  if (filter == RETRO_VIDEO_FILTER_SMOOTH) {
-    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
-
-    return FALSE;
-  }
-
-  if (filter == RETRO_VIDEO_FILTER_SHARP) {
-    retro_gl_display_blit_texture (self, GL_NEAREST, texture_width, texture_height);
-
-    return FALSE;
-  }
-
-  if (self->glsl_filter[filter] == NULL) {
-    retro_gl_display_blit_texture (self, GL_LINEAR, texture_width, texture_height);
-
-    return FALSE;
-  }
 
   retro_gl_display_draw_texture (self, self->glsl_filter[filter], texture_width, texture_height);
 

@@ -37,7 +37,7 @@ retro_controller_iterator_init (RetroControllerIterator *self)
  * retro_controller_iterator_next:
  * @self: a #RetroControllerIterator
  * @port: (out) (optional): return location for the port
- * @controller: (out) (optional) (nullable): return location for the controller
+ * @controller: (out) (optional) (transfer none): return location for the controller
  *
  * Fetch the next #RetroController and the port number it is plugged into.
  *

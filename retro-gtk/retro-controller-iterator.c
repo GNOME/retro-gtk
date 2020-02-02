@@ -45,7 +45,7 @@ retro_controller_iterator_init (RetroControllerIterator *self)
  */
 gboolean
 retro_controller_iterator_next (RetroControllerIterator  *self,
-                                guint                   **port,
+                                guint                    *port,
                                 RetroController         **controller)
 {
   gpointer key, val;
@@ -56,7 +56,7 @@ retro_controller_iterator_next (RetroControllerIterator  *self,
   ret = g_hash_table_iter_next (&self->iterator, &key, &val);
 
   if (port)
-    *port = key;
+    *port = GPOINTER_TO_UINT (key);
 
   if (controller)
     *controller = val;

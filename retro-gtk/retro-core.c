@@ -589,8 +589,8 @@ retro_core_init (RetroCore *self)
   self->option_overrides = g_hash_table_new_full (g_str_hash, g_str_equal,
                                                   g_free, g_free);
 
-  self->controllers = g_hash_table_new_full (g_int_hash, g_int_equal,
-                                             g_free, g_object_unref);
+  self->controllers = g_hash_table_new_full (g_direct_hash, g_direct_equal,
+                                             NULL, g_object_unref);
 
   self->main_loop = -1;
   self->speed_rate = 1;
@@ -1450,7 +1450,7 @@ retro_core_boot (RetroCore  *self,
 {
   RetroInit init;
   RetroControllerIterator *controller_iterator;
-  guint *port;
+  guint port;
   RetroController *controller;
   RetroControllerType controller_type;
   GError *tmp_error = NULL;
@@ -1469,7 +1469,7 @@ retro_core_boot (RetroCore  *self,
                                          &port,
                                          &controller)) {
     controller_type = retro_controller_get_controller_type (controller);
-    retro_core_set_controller_port_device (self, *port, controller_type);
+    retro_core_set_controller_port_device (self, port, controller_type);
   }
   g_object_unref (controller_iterator);
 
@@ -2132,7 +2132,7 @@ retro_core_get_controller_input_state (RetroCore  *self,
   controller_type = retro_input_get_controller_type (input) &
                     RETRO_CONTROLLER_TYPE_TYPE_MASK;
 
-  controller = g_hash_table_lookup (self->controllers, &port);
+  controller = g_hash_table_lookup (self->controllers, GUINT_TO_POINTER (port));
   if (controller != NULL &&
       retro_controller_has_capability (controller, controller_type))
     return retro_controller_get_input_state (controller, input);
@@ -2201,21 +2201,18 @@ retro_core_set_controller (RetroCore       *self,
                            guint            port,
                            RetroController *controller)
 {
-  guint *port_copy;
   RetroControllerType controller_type;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
   if (RETRO_IS_CONTROLLER (controller)) {
-    port_copy = g_new (guint, 1);
-    *port_copy = port;
     g_hash_table_insert (self->controllers,
-                         port_copy,
+                         GUINT_TO_POINTER (port),
                          g_object_ref (controller));
     controller_type = retro_controller_get_controller_type (controller);
   }
   else {
-    g_hash_table_remove (self->controllers, &port);
+    g_hash_table_remove (self->controllers, GUINT_TO_POINTER (port));
     controller_type = RETRO_CONTROLLER_TYPE_NONE;
   }
 

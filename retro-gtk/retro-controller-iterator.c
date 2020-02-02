@@ -48,11 +48,20 @@ retro_controller_iterator_next (RetroControllerIterator  *self,
                                 guint                   **port,
                                 RetroController         **controller)
 {
-  g_return_val_if_fail (RETRO_IS_CONTROLLER_ITERATOR (self), FALSE);
-  g_return_val_if_fail (port != NULL, FALSE);
-  g_return_val_if_fail (controller != NULL, FALSE);
+  gpointer key, val;
+  gboolean ret;
 
-  return g_hash_table_iter_next (&self->iterator, (gpointer *) port, (gpointer *) controller);
+  g_return_val_if_fail (RETRO_IS_CONTROLLER_ITERATOR (self), FALSE);
+
+  ret = g_hash_table_iter_next (&self->iterator, &key, &val);
+
+  if (port)
+    *port = key;
+
+  if (controller)
+    *controller = val;
+
+  return ret;
 }
 
 /**

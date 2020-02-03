@@ -1911,17 +1911,12 @@ retro_core_load_state (RetroCore    *self,
     return;
   }
 
-  if (data_size > expected_size) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-                 "Couldn't deserialize the internal state: expected at most %"
-                 G_GSIZE_FORMAT" bytes, got %"G_GSIZE_FORMAT".",
-                 expected_size,
-                 data_size);
-
-    return;
-  }
+  if (data_size != expected_size)
+    g_critical ("%s expects %"G_GSIZE_FORMAT" bytes for its internal state, but %"
+                G_GSIZE_FORMAT" bytes were passed.",
+                retro_core_get_name (self),
+                expected_size,
+                data_size);
 
   unserialize = retro_module_get_unserialize (self->module);
 

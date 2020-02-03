@@ -159,6 +159,9 @@ on_iterated (RetroCore     *core,
   if (retro_core_is_running_ahead (self->core))
     return;
 
+  if (self->buffer->len == 0)
+    return;
+
   sample_rate = retro_core_get_sample_rate (self->core);
   speed_rate = retro_core_get_speed_rate (self->core);
 

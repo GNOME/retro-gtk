@@ -58,77 +58,19 @@ enum {
 
 static guint signals[N_SIGNALS];
 
-#define RETRO_CORE_OBJECTS_LENGTH 32
-
-static GRecMutex retro_core_r_mutex = { 0 };
-static GRecMutex retro_core_w_mutex = { 0 };
-static RetroCore *retro_core_objects[32];
-static gint retro_core_i = 0;
+static RetroCore *retro_core_instance = NULL;
 
 static void retro_core_set_filename (RetroCore   *self,
                                      const gchar *filename);
 
 /* Private */
 
-void
-retro_core_push_cb_data (RetroCore *self)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  g_rec_mutex_lock (&retro_core_w_mutex);
-  g_rec_mutex_lock (&retro_core_r_mutex);
-
-  if (G_UNLIKELY (retro_core_i == RETRO_CORE_OBJECTS_LENGTH)) {
-    g_critical ("RetroCore callback data stack overflow.");
-
-    g_rec_mutex_unlock (&retro_core_r_mutex);
-    g_assert_not_reached ();
-  }
-
-  retro_core_objects[retro_core_i] = self;
-  retro_core_i++;
-
-  g_rec_mutex_unlock (&retro_core_r_mutex);
-}
-
-void
-retro_core_pop_cb_data (void)
-{
-  g_rec_mutex_lock (&retro_core_r_mutex);
-
-  if (G_UNLIKELY (retro_core_i == 0)) {
-    g_critical ("RetroCore callback data stack underflow.");
-
-    g_rec_mutex_unlock (&retro_core_r_mutex);
-    g_rec_mutex_unlock (&retro_core_w_mutex);
-    g_assert_not_reached ();
-  }
-  retro_core_i--;
-
-  retro_core_objects[retro_core_i] = NULL;
-
-  g_rec_mutex_unlock (&retro_core_r_mutex);
-  g_rec_mutex_unlock (&retro_core_w_mutex);
-}
-
 RetroCore *
-retro_core_get_cb_data (void)
+retro_core_get_instance (void)
 {
-  RetroCore *result;
+  g_assert (RETRO_IS_CORE (retro_core_instance));
 
-  g_rec_mutex_lock (&retro_core_r_mutex);
-
-  if (retro_core_i == 0) {
-    g_critical ("RetroCore callback data segmentation fault.");
-
-    g_rec_mutex_unlock (&retro_core_r_mutex);
-    g_assert_not_reached ();
-  }
-
-  result = retro_core_objects[retro_core_i - 1];
-  g_rec_mutex_unlock (&retro_core_r_mutex);
-
-  return result;
+  return retro_core_instance;
 }
 
 void retro_core_set_callbacks (RetroCore *self);
@@ -169,14 +111,12 @@ retro_core_finalize (GObject *object)
 
   retro_core_stop (self);
 
-  retro_core_push_cb_data (self);
   if (retro_core_get_game_loaded (self)) {
     unload_game = retro_module_get_unload_game (self->module);
     unload_game ();
   }
   deinit = retro_module_get_deinit (self->module);
   deinit ();
-  retro_core_pop_cb_data ();
 
   if (self->media_uris != NULL)
     g_strfreev (self->media_uris);
@@ -682,10 +622,8 @@ retro_core_get_system_info (RetroCore       *self,
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (system_info != NULL);
 
-  retro_core_push_cb_data (self);
   get_system_info = retro_module_get_get_system_info (self->module);
   get_system_info (system_info);
-  retro_core_pop_cb_data ();
 }
 
 static gboolean
@@ -770,7 +708,6 @@ retro_core_set_disk_ejected (RetroCore  *self,
                              GError    **error)
 {
   RetroDiskControlCallbackSetEjectState set_eject_state;
-  gboolean result;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
@@ -785,11 +722,7 @@ retro_core_set_disk_ejected (RetroCore  *self,
     return FALSE;
   }
 
-  retro_core_push_cb_data (self);
-  result = set_eject_state (ejected);
-  retro_core_pop_cb_data ();
-
-  return result;
+  return set_eject_state (ejected);
 }
 
 static gboolean
@@ -798,7 +731,6 @@ retro_core_set_disk_image_index (RetroCore  *self,
                                  GError    **error)
 {
   RetroDiskControlCallbackSetImageIndex set_image_index;
-  gboolean result;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
@@ -813,11 +745,7 @@ retro_core_set_disk_image_index (RetroCore  *self,
     return FALSE;
   }
 
-  retro_core_push_cb_data (self);
-  result = set_image_index (index);
-  retro_core_pop_cb_data ();
-
-  return result;
+  return set_image_index (index);
 }
 
 static guint
@@ -825,7 +753,6 @@ retro_core_get_disk_images_number (RetroCore  *self,
                                    GError    **error)
 {
   RetroDiskControlCallbackGetNumImages get_num_images;
-  guint result;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
@@ -840,11 +767,7 @@ retro_core_get_disk_images_number (RetroCore  *self,
     return FALSE;
   }
 
-  retro_core_push_cb_data (self);
-  result = get_num_images ();
-  retro_core_pop_cb_data ();
-
-  return result;
+  return get_num_images ();
 }
 
 static gboolean
@@ -854,7 +777,6 @@ retro_core_replace_disk_image_index (RetroCore     *self,
                                      GError        **error)
 {
   RetroDiskControlCallbackReplaceImageIndex replace_image_index;
-  gboolean result;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
@@ -869,11 +791,7 @@ retro_core_replace_disk_image_index (RetroCore     *self,
     return FALSE;
   }
 
-  retro_core_push_cb_data (self);
-  result = replace_image_index (index, info);
-  retro_core_pop_cb_data ();
-
-  return result;
+  return replace_image_index (index, info);
 }
 
 static gboolean
@@ -881,7 +799,6 @@ retro_core_add_disk_image_index (RetroCore  *self,
                                  GError    **error)
 {
   RetroDiskControlCallbackAddImageIndex add_image_index;
-  gboolean result;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
@@ -896,11 +813,7 @@ retro_core_add_disk_image_index (RetroCore  *self,
     return FALSE;
   }
 
-  retro_core_push_cb_data (self);
-  result = add_image_index ();
-  retro_core_pop_cb_data ();
-
-  return result;
+  return add_image_index ();
 }
 
 static void
@@ -1001,20 +914,16 @@ retro_core_load_game (RetroCore     *self,
   g_return_val_if_fail (game != NULL, FALSE);
 
   if (retro_core_get_game_loaded (self)) {
-    retro_core_push_cb_data (self);
     unload_game = retro_module_get_unload_game (self->module);
     unload_game ();
-    retro_core_pop_cb_data ();
   }
 
-  retro_core_push_cb_data (self);
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (game);
   retro_core_set_game_loaded (self, game_loaded);
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
-  retro_core_pop_cb_data ();
 
   return game_loaded;
 }
@@ -1028,14 +937,12 @@ retro_core_prepare (RetroCore *self) {
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
-  retro_core_push_cb_data (self);
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (NULL);
   retro_core_set_game_loaded (self, game_loaded);
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
-  retro_core_pop_cb_data ();
 
   return game_loaded;
 }
@@ -1181,17 +1088,13 @@ retro_core_get_framebuffer_fd (RetroCore *self)
 guint
 retro_core_get_api_version (RetroCore *self)
 {
-  guint result;
   RetroApiVersion api_version;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), 0U);
 
-  retro_core_push_cb_data (self);
   api_version = retro_module_get_api_version (self->module);
-  result = api_version ();
-  retro_core_pop_cb_data ();
 
-  return result;
+  return api_version ();
 }
 
 /**
@@ -1429,10 +1332,8 @@ retro_core_boot (RetroCore  *self,
 
   retro_core_set_environment_interface (self);
 
-  retro_core_push_cb_data (self);
   init = retro_module_get_init (self->module);
   init ();
-  retro_core_pop_cb_data ();
 
   retro_core_set_is_initiated (self, TRUE);
 
@@ -1541,10 +1442,8 @@ retro_core_set_controller (RetroCore           *self,
     g_hash_table_insert (self->controllers, GUINT_TO_POINTER (port),
                          retro_controller_state_new (fd));
 
-  retro_core_push_cb_data (self);
   set_controller_port_device = retro_module_get_set_controller_port_device (self->module);
   set_controller_port_device (port, controller_type);
-  retro_core_pop_cb_data ();
 }
 
 gboolean
@@ -1576,9 +1475,7 @@ retro_core_send_input_key_event (RetroCore                *self,
   if (self->keyboard_callback.callback == NULL)
     return;
 
-  retro_core_push_cb_data (self);
   self->keyboard_callback.callback (down, keycode, character, key_modifiers);
-  retro_core_pop_cb_data ();
 }
 
 static gboolean
@@ -1653,10 +1550,8 @@ retro_core_reset (RetroCore *self)
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  retro_core_push_cb_data (self);
   reset = retro_module_get_reset (self->module);
   reset ();
-  retro_core_pop_cb_data ();
 }
 
 /**
@@ -1683,9 +1578,7 @@ retro_core_iteration (RetroCore *self)
 
   if (self->runahead == 0) {
     self->run_remaining = 0;
-    retro_core_push_cb_data (self);
     run ();
-    retro_core_pop_cb_data ();
 
     g_signal_emit (self, signals[SIG_ITERATED_SIGNAL], 0);
 
@@ -1693,16 +1586,11 @@ retro_core_iteration (RetroCore *self)
   }
 
   serialize_size = retro_module_get_serialize_size (self->module);
-
-  retro_core_push_cb_data (self);
   size = serialize_size ();
-  retro_core_pop_cb_data ();
 
   if (size == 0) {
     self->run_remaining = 0;
-    retro_core_push_cb_data (self);
     run ();
-    retro_core_pop_cb_data ();
 
     g_critical ("Couldn't run ahead: serialization not supported.");
 
@@ -1712,10 +1600,7 @@ retro_core_iteration (RetroCore *self)
   }
 
   self->run_remaining = self->runahead;
-
-  retro_core_push_cb_data (self);
   run ();
-  retro_core_pop_cb_data ();
 
   self->run_remaining--;
 
@@ -1735,9 +1620,7 @@ retro_core_iteration (RetroCore *self)
   data = g_new0 (guint8, size);
 
   serialize = retro_module_get_serialize (self->module);
-  retro_core_push_cb_data (self);
   success = serialize (data, size);
-  retro_core_pop_cb_data ();
 
   if (!success) {
     g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
@@ -1749,10 +1632,8 @@ retro_core_iteration (RetroCore *self)
     return;
   }
 
-  retro_core_push_cb_data (self);
   for (; self->run_remaining >= 0; self->run_remaining--)
     run ();
-  retro_core_pop_cb_data ();
 
   new_size = serialize_size ();
 
@@ -1769,9 +1650,7 @@ retro_core_iteration (RetroCore *self)
   }
 
   unserialize = retro_module_get_unserialize (self->module);
-  retro_core_push_cb_data (self);
   success = unserialize ((guint8 *) data, size);
-  retro_core_pop_cb_data ();
 
   if (!success) {
     g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
@@ -1804,10 +1683,8 @@ retro_core_get_can_access_state (RetroCore *self)
 
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
-  retro_core_push_cb_data (self);
   serialize_size = retro_module_get_serialize_size (self->module);
   size = serialize_size ();
-  retro_core_pop_cb_data ();
 
   return size > 0;
 }
@@ -1836,10 +1713,7 @@ retro_core_save_state (RetroCore    *self,
   g_return_if_fail (filename != NULL);
 
   serialize_size = retro_module_get_serialize_size (self->module);
-
-  retro_core_push_cb_data (self);
   size = serialize_size ();
-  retro_core_pop_cb_data ();
 
   if (size <= 0) {
     g_set_error (error,
@@ -1853,9 +1727,7 @@ retro_core_save_state (RetroCore    *self,
   serialize = retro_module_get_serialize (self->module);
   data = g_new0 (guint8, size);
 
-  retro_core_push_cb_data (self);
   success = serialize (data, size);
-  retro_core_pop_cb_data ();
 
   if (!success) {
     g_set_error (error,
@@ -1908,10 +1780,7 @@ retro_core_load_state (RetroCore    *self,
   }
 
   serialize_size = retro_module_get_serialize_size (self->module);
-
-  retro_core_push_cb_data (self);
   expected_size = serialize_size ();
-  retro_core_pop_cb_data ();
 
   if (expected_size == 0) {
     g_set_error (error,
@@ -1930,10 +1799,7 @@ retro_core_load_state (RetroCore    *self,
                 data_size);
 
   unserialize = retro_module_get_unserialize (self->module);
-
-  retro_core_push_cb_data (self);
   success = unserialize ((guint8 *) data, data_size);
-  retro_core_pop_cb_data ();
 
   if (!success) {
     g_set_error (error,
@@ -1956,17 +1822,13 @@ gsize
 retro_core_get_memory_size (RetroCore       *self,
                             RetroMemoryType  memory_type)
 {
-  gsize size;
   RetroGetMemorySize get_memory_size;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), 0UL);
 
-  retro_core_push_cb_data (self);
   get_memory_size = retro_module_get_get_memory_size (self->module);
-  size = get_memory_size (memory_type);
-  retro_core_pop_cb_data ();
 
-  return size;
+  return get_memory_size (memory_type);
 }
 
 /**
@@ -1995,11 +1857,8 @@ retro_core_save_memory (RetroCore        *self,
 
   get_mem_data = retro_module_get_get_memory_data (self->module);
   get_mem_size = retro_module_get_get_memory_size (self->module);
-
-  retro_core_push_cb_data (self);
   data = get_mem_data (memory_type);
   size = get_mem_size (memory_type);
-  retro_core_pop_cb_data ();
 
   g_file_set_contents (filename, data, size, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL))
@@ -2037,11 +1896,8 @@ retro_core_load_memory (RetroCore        *self,
 
   get_mem_region = retro_module_get_get_memory_data (self->module);
   get_mem_region_size = retro_module_get_get_memory_size (self->module);
-
-  retro_core_push_cb_data (self);
   memory_region = get_mem_region (memory_type);
   memory_region_size = get_mem_region_size (memory_type);
-  retro_core_pop_cb_data ();
 
   g_file_get_contents (filename, &data, &data_size, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
@@ -2284,6 +2140,9 @@ RetroCore *
 retro_core_new (const gchar *filename)
 {
   g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (retro_core_instance == NULL, NULL);
 
-  return g_object_new (RETRO_TYPE_CORE, "filename", filename, NULL);
+  retro_core_instance = g_object_new (RETRO_TYPE_CORE, "filename", filename, NULL);
+
+  return retro_core_instance;
 }

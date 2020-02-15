@@ -97,9 +97,7 @@ rumble_callback_set_rumble_state (guint             port,
                                   RetroRumbleEffect effect,
                                   guint16           strength)
 {
-  RetroCore *self;
-
-  self = retro_core_get_cb_data ();
+  RetroCore *self = retro_core_get_instance ();
 
   if (!retro_core_get_controller_supports_rumble (self, port))
     return FALSE;
@@ -112,15 +110,11 @@ rumble_callback_set_rumble_state (guint             port,
 static void
 on_log (guint level, const gchar *format, ...)
 {
-  RetroCore *self;
+  RetroCore *self = retro_core_get_instance ();
   const gchar *log_domain;
   GLogLevelFlags log_level;
   gchar *message;
   va_list args;
-
-  self = retro_core_get_cb_data ();
-  if (!self)
-    g_return_if_reached ();
 
   switch (level) {
   case RETRO_LOG_LEVEL_DEBUG:
@@ -522,12 +516,7 @@ static gboolean
 on_environment_interface (unsigned cmd,
                           gpointer data)
 {
-  RetroCore *self;
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_assert_not_reached ();
+  RetroCore *self = retro_core_get_instance ();
 
   return environment_core_command (self, cmd, data);
 }
@@ -538,15 +527,10 @@ on_video_refresh (guint8 *data,
                   guint   height,
                   gsize   pitch)
 {
-  RetroCore *self;
+  RetroCore *self = retro_core_get_instance ();
 
   if (data == NULL)
     return;
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_return_if_reached ();
 
   if (retro_core_is_running_ahead (self))
     return;
@@ -570,13 +554,8 @@ static void
 on_audio_sample (gint16 left,
                  gint16 right)
 {
-  RetroCore *self;
+  RetroCore *self = retro_core_get_instance ();
   gint16 samples[] = { left, right };
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_return_if_reached ();
 
   if (retro_core_is_running_ahead (self))
     return;
@@ -591,12 +570,7 @@ static gsize
 on_audio_sample_batch (gint16 *data,
                        gint    frames)
 {
-  RetroCore *self;
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_return_val_if_reached (0);
+  RetroCore *self = retro_core_get_instance ();
 
   if (retro_core_is_running_ahead (self))
     return frames;
@@ -612,12 +586,7 @@ on_audio_sample_batch (gint16 *data,
 static void
 on_input_poll ()
 {
-  RetroCore *self;
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_return_if_reached ();
+  RetroCore *self = retro_core_get_instance ();
 
   retro_core_poll_controllers (self);
 }
@@ -628,13 +597,8 @@ on_input_state (guint port,
                 guint index,
                 guint id)
 {
-  RetroCore *self;
+  RetroCore *self = retro_core_get_instance ();
   RetroInput input;
-
-  self = retro_core_get_cb_data ();
-
-  if (self == NULL)
-    g_return_val_if_reached (0);
 
   retro_input_init (&input, device, id, index);
 
@@ -650,10 +614,7 @@ retro_core_set_environment_interface (RetroCore *self)
 
   module = self->module;
   set_environment = retro_module_get_set_environment (module);
-
-  retro_core_push_cb_data (self);
   set_environment (on_environment_interface);
-  retro_core_pop_cb_data ();
 }
 
 // TODO This is internal, make it private as soon as possible.
@@ -674,11 +635,9 @@ retro_core_set_callbacks (RetroCore *self)
   set_input_poll = retro_module_get_set_input_poll (module);
   set_input_state = retro_module_get_set_input_state (module);
 
-  retro_core_push_cb_data (self);
   set_video_refresh (on_video_refresh);
   set_audio_sample (on_audio_sample);
   set_audio_sample_batch (on_audio_sample_batch);
   set_input_poll (on_input_poll);
   set_input_state (on_input_state);
-  retro_core_pop_cb_data ();
 }

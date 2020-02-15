@@ -4,7 +4,7 @@
 
 #include <stdbool.h>
 #include "retro-input-private.h"
-#include "retro-pixdata-private.h"
+#include "retro-rumble-effect.h"
 
 #define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000
 #define RETRO_ENVIRONMENT_PRIVATE 0x20000
@@ -98,24 +98,13 @@ rumble_callback_set_rumble_state (guint             port,
                                   guint16           strength)
 {
   RetroCore *self;
-  RetroController *controller;
 
   self = retro_core_get_cb_data ();
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-
-  if (!g_hash_table_contains (self->controllers, &port))
+  if (!retro_core_get_controller_supports_rumble (self, port))
     return FALSE;
 
-  controller = g_hash_table_lookup (self->controllers, &port);
-
-  if (controller == NULL)
-    return FALSE;
-
-  if (!retro_controller_get_supports_rumble (controller))
-    return FALSE;
-
-  retro_controller_set_rumble_state (controller, effect, strength);
+  g_signal_emit_by_name (self, "set-rumble-state", port, effect, strength);
 
   return TRUE;
 }
@@ -298,14 +287,13 @@ static gboolean
 get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
-  RetroOption *option;
-  const gchar *value;
+  gchar *value;
 
-  if (!retro_core_has_option (self, variable->key))
+  value = g_hash_table_lookup (self->variables, variable->key);
+
+  if (!value)
     return FALSE;
 
-  option = retro_core_get_option (self, variable->key);
-  value = retro_option_get_value (option);
   variable->value = value;
 
   return TRUE;
@@ -413,6 +401,8 @@ set_variables (RetroCore     *self,
 
   for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
     retro_core_insert_variable (self, &variable_array[i]);
+
+  g_signal_emit_by_name (self, "variables-set", variable_array);
 
   return TRUE;
 }
@@ -549,7 +539,6 @@ on_video_refresh (guint8 *data,
                   gsize   pitch)
 {
   RetroCore *self;
-  RetroPixdata pixdata;
 
   if (data == NULL)
     return;
@@ -562,12 +551,12 @@ on_video_refresh (guint8 *data,
   if (retro_core_is_running_ahead (self))
     return;
 
-  retro_pixdata_init (&pixdata,
-                      data, self->pixel_format,
-                      pitch, width, height,
-                      self->aspect_ratio);
+  retro_framebuffer_lock (self->framebuffer);
+  retro_framebuffer_set_data (self->framebuffer, self->pixel_format, pitch,
+                              width, height, self->aspect_ratio, data);
+  retro_framebuffer_unlock (self->framebuffer);
 
-  g_signal_emit_by_name (self, "video-output", &pixdata);
+  g_signal_emit_by_name (self, "video-output");
 }
 
 // TODO This is internal, make it private as soon as possible.

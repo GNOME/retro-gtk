@@ -6,9 +6,10 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
-#include "retro-controller-type.h"
-#include "retro-keyboard-key-private.h"
+#include <gtk/gtk.h>
+#include "retro-controller-iterator.h"
 #include "retro-memory-type.h"
+#include "retro-option-iterator.h"
 
 G_BEGIN_DECLS
 
@@ -60,30 +61,28 @@ void retro_core_load_memory (RetroCore        *self,
                              RetroMemoryType   memory_type,
                              const gchar      *filename,
                              GError          **error);
-void retro_core_set_default_controller (RetroCore *self,
-                                        gint       fd);
-void retro_core_set_controller (RetroCore           *self,
-                                guint                port,
-                                RetroControllerType  controller_type,
-                                gint                 fd);
-gboolean retro_core_get_controller_supports_rumble (RetroCore *self,
-                                                    guint      port);
-void retro_core_send_input_key_event (RetroCore                *self,
-                                      gboolean                  down,
-                                      RetroKeyboardKey          keycode,
-                                      guint32                   character,
-                                      RetroKeyboardModifierKey  key_modifiers);
+void retro_core_set_default_controller (RetroCore           *self,
+                                        RetroControllerType  controller_type,
+                                        RetroController     *controller);
+void retro_core_set_controller (RetroCore       *self,
+                                guint            port,
+                                RetroController *controller);
+void retro_core_set_keyboard (RetroCore *self,
+                              GtkWidget *widget);
+RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
 guint retro_core_get_runahead (RetroCore *self);
 void retro_core_set_runahead (RetroCore *self,
                               guint      runahead);
 gdouble retro_core_get_speed_rate (RetroCore *self);
 void retro_core_set_speed_rate (RetroCore *self,
                                 gdouble    speed_rate);
-void retro_core_override_variable_default (RetroCore   *self,
-                                           const gchar *key,
-                                           const gchar *value);
-void retro_core_update_variable (RetroCore   *self,
-                                 const gchar *key,
-                                 const gchar *value);
+gboolean retro_core_has_option (RetroCore   *self,
+                                const gchar *key);
+RetroOption *retro_core_get_option (RetroCore   *self,
+                                    const gchar *key);
+RetroOptionIterator *retro_core_iterate_options (RetroCore *self);
+void retro_core_override_option_default (RetroCore   *self,
+                                         const gchar *key,
+                                         const gchar *value);
 
 G_END_DECLS

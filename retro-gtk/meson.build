@@ -15,24 +15,23 @@ retro_gtk_sources = [
   'retro-core-descriptor.c',
   'retro-core-view.c',
   'retro-core-view-controller.c',
-  'retro-environment.c',
-  'retro-game-info.c',
   'retro-gl-display.c',
   'retro-glsl-filter.c',
-  'retro-input-descriptor.c',
   'retro-keyboard.c',
   'retro-key-joypad-mapping.c',
   'retro-log.c',
-  'retro-main-loop-source.c',
-  'retro-module.c',
   'retro-module-iterator.c',
   'retro-module-query.c',
   'retro-option.c',
   'retro-option-iterator.c',
-  'retro-pa-player.c',
   'retro-pixbuf.c',
   'retro-pixdata.c',
-  'retro-video-filter.c',
+  'retro-runner-process.c',
+  'retro-video-filter.c'
+]
+
+retro_gtk_generated_sources = [
+  ipc_runner_src,
 ]
 
 retro_gtk_main_header = 'retro-gtk.h'
@@ -88,14 +87,11 @@ retro_gtk_deps = [
   gmodule,
   gobject,
   gtk,
-  libpulse_simple,
-  m,
-  samplerate,
 ]
 
 retro_gtk_lib = shared_library(
   retro_gtk_module,
-  retro_gtk_sources,
+  retro_gtk_sources + retro_gtk_generated_sources,
   c_args: retro_gtk_c_args,
   dependencies: retro_gtk_deps,
   include_directories: [ confinc, shared_inc ],

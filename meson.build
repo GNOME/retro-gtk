@@ -11,6 +11,7 @@ gnome = import('gnome')
 
 prefix = get_option('prefix')
 libdir = join_paths(prefix, get_option('libdir'))
+libexecdir = join_paths(prefix, get_option('libexecdir'))
 libretrodir = join_paths(libdir, 'libretro')
 
 confinc = include_directories('.')
@@ -25,6 +26,7 @@ gtk_version = '>= 3.22'
 
 epoxy = dependency ('epoxy')
 gio = dependency ('gio-2.0', version: glib_version)
+gio_unix = dependency ('gio-unix-2.0', version: glib_version)
 glib = dependency ('glib-2.0', version: glib_version)
 gmodule = dependency ('gmodule-2.0', version: glib_version)
 gobject = dependency ('gobject-2.0', version: glib_version)
@@ -35,6 +37,7 @@ samplerate = dependency ('samplerate')
 
 config_h = configuration_data()
 config_h.set_quoted ('RETRO_PLUGIN_PATH', ':'.join ([libretrodir, libdir]))
+config_h.set_quoted ('RETRO_RUNNER_PATH', join_paths (libexecdir, 'retro-runner'))
 
 configure_file(
   output: 'retro-gtk-config.h',
@@ -42,6 +45,7 @@ configure_file(
 )
 
 subdir('shared')
+subdir('retro-runner')
 subdir('retro-gtk')
 if get_option('build-tests')
   subdir('tests')

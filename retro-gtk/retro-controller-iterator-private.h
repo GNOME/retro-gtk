@@ -10,6 +10,9 @@
 
 G_BEGIN_DECLS
 
-RetroControllerIterator *retro_controller_iterator_new (GHashTable *controllers);
+typedef RetroController * (*RetroControllerIteratorGetController) (gpointer data);
+
+RetroControllerIterator *retro_controller_iterator_new (GHashTable                           *controllers,
+                                                        RetroControllerIteratorGetController  func);
 
 G_END_DECLS

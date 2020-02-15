@@ -6,14 +6,16 @@
 # error "Only <retro-gtk.h> can be included directly."
 #endif
 
+#include "retro-controller-state-private.h"
 #include "retro-core.h"
 #include "retro-disk-control-callback-private.h"
+#include "retro-framebuffer-private.h"
 #include "retro-input.h"
 #include "retro-input-descriptor-private.h"
 #include "retro-module-private.h"
-#include "retro-option-private.h"
 #include "retro-pixel-format-private.h"
 #include "retro-rotation-private.h"
+#include "retro-variable-private.h"
 
 G_BEGIN_DECLS
 
@@ -44,14 +46,12 @@ struct _RetroCore
   RetroRotation rotation;
   gdouble sample_rate;
 
+  RetroFramebuffer *framebuffer;
   RetroKeyboardCallback keyboard_callback;
-  RetroController *default_controllers[RETRO_CONTROLLER_TYPE_COUNT];
+  RetroControllerState *default_controller;
   GHashTable *controllers;
-  GtkWidget *keyboard_widget;
-  gulong key_press_event_id;
-  gulong key_release_event_id;
-  GHashTable *options;
-  GHashTable *option_overrides;
+  GHashTable *variables;
+  GHashTable *variable_overrides;
   gboolean variable_updated;
   guint runahead;
   gssize run_remaining;
@@ -75,9 +75,6 @@ gint16 retro_core_get_controller_input_state (RetroCore  *self,
                                               uint        port,
                                               RetroInput *input);
 guint64 retro_core_get_controller_capabilities (RetroCore *self);
-void retro_core_set_controller_port_device (RetroCore           *self,
-                                            guint                port,
-                                            RetroControllerType  controller_type);
 void retro_core_set_controller_descriptors (RetroCore            *self,
                                             RetroInputDescriptor *input_descriptors,
                                             gsize                 length);
@@ -86,5 +83,7 @@ void retro_core_insert_variable (RetroCore           *self,
                                  const RetroVariable *variable);
 gboolean retro_core_get_variable_update (RetroCore *self);
 gdouble retro_core_get_sample_rate (RetroCore *self);
+
+gint retro_core_get_framebuffer_fd (RetroCore *self);
 
 G_END_DECLS

@@ -1,11 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-controller-iterator.h"
+#include "retro-controller-iterator-private.h"
 
 struct _RetroControllerIterator
 {
   GObject parent_instance;
   GHashTableIter iterator;
+  RetroControllerIteratorGetController get_controller;
 };
 
 G_DEFINE_TYPE (RetroControllerIterator, retro_controller_iterator, G_TYPE_OBJECT)
@@ -59,7 +60,7 @@ retro_controller_iterator_next (RetroControllerIterator  *self,
     *port = GPOINTER_TO_UINT (key);
 
   if (controller)
-    *controller = val;
+    *controller = self->get_controller (val);
 
   return ret;
 }
@@ -67,13 +68,15 @@ retro_controller_iterator_next (RetroControllerIterator  *self,
 /**
  * retro_controller_iterator_new:
  * @controllers: (element-type guint RetroController): A #GHashTable
+ * @func: a function to extract controllers from the hash table values
  *
  * Creates a new #RetroControllerIterator.
  *
  * Returns: (transfer full): a new #RetroControllerIterator
  */
 RetroControllerIterator *
-retro_controller_iterator_new (GHashTable *controllers)
+retro_controller_iterator_new (GHashTable                           *controllers,
+                               RetroControllerIteratorGetController  func)
 {
   RetroControllerIterator *self;
 
@@ -81,6 +84,8 @@ retro_controller_iterator_new (GHashTable *controllers)
 
   self = g_object_new (RETRO_TYPE_CONTROLLER_ITERATOR, NULL);
   g_hash_table_iter_init (&self->iterator, controllers);
+
+  self->get_controller = func;
 
   return self;
 }

@@ -2,12 +2,12 @@
 
 #include "retro-core-private.h"
 
+#include <gio/gio.h>
 #include <string.h>
-#include "retro-controller-iterator-private.h"
-#include "retro-keyboard-private.h"
+#include "retro-input-private.h"
 #include "retro-main-loop-source-private.h"
-#include "retro-option-iterator-private.h"
-#include "retro-pixdata.h"
+#include "retro-memfd-private.h"
+#include "retro-rumble-effect.h"
 
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
 
@@ -51,6 +51,8 @@ enum {
   SIG_LOG_SIGNAL,
   SIG_SHUTDOWN_SIGNAL,
   SIG_MESSAGE_SIGNAL,
+  SIG_VARIABLES_SET_SIGNAL,
+  SIG_SET_RUMBLE_STATE_SIGNAL,
   N_SIGNALS,
 };
 
@@ -137,6 +139,7 @@ retro_core_constructed (GObject *object)
   RetroCore *self = RETRO_CORE (object);
   g_autoptr (GFile) file = NULL;
   g_autoptr (GFile) relative_path_file = NULL;
+  gint memfd;
 
   if (G_UNLIKELY (!self->filename))
     g_error ("A RetroCore's 'filename' property my be set when constructing it.");
@@ -149,6 +152,9 @@ retro_core_constructed (GObject *object)
 
   retro_core_set_callbacks (self);
 
+  memfd = retro_memfd_create ("[retro-runner framebuffer]");
+  self->framebuffer = retro_framebuffer_new (memfd);
+
   G_OBJECT_CLASS (retro_core_parent_class)->constructed (object);
 }
 
@@ -158,12 +164,10 @@ retro_core_finalize (GObject *object)
   RetroCore *self = RETRO_CORE (object);
   RetroUnloadGame unload_game;
   RetroDeinit deinit;
-  gsize i;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
   retro_core_stop (self);
-  retro_core_set_keyboard (self, NULL);
 
   retro_core_push_cb_data (self);
   if (retro_core_get_game_loaded (self)) {
@@ -178,19 +182,18 @@ retro_core_finalize (GObject *object)
     g_strfreev (self->media_uris);
 
   g_object_unref (self->module);
-  for (i = 0; i < RETRO_CONTROLLER_TYPE_COUNT; i++)
-    if (self->default_controllers[i] != NULL)
-      g_object_unref (self->default_controllers[i]);
+  g_object_unref (self->framebuffer);
+  if (self->default_controller)
+    g_object_unref (self->default_controller);
   g_hash_table_unref (self->controllers);
-  g_hash_table_unref (self->options);
-  g_hash_table_unref (self->option_overrides);
+  g_hash_table_unref (self->variables);
+  g_hash_table_unref (self->variable_overrides);
 
   g_free (self->filename);
   g_free (self->system_directory);
   g_free (self->libretro_path);
   g_free (self->content_directory);
   g_free (self->save_directory);
-  g_clear_object (&self->keyboard_widget);
 
   G_OBJECT_CLASS (retro_core_parent_class)->finalize (object);
 }
@@ -222,10 +225,6 @@ retro_core_get_property (GObject    *object,
     break;
   case PROP_SAVE_DIRECTORY:
     g_value_set_string (value, retro_core_get_save_directory (self));
-
-    break;
-  case PROP_IS_INITIATED:
-    g_value_set_boolean (value, retro_core_get_is_initiated (self));
 
     break;
   case PROP_GAME_LOADED:
@@ -472,7 +471,7 @@ retro_core_class_init (RetroCoreClass *klass)
     g_param_spec_double ("speed-rate",
                          "Speed rate",
                          "The speed ratio at wich the core will run",
-                         0.0, G_MAXDOUBLE, 1.0,
+                         -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
                          G_PARAM_STATIC_NICK |
@@ -482,24 +481,16 @@ retro_core_class_init (RetroCoreClass *klass)
 
   /**
    * RetroCore::video-output:
-   * @self: the #RetroCore
-   * @pixdata: (type RetroPixdata): the #RetroPixdata
    *
    * The ::video-output signal is emitted each time a new video frame is emitted
    * by the core.
-   *
-   * @pixdata will be invalid after the signal emission, copy it in some way if
-   * you want to keep it.
    */
   signals[SIG_VIDEO_OUTPUT_SIGNAL] =
-    g_signal_new ("video-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
+    g_signal_new ("video-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
                   0, NULL, NULL,
                   NULL,
                   G_TYPE_NONE,
-                  1,
-                  // G_TYPE_POINTER instead of RETRO_TYPE_PIXDATA to implicit
-                  // copy when sending the RetroPixdata.
-                  G_TYPE_POINTER);
+                  0);
 
   /**
    * RetroCore::audio-output:
@@ -579,15 +570,54 @@ retro_core_class_init (RetroCoreClass *klass)
                   2,
                   G_TYPE_STRING,
                   G_TYPE_UINT);
+
+  /**
+   * RetroCore::variables-set:
+   * @self: the #RetroCore
+   * @variables: an array of #RetroVariable
+   *
+   * The ::variables-set signal is emitted when the core sets the
+   * options during boot.
+   *
+   * @variables will be invalid after the signal emission, copy it in some way
+   * if you want to keep it.
+   */
+  signals[SIG_VARIABLES_SET_SIGNAL] =
+    g_signal_new ("variables-set", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
+                  0, NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  1,
+                  G_TYPE_POINTER);
+
+  /**
+   * RetroCore::set-rumble-state:
+   * @self: the #RetroCore
+   * @port: the port number
+   * @effect: the rumble effect
+   * @strength: the rumble effect strength
+   *
+   * The ::set-rumble-state signal is emitted when the core requests
+   * controller on the port @port to set rumble state.
+   */
+  signals[SIG_SET_RUMBLE_STATE_SIGNAL] =
+    g_signal_new ("set-rumble-state", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
+                  0, NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  3,
+                  G_TYPE_UINT,
+                  RETRO_TYPE_RUMBLE_EFFECT,
+                  G_TYPE_UINT);
 }
 
 static void
 retro_core_init (RetroCore *self)
 {
-  self->options = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                         g_free, g_object_unref);
-  self->option_overrides = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                                  g_free, g_free);
+  self->variables = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                           g_free, g_free);
+  self->variable_overrides = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                    g_free, g_free);
 
   self->controllers = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                              NULL, g_object_unref);
@@ -720,50 +750,18 @@ retro_core_get_name (RetroCore *self)
   return system_info.library_name;
 }
 
-static void
-retro_core_send_input_key_event (RetroCore                *self,
-                                 gboolean                  down,
-                                 RetroKeyboardKey          keycode,
-                                 guint32                   character,
-                                 RetroKeyboardModifierKey  key_modifiers)
+void
+retro_core_update_variable (RetroCore   *self,
+                            const gchar *key,
+                            const gchar *value)
 {
   g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (key != NULL);
+  g_return_if_fail (value != NULL);
 
-  if (self->keyboard_callback.callback == NULL)
-    return;
+  g_hash_table_replace (self->variables, g_strdup (key), g_strdup (value));
 
-  self->keyboard_callback.callback (down, keycode, character, key_modifiers);
-}
-
-static gboolean
-retro_core_key_event (RetroCore   *self,
-                      GdkEventKey *event)
-{
-  gboolean pressed;
-  RetroKeyboardKey retro_key;
-  RetroKeyboardModifierKey retro_modifier_key;
-  guint32 character;
-
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
-
-  if (!retro_core_get_is_initiated (self))
-    return FALSE;
-
-  pressed = event->type == GDK_KEY_PRESS;
-  retro_key = retro_keyboard_key_converter (event->keyval);
-  retro_modifier_key = retro_keyboard_modifier_key_converter (event->keyval, event->state);
-  character = gdk_keyval_to_unicode (event->keyval);
-
-  retro_core_push_cb_data (self);
-  retro_core_send_input_key_event (self,
-                                   pressed,
-                                   retro_key,
-                                   character,
-                                   retro_modifier_key);
-  retro_core_pop_cb_data ();
-
-  return FALSE;
+  self->variable_updated = TRUE;
 }
 
 static gboolean
@@ -1110,67 +1108,35 @@ retro_core_load_medias (RetroCore *self,
 
 void retro_core_set_environment_interface (RetroCore *self);
 
-static gboolean
-on_key_event (GtkWidget   *widget,
-              GdkEventKey *event,
-              gpointer     self)
+/* FIXME: this is partially copied from retro_option_new() */
+static gchar *
+get_default_value (const gchar *description)
 {
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
+  const gchar *description_separator, *value_separator, *values;
 
-  return retro_core_key_event (RETRO_CORE (self), event);
-}
+  description_separator = g_strstr_len (description, -1, "; ");
+  if (G_UNLIKELY (description_separator == NULL))
+    return NULL;
 
-static void
-on_option_value_changed (RetroOption *option,
-                         RetroCore   *self)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
+  values = description_separator + 2;
+  value_separator = g_strstr_len (values, -1, "|");
 
-  self->variable_updated = TRUE;
+  return g_strndup (values, value_separator - values);
 }
 
 void
 retro_core_insert_variable (RetroCore           *self,
                             const RetroVariable *variable)
 {
-  RetroOption *option;
-  const gchar *key;
-  GError *tmp_error = NULL;
+  gchar *value;
 
-  g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (variable != NULL);
+  if (g_hash_table_contains (self->variable_overrides, variable->key))
+    value = g_strdup (g_hash_table_lookup (self->variable_overrides,
+                                           variable->key));
+  else
+    value = get_default_value (variable->value);
 
-  option = retro_option_new (variable, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_debug ("%s", tmp_error->message);
-    g_clear_error (&tmp_error);
-
-    return;
-  }
-
-  key = retro_option_get_key (option);
-
-  if (g_hash_table_contains (self->option_overrides, key)) {
-    const gchar *value = g_hash_table_lookup (self->option_overrides, key);
-
-    retro_option_set_value (option, value, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_warning ("%s", tmp_error->message);
-      g_clear_error (&tmp_error);
-    }
-  }
-
-  g_hash_table_insert (self->options, g_strdup (key), option);
-
-  g_signal_connect_object (option,
-                           "value-changed",
-                           G_CALLBACK (on_option_value_changed),
-                           self,
-                           0);
-
-  self->variable_updated = TRUE;
+  g_hash_table_insert (self->variables, g_strdup (variable->key), value);
 }
 
 gboolean
@@ -1192,6 +1158,14 @@ retro_core_get_sample_rate (RetroCore *self)
   g_return_val_if_fail (RETRO_IS_CORE (self), 0);
 
   return self->sample_rate;
+}
+
+gint
+retro_core_get_framebuffer_fd (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), 0);
+
+  return retro_framebuffer_get_fd (self->framebuffer);
 }
 
 /* Public */
@@ -1449,10 +1423,6 @@ retro_core_boot (RetroCore  *self,
                  GError    **error)
 {
   RetroInit init;
-  RetroControllerIterator *controller_iterator;
-  guint port;
-  RetroController *controller;
-  RetroControllerType controller_type;
   GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
@@ -1463,15 +1433,6 @@ retro_core_boot (RetroCore  *self,
   init = retro_module_get_init (self->module);
   init ();
   retro_core_pop_cb_data ();
-
-  controller_iterator = retro_core_iterate_controllers (self);
-  while (retro_controller_iterator_next (controller_iterator,
-                                         &port,
-                                         &controller)) {
-    controller_type = retro_controller_get_controller_type (controller);
-    retro_core_set_controller_port_device (self, port, controller_type);
-  }
-  g_object_unref (controller_iterator);
 
   retro_core_set_is_initiated (self, TRUE);
 
@@ -1554,19 +1515,69 @@ retro_core_set_current_media (RetroCore  *self,
   }
 }
 
-// FIXME Merge this into retro_core_set_controller().
 void
-retro_core_set_controller_port_device (RetroCore           *self,
-                                       guint                port,
-                                       RetroControllerType  controller_type)
+retro_core_set_default_controller (RetroCore *self,
+                                   gint       fd)
+{
+  if (self->default_controller)
+    g_object_unref (self->default_controller);
+
+  self->default_controller = retro_controller_state_new (fd);
+}
+
+void
+retro_core_set_controller (RetroCore           *self,
+                           guint                port,
+                           RetroControllerType  controller_type,
+                           gint                 fd)
 {
   RetroSetControllerPortDevice set_controller_port_device;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
+  if (controller_type == RETRO_CONTROLLER_TYPE_NONE)
+    g_hash_table_remove (self->controllers, GUINT_TO_POINTER (port));
+  else if (!g_hash_table_lookup (self->controllers, GUINT_TO_POINTER (port)))
+    g_hash_table_insert (self->controllers, GUINT_TO_POINTER (port),
+                         retro_controller_state_new (fd));
+
   retro_core_push_cb_data (self);
   set_controller_port_device = retro_module_get_set_controller_port_device (self->module);
   set_controller_port_device (port, controller_type);
+  retro_core_pop_cb_data ();
+}
+
+gboolean
+retro_core_get_controller_supports_rumble (RetroCore *self,
+                                           guint      port)
+{
+  RetroControllerState *controller;
+
+  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
+
+  if (!g_hash_table_contains (self->controllers, GUINT_TO_POINTER (port)))
+    return FALSE;
+
+  controller = g_hash_table_lookup (self->controllers, GUINT_TO_POINTER (port));
+  g_return_val_if_fail (controller != NULL, FALSE);
+
+  return retro_controller_state_get_supports_rumble (controller);
+}
+
+void
+retro_core_send_input_key_event (RetroCore                *self,
+                                 gboolean                  down,
+                                 RetroKeyboardKey          keycode,
+                                 guint32                   character,
+                                 RetroKeyboardModifierKey  key_modifiers)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  if (self->keyboard_callback.callback == NULL)
+    return;
+
+  retro_core_push_cb_data (self);
+  self->keyboard_callback.callback (down, keycode, character, key_modifiers);
   retro_core_pop_cb_data ();
 }
 
@@ -2101,6 +2112,23 @@ retro_core_load_memory (RetroCore        *self,
 void
 retro_core_poll_controllers (RetroCore *self)
 {
+  GHashTableIter iter;
+  gpointer port;
+  RetroControllerState *controller;
+
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  retro_controller_state_lock (self->default_controller);
+  retro_controller_state_snapshot (self->default_controller);
+  retro_controller_state_unlock (self->default_controller);
+
+  g_hash_table_iter_init (&iter, self->controllers);
+
+  while (g_hash_table_iter_next (&iter, &port, (gpointer *) &controller)) {
+    retro_controller_state_lock (controller);
+    retro_controller_state_snapshot (controller);
+    retro_controller_state_unlock (controller);
+  }
 }
 
 /**
@@ -2119,23 +2147,19 @@ retro_core_get_controller_input_state (RetroCore  *self,
                                        guint       port,
                                        RetroInput *input)
 {
-  RetroController *controller;
-  RetroControllerType controller_type;
+  RetroControllerType type;
+  RetroControllerState *controller;
 
   g_return_val_if_fail (RETRO_IS_CORE (self), 0);
 
-  controller_type = retro_input_get_controller_type (input) &
-                    RETRO_CONTROLLER_TYPE_TYPE_MASK;
+  type = retro_input_get_controller_type (input) & RETRO_CONTROLLER_TYPE_TYPE_MASK;
 
   controller = g_hash_table_lookup (self->controllers, GUINT_TO_POINTER (port));
-  if (controller != NULL &&
-      retro_controller_has_capability (controller, controller_type))
-    return retro_controller_get_input_state (controller, input);
+  if (controller && retro_controller_state_has_type (controller, type))
+    return retro_controller_state_get_input (controller, input);
 
-  controller = self->default_controllers[controller_type];
-  if (controller != NULL &&
-      retro_controller_has_capability (controller, controller_type))
-    return retro_controller_get_input_state (controller, input);
+  if (self->default_controller && retro_controller_state_has_type (self->default_controller, type))
+    return retro_controller_state_get_input (self->default_controller, input);
 
   return 0;
 }
@@ -2160,123 +2184,6 @@ retro_core_get_controller_capabilities (RetroCore *self)
   // TODO
 
   return 0;
-}
-
-/**
- * retro_core_set_default_controller:
- * @self: a #RetroCore
- * @controller_type: a #RetroControllerType
- * @controller: (nullable): a #RetroController
- *
- * Uses @controller as the default controller for the given type. When a port
- * has no controller plugged plugged into it, the core will use the default
- * controllers instead.
- */
-void
-retro_core_set_default_controller (RetroCore           *self,
-                                   RetroControllerType  controller_type,
-                                   RetroController     *controller)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (controller_type < RETRO_CONTROLLER_TYPE_COUNT);
-
-  g_set_object (&self->default_controllers[controller_type], controller);
-}
-
-/**
- * retro_core_set_controller:
- * @self: a #RetroCore
- * @port: the port number
- * @controller: (nullable): a #RetroController
- *
- * Plugs @controller into the specified port number of @self.
- */
-void
-retro_core_set_controller (RetroCore       *self,
-                           guint            port,
-                           RetroController *controller)
-{
-  RetroControllerType controller_type;
-
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  if (RETRO_IS_CONTROLLER (controller)) {
-    g_hash_table_insert (self->controllers,
-                         GUINT_TO_POINTER (port),
-                         g_object_ref (controller));
-    controller_type = retro_controller_get_controller_type (controller);
-  }
-  else {
-    g_hash_table_remove (self->controllers, GUINT_TO_POINTER (port));
-    controller_type = RETRO_CONTROLLER_TYPE_NONE;
-  }
-
-  if (!retro_core_get_is_initiated (self))
-    return;
-
-  retro_core_set_controller_port_device (self, port, controller_type);
-}
-
-void
-keyboard_widget_notify (RetroCore *self,
-                        GObject   *keyboard_widget)
-{
-  self->keyboard_widget = NULL;
-}
-
-/**
- * retro_core_set_keyboard:
- * @self: a #RetroCore
- * @widget: (nullable): a #GtkWidget, or %NULL
- *
- * Sets the widget whose key events will be forwarded to @self.
- */
-void
-retro_core_set_keyboard (RetroCore *self,
-                         GtkWidget *widget)
-{
-  g_return_if_fail (RETRO_IS_CORE (self));
-
-  if (self->keyboard_widget != NULL) {
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_press_event_id);
-    g_signal_handler_disconnect (G_OBJECT (self->keyboard_widget), self->key_release_event_id);
-    g_object_weak_unref (G_OBJECT (self->keyboard_widget), (GWeakNotify) keyboard_widget_notify, self);
-    self->keyboard_widget = NULL;
-  }
-
-  if (widget != NULL) {
-    self->key_press_event_id =
-      g_signal_connect_object (widget,
-                               "key-press-event",
-                               G_CALLBACK (on_key_event),
-                               self,
-                               0);
-    self->key_release_event_id =
-      g_signal_connect_object (widget,
-                               "key-release-event",
-                               G_CALLBACK (on_key_event),
-                               self,
-                               0);
-    self->keyboard_widget = widget;
-    g_object_weak_ref (G_OBJECT (widget), (GWeakNotify) keyboard_widget_notify, self);
-  }
-}
-
-/**
- * retro_core_iterate_controllers:
- * @self: a #RetroCore
- *
- * Creates a new #RetroControllerIterator which can be used to iterate through
- * the controllers plugged into @self.
- *
- * Returns: (transfer full): a new #RetroControllerIterator
- */
-RetroControllerIterator *
-retro_core_iterate_controllers (RetroCore *self)
-{
-  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
-
-  return retro_controller_iterator_new (self->controllers);
 }
 
 guint
@@ -2341,82 +2248,28 @@ retro_core_set_speed_rate (RetroCore *self,
 }
 
 /**
- * retro_core_has_option:
+ * retro_core_override_variable_default:
  * @self: a #RetroCore
- * @key: the key of the option
- *
- * Gets whether the core has an option for the given key.
- *
- * Returns: whether the core has an option for the given key
- */
-gboolean
-retro_core_has_option (RetroCore   *self,
-                       const gchar *key)
-{
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (key != NULL, FALSE);
-
-  return g_hash_table_contains (self->options, key);
-}
-
-/**
- * retro_core_get_option:
- * @self: a #RetroCore
- * @key: the key of the option
- *
- * Gets the option for the given key.
- *
- * Returns: (transfer none): the option
- */
-RetroOption *
-retro_core_get_option (RetroCore    *self,
-                       const gchar  *key)
-{
-  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
-  g_return_val_if_fail (key != NULL, NULL);
-
-  return RETRO_OPTION (g_hash_table_lookup (self->options, key));
-}
-
-/**
- * retro_core_iterate_options:
- * @self: a #RetroCore
- *
- * Creates a new #RetroOptionIterator which can be used to iterate through the
- * options of @self.
- *
- * Returns: (transfer full): a new #RetroOptionIterator
- */
-RetroOptionIterator *
-retro_core_iterate_options (RetroCore *self)
-{
-  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
-
-  return retro_option_iterator_new (self->options);
-}
-
-/**
- * retro_core_override_option_default:
- * @self: a #RetroCore
- * @key: the key of the option
+ * @key: the key of the variable
  * @value: the default value
  *
- * Overrides default value for the option @key. This can be used to set value
+ * Overrides default value for the variable @key. This can be used to set value
  * for a startup-only option.
  *
  * You can use this before booting the core.
+ *
+ * See retro_core_override_option_default() in retro-gtk/retro-core.c
  */
 void
-retro_core_override_option_default (RetroCore   *self,
-                                    const gchar *key,
-                                    const gchar *value)
+retro_core_override_variable_default (RetroCore   *self,
+                                      const gchar *key,
+                                      const gchar *value)
 {
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (key != NULL);
-  g_return_if_fail (key != NULL);
-  g_return_if_fail (!retro_core_get_is_initiated (self));
+  g_return_if_fail (value != NULL);
 
-  g_hash_table_replace (self->option_overrides, g_strdup (key), g_strdup (value));
+  g_hash_table_replace (self->variable_overrides, g_strdup (key), g_strdup (value));
 }
 
 /**

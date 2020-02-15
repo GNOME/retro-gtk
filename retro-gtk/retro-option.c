@@ -174,18 +174,18 @@ retro_option_set_value (RetroOption  *self,
 }
 
 RetroOption *
-retro_option_new (const RetroVariable  *variable,
-                  GError              **error)
+retro_option_new (const gchar  *key,
+                  const gchar  *definition,
+                  GError      **error)
 {
   RetroOption *self;
   gchar *description_separator;
   gchar **values;
 
-  g_return_val_if_fail (variable != NULL, NULL);
-  g_return_val_if_fail (variable->key != NULL, NULL);
-  g_return_val_if_fail (variable->value != NULL, NULL);
+  g_return_val_if_fail (key != NULL, NULL);
+  g_return_val_if_fail (definition != NULL, NULL);
 
-  description_separator = g_strstr_len (variable->value, -1, "; ");
+  description_separator = g_strstr_len (definition, -1, "; ");
   if (G_UNLIKELY (description_separator == NULL)) {
     g_set_error_literal (error,
                          RETRO_OPTION_ERROR,
@@ -209,9 +209,9 @@ retro_option_new (const RetroVariable  *variable,
 
   self = g_object_new (RETRO_TYPE_OPTION, NULL);
 
-  self->key = g_strdup (variable->key);
-  self->description = g_strndup (variable->value,
-                                 description_separator - variable->value);
+  self->key = g_strdup (key);
+  self->description = g_strndup (definition,
+                                 description_separator - definition);
   self->values = values;
 
   return self;

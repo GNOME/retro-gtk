@@ -1,3 +1,10 @@
+ipc_runner_src = gnome.gdbus_codegen(
+  'ipc-runner',
+  sources: 'org.gnome.Retro.Runner.xml',
+  interface_prefix: 'org.gnome.Retro.',
+  namespace: 'Ipc'
+)
+
 shared_sources = files([
   'retro-controller-codes.c',
   'retro-controller-state.c',

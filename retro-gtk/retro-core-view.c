@@ -8,14 +8,12 @@
 #include "retro-core-view-controller-private.h"
 #include "retro-input-private.h"
 #include "retro-keyboard-private.h"
-#include "retro-pa-player-private.h"
 
 struct _RetroCoreView
 {
   GtkEventBox parent_instance;
   RetroCore *core;
   RetroGLDisplay *display;
-  RetroPaPlayer *audio_player;
   gboolean can_grab_pointer;
   gboolean snap_pointer_to_borders;
   GHashTable *key_state;
@@ -395,7 +393,6 @@ retro_core_view_finalize (GObject *object)
 
   g_clear_object (&self->core);
   g_object_unref (self->display);
-  g_object_unref (self->audio_player);
   g_hash_table_unref (self->key_state);
   g_hash_table_unref (self->keyval_state);
   g_object_unref (self->key_joypad_mapping);
@@ -528,8 +525,6 @@ retro_core_view_init (RetroCoreView *self)
                           G_BINDING_BIDIRECTIONAL |
                           G_BINDING_SYNC_CREATE);
 
-  self->audio_player = retro_pa_player_new ();
-
   self->key_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->keyval_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
   self->key_joypad_mapping = retro_key_joypad_mapping_new_default ();
@@ -564,13 +559,11 @@ retro_core_view_set_core (RetroCoreView *self,
   if (self->core != NULL) {
     g_clear_object (&self->core);
     retro_gl_display_set_core (self->display, NULL);
-    retro_pa_player_set_core (self->audio_player, NULL);
   }
 
   if (core != NULL) {
     self->core = g_object_ref (core);
     retro_gl_display_set_core (self->display, core);
-    retro_pa_player_set_core (self->audio_player, core);
   }
 }
 

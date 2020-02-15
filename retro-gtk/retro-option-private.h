@@ -7,11 +7,11 @@
 #endif
 
 #include "retro-option.h"
-#include "retro-variable-private.h"
 
 G_BEGIN_DECLS
 
-RetroOption *retro_option_new (const RetroVariable  *variable,
-                               GError              **error);
+RetroOption *retro_option_new (const gchar  *key,
+                               const gchar  *definition,
+                               GError      **error);
 
 G_END_DECLS

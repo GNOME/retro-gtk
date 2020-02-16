@@ -146,7 +146,7 @@ retro_core_constructed (GObject *object)
   RetroCore *self = RETRO_CORE (object);
 
   if (G_UNLIKELY (!self->filename))
-    g_error ("A RetroCore's 'filename' property my be set when constructing it.");
+    g_error ("A RetroCore’s “filename” property must be set when constructing it.");
 
   self->process = retro_runner_process_new (self->filename);
   g_signal_connect_object (self->process, "exit", G_CALLBACK (exit_cb), self, 0);

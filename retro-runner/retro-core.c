@@ -84,7 +84,7 @@ retro_core_constructed (GObject *object)
   gint memfd;
 
   if (G_UNLIKELY (!self->filename))
-    g_error ("A RetroCore's 'filename' property my be set when constructing it.");
+    g_error ("A RetroCore’s “filename” property must be set when constructing it.");
 
   file = g_file_new_for_path (self->filename);
   relative_path_file = g_file_resolve_relative_path (file, "");

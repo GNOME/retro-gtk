@@ -1624,11 +1624,12 @@ retro_core_set_default_controller (RetroCore           *self,
 
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (controller_type < RETRO_CONTROLLER_TYPE_COUNT);
+  g_return_if_fail (controller == NULL || RETRO_IS_CONTROLLER (controller));
 
   if (self->default_controllers[controller_type])
     free_default_controller_info (self->default_controllers[controller_type]);
 
-  if (RETRO_IS_CONTROLLER (controller)) {
+  if (controller != NULL) {
     info = g_new0 (RetroCoreDefaultControllerInfo, 1);
 
     info->controller = g_object_ref (controller);

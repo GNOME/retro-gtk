@@ -1585,7 +1585,7 @@ default_controller_state_changed_cb (RetroController                *controller,
   retro_controller_state_unlock (info->state);
 }
 
-void
+static void
 controller_state_changed_cb (RetroController         *controller,
                              RetroCoreControllerInfo *info)
 {

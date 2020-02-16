@@ -1699,7 +1699,7 @@ retro_core_set_controller (RetroCore       *self,
   retro_core_set_controller_port_device (self, port, controller_type, info);
 }
 
-void
+static void
 keyboard_widget_notify (RetroCore *self,
                         GObject   *keyboard_widget)
 {

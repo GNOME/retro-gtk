@@ -1,5 +1,7 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+#ifdef PULSEAUDIO_ENABLED
+
 #include "retro-pa-player-private.h"
 
 #include "retro-core-private.h"
@@ -253,3 +255,5 @@ retro_pa_player_new (void)
 {
   return g_object_new (RETRO_TYPE_PA_PLAYER, NULL);
 }
+
+#endif

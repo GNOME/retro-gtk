@@ -19,7 +19,6 @@ retro_runner_deps = [
   gio,
   gio_unix,
   gmodule,
-  libpulse_simple,
   m,
   samplerate,
 ]
@@ -29,6 +28,11 @@ retro_runner_c_args = [
   '-DG_LOG_DOMAIN="RetroRunner"',
   '-DRETRO_RUNNER_COMPILATION',
 ]
+
+if libpulse_simple.found()
+  retro_runner_c_args += '-DPULSEAUDIO_ENABLED'
+  retro_runner_deps += libpulse_simple
+endif
 
 executable(
   'retro-runner',

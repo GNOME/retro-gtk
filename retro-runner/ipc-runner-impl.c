@@ -7,14 +7,18 @@
 #include <gio/gunixfdlist.h>
 #include "retro-core-private.h"
 #include "retro-keyboard-key-private.h"
+#ifdef PULSEAUDIO_ENABLED
 #include "retro-pa-player-private.h"
+#endif
 
 struct _IpcRunnerImpl
 {
   IpcRunnerSkeleton parent_instance;
 
   RetroCore *core;
+#ifdef PULSEAUDIO_ENABLED
   RetroPaPlayer *audio_player;
+#endif
 
   GVariant *variables;
   gboolean block_video_signal;
@@ -567,8 +571,10 @@ ipc_runner_impl_constructed (GObject *object)
 {
   IpcRunnerImpl *self = (IpcRunnerImpl *)object;
 
+#ifdef PULSEAUDIO_ENABLED
   self->audio_player = retro_pa_player_new ();
   retro_pa_player_set_core (self->audio_player, self->core);
+#endif
 
   g_object_bind_property (self->core, "api-version",
                           self,       "api-version",
@@ -620,7 +626,9 @@ ipc_runner_impl_finalize (GObject *object)
   g_signal_handlers_disconnect_by_data (self->core, self);
 
   g_object_unref (self->core);
+#ifdef PULSEAUDIO_ENABLED
   g_object_unref (self->audio_player);
+#endif
 
   G_OBJECT_CLASS (ipc_runner_impl_parent_class)->finalize (object);
 }

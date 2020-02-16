@@ -138,7 +138,6 @@ if get_option('introspection')
     'gmodule-2.0',
     'gobject-2.0',
     'gtk+-3.0',
-    # 'libpulse-simple',
   ]
 
   gnome.generate_vapi(

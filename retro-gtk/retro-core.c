@@ -1898,7 +1898,7 @@ retro_core_override_option_default (RetroCore   *self,
 {
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (key != NULL);
-  g_return_if_fail (key != NULL);
+  g_return_if_fail (value != NULL);
   g_return_if_fail (!retro_core_get_is_initiated (self));
 
   g_hash_table_replace (self->option_overrides, g_strdup (key), g_strdup (value));

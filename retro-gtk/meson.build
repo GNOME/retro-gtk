@@ -66,7 +66,7 @@ version_conf.set('MAJOR_VERSION', MAJOR_VERSION)
 version_conf.set('MINOR_VERSION', MINOR_VERSION)
 version_conf.set('MICRO_VERSION', MICRO_VERSION)
 
-retro_gtk_version = configure_file(
+retro_gtk_version_h = configure_file(
   input: 'retro-gtk-version.h.in',
   output: 'retro-gtk-version.h',
   configuration: version_conf,
@@ -100,7 +100,7 @@ retro_gtk_lib = shared_library(
 )
 
 retro_gtk_dep_sources = [
-  retro_gtk_version,
+  retro_gtk_version_h,
 ]
 
 if get_option('introspection')

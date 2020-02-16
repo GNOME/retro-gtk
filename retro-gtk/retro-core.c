@@ -1668,8 +1668,9 @@ retro_core_set_controller (RetroCore       *self,
   RetroCoreControllerInfo *info;
 
   g_return_if_fail (RETRO_IS_CORE (self));
+  g_return_if_fail (controller == NULL || RETRO_IS_CONTROLLER (controller));
 
-  if (RETRO_IS_CONTROLLER (controller)) {
+  if (controller != NULL) {
     info = g_new0 (RetroCoreControllerInfo, 1);
     gint fd;
     g_autofree gchar *name = NULL;

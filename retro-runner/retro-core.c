@@ -452,6 +452,16 @@ retro_core_class_init (RetroCoreClass *klass)
                   G_TYPE_ULONG,
                   G_TYPE_DOUBLE);
 
+  /**
+   * RetroCore::iterated:
+   * @self: the #RetroCore
+   *
+   * The ::iterated signal is emitted at the end of a core's iteration.
+   *
+   * When ::runahead is > 0 and the core is iterated over multiple times
+   * internally, ::iterated will be emitted only once, after the perceived
+   * iteration is completed.
+   */
   signals[SIG_ITERATED_SIGNAL] =
     g_signal_new ("iterated", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,

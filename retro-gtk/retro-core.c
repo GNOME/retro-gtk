@@ -441,7 +441,14 @@ retro_core_class_init (RetroCoreClass *klass)
   /**
    * RetroCore:runahead:
    *
-   * The number of frame to run ahead of time.
+   * The number of frames to run ahead of time. This allows to know in advance
+   * what should happen in the given number of frames, allowing to react in
+   * advance.
+   *
+   * Note that this is resource intensive as the core will be iterated over
+   * multiple times for each perceived iteration. In order to work, this
+   * requires the cores to properly support serialization, otherwise the
+   * behavior is undefined.
    */
   properties[PROP_RUNAHEAD] =
     g_param_spec_uint ("runahead",

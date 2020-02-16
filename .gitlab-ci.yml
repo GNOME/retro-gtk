@@ -33,7 +33,7 @@ flatpak:tests:
     MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
     FLATPAK_MODULE: "retro-gtk"
     FLATPAK_BUILD_DIR: "unit-tests"
-    MESON_ARGS: "--libdir=lib -Dinstall-tests=true"
+    MESON_ARGS: "--libdir=lib -Dinstall-tests=true -Dpulseaudio=disabled"
   script:
     - flatpak-builder --stop-at=${FLATPAK_MODULE} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
     - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${MESON_ARGS} _build

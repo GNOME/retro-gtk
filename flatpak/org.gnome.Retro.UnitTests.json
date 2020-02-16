@@ -94,7 +94,8 @@
             "builddir" : true,
             "config-opts" : [
                 "--libdir=lib",
-                "-Dinstall-tests=true"
+                "-Dinstall-tests=true",
+                "-Dpulseaudio=disabled"
             ],
             "sources" : [
                 {

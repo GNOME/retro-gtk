@@ -1793,6 +1793,20 @@ retro_core_load_state (RetroCore    *self,
     return;
   }
 
+  /* Some cores, such as MAME and ParaLLEl N64, can only properly restore the
+   * state after at least one frame has been run. */
+  if (!self->has_run) {
+    RetroRun run = retro_module_get_run (self->module);
+
+    /* Ignore the video output here to avoid briefly showing the previous state
+     * in case user is showing a screenshot of the state to restore here. */
+    self->block_video_signal = TRUE;
+    run ();
+    self->block_video_signal = FALSE;
+
+    self->has_run = TRUE;
+  }
+
   serialize_size = retro_module_get_serialize_size (self->module);
   expected_size = serialize_size ();
 
@@ -1811,20 +1825,6 @@ retro_core_load_state (RetroCore    *self,
                 retro_core_get_name (self),
                 expected_size,
                 data_size);
-
-  /* Some cores, such as MAME and ParaLLEl N64, can only properly restore the
-   * state after at least one frame has been run. */
-  if (!self->has_run) {
-    RetroRun run = retro_module_get_run (self->module);
-
-    /* Ignore the video output here to avoid briefly showing the previous state
-     * in case user is showing a screenshot of the state to restore here. */
-    self->block_video_signal = TRUE;
-    run ();
-    self->block_video_signal = FALSE;
-
-    self->has_run = TRUE;
-  }
 
   unserialize = retro_module_get_unserialize (self->module);
   success = unserialize ((guint8 *) data, data_size);

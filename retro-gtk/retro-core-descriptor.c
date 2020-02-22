@@ -224,8 +224,7 @@ retro_core_descriptor_check_has_required_key (RetroCoreDescriptor  *self,
                  group);
 }
 
-// FIXME static
-void
+static void
 retro_core_descriptor_check_libretro_group (RetroCoreDescriptor  *self,
                                             GError              **error)
 {
@@ -274,8 +273,7 @@ retro_core_descriptor_check_libretro_group (RetroCoreDescriptor  *self,
   }
 }
 
-// FIXME static
-void
+static void
 retro_core_descriptor_check_platform_group (RetroCoreDescriptor  *self,
                                             const gchar          *group,
                                             GError              **error)

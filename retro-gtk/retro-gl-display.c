@@ -53,7 +53,7 @@ static const gchar *filter_uris[] = {
 /* Private */
 
 static void
-retro_gl_display_clear_video (RetroGLDisplay *self)
+clear_video (RetroGLDisplay *self)
 {
   g_clear_object (&self->pixbuf);
   if (self->pixdata != NULL) {
@@ -63,13 +63,13 @@ retro_gl_display_clear_video (RetroGLDisplay *self)
 }
 
 static void
-retro_gl_display_set_pixdata (RetroGLDisplay *self,
-                              RetroPixdata   *pixdata)
+set_pixdata (RetroGLDisplay *self,
+             RetroPixdata   *pixdata)
 {
   if (self->pixdata == pixdata)
     return;
 
-  retro_gl_display_clear_video (self);
+  clear_video (self);
 
   if (pixdata != NULL)
     self->pixdata = retro_pixdata_copy (pixdata);
@@ -78,11 +78,11 @@ retro_gl_display_set_pixdata (RetroGLDisplay *self,
 }
 
 static void
-retro_gl_display_get_video_box (RetroGLDisplay *self,
-                                gdouble        *width,
-                                gdouble        *height,
-                                gdouble        *x,
-                                gdouble        *y)
+get_video_box (RetroGLDisplay *self,
+               gdouble        *width,
+               gdouble        *height,
+               gdouble        *x,
+               gdouble        *y)
 {
   gdouble w;
   gdouble h;
@@ -120,9 +120,9 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
 }
 
 static gboolean
-retro_gl_display_load_texture (RetroGLDisplay *self,
-                               gint           *texture_width,
-                               gint           *texture_height)
+load_texture (RetroGLDisplay *self,
+              gint           *texture_width,
+              gint           *texture_height)
 {
   glBindTexture (GL_TEXTURE_2D, self->texture);
 
@@ -152,10 +152,10 @@ retro_gl_display_load_texture (RetroGLDisplay *self,
 }
 
 static void
-retro_gl_display_draw_texture (RetroGLDisplay  *self,
-                               RetroGLSLFilter *filter,
-                               gint             texture_width,
-                               gint             texture_height)
+draw_texture (RetroGLDisplay  *self,
+              RetroGLSLFilter *filter,
+              gint             texture_width,
+              gint             texture_height)
 {
   GLfloat source_width, source_height;
   GLfloat target_width, target_height;
@@ -193,7 +193,7 @@ retro_gl_display_draw_texture (RetroGLDisplay  *self,
 }
 
 static void
-retro_gl_display_realize (RetroGLDisplay *self)
+realize (RetroGLDisplay *self)
 {
   GLuint vertex_buffer_object;
   GLuint vertex_array_object;
@@ -260,7 +260,7 @@ retro_gl_display_realize (RetroGLDisplay *self)
 }
 
 static void
-retro_gl_display_unrealize (RetroGLDisplay *self)
+unrealize (RetroGLDisplay *self)
 {
   RetroVideoFilter filter;
 
@@ -273,7 +273,7 @@ retro_gl_display_unrealize (RetroGLDisplay *self)
 }
 
 static gboolean
-retro_gl_display_render (RetroGLDisplay *self)
+render (RetroGLDisplay *self)
 {
   RetroVideoFilter filter;
   gint texture_width;
@@ -287,10 +287,10 @@ retro_gl_display_render (RetroGLDisplay *self)
 
   g_assert (self->glsl_filter[filter] != NULL);
 
-  if (!retro_gl_display_load_texture (self, &texture_width, &texture_height))
+  if (!load_texture (self, &texture_width, &texture_height))
     return FALSE;
 
-  retro_gl_display_draw_texture (self, self->glsl_filter[filter], texture_width, texture_height);
+  draw_texture (self, self->glsl_filter[filter], texture_width, texture_height);
 
   return FALSE;
 }
@@ -337,19 +337,19 @@ retro_gl_display_init (RetroGLDisplay *self)
 {
   g_signal_connect_object (G_OBJECT (self),
                            "realize",
-                           (GCallback) retro_gl_display_realize,
+                           (GCallback) realize,
                            GTK_WIDGET (self),
                            0);
 
   g_signal_connect_object (G_OBJECT (self),
                            "unrealize",
-                           (GCallback) retro_gl_display_unrealize,
+                           (GCallback) unrealize,
                            GTK_WIDGET (self),
                            0);
 
   g_signal_connect_object (G_OBJECT (self),
                            "render",
-                           (GCallback) retro_gl_display_render,
+                           (GCallback) render,
                            GTK_WIDGET (self),
                            0);
 
@@ -363,9 +363,9 @@ retro_gl_display_init (RetroGLDisplay *self)
 }
 
 static void
-retro_gl_display_on_video_output (RetroCore    *sender,
-                                  RetroPixdata *pixdata,
-                                  gpointer      user_data)
+on_video_output (RetroCore    *sender,
+                 RetroPixdata *pixdata,
+                 gpointer      user_data)
 {
   RetroGLDisplay *self = RETRO_GL_DISPLAY (user_data);
 
@@ -373,7 +373,7 @@ retro_gl_display_on_video_output (RetroCore    *sender,
     return;
 
   self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
-  retro_gl_display_set_pixdata (self, pixdata);
+  set_pixdata (self, pixdata);
 }
 
 /* Public */
@@ -401,7 +401,7 @@ retro_gl_display_set_core (RetroGLDisplay *self,
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    self->on_video_output_id = g_signal_connect_object (core, "video-output", (GCallback) retro_gl_display_on_video_output, self, 0);
+    self->on_video_output_id = g_signal_connect_object (core, "video-output", (GCallback) on_video_output, self, 0);
   }
 }
 
@@ -448,7 +448,7 @@ retro_gl_display_set_pixbuf (RetroGLDisplay *self,
   if (self->pixbuf == pixbuf)
     return;
 
-  retro_gl_display_clear_video (self);
+  clear_video (self);
 
   if (pixbuf != NULL)
     self->pixbuf = g_object_ref (pixbuf);
@@ -507,7 +507,7 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 
-  retro_gl_display_get_video_box (self, &w, &h, &x, &y);
+  get_video_box (self, &w, &h, &x, &y);
 
   scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
   widget_x *= scale_factor;

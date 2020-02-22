@@ -81,7 +81,8 @@ g_object_pointer_unref (GObject **pointer)
     g_object_unref (*pointer);
 }
 
-static gint uint_compare (guint *a, guint *b) {
+static gint
+uint_compare (guint *a, guint *b) {
   if (*a == *b)
     return 0;
 
@@ -198,19 +199,19 @@ retro_reftest_file_init (RetroReftestFile *self)
 }
 
 static GFile *
-retro_reftest_file_get_sibbling (RetroReftestFile *self,
-                                 const gchar      *path)
+get_sibling (RetroReftestFile *self,
+              const gchar      *path)
 {
-  GFile *parent, *sibbling;
+  GFile *parent, *sibling;
 
   if (path[0] == '/')
     return g_file_new_for_path (path);
 
   parent = g_file_get_parent (self->file);
-  sibbling = g_file_get_child (parent, path);
+  sibling = g_file_get_child (parent, path);
   g_object_unref (parent);
 
-  return sibbling;
+  return sibling;
 }
 
 const gchar *
@@ -231,8 +232,8 @@ retro_reftest_file_peek_path (RetroReftestFile *self)
 }
 
 static guint
-retro_reftest_file_str_to_uint (gchar   *string,
-                                GError **error)
+str_to_uint (gchar   *string,
+             GError **error)
 {
   gchar *string_end;
   guint64 number_long;
@@ -288,7 +289,7 @@ retro_reftest_file_str_to_uint (gchar   *string,
 }
 
 static RetroControllerState *
-retro_controller_state_from_string (gchar *string)
+state_from_string (gchar *string)
 {
   RetroControllerState *state;
   RetroControllerType type;
@@ -375,7 +376,7 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
     return NULL;
   }
 
-  core_file = retro_reftest_file_get_sibbling (self, key_file_core);
+  core_file = get_sibling (self, key_file_core);
   g_free (key_file_core);
   path = g_file_get_path (core_file);
   g_object_unref (core_file);
@@ -400,7 +401,7 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
 
   media_uris = g_new0 (gchar *, key_file_medias_length + 1);
   for (i = 0; i < key_file_medias_length; i++) {
-    media_file = retro_reftest_file_get_sibbling (self, key_file_medias[i]);
+    media_file = get_sibling (self, key_file_medias[i]);
     media_uris[i] = g_file_get_uri (media_file);
     g_object_unref (media_file);
   }
@@ -535,7 +536,7 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
       continue;
 
     frame_number_string = groups[i] + strlen (RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX);
-    frame_number = retro_reftest_file_str_to_uint (frame_number_string, &error);
+    frame_number = str_to_uint (frame_number_string, &error);
     if (G_UNLIKELY (error != NULL)) {
       g_critical ("Invalid frame group [%s]: %s", groups[i], error->message);
       g_clear_error (&error);
@@ -616,7 +617,7 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
     return NULL;
   }
 
-  video_file = retro_reftest_file_get_sibbling (self, key_file_video);
+  video_file = get_sibling (self, key_file_video);
   g_free (key_file_video);
 
   return video_file;
@@ -653,7 +654,7 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 
     controller_number_string = *key_i + strlen (RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX);
     controller_number = g_new (guint, 1);
-    *controller_number = retro_reftest_file_str_to_uint (controller_number_string, &tmp_error);
+    *controller_number = str_to_uint (controller_number_string, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_critical ("Invalid controller key [%s]: %s", *key_i, tmp_error->message);
       g_clear_error (&tmp_error);
@@ -666,7 +667,7 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
     states = g_array_new (TRUE, TRUE, sizeof (RetroControllerState *));
     g_array_set_clear_func (states, (GDestroyNotify) g_pointer_free);
     for (input_i = inputs; *input_i != NULL; input_i++) {
-      state = retro_controller_state_from_string (*input_i);
+      state = state_from_string (*input_i);
       if (state == NULL) {
         g_critical ("Invalid controller input: %s. Skipping.", *input_i);
 

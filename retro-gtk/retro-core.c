@@ -1034,10 +1034,10 @@ serialize_option_overrides (RetroCore *self)
 
 // FIXME Merge this into retro_core_set_controller().
 static void
-retro_core_set_controller_port_device (RetroCore               *self,
-                                       guint                    port,
-                                       RetroControllerType      controller_type,
-                                       RetroCoreControllerInfo *info)
+set_controller_port_device (RetroCore               *self,
+                            guint                    port,
+                            RetroControllerType      controller_type,
+                            RetroCoreControllerInfo *info)
 {
   g_autoptr(GError) error = NULL;
   g_autoptr(GUnixFDList) fd_list = NULL;
@@ -1198,7 +1198,7 @@ retro_core_boot (RetroCore  *self,
   g_hash_table_iter_init (&iter, self->controllers);
   while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &info)) {
     controller_type = retro_controller_get_controller_type (info->controller);
-    retro_core_set_controller_port_device (self, info->port, controller_type, info);
+    set_controller_port_device (self, info->port, controller_type, info);
   }
 
   if (!ipc_runner_call_get_properties_sync (proxy,
@@ -1679,7 +1679,7 @@ retro_core_set_controller (RetroCore       *self,
   if (!retro_core_get_is_initiated (self))
     return;
 
-  retro_core_set_controller_port_device (self, port, controller_type, info);
+  set_controller_port_device (self, port, controller_type, info);
 }
 
 static void

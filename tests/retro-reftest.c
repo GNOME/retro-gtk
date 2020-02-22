@@ -250,8 +250,8 @@ pixdata_equal (GdkPixbuf  *test,
 }
 
 static void
-retro_reftest_on_video_output (RetroReftestData *data,
-                               RetroPixdata     *pixdata)
+on_video_output (RetroReftestData *data,
+                 RetroPixdata     *pixdata)
 {
   if (pixdata == NULL)
     return;
@@ -697,7 +697,7 @@ retro_reftest_setup_for_file (GFile *file)
   g_list_free (frames);
   retro_reftest_data_unref (data);
 
-  g_signal_connect_swapped (data->core, "video-output", (GCallback) retro_reftest_on_video_output, data);
+  g_signal_connect_swapped (data->core, "video-output", (GCallback) on_video_output, data);
 }
 
 int

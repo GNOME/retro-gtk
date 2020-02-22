@@ -36,7 +36,7 @@ retro_module_query_init (RetroModuleQuery *self)
 }
 
 static gchar **
-retro_module_query_get_plugin_lookup_paths ()
+get_plugin_lookup_paths ()
 {
   gchar **envp;
   const gchar *env_plugin_path;
@@ -77,7 +77,7 @@ retro_module_query_iterator (RetroModuleQuery *self)
 
   g_return_val_if_fail (RETRO_IS_MODULE_QUERY (self), NULL);
 
-  paths = retro_module_query_get_plugin_lookup_paths ();
+  paths = get_plugin_lookup_paths ();
   result = retro_module_iterator_new ((const gchar * const *) paths,
                                       self->recursive);
   g_strfreev (paths);

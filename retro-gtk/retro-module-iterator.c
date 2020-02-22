@@ -46,8 +46,8 @@ retro_module_iterator_init (RetroModuleIterator *self)
 }
 
 static RetroModuleIterator *
-retro_module_iterator_new_for_subdirectory (const gchar *lookup_path,
-                                            GHashTable  *visited_paths)
+new_for_subdirectory (const gchar *lookup_path,
+                      GHashTable  *visited_paths)
 {
   RetroModuleIterator *self;
 
@@ -64,7 +64,7 @@ retro_module_iterator_new_for_subdirectory (const gchar *lookup_path,
 }
 
 static gboolean
-retro_module_iterator_was_current_directory_visited (RetroModuleIterator *self)
+was_current_directory_visited (RetroModuleIterator *self)
 {
   GFile *current_directory_file;
   gchar *current_directory_path;
@@ -80,7 +80,7 @@ retro_module_iterator_was_current_directory_visited (RetroModuleIterator *self)
 }
 
 static void
-retro_module_iterator_set_current_directory_as_visited (RetroModuleIterator *self)
+set_current_directory_as_visited (RetroModuleIterator *self)
 {
   GFile *current_directory_file;
   gchar *current_directory_path;
@@ -92,7 +92,7 @@ retro_module_iterator_set_current_directory_as_visited (RetroModuleIterator *sel
 }
 
 static gboolean
-retro_module_iterator_next_in_sub_directory (RetroModuleIterator *self)
+next_in_sub_directory (RetroModuleIterator *self)
 {
   if (retro_module_iterator_next (self->sub_directory)) {
     if (self->core_descriptor != NULL)
@@ -112,10 +112,10 @@ retro_module_iterator_next_in_sub_directory (RetroModuleIterator *self)
 }
 
 static gboolean
-retro_module_iterator_iterate_next_in_current_path (RetroModuleIterator  *self,
-                                                    GFile                *directory,
-                                                    GFileInfo            *info,
-                                                    GError              **error)
+iterate_next_in_current_path (RetroModuleIterator  *self,
+                              GFile                *directory,
+                              GFileInfo            *info,
+                              GError              **error)
 {
   const gchar *sub_directory_basename;
   GFile *sub_directory_file;
@@ -143,10 +143,10 @@ retro_module_iterator_iterate_next_in_current_path (RetroModuleIterator  *self,
       return FALSE;
     }
 
-    self->sub_directory = retro_module_iterator_new_for_subdirectory (sub_directory_path, self->visited);
+    self->sub_directory = new_for_subdirectory (sub_directory_path, self->visited);
     g_free (sub_directory_path);
 
-    return retro_module_iterator_next_in_sub_directory (self);
+    return next_in_sub_directory (self);
   }
 
   core_descriptor_basename = g_file_info_get_name (info);
@@ -174,8 +174,8 @@ retro_module_iterator_iterate_next_in_current_path (RetroModuleIterator  *self,
 }
 
 static gboolean
-retro_module_iterator_next_in_current_path (RetroModuleIterator  *self,
-                                            GError              **error)
+next_in_current_path (RetroModuleIterator  *self,
+                      GError              **error)
 {
   GFile *directory = NULL;
   GFileInfo *info = NULL;
@@ -183,8 +183,7 @@ retro_module_iterator_next_in_current_path (RetroModuleIterator  *self,
 
   GError *tmp_error = NULL;
 
-  if (self->sub_directory != NULL &&
-      retro_module_iterator_next_in_sub_directory (self))
+  if (self->sub_directory != NULL && next_in_sub_directory (self))
     return TRUE;
 
   directory = g_file_new_for_path (self->directories[self->current_directory]);
@@ -227,7 +226,7 @@ retro_module_iterator_next_in_current_path (RetroModuleIterator  *self,
     if (info == NULL)
       break;
 
-    found = retro_module_iterator_iterate_next_in_current_path (self, directory, info, &tmp_error);
+    found = iterate_next_in_current_path (self, directory, info, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
       g_object_unref (info);
@@ -282,26 +281,26 @@ retro_module_iterator_get (RetroModuleIterator *self)
 gboolean
 retro_module_iterator_next (RetroModuleIterator *self)
 {
-  gboolean next_in_current_path;
+  gboolean found_next_in_current_path;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_MODULE_ITERATOR (self), FALSE);
 
   while (self->directories[self->current_directory] != NULL) {
-    retro_module_iterator_set_current_directory_as_visited (self);
+    set_current_directory_as_visited (self);
 
-    next_in_current_path = retro_module_iterator_next_in_current_path (self, &tmp_error);
+    found_next_in_current_path = next_in_current_path (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_debug ("%s", tmp_error->message);
       g_clear_error (&tmp_error);
-      next_in_current_path = FALSE;
+      found_next_in_current_path = FALSE;
     }
 
-    if (next_in_current_path)
+    if (found_next_in_current_path)
       return TRUE;
 
     while (self->directories[self->current_directory] != NULL &&
-           retro_module_iterator_was_current_directory_visited (self))
+           was_current_directory_visited (self))
       self->current_directory++;
   }
 

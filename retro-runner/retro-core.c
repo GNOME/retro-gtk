@@ -60,8 +60,8 @@ static guint signals[N_SIGNALS];
 
 static RetroCore *retro_core_instance = NULL;
 
-static void retro_core_set_filename (RetroCore   *self,
-                                     const gchar *filename);
+static void set_filename (RetroCore   *self,
+                          const gchar *filename);
 
 /* Private */
 
@@ -202,7 +202,7 @@ retro_core_set_property (GObject      *object,
 
   switch (prop_id) {
   case PROP_FILENAME:
-    retro_core_set_filename (self, g_value_get_string (value));
+    set_filename (self, g_value_get_string (value));
 
     break;
   case PROP_SYSTEM_DIRECTORY:
@@ -582,8 +582,8 @@ retro_core_init (RetroCore *self)
 }
 
 static void
-retro_core_set_filename (RetroCore   *self,
-                         const gchar *filename)
+set_filename (RetroCore   *self,
+              const gchar *filename)
 {
   if (g_strcmp0 (filename, retro_core_get_filename (self)) == 0)
     return;
@@ -594,8 +594,8 @@ retro_core_set_filename (RetroCore   *self,
 }
 
 static void
-retro_core_set_is_initiated (RetroCore *self,
-                             gboolean   is_initiated)
+set_is_initiated (RetroCore *self,
+                  gboolean   is_initiated)
 {
   if (retro_core_get_is_initiated (self) == is_initiated)
     return;
@@ -605,8 +605,8 @@ retro_core_set_is_initiated (RetroCore *self,
 }
 
 static void
-retro_core_set_game_loaded (RetroCore *self,
-                            gboolean   game_loaded)
+set_game_loaded (RetroCore *self,
+                 gboolean   game_loaded)
 {
   if (retro_core_get_game_loaded (self) == game_loaded)
     return;
@@ -623,8 +623,8 @@ retro_core_set_game_loaded (RetroCore *self,
  * Gives basic informations on how to handle the Libretro core.
  */
 static void
-retro_core_get_system_info (RetroCore       *self,
-                            RetroSystemInfo *system_info)
+get_system_info (RetroCore       *self,
+                 RetroSystemInfo *system_info)
 {
   RetroGetSystemInfo get_system_info;
 
@@ -635,11 +635,11 @@ retro_core_get_system_info (RetroCore       *self,
 }
 
 static gboolean
-retro_core_get_needs_full_path (RetroCore *self)
+get_needs_full_path (RetroCore *self)
 {
   RetroSystemInfo system_info = { 0 };
 
-  retro_core_get_system_info (self, &system_info);
+  get_system_info (self, &system_info);
 
   return system_info.need_fullpath;
 }
@@ -691,7 +691,7 @@ retro_core_get_name (RetroCore *self)
 {
   RetroSystemInfo system_info = { 0 };
 
-  retro_core_get_system_info (self, &system_info);
+  get_system_info (self, &system_info);
 
   return system_info.library_name;
 }
@@ -710,9 +710,9 @@ retro_core_update_variable (RetroCore   *self,
 }
 
 static gboolean
-retro_core_set_disk_ejected (RetroCore  *self,
-                             gboolean    ejected,
-                             GError    **error)
+set_disk_ejected (RetroCore  *self,
+                  gboolean    ejected,
+                  GError    **error)
 {
   RetroDiskControlCallbackSetEjectState set_eject_state;
 
@@ -731,9 +731,9 @@ retro_core_set_disk_ejected (RetroCore  *self,
 }
 
 static gboolean
-retro_core_set_disk_image_index (RetroCore  *self,
-                                 guint       index,
-                                 GError    **error)
+set_disk_image_index (RetroCore  *self,
+                      guint       index,
+                      GError    **error)
 {
   RetroDiskControlCallbackSetImageIndex set_image_index;
 
@@ -752,8 +752,8 @@ retro_core_set_disk_image_index (RetroCore  *self,
 }
 
 static guint
-retro_core_get_disk_images_number (RetroCore  *self,
-                                   GError    **error)
+get_disk_images_number (RetroCore  *self,
+                        GError    **error)
 {
   RetroDiskControlCallbackGetNumImages get_num_images;
 
@@ -772,10 +772,10 @@ retro_core_get_disk_images_number (RetroCore  *self,
 }
 
 static gboolean
-retro_core_replace_disk_image_index (RetroCore     *self,
-                                     guint          index,
-                                     RetroGameInfo *info,
-                                     GError        **error)
+replace_disk_image_index (RetroCore      *self,
+                          guint           index,
+                          RetroGameInfo  *info,
+                          GError        **error)
 {
   RetroDiskControlCallbackReplaceImageIndex replace_image_index;
 
@@ -794,8 +794,8 @@ retro_core_replace_disk_image_index (RetroCore     *self,
 }
 
 static gboolean
-retro_core_add_disk_image_index (RetroCore  *self,
-                                 GError    **error)
+add_disk_image_index (RetroCore  *self,
+                      GError    **error)
 {
   RetroDiskControlCallbackAddImageIndex add_image_index;
 
@@ -814,8 +814,8 @@ retro_core_add_disk_image_index (RetroCore  *self,
 }
 
 static void
-retro_core_load_discs (RetroCore  *self,
-                       GError    **error)
+load_discs (RetroCore  *self,
+            GError    **error)
 {
   guint length;
   gboolean fullpath;
@@ -825,7 +825,7 @@ retro_core_load_discs (RetroCore  *self,
   RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 
-  retro_core_set_disk_ejected (self, TRUE, &tmp_error);
+  set_disk_ejected (self, TRUE, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
@@ -833,9 +833,9 @@ retro_core_load_discs (RetroCore  *self,
   }
 
   length = g_strv_length (self->media_uris);
-  while (retro_core_get_disk_images_number (self, &tmp_error) < length &&
+  while (get_disk_images_number (self, &tmp_error) < length &&
          (tmp_error != NULL)) {
-    retro_core_add_disk_image_index (self, &tmp_error);
+   add_disk_image_index (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
@@ -849,7 +849,7 @@ retro_core_load_discs (RetroCore  *self,
     return;
   }
 
-  fullpath = retro_core_get_needs_full_path (self);
+  fullpath = get_needs_full_path (self);
   for (index = 0; index < length; index++) {
     file = g_file_new_for_uri (self->media_uris[index]);
     path = g_file_get_path (file);
@@ -871,7 +871,7 @@ retro_core_load_discs (RetroCore  *self,
       }
     }
 
-    retro_core_replace_disk_image_index (self, index, game_info, &tmp_error);
+    replace_disk_image_index (self, index, game_info, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
@@ -887,7 +887,7 @@ retro_core_load_discs (RetroCore  *self,
     g_object_unref (file);
   }
 
-  retro_core_set_disk_ejected (self, FALSE, &tmp_error);
+  set_disk_ejected (self, FALSE, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
@@ -896,8 +896,8 @@ retro_core_load_discs (RetroCore  *self,
 }
 
 static gboolean
-retro_core_load_game (RetroCore     *self,
-                      RetroGameInfo *game)
+load_game (RetroCore     *self,
+           RetroGameInfo *game)
 {
   RetroUnloadGame unload_game;
   RetroLoadGame load_game;
@@ -914,7 +914,7 @@ retro_core_load_game (RetroCore     *self,
 
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (game);
-  retro_core_set_game_loaded (self, game_loaded);
+  set_game_loaded (self, game_loaded);
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
@@ -923,7 +923,7 @@ retro_core_load_game (RetroCore     *self,
 }
 
 static gboolean
-retro_core_prepare (RetroCore *self) {
+prepare (RetroCore *self) {
   RetroLoadGame load_game;
   RetroGetSystemAvInfo get_system_av_info;
   gboolean game_loaded;
@@ -931,7 +931,7 @@ retro_core_prepare (RetroCore *self) {
 
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (NULL);
-  retro_core_set_game_loaded (self, game_loaded);
+  set_game_loaded (self, game_loaded);
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
@@ -940,8 +940,8 @@ retro_core_prepare (RetroCore *self) {
 }
 
 static void
-retro_core_load_medias (RetroCore *self,
-                        GError** error)
+load_medias (RetroCore  *self,
+             GError    **error)
 {
   guint length;
   gchar *uri;
@@ -954,7 +954,7 @@ retro_core_load_medias (RetroCore *self,
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
   if (length == 0) {
-    retro_core_prepare (self);
+    prepare (self);
 
     return;
   }
@@ -962,7 +962,7 @@ retro_core_load_medias (RetroCore *self,
   uri = g_strdup (self->media_uris[0]);
   file = g_file_new_for_uri (uri);
   path = g_file_get_path (file);
-  fullpath = retro_core_get_needs_full_path (self);
+  fullpath = get_needs_full_path (self);
   if (fullpath) {
     game_info = retro_game_info_new (path);
   }
@@ -978,7 +978,7 @@ retro_core_load_medias (RetroCore *self,
       return;
     }
   }
-  if (!retro_core_load_game (self, game_info)) {
+  if (!load_game (self, game_info)) {
     retro_game_info_free (game_info);
     g_free (path);
     g_object_unref (file);
@@ -987,7 +987,7 @@ retro_core_load_medias (RetroCore *self,
     return;
   }
   if (self->disk_control_callback != NULL) {
-    retro_core_load_discs (self, &tmp_error);
+    load_discs (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
       retro_game_info_free (game_info);
@@ -1326,9 +1326,9 @@ retro_core_boot (RetroCore  *self,
   init = retro_module_get_init (self->module);
   init ();
 
-  retro_core_set_is_initiated (self, TRUE);
+  set_is_initiated (self, TRUE);
 
-  retro_core_load_medias (self, &tmp_error);
+  load_medias (self, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
@@ -1385,21 +1385,21 @@ retro_core_set_current_media (RetroCore  *self,
   if (self->disk_control_callback == NULL)
     return;
 
-  retro_core_set_disk_ejected (self, TRUE, &tmp_error);
+  set_disk_ejected (self, TRUE, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 
     return;
   }
 
-  retro_core_set_disk_image_index (self, media_index, &tmp_error);
+  set_disk_image_index (self, media_index, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 
     return;
   }
 
-  retro_core_set_disk_ejected (self, FALSE, &tmp_error);
+  set_disk_ejected (self, FALSE, &tmp_error);
   if (tmp_error != NULL) {
     g_propagate_error (error, tmp_error);
 

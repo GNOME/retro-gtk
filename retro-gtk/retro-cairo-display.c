@@ -27,11 +27,11 @@ static GParamSpec *properties [N_PROPS];
 /* Private */
 
 static void
-retro_cairo_display_get_video_box (RetroCairoDisplay *self,
-                                   gdouble           *width,
-                                   gdouble           *height,
-                                   gdouble           *x,
-                                   gdouble           *y)
+get_video_box (RetroCairoDisplay *self,
+               gdouble           *width,
+               gdouble           *height,
+               gdouble           *x,
+               gdouble           *y)
 {
   gdouble w;
   gdouble h;
@@ -66,8 +66,8 @@ retro_cairo_display_get_video_box (RetroCairoDisplay *self,
 }
 
 static void
-retro_cairo_display_draw_background (RetroCairoDisplay *self,
-                                     cairo_t           *cr)
+draw_background (RetroCairoDisplay *self,
+                 cairo_t           *cr)
 {
   g_assert (cr != NULL);
 
@@ -94,7 +94,7 @@ retro_cairo_display_draw (GtkWidget *widget,
   gdouble ys;
   cairo_pattern_t *source;
 
-  retro_cairo_display_draw_background (self, cr);
+  draw_background (self, cr);
 
   if (self->pixbuf == NULL)
     return FALSE;
@@ -110,7 +110,7 @@ retro_cairo_display_draw (GtkWidget *widget,
   }
 
   surface = gdk_cairo_surface_create_from_pixbuf (to_draw, 1, NULL);
-  retro_cairo_display_get_video_box (self, &w, &h, &x, &y);
+  get_video_box (self, &w, &h, &x, &y);
   xs = w / gdk_pixbuf_get_width (to_draw);
   ys = h / gdk_pixbuf_get_height (to_draw);
 
@@ -239,9 +239,9 @@ retro_cairo_display_init (RetroCairoDisplay *self)
 }
 
 static void
-retro_cairo_display_on_video_output (RetroCore    *sender,
-                                     RetroPixdata *pixdata,
-                                     gpointer      user_data)
+on_video_output (RetroCore    *sender,
+                 RetroPixdata *pixdata,
+                 gpointer      user_data)
 {
   RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (user_data);
 
@@ -280,7 +280,9 @@ retro_cairo_display_set_core (RetroCairoDisplay *self,
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    self->on_video_output_id = g_signal_connect_object (core, "video-output", (GCallback) retro_cairo_display_on_video_output, self, 0);
+    self->on_video_output_id =
+      g_signal_connect_object (core, "video-output",
+                               (GCallback) on_video_output, self, 0);
   }
 }
 
@@ -379,7 +381,7 @@ retro_cairo_display_get_coordinates_on_display (RetroCairoDisplay *self,
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 
-  retro_cairo_display_get_video_box (self, &w, &h, &x, &y);
+  get_video_box (self, &w, &h, &x, &y);
 
   // Return coordinates as a [-1.0, 1.0] scale, (0.0, 0.0) is the center.
   *display_x = ((widget_x - x) * 2.0 - w) / w;

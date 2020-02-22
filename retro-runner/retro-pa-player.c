@@ -64,8 +64,8 @@ retro_pa_player_init (RetroPaPlayer *self)
 }
 
 static void
-retro_pa_player_prepare_for_sample_rate (RetroPaPlayer *self,
-                                         gdouble        sample_rate)
+prepare_for_sample_rate (RetroPaPlayer *self,
+                         gdouble        sample_rate)
 {
   pa_sample_spec sample_spec = {0};
   gint error;
@@ -139,11 +139,11 @@ resample (RetroPaPlayer *self,
 }
 
 static void
-retro_pa_player_on_audio_output (RetroCore *sender,
-                                 gint16    *data,
-                                 int        length,
-                                 gdouble    sample_rate,
-                                 gpointer   user_data)
+on_audio_output (RetroCore *sender,
+                 gint16    *data,
+                 int        length,
+                 gdouble    sample_rate,
+                 gpointer   user_data)
 {
   RetroPaPlayer *self = RETRO_PA_PLAYER (user_data);
 
@@ -176,7 +176,7 @@ on_iterated (RetroCore     *core,
   }
 
   if (self->simple == NULL || sample_rate != self->sample_rate)
-    retro_pa_player_prepare_for_sample_rate (self, sample_rate);
+    prepare_for_sample_rate (self, sample_rate);
 
   if (self->simple == NULL)
     return;
@@ -222,7 +222,7 @@ retro_pa_player_set_core (RetroPaPlayer *self,
     self->on_audio_output_id =
       g_signal_connect_object (core,
                                "audio-output",
-                               (GCallback) retro_pa_player_on_audio_output,
+                               (GCallback) on_audio_output,
                                self,
                                0);
     self->on_iterated_id =

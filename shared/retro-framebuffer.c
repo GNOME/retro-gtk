@@ -210,7 +210,7 @@ retro_framebuffer_set_data (RetroFramebuffer *self,
                             gsize             rowstride,
                             guint             width,
                             guint             height,
-                            float             aspect_ratio,
+                            gfloat            aspect_ratio,
                             gpointer          data)
 {
   gsize size;

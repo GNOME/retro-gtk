@@ -330,19 +330,19 @@ retro_gl_display_init (RetroGLDisplay *self)
   g_signal_connect_object (G_OBJECT (self),
                            "realize",
                            (GCallback) realize,
-                           GTK_WIDGET (self),
+                           self,
                            0);
 
   g_signal_connect_object (G_OBJECT (self),
                            "unrealize",
                            (GCallback) unrealize,
-                           GTK_WIDGET (self),
+                           self,
                            0);
 
   g_signal_connect_object (G_OBJECT (self),
                            "render",
                            (GCallback) render,
-                           GTK_WIDGET (self),
+                           self,
                            0);
 
   self->filter = RETRO_VIDEO_FILTER_SMOOTH;
@@ -350,7 +350,7 @@ retro_gl_display_init (RetroGLDisplay *self)
   g_signal_connect_object (G_OBJECT (self),
                            "notify::sensitive",
                            (GCallback) gtk_widget_queue_draw,
-                           GTK_WIDGET (self),
+                           self,
                            G_CONNECT_SWAPPED);
 }
 

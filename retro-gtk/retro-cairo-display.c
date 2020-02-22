@@ -221,12 +221,12 @@ retro_cairo_display_init (RetroCairoDisplay *self)
   g_signal_connect_object (G_OBJECT (self),
                            "notify::sensitive",
                            (GCallback) gtk_widget_queue_draw,
-                           GTK_WIDGET (self),
+                           self,
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (G_OBJECT (self),
                            "notify::pixbuf",
                            (GCallback) gtk_widget_queue_draw,
-                           GTK_WIDGET (self),
+                           self,
                            G_CONNECT_SWAPPED);
 }
 

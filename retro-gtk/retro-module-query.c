@@ -36,7 +36,7 @@ retro_module_query_init (RetroModuleQuery *self)
 }
 
 static gchar **
-get_plugin_lookup_paths ()
+get_plugin_lookup_paths (void)
 {
   gchar **envp;
   const gchar *env_plugin_path;

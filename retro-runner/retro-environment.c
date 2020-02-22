@@ -585,7 +585,7 @@ audio_sample_batch_cb (gint16 *data,
 }
 
 static void
-input_poll_cb ()
+input_poll_cb (void)
 {
   RetroCore *self = retro_core_get_instance ();
 

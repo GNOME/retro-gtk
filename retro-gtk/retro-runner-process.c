@@ -219,7 +219,7 @@ create_connection (GSubprocessLauncher  *launcher,
 }
 
 static gboolean
-is_debug ()
+is_debug (void)
 {
   gchar **envp;
   const gchar *env_value;

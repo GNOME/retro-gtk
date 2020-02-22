@@ -103,7 +103,7 @@ retro_key_joypad_mapping_get_button_key (RetroKeyJoypadMapping *self,
  * Returns: (transfer full): a new #RetroKeyJoypadMapping
  */
 RetroKeyJoypadMapping *
-retro_key_joypad_mapping_new ()
+retro_key_joypad_mapping_new (void)
 {
   RetroKeyJoypadMapping *self;
 
@@ -120,7 +120,7 @@ retro_key_joypad_mapping_new ()
  * Returns: (transfer full): a new #RetroKeyJoypadMapping
  */
 RetroKeyJoypadMapping *
-retro_key_joypad_mapping_new_default ()
+retro_key_joypad_mapping_new_default (void)
 {
   RetroKeyJoypadMapping *self;
   RetroJoypadId button;

@@ -634,19 +634,16 @@ exit_cb (RetroRunnerProcess *process,
 }
 
 static gboolean
-retro_core_key_event (RetroCore   *self,
-                      GdkEventKey *event)
+on_key_event (GtkWidget   *widget,
+              GdkEventKey *event,
+              RetroCore   *self)
 {
-
   gboolean pressed;
   RetroKeyboardKey retro_key;
   RetroKeyboardModifierKey retro_modifier_key;
   guint32 character;
   g_autoptr(GError) error = NULL;
   IpcRunner *proxy;
-
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (!retro_core_get_is_initiated (self))
     return FALSE;
@@ -663,18 +660,6 @@ retro_core_key_event (RetroCore   *self,
     crash (self, error);
 
   return FALSE;
-}
-
-static gboolean
-on_key_event (GtkWidget   *widget,
-              GdkEventKey *event,
-              gpointer     self)
-{
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
-
-  return retro_core_key_event (RETRO_CORE (self), event);
 }
 
 /* Public */

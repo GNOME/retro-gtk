@@ -215,27 +215,19 @@ retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
 }
 
 static void
-queue_draw (GObject    *sender,
-            GParamSpec *pspec,
-            gpointer    self)
-{
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-}
-
-static void
 retro_cairo_display_init (RetroCairoDisplay *self)
 {
   self->filter = RETRO_VIDEO_FILTER_SMOOTH;
   g_signal_connect_object (G_OBJECT (self),
                            "notify::sensitive",
-                           (GCallback) queue_draw,
+                           (GCallback) gtk_widget_queue_draw,
                            GTK_WIDGET (self),
-                           0);
+                           G_CONNECT_SWAPPED);
   g_signal_connect_object (G_OBJECT (self),
                            "notify::pixbuf",
-                           (GCallback) queue_draw,
+                           (GCallback) gtk_widget_queue_draw,
                            GTK_WIDGET (self),
-                           0);
+                           G_CONNECT_SWAPPED);
 }
 
 static void

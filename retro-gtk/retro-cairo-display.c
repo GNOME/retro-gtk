@@ -137,6 +137,7 @@ retro_cairo_display_draw (GtkWidget *widget,
 
   return TRUE;
 }
+
 static void
 retro_cairo_display_finalize (GObject *object)
 {

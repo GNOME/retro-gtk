@@ -40,7 +40,7 @@ gsize retro_framebuffer_get_rowstride (RetroFramebuffer *self);
 guint retro_framebuffer_get_width (RetroFramebuffer *self);
 guint retro_framebuffer_get_height (RetroFramebuffer *self);
 gdouble retro_framebuffer_get_aspect_ratio (RetroFramebuffer *self);
-gpointer retro_framebuffer_get_pixels (RetroFramebuffer *self);
+gconstpointer retro_framebuffer_get_pixels (RetroFramebuffer *self);
 
 #endif
 

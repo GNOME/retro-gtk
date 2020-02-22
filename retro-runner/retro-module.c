@@ -52,7 +52,7 @@ try_delete_file (GFile *file)
 {
   GError *inner_error = NULL;
 
-  g_return_if_fail (file != NULL);
+  g_assert (file != NULL);
 
   g_file_delete (file, NULL, &inner_error);
   if (G_UNLIKELY (inner_error != NULL)) {

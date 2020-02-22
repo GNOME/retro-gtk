@@ -107,8 +107,6 @@ retro_core_finalize (GObject *object)
   RetroUnloadGame unload_game;
   RetroDeinit deinit;
 
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   retro_core_stop (self);
 
   if (retro_core_get_game_loaded (self)) {
@@ -587,8 +585,6 @@ static void
 retro_core_set_filename (RetroCore   *self,
                          const gchar *filename)
 {
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   if (g_strcmp0 (filename, retro_core_get_filename (self)) == 0)
     return;
 
@@ -601,8 +597,6 @@ static void
 retro_core_set_is_initiated (RetroCore *self,
                              gboolean   is_initiated)
 {
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   if (retro_core_get_is_initiated (self) == is_initiated)
     return;
 
@@ -614,8 +608,6 @@ static void
 retro_core_set_game_loaded (RetroCore *self,
                             gboolean   game_loaded)
 {
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   if (retro_core_get_game_loaded (self) == game_loaded)
     return;
 
@@ -636,8 +628,7 @@ retro_core_get_system_info (RetroCore       *self,
 {
   RetroGetSystemInfo get_system_info;
 
-  g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (system_info != NULL);
+  g_assert (system_info != NULL);
 
   get_system_info = retro_module_get_get_system_info (self->module);
   get_system_info (system_info);
@@ -710,9 +701,8 @@ retro_core_update_variable (RetroCore   *self,
                             const gchar *key,
                             const gchar *value)
 {
-  g_return_if_fail (RETRO_IS_CORE (self));
-  g_return_if_fail (key != NULL);
-  g_return_if_fail (value != NULL);
+  g_assert (key != NULL);
+  g_assert (value != NULL);
 
   g_hash_table_replace (self->variables, g_strdup (key), g_strdup (value));
 
@@ -725,8 +715,6 @@ retro_core_set_disk_ejected (RetroCore  *self,
                              GError    **error)
 {
   RetroDiskControlCallbackSetEjectState set_eject_state;
-
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
   set_eject_state = self->disk_control_callback->set_eject_state;
 
@@ -749,8 +737,6 @@ retro_core_set_disk_image_index (RetroCore  *self,
 {
   RetroDiskControlCallbackSetImageIndex set_image_index;
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-
   set_image_index = self->disk_control_callback->set_image_index;
 
   if (set_image_index == NULL) {
@@ -770,8 +756,6 @@ retro_core_get_disk_images_number (RetroCore  *self,
                                    GError    **error)
 {
   RetroDiskControlCallbackGetNumImages get_num_images;
-
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
   get_num_images = self->disk_control_callback->get_num_images;
 
@@ -795,8 +779,6 @@ retro_core_replace_disk_image_index (RetroCore     *self,
 {
   RetroDiskControlCallbackReplaceImageIndex replace_image_index;
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-
   replace_image_index = self->disk_control_callback->replace_image_index;
 
   if (replace_image_index == NULL) {
@@ -816,8 +798,6 @@ retro_core_add_disk_image_index (RetroCore  *self,
                                  GError    **error)
 {
   RetroDiskControlCallbackAddImageIndex add_image_index;
-
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
   add_image_index = self->disk_control_callback->add_image_index;
 
@@ -844,8 +824,6 @@ retro_core_load_discs (RetroCore  *self,
   guint index;
   RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
-
-  g_return_if_fail (RETRO_IS_CORE (self));
 
   retro_core_set_disk_ejected (self, TRUE, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
@@ -927,8 +905,7 @@ retro_core_load_game (RetroCore     *self,
   gboolean game_loaded;
   RetroSystemAvInfo info = {{ 0 }};
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-  g_return_val_if_fail (game != NULL, FALSE);
+  g_assert (game != NULL);
 
   if (retro_core_get_game_loaded (self)) {
     unload_game = retro_module_get_unload_game (self->module);
@@ -952,8 +929,6 @@ retro_core_prepare (RetroCore *self) {
   gboolean game_loaded;
   RetroSystemAvInfo info = {{ 0 }};
 
-  g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
-
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (NULL);
   retro_core_set_game_loaded (self, game_loaded);
@@ -976,7 +951,6 @@ retro_core_load_medias (RetroCore *self,
   RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 
-  g_return_if_fail (RETRO_IS_CORE (self));
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
   if (length == 0) {

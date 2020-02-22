@@ -70,8 +70,6 @@ retro_pa_player_prepare_for_sample_rate (RetroPaPlayer *self,
   pa_sample_spec sample_spec = {0};
   gint error;
 
-  g_return_if_fail (RETRO_IS_PA_PLAYER (self));
-
   self->sample_rate = sample_rate;
 
   pa_sample_spec_init (&sample_spec);

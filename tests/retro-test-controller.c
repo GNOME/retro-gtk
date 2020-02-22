@@ -45,8 +45,6 @@ retro_test_controller_get_input_state (RetroController *base,
 {
   RetroTestController *self = RETRO_TEST_CONTROLLER (base);
 
-  g_return_val_if_fail (self != NULL, 0);
-
   switch (retro_input_get_controller_type (input) & RETRO_CONTROLLER_TYPE_TYPE_MASK) {
   case RETRO_CONTROLLER_TYPE_JOYPAD: {
     RetroJoypadId id;
@@ -96,8 +94,6 @@ static RetroControllerType
 retro_test_controller_get_controller_type (RetroController *base)
 {
   RetroTestController *self = RETRO_TEST_CONTROLLER (base);
-
-  g_return_val_if_fail (self != NULL, 0);
 
   return self->controller_type;
 }

@@ -62,8 +62,6 @@ static const GOptionEntry test_args[] = {
 
 static RetroReftestData *
 retro_reftest_data_ref (RetroReftestData *self) {
-  g_return_val_if_fail (self != NULL, NULL);
-
   self->refs++;
 
   return self;
@@ -71,8 +69,6 @@ retro_reftest_data_ref (RetroReftestData *self) {
 
 static void
 retro_reftest_data_unref (RetroReftestData *self) {
-  g_return_if_fail (self != NULL);
-
   if (self->refs == 0) {
     g_object_unref (self->core);
     retro_pixdata_free (self->pixdata);
@@ -88,8 +84,6 @@ retro_reftest_data_unref (RetroReftestData *self) {
 
 static void
 retro_reftest_options_unref (RetroReftestOptions *self) {
-  g_return_if_fail (self != NULL);
-
   if (self->refs == 0) {
     retro_reftest_data_unref (self->data);
     g_hash_table_unref (self->options);
@@ -103,8 +97,6 @@ retro_reftest_options_unref (RetroReftestOptions *self) {
 
 static void
 retro_reftest_run_unref (RetroReftestRun *self) {
-  g_return_if_fail (self != NULL);
-
   if (self->refs == 0) {
     retro_reftest_data_unref (self->data);
     if (self->controller_states != NULL)
@@ -119,8 +111,6 @@ retro_reftest_run_unref (RetroReftestRun *self) {
 
 static void
 retro_reftest_video_unref (RetroReftestVideo *self) {
-  g_return_if_fail (self != NULL);
-
   if (self->refs == 0) {
     retro_reftest_data_unref (self->data);
     g_object_unref (self->video_file);

@@ -38,11 +38,10 @@ retro_cairo_display_get_video_box (RetroCairoDisplay *self,
   gdouble display_ratio;
   gdouble allocated_ratio;
 
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (width != NULL);
-  g_return_if_fail (height != NULL);
-  g_return_if_fail (x != NULL);
-  g_return_if_fail (y != NULL);
+  g_assert (width != NULL);
+  g_assert (height != NULL);
+  g_assert (x != NULL);
+  g_assert (y != NULL);
 
   w = (gdouble) gtk_widget_get_allocated_width (GTK_WIDGET (self));
   h = (gdouble) gtk_widget_get_allocated_height (GTK_WIDGET (self));
@@ -70,8 +69,7 @@ static void
 retro_cairo_display_draw_background (RetroCairoDisplay *self,
                                      cairo_t           *cr)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (cr != NULL);
+  g_assert (cr != NULL);
 
   cairo_set_source_rgb (cr, (gdouble) 0, (gdouble) 0, (gdouble) 0);
   cairo_paint (cr);
@@ -248,8 +246,6 @@ retro_cairo_display_on_video_output (RetroCore    *sender,
   RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (user_data);
 
   GdkPixbuf *pixbuf;
-
-  g_return_if_fail (self != NULL);
 
   self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);
   pixbuf = retro_pixdata_to_pixbuf (pixdata);

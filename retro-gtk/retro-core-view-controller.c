@@ -27,8 +27,6 @@ retro_core_view_controller_get_input_state (RetroController *base,
   gpointer view;
   gint16 result;
 
-  g_return_val_if_fail (self != NULL, 0);
-
   if (retro_input_get_controller_type (input) != self->controller_type)
     return 0;
 
@@ -49,8 +47,6 @@ retro_core_view_controller_get_controller_type (RetroController *base)
 {
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
 
-  g_return_val_if_fail (self != NULL, 0);
-
   return self->controller_type;
 }
 
@@ -60,8 +56,6 @@ retro_core_view_controller_get_capabilities (RetroController *base)
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
   gpointer view;
   guint64 capabilities;
-
-  g_return_val_if_fail (self != NULL, 0);
 
   view = g_weak_ref_get (&self->view);
 

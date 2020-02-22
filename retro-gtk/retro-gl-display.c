@@ -90,11 +90,10 @@ retro_gl_display_get_video_box (RetroGLDisplay *self,
   gdouble allocated_ratio;
   gint scale;
 
-  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
-  g_return_if_fail (width != NULL);
-  g_return_if_fail (height != NULL);
-  g_return_if_fail (x != NULL);
-  g_return_if_fail (y != NULL);
+  g_assert (width != NULL);
+  g_assert (height != NULL);
+  g_assert (x != NULL);
+  g_assert (y != NULL);
 
   scale = gtk_widget_get_scale_factor (GTK_WIDGET (self));
 
@@ -280,8 +279,6 @@ retro_gl_display_render (RetroGLDisplay *self)
   gint texture_width;
   gint texture_height;
 
-  g_return_val_if_fail (RETRO_IS_GL_DISPLAY (self), FALSE);
-
   glClear (GL_COLOR_BUFFER_BIT);
 
   filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
@@ -371,8 +368,6 @@ retro_gl_display_on_video_output (RetroCore    *sender,
                                   gpointer      user_data)
 {
   RetroGLDisplay *self = RETRO_GL_DISPLAY (user_data);
-
-  g_return_if_fail (RETRO_IS_GL_DISPLAY (self));
 
   if (pixdata == NULL)
     return;

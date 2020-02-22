@@ -76,9 +76,8 @@ has_group_prefixed (RetroCoreDescriptor *self,
   gchar *group;
   gboolean result;
 
-  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
-  g_return_val_if_fail (group_prefix != NULL, FALSE);
-  g_return_val_if_fail (group_suffix != NULL, FALSE);
+  g_assert (group_prefix != NULL);
+  g_assert (group_suffix != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
   result = g_key_file_has_group (self->key_file, group);
@@ -98,10 +97,9 @@ has_key_prefixed (RetroCoreDescriptor  *self,
   gboolean result;
   GError *tmp_error = NULL;
 
-  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
-  g_return_val_if_fail (group_prefix != NULL, FALSE);
-  g_return_val_if_fail (group_suffix != NULL, FALSE);
-  g_return_val_if_fail (key != NULL, FALSE);
+  g_assert (group_prefix != NULL);
+  g_assert (group_suffix != NULL);
+  g_assert (key != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
   result = g_key_file_has_key (self->key_file,
@@ -131,10 +129,9 @@ get_string_prefixed (RetroCoreDescriptor  *self,
   gchar *result;
   GError *tmp_error = NULL;
 
-  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
-  g_return_val_if_fail (group_prefix != NULL, NULL);
-  g_return_val_if_fail (group_suffix != NULL, NULL);
-  g_return_val_if_fail (key != NULL, NULL);
+  g_assert (group_prefix != NULL);
+  g_assert (group_suffix != NULL);
+  g_assert (key != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
 
@@ -166,11 +163,10 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
   gchar **result;
   GError *tmp_error = NULL;
 
-  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
-  g_return_val_if_fail (group_prefix != NULL, NULL);
-  g_return_val_if_fail (group_suffix != NULL, NULL);
-  g_return_val_if_fail (key != NULL, NULL);
-  g_return_val_if_fail (length != NULL, NULL);
+  g_assert (group_prefix != NULL);
+  g_assert (group_suffix != NULL);
+  g_assert (key != NULL);
+  g_assert (length != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
   result = g_key_file_get_string_list (self->key_file,
@@ -199,9 +195,8 @@ retro_core_descriptor_check_has_required_key (RetroCoreDescriptor  *self,
   gboolean has_key;
   GError *tmp_error = NULL;
 
-  g_return_if_fail (RETRO_IS_CORE_DESCRIPTOR (self));
-  g_return_if_fail (group != NULL);
-  g_return_if_fail (key != NULL);
+  g_assert (group != NULL);
+  g_assert (key != NULL);
 
   has_key = g_key_file_has_key (self->key_file,
                                 RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
@@ -229,8 +224,6 @@ retro_core_descriptor_check_libretro_group (RetroCoreDescriptor  *self,
                                             GError              **error)
 {
   GError *tmp_error = NULL;
-
-  g_return_if_fail (RETRO_IS_CORE_DESCRIPTOR (self));
 
   retro_core_descriptor_check_has_required_key (self,
                                                 RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
@@ -284,8 +277,7 @@ retro_core_descriptor_check_platform_group (RetroCoreDescriptor  *self,
   gchar *firmware_group;
   GError *tmp_error = NULL;
 
-  g_return_if_fail (RETRO_IS_CORE_DESCRIPTOR (self));
-  g_return_if_fail (group != NULL);
+  g_assert (group != NULL);
 
   retro_core_descriptor_check_has_required_key (self,
                                                 group,
@@ -347,8 +339,7 @@ retro_core_descriptor_check_firmware_group (RetroCoreDescriptor  *self,
 {
   GError *tmp_error = NULL;
 
-  g_return_if_fail (RETRO_IS_CORE_DESCRIPTOR (self));
-  g_return_if_fail (group != NULL);
+  g_assert (group != NULL);
 
   retro_core_descriptor_check_has_required_key (self,
                                                 group,

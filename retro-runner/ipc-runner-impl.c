@@ -44,17 +44,12 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
                              const gchar * const   *medias,
                              GVariant              *default_controller)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
   g_autoptr(GUnixFDList) out_fd_list = NULL;
   GVariantIter *iter;
   gchar *key, *value;
   gint handle, fd;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   g_variant_get (defaults, "a(ss)", &iter);
 
@@ -123,13 +118,8 @@ ipc_runner_impl_handle_set_current_media (IpcRunner             *runner,
                                           GDBusMethodInvocation *invocation,
                                           uint                   index)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   retro_core_set_current_media (self->core, index, &error);
   if (error) {
@@ -147,12 +137,7 @@ static gboolean
 ipc_runner_impl_handle_run (IpcRunner             *runner,
                             GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   retro_core_run (self->core);
 
@@ -165,12 +150,7 @@ static gboolean
 ipc_runner_impl_handle_stop (IpcRunner             *runner,
                              GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   retro_core_stop (self->core);
 
@@ -183,12 +163,7 @@ static gboolean
 ipc_runner_impl_handle_reset (IpcRunner             *runner,
                               GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   retro_core_reset (self->core);
 
@@ -201,12 +176,7 @@ static gboolean
 ipc_runner_impl_handle_iteration (IpcRunner             *runner,
                                   GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   /* For this call UI process will do the video handling itself
    * to ensure it's synchronous, no signal emission needed.
@@ -224,13 +194,8 @@ static gboolean
 ipc_runner_impl_handle_get_can_access_state (IpcRunner             *runner,
                                              GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   gboolean can_access_state;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   can_access_state = retro_core_get_can_access_state (self->core);
 
@@ -244,13 +209,8 @@ ipc_runner_impl_handle_save_state (IpcRunner             *runner,
                                    GDBusMethodInvocation *invocation,
                                    const gchar           *filename)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   retro_core_save_state (self->core, filename, &error);
   if (error) {
@@ -269,13 +229,8 @@ ipc_runner_impl_handle_load_state (IpcRunner             *runner,
                                    GDBusMethodInvocation *invocation,
                                    const gchar           *filename)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   retro_core_load_state (self->core, filename, &error);
 
@@ -295,13 +250,8 @@ ipc_runner_impl_handle_get_memory_size (IpcRunner             *runner,
                                         GDBusMethodInvocation *invocation,
                                         RetroMemoryType        memory_type)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   gsize memory_size;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   memory_size = retro_core_get_memory_size (self->core, memory_type);
 
@@ -316,13 +266,8 @@ ipc_runner_impl_handle_save_memory (IpcRunner             *runner,
                                     RetroMemoryType        memory_type,
                                     const gchar           *filename)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   retro_core_save_memory (self->core, memory_type, filename, &error);
 
@@ -343,13 +288,8 @@ ipc_runner_impl_handle_load_memory (IpcRunner             *runner,
                                     RetroMemoryType        memory_type,
                                     const gchar           *filename)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   retro_core_load_memory (self->core, memory_type, filename, &error);
 
@@ -370,12 +310,7 @@ ipc_runner_impl_handle_update_variable (IpcRunner             *runner,
                                         const gchar           *key,
                                         const gchar           *value)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   retro_core_update_variable (self->core, key, value);
 
@@ -392,13 +327,8 @@ ipc_runner_handle_set_controller (IpcRunner             *runner,
                                   RetroControllerType    type,
                                   GVariant              *data_handle)
 {
-  IpcRunnerImpl *self;
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   gint fd;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
 
   if (type != RETRO_CONTROLLER_TYPE_NONE) {
     g_autoptr(GError) error = NULL;
@@ -439,12 +369,7 @@ ipc_runner_impl_handle_key_event (IpcRunner                *runner,
                                   guint32                   character,
                                   RetroKeyboardModifierKey  modifiers)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   retro_core_send_input_key_event (self->core, pressed, keycode, character, modifiers);
 
@@ -457,12 +382,7 @@ static gboolean
 ipc_runner_impl_handle_get_properties (IpcRunner             *runner,
                                         GDBusMethodInvocation *invocation)
 {
-  IpcRunnerImpl *self;
-
-  g_return_val_if_fail (IPC_IS_RUNNER_IMPL (runner), FALSE);
-  g_return_val_if_fail (G_IS_DBUS_METHOD_INVOCATION (invocation), FALSE);
-
-  self = IPC_RUNNER_IMPL (runner);
+  IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
 
   ipc_runner_complete_get_properties (runner, invocation,
                                       retro_core_get_game_loaded (self->core),

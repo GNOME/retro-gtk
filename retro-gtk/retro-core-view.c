@@ -110,8 +110,6 @@ recenter_pointer (RetroCoreView *self)
 static gboolean
 retro_core_view_get_is_pointer_grabbed (RetroCoreView *self)
 {
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-
   return self->grabbed_device != NULL;
 }
 
@@ -128,10 +126,9 @@ retro_core_view_grab (RetroCoreView *self,
   GdkMonitor *monitor;
   GdkRectangle monitor_geometry;
 
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-  g_return_if_fail (device != NULL);
-  g_return_if_fail (window != NULL);
-  g_return_if_fail (event != NULL);
+  g_assert (device != NULL);
+  g_assert (window != NULL);
+  g_assert (event != NULL);
 
   if (self->grabbed_device != NULL)
     g_object_unref (self->grabbed_device);
@@ -166,8 +163,7 @@ retro_core_view_ungrab (RetroCoreView *self)
 {
   GdkSeat *seat;
 
-  g_return_if_fail (RETRO_IS_CORE_VIEW (self));
-  g_return_if_fail (self->grabbed_device != NULL);
+  g_assert (self->grabbed_device != NULL);
 
   seat = gdk_device_get_seat (self->grabbed_device);
   gdk_seat_ungrab (seat);
@@ -190,9 +186,6 @@ retro_core_view_on_key_press_event (GtkWidget   *source,
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
   gboolean changed;
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (event->keyval == GDK_KEY_Escape &&
       (event->state & GDK_CONTROL_MASK) &&
@@ -217,9 +210,6 @@ retro_core_view_on_key_release_event (GtkWidget   *source,
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
 
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
-
   set_input_released (self->key_state, event->hardware_keycode);
   set_input_released (self->keyval_state, event->keyval);
 
@@ -234,9 +224,6 @@ retro_core_view_on_button_press_event (GtkWidget      *source,
                                        gpointer        data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   gtk_widget_grab_focus (GTK_WIDGET (source));
 
@@ -271,9 +258,6 @@ retro_core_view_on_button_release_event (GtkWidget      *source,
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
 
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
-
   set_input_released (self->mouse_button_state, event->button);
 
   g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
@@ -287,9 +271,6 @@ retro_core_view_on_focus_out_event (GtkWidget     *source,
                                     gpointer       data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (retro_core_view_get_is_pointer_grabbed (self))
     retro_core_view_ungrab (self);
@@ -308,9 +289,6 @@ retro_core_view_on_motion_notify_event (GtkWidget      *source,
                                         gpointer        data)
 {
   RetroCoreView *self = RETRO_CORE_VIEW (data);
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
 
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (retro_core_view_get_is_pointer_grabbed (self) &&
@@ -340,8 +318,6 @@ static gboolean
 retro_core_view_get_key_state (RetroCoreView *self,
                                guint16        hardware_keycode)
 {
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-
   return get_input_state (self->key_state, hardware_keycode);
 }
 
@@ -350,8 +326,6 @@ retro_core_view_get_joypad_button_state (RetroCoreView *self,
                                          RetroJoypadId  button)
 {
   guint16 hardware_keycode;
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
   if (button >= RETRO_JOYPAD_ID_COUNT)
     return 0;
@@ -365,8 +339,6 @@ static gboolean
 retro_core_view_get_mouse_button_state (RetroCoreView *self,
                                         guint16        button)
 {
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
-
   return get_input_state (self->mouse_button_state, button);
 }
 
@@ -375,8 +347,6 @@ retro_core_view_get_keyboard_key_state (RetroCoreView *self,
                                         guint16        key)
 {
   guint16 keyval;
-
-  g_return_val_if_fail (RETRO_IS_CORE_VIEW (self), FALSE);
 
   if (key >= RETRO_KEYBOARD_KEY_LAST)
     return FALSE;

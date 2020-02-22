@@ -160,8 +160,6 @@ retro_core_finalize (GObject *object)
   RetroCore *self = RETRO_CORE (object);
   gint i;
 
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   retro_core_set_keyboard (self, NULL);
   g_object_unref (self->framebuffer);
 
@@ -591,8 +589,6 @@ static void
 retro_core_set_filename (RetroCore   *self,
                          const gchar *filename)
 {
-  g_return_if_fail (RETRO_IS_CORE (self));
-
   if (g_strcmp0 (filename, retro_core_get_filename (self)) == 0)
     return;
 

@@ -231,12 +231,10 @@ retro_cairo_display_init (RetroCairoDisplay *self)
 }
 
 static void
-on_video_output (RetroCore    *sender,
-                 RetroPixdata *pixdata,
-                 gpointer      user_data)
+on_video_output (RetroCore         *sender,
+                 RetroPixdata      *pixdata,
+                 RetroCairoDisplay *self)
 {
-  RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (user_data);
-
   GdkPixbuf *pixbuf;
 
   self->aspect_ratio = retro_pixdata_get_aspect_ratio (pixdata);

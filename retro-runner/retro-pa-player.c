@@ -139,14 +139,12 @@ resample (RetroPaPlayer *self,
 }
 
 static void
-on_audio_output (RetroCore *sender,
-                 gint16    *data,
-                 int        length,
-                 gdouble    sample_rate,
-                 gpointer   user_data)
+on_audio_output (RetroCore     *sender,
+                 gint16        *data,
+                 int            length,
+                 gdouble        sample_rate,
+                 RetroPaPlayer *self)
 {
-  RetroPaPlayer *self = RETRO_PA_PLAYER (user_data);
-
   g_array_append_vals (self->buffer, data, length);
 }
 

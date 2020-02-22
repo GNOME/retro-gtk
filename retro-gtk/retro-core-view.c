@@ -180,11 +180,10 @@ static gboolean get_key_state (RetroCoreView *self,
                                guint16        hardware_keycode);
 
 static gboolean
-on_key_press_event (GtkWidget   *source,
-                    GdkEventKey *event,
-                    gpointer     data)
+on_key_press_event (GtkWidget     *source,
+                    GdkEventKey   *event,
+                    RetroCoreView *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
   gboolean changed;
 
   if (event->keyval == GDK_KEY_Escape &&
@@ -204,12 +203,10 @@ on_key_press_event (GtkWidget   *source,
 }
 
 static gboolean
-on_key_release_event (GtkWidget   *source,
-                      GdkEventKey *event,
-                      gpointer     data)
+on_key_release_event (GtkWidget     *source,
+                      GdkEventKey   *event,
+                      RetroCoreView *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
-
   set_input_released (self->key_state, event->hardware_keycode);
   set_input_released (self->keyval_state, event->keyval);
 
@@ -221,10 +218,8 @@ on_key_release_event (GtkWidget   *source,
 static gboolean
 on_button_press_event (GtkWidget      *source,
                        GdkEventButton *event,
-                       gpointer        data)
+                       RetroCoreView  *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
-
   gtk_widget_grab_focus (GTK_WIDGET (source));
 
   if (retro_core_view_get_can_grab_pointer (self)) {
@@ -251,10 +246,8 @@ on_button_press_event (GtkWidget      *source,
 static gboolean
 on_button_release_event (GtkWidget      *source,
                          GdkEventButton *event,
-                         gpointer        data)
+                         RetroCoreView  *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
-
   set_input_released (self->mouse_button_state, event->button);
 
   g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
@@ -265,10 +258,8 @@ on_button_release_event (GtkWidget      *source,
 static gboolean
 on_focus_out_event (GtkWidget     *source,
                     GdkEventFocus *event,
-                    gpointer       data)
+                    RetroCoreView *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
-
   if (get_is_pointer_grabbed (self))
     ungrab (self);
 
@@ -283,10 +274,8 @@ on_focus_out_event (GtkWidget     *source,
 static gboolean
 on_motion_notify_event (GtkWidget      *source,
                         GdkEventMotion *event,
-                        gpointer        data)
+                        RetroCoreView  *self)
 {
-  RetroCoreView *self = RETRO_CORE_VIEW (data);
-
   if (retro_core_view_get_can_grab_pointer (self)) {
     if (get_is_pointer_grabbed (self) &&
         event->device == self->grabbed_device) {

@@ -355,12 +355,10 @@ retro_gl_display_init (RetroGLDisplay *self)
 }
 
 static void
-on_video_output (RetroCore    *sender,
-                 RetroPixdata *pixdata,
-                 gpointer      user_data)
+on_video_output (RetroCore      *sender,
+                 RetroPixdata   *pixdata,
+                 RetroGLDisplay *self)
 {
-  RetroGLDisplay *self = RETRO_GL_DISPLAY (user_data);
-
   if (pixdata == NULL)
     return;
 

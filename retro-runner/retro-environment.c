@@ -108,7 +108,7 @@ rumble_callback_set_rumble_state (guint             port,
 }
 
 static void
-on_log (guint level, const gchar *format, ...)
+log_cb (guint level, const gchar *format, ...)
 {
   RetroCore *self = retro_core_get_instance ();
   const gchar *log_domain;
@@ -236,7 +236,7 @@ static gboolean
 get_log_callback (RetroCore        *self,
                   RetroLogCallback *cb)
 {
-  cb->log = on_log;
+  cb->log = log_cb;
 
   return TRUE;
 }
@@ -513,7 +513,7 @@ environment_core_command (RetroCore *self,
 /* Core callbacks */
 
 static gboolean
-on_environment_interface (unsigned cmd,
+environment_interface_cb (unsigned cmd,
                           gpointer data)
 {
   RetroCore *self = retro_core_get_instance ();
@@ -522,7 +522,7 @@ on_environment_interface (unsigned cmd,
 }
 
 static void
-on_video_refresh (guint8 *data,
+video_refresh_cb (guint8 *data,
                   guint   width,
                   guint   height,
                   gsize   pitch)
@@ -548,11 +548,11 @@ on_video_refresh (guint8 *data,
 gpointer
 retro_core_get_module_video_refresh_cb (RetroCore *self)
 {
-  return on_video_refresh;
+  return video_refresh_cb;
 }
 
 static void
-on_audio_sample (gint16 left,
+audio_sample_cb (gint16 left,
                  gint16 right)
 {
   RetroCore *self = retro_core_get_instance ();
@@ -568,7 +568,7 @@ on_audio_sample (gint16 left,
 }
 
 static gsize
-on_audio_sample_batch (gint16 *data,
+audio_sample_batch_cb (gint16 *data,
                        gint    frames)
 {
   RetroCore *self = retro_core_get_instance ();
@@ -585,7 +585,7 @@ on_audio_sample_batch (gint16 *data,
 }
 
 static void
-on_input_poll ()
+input_poll_cb ()
 {
   RetroCore *self = retro_core_get_instance ();
 
@@ -593,7 +593,7 @@ on_input_poll ()
 }
 
 static gint16
-on_input_state (guint port,
+input_state_cb (guint port,
                 guint device,
                 guint index,
                 guint id)
@@ -615,7 +615,7 @@ retro_core_set_environment_interface (RetroCore *self)
 
   module = self->module;
   set_environment = retro_module_get_set_environment (module);
-  set_environment (on_environment_interface);
+  set_environment (environment_interface_cb);
 }
 
 // TODO This is internal, make it private as soon as possible.
@@ -636,9 +636,9 @@ retro_core_set_callbacks (RetroCore *self)
   set_input_poll = retro_module_get_set_input_poll (module);
   set_input_state = retro_module_get_set_input_state (module);
 
-  set_video_refresh (on_video_refresh);
-  set_audio_sample (on_audio_sample);
-  set_audio_sample_batch (on_audio_sample_batch);
-  set_input_poll (on_input_poll);
-  set_input_state (on_input_state);
+  set_video_refresh (video_refresh_cb);
+  set_audio_sample (audio_sample_cb);
+  set_audio_sample_batch (audio_sample_batch_cb);
+  set_input_poll (input_poll_cb);
+  set_input_state (input_state_cb);
 }

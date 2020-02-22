@@ -12,7 +12,7 @@ struct _RetroCairoDisplay
   GdkPixbuf *pixbuf;
   RetroVideoFilter filter;
   gfloat aspect_ratio;
-  gulong on_video_output_id;
+  gulong video_output_cb_id;
 };
 
 G_DEFINE_TYPE (RetroCairoDisplay, retro_cairo_display, GTK_TYPE_DRAWING_AREA)
@@ -231,7 +231,7 @@ retro_cairo_display_init (RetroCairoDisplay *self)
 }
 
 static void
-on_video_output (RetroCore         *sender,
+video_output_cb (RetroCore         *sender,
                  RetroPixdata      *pixdata,
                  RetroCairoDisplay *self)
 {
@@ -264,15 +264,15 @@ retro_cairo_display_set_core (RetroCairoDisplay *self,
     return;
 
   if (self->core != NULL) {
-    g_signal_handler_disconnect (G_OBJECT (self->core), self->on_video_output_id);
+    g_signal_handler_disconnect (G_OBJECT (self->core), self->video_output_cb_id);
     g_clear_object (&self->core);
   }
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    self->on_video_output_id =
+    self->video_output_cb_id =
       g_signal_connect_object (core, "video-output",
-                               (GCallback) on_video_output, self, 0);
+                               (GCallback) video_output_cb, self, 0);
   }
 }
 

@@ -180,7 +180,7 @@ static gboolean get_key_state (RetroCoreView *self,
                                guint16        hardware_keycode);
 
 static gboolean
-on_key_press_event (GtkWidget     *source,
+key_press_event_cb (GtkWidget     *source,
                     GdkEventKey   *event,
                     RetroCoreView *self)
 {
@@ -203,7 +203,7 @@ on_key_press_event (GtkWidget     *source,
 }
 
 static gboolean
-on_key_release_event (GtkWidget     *source,
+key_release_event_cb (GtkWidget     *source,
                       GdkEventKey   *event,
                       RetroCoreView *self)
 {
@@ -216,7 +216,7 @@ on_key_release_event (GtkWidget     *source,
 }
 
 static gboolean
-on_button_press_event (GtkWidget      *source,
+button_press_event_cb (GtkWidget      *source,
                        GdkEventButton *event,
                        RetroCoreView  *self)
 {
@@ -244,7 +244,7 @@ on_button_press_event (GtkWidget      *source,
 }
 
 static gboolean
-on_button_release_event (GtkWidget      *source,
+button_release_event_cb (GtkWidget      *source,
                          GdkEventButton *event,
                          RetroCoreView  *self)
 {
@@ -256,7 +256,7 @@ on_button_release_event (GtkWidget      *source,
 }
 
 static gboolean
-on_focus_out_event (GtkWidget     *source,
+focus_out_event_cb (GtkWidget     *source,
                     GdkEventFocus *event,
                     RetroCoreView *self)
 {
@@ -272,7 +272,7 @@ on_focus_out_event (GtkWidget     *source,
 }
 
 static gboolean
-on_motion_notify_event (GtkWidget      *source,
+motion_notify_event_cb (GtkWidget      *source,
                         GdkEventMotion *event,
                         RetroCoreView  *self)
 {
@@ -486,12 +486,12 @@ retro_core_view_init (RetroCoreView *self)
   self->key_joypad_mapping = retro_key_joypad_mapping_new_default ();
   self->mouse_button_state = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, g_free);
 
-  g_signal_connect_object (self, "key-press-event", (GCallback) on_key_press_event, self, 0);
-  g_signal_connect_object (self, "key-release-event", (GCallback) on_key_release_event, self, 0);
-  g_signal_connect_object (self, "button-press-event", (GCallback) on_button_press_event, self, 0);
-  g_signal_connect_object (self, "button-release-event", (GCallback) on_button_release_event, self, 0);
-  g_signal_connect_object (self, "focus-out-event", (GCallback) on_focus_out_event, self, 0);
-  g_signal_connect_object (self, "motion-notify-event", (GCallback) on_motion_notify_event, self, 0);
+  g_signal_connect_object (self, "key-press-event", (GCallback) key_press_event_cb, self, 0);
+  g_signal_connect_object (self, "key-release-event", (GCallback) key_release_event_cb, self, 0);
+  g_signal_connect_object (self, "button-press-event", (GCallback) button_press_event_cb, self, 0);
+  g_signal_connect_object (self, "button-release-event", (GCallback) button_release_event_cb, self, 0);
+  g_signal_connect_object (self, "focus-out-event", (GCallback) focus_out_event_cb, self, 0);
+  g_signal_connect_object (self, "motion-notify-event", (GCallback) motion_notify_event_cb, self, 0);
 }
 
 /* Public */

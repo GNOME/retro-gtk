@@ -13,8 +13,8 @@ struct _RetroPaPlayer
 {
   GObject parent_instance;
   RetroCore *core;
-  gulong on_audio_output_id;
-  gulong on_iterated_id;
+  gulong audio_output_cb_id;
+  gulong iterated_cb_id;
   GArray *buffer;
   gdouble sample_rate;
   pa_simple *simple;
@@ -139,7 +139,7 @@ resample (RetroPaPlayer *self,
 }
 
 static void
-on_audio_output (RetroCore     *sender,
+audio_output_cb (RetroCore     *sender,
                  gint16        *data,
                  int            length,
                  gdouble        sample_rate,
@@ -149,7 +149,7 @@ on_audio_output (RetroCore     *sender,
 }
 
 static void
-on_iterated (RetroCore     *core,
+iterated_cb (RetroCore     *core,
              RetroPaPlayer *self)
 {
   gdouble sample_rate, speed_rate;
@@ -209,24 +209,24 @@ retro_pa_player_set_core (RetroPaPlayer *self,
 
   if (self->core != NULL) {
     g_signal_handler_disconnect (G_OBJECT (self->core),
-                                 self->on_audio_output_id);
+                                 self->audio_output_cb_id);
     g_signal_handler_disconnect (G_OBJECT (self->core),
-                                 self->on_iterated_id);
+                                 self->iterated_cb_id);
     g_clear_object (&self->core);
   }
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    self->on_audio_output_id =
+    self->audio_output_cb_id =
       g_signal_connect_object (core,
                                "audio-output",
-                               (GCallback) on_audio_output,
+                               (GCallback) audio_output_cb,
                                self,
                                0);
-    self->on_iterated_id =
+    self->iterated_cb_id =
       g_signal_connect_object (core,
                                "iterated",
-                               (GCallback) on_iterated,
+                               (GCallback) iterated_cb,
                                self,
                                0);
   }

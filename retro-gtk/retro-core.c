@@ -630,7 +630,7 @@ exit_cb (RetroRunnerProcess *process,
 }
 
 static gboolean
-on_key_event (GtkWidget   *widget,
+key_event_cb (GtkWidget   *widget,
               GdkEventKey *event,
               RetroCore   *self)
 {
@@ -1713,13 +1713,13 @@ retro_core_set_keyboard (RetroCore *self,
     self->key_press_event_id =
       g_signal_connect_object (widget,
                                "key-press-event",
-                               G_CALLBACK (on_key_event),
+                               G_CALLBACK (key_event_cb),
                                self,
                                0);
     self->key_release_event_id =
       g_signal_connect_object (widget,
                                "key-release-event",
-                               G_CALLBACK (on_key_event),
+                               G_CALLBACK (key_event_cb),
                                self,
                                0);
     self->keyboard_widget = widget;

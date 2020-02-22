@@ -15,7 +15,7 @@ struct _RetroGLDisplay
   GdkPixbuf *pixbuf;
   RetroVideoFilter filter;
   gfloat aspect_ratio;
-  gulong on_video_output_id;
+  gulong video_output_cb_id;
 
   RetroGLSLFilter *glsl_filter[RETRO_VIDEO_FILTER_COUNT];
   GLuint texture;
@@ -355,7 +355,7 @@ retro_gl_display_init (RetroGLDisplay *self)
 }
 
 static void
-on_video_output (RetroCore      *sender,
+video_output_cb (RetroCore      *sender,
                  RetroPixdata   *pixdata,
                  RetroGLDisplay *self)
 {
@@ -385,13 +385,13 @@ retro_gl_display_set_core (RetroGLDisplay *self,
     return;
 
   if (self->core != NULL) {
-    g_signal_handler_disconnect (G_OBJECT (self->core), self->on_video_output_id);
+    g_signal_handler_disconnect (G_OBJECT (self->core), self->video_output_cb_id);
     g_clear_object (&self->core);
   }
 
   if (core != NULL) {
     self->core = g_object_ref (core);
-    self->on_video_output_id = g_signal_connect_object (core, "video-output", (GCallback) on_video_output, self, 0);
+    self->video_output_cb_id = g_signal_connect_object (core, "video-output", (GCallback) video_output_cb, self, 0);
   }
 }
 

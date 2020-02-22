@@ -78,10 +78,10 @@ retro_cairo_display_draw_background (RetroCairoDisplay *self,
 }
 
 static gboolean
-retro_cairo_display_real_draw (GtkWidget *base,
-                               cairo_t   *cr)
+retro_cairo_display_draw (GtkWidget *widget,
+                          cairo_t   *cr)
 {
-  RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (base);
+  RetroCairoDisplay *self = RETRO_CAIRO_DISPLAY (widget);
   GdkPixbuf *to_draw;
   gboolean has_alpha;
   gint width;
@@ -95,9 +95,6 @@ retro_cairo_display_real_draw (GtkWidget *base,
   gdouble xs;
   gdouble ys;
   cairo_pattern_t *source;
-
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (cr != NULL, FALSE);
 
   retro_cairo_display_draw_background (self, cr);
 
@@ -199,8 +196,7 @@ retro_cairo_display_class_init (RetroCairoDisplayClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  ((GtkWidgetClass *) klass)->draw = (gboolean (*) (GtkWidget *, cairo_t *)) retro_cairo_display_real_draw;
-
+  widget_class->draw = retro_cairo_display_draw;
   object_class->finalize = retro_cairo_display_finalize;
   object_class->get_property = retro_cairo_display_get_property;
   object_class->set_property = retro_cairo_display_set_property;

@@ -36,8 +36,8 @@ retro_option_iterator_init (RetroOptionIterator *self)
 /**
  * retro_option_iterator_next:
  * @self: a #RetroOptionIterator
- * @key: (out) (optional): return location for the key
- * @option: (out) (optional) (nullable): return location for the option
+ * @key: (out) (optional) (transfer none): return location for the key
+ * @option: (out) (optional) (nullable) (transfer none): return location for the option
  *
  * Fetch the next #RetroOption and its key.
  *

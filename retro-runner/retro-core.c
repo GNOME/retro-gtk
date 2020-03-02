@@ -834,7 +834,7 @@ load_discs (RetroCore  *self,
 
   length = g_strv_length (self->media_uris);
   while (get_disk_images_number (self, &tmp_error) < length &&
-         (tmp_error != NULL)) {
+         (tmp_error == NULL)) {
    add_disk_image_index (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);

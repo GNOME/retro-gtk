@@ -1019,6 +1019,9 @@ get_default_value (const gchar *description)
   values = description_separator + 2;
   value_separator = g_strstr_len (values, -1, "|");
 
+  if (!value_separator)
+    return g_strdup (values);
+
   return g_strndup (values, value_separator - values);
 }
 

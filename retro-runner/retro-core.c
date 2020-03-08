@@ -1432,7 +1432,7 @@ retro_core_set_controller (RetroCore           *self,
 
   if (controller_type == RETRO_CONTROLLER_TYPE_NONE)
     g_hash_table_remove (self->controllers, GUINT_TO_POINTER (port));
-  else if (!g_hash_table_lookup (self->controllers, GUINT_TO_POINTER (port)))
+  else
     g_hash_table_insert (self->controllers, GUINT_TO_POINTER (port),
                          retro_controller_state_new (fd));
 

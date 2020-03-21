@@ -4,6 +4,7 @@
 
 #include <gio/gio.h>
 #include <string.h>
+#include "retro-error-private.h"
 #include "retro-input-private.h"
 #include "retro-main-loop-source-private.h"
 #include "retro-memfd-private.h"
@@ -719,14 +720,10 @@ set_disk_ejected (RetroCore  *self,
 
   set_eject_state = self->disk_control_callback->set_eject_state;
 
-  if (set_eject_state == NULL) {
-    g_set_error_literal (error,
-                         RETRO_CORE_ERROR,
-                         RETRO_CORE_ERROR_NO_CALLBACK,
-                         "DiskControl has no callback for this operation.");
-
-    return FALSE;
-  }
+  retro_throw_val_if_fail (error,
+    set_eject_state != NULL, FALSE,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_CALLBACK,
+    "DiskControl has no callback for this operation.");
 
   return set_eject_state (ejected);
 }
@@ -740,14 +737,10 @@ set_disk_image_index (RetroCore  *self,
 
   set_image_index = self->disk_control_callback->set_image_index;
 
-  if (set_image_index == NULL) {
-    g_set_error_literal (error,
-                         RETRO_CORE_ERROR,
-                         RETRO_CORE_ERROR_NO_CALLBACK,
-                         "DiskControl has no callback for this operation.");
-
-    return FALSE;
-  }
+  retro_throw_val_if_fail (error,
+    set_image_index != NULL, FALSE,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_CALLBACK,
+    "DiskControl has no callback for this operation.");
 
   return set_image_index (index);
 }
@@ -760,14 +753,10 @@ get_disk_images_number (RetroCore  *self,
 
   get_num_images = self->disk_control_callback->get_num_images;
 
-  if (get_num_images == NULL) {
-    g_set_error_literal (error,
-                         RETRO_CORE_ERROR,
-                         RETRO_CORE_ERROR_NO_CALLBACK,
-                         "DiskControl has no callback for this operation.");
-
-    return FALSE;
-  }
+  retro_throw_val_if_fail (error,
+    get_num_images != NULL, FALSE,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_CALLBACK,
+    "DiskControl has no callback for this operation.");
 
   return get_num_images ();
 }
@@ -782,14 +771,10 @@ replace_disk_image_index (RetroCore      *self,
 
   replace_image_index = self->disk_control_callback->replace_image_index;
 
-  if (replace_image_index == NULL) {
-    g_set_error_literal (error,
-                         RETRO_CORE_ERROR,
-                         RETRO_CORE_ERROR_NO_CALLBACK,
-                         "DiskControl has no callback for this operation.");
-
-    return FALSE;
-  }
+  retro_throw_val_if_fail (error,
+    replace_image_index != NULL, FALSE,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_CALLBACK,
+    "DiskControl has no callback for this operation.");
 
   return replace_image_index (index, info);
 }
@@ -802,14 +787,10 @@ add_disk_image_index (RetroCore  *self,
 
   add_image_index = self->disk_control_callback->add_image_index;
 
-  if (add_image_index == NULL) {
-    g_set_error_literal (error,
-                         RETRO_CORE_ERROR,
-                         RETRO_CORE_ERROR_NO_CALLBACK,
-                         "DiskControl has no callback for this operation.");
-
-    return FALSE;
-  }
+  retro_throw_val_if_fail (error,
+    add_image_index != NULL, FALSE,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_CALLBACK,
+    "DiskControl has no callback for this operation.");
 
   return add_image_index ();
 }
@@ -820,80 +801,37 @@ load_discs (RetroCore  *self,
 {
   guint length;
   gboolean fullpath;
-  GFile *file;
-  gchar *path;
   guint index;
-  RetroGameInfo *game_info = NULL;
-  GError *tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   set_disk_ejected (self, TRUE, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 
   length = g_strv_length (self->media_uris);
   while (get_disk_images_number (self, &tmp_error) < length &&
          (tmp_error == NULL)) {
-   add_disk_image_index (self, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-
-      return;
-    }
+    add_disk_image_index (self, &tmp_error);
+    retro_propagate_if_error (error, tmp_error);
   }
 
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 
   fullpath = get_needs_full_path (self);
   for (index = 0; index < length; index++) {
-    file = g_file_new_for_uri (self->media_uris[index]);
-    path = g_file_get_path (file);
+    g_autoptr (GFile) file = g_file_new_for_uri (self->media_uris[index]);
+    g_autofree gchar *path = g_file_get_path (file);
+    g_autoptr (RetroGameInfo) game_info = fullpath ?
+      retro_game_info_new (path) :
+      retro_game_info_new_with_data (path, &tmp_error);
 
-    if (fullpath) {
-      game_info = retro_game_info_new (path);
-    }
-    else {
-      game_info = retro_game_info_new_with_data (path, &tmp_error);
-      if (G_UNLIKELY (tmp_error != NULL)) {
-        g_propagate_error (error, tmp_error);
-
-        if (game_info != NULL)
-          retro_game_info_free (game_info);
-        g_free (path);
-        g_object_unref (file);
-
-        return;
-      }
-    }
+    retro_propagate_if_error (error, tmp_error);
 
     replace_disk_image_index (self, index, game_info, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-
-      return;
-    }
-
-    retro_game_info_free (game_info);
-    g_free (path);
-    g_object_unref (file);
+    retro_propagate_if_error (error, tmp_error);
   }
 
   set_disk_ejected (self, FALSE, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 }
 
 static gboolean
@@ -949,12 +887,12 @@ load_medias (RetroCore  *self,
              GError    **error)
 {
   guint length;
-  gchar *uri;
-  GFile *file;
-  gchar *path;
+  g_autofree gchar *uri = NULL;
+  g_autoptr (GFile) file = NULL;
+  g_autofree gchar *path = NULL;
   gboolean fullpath;
-  RetroGameInfo *game_info = NULL;
-  GError *tmp_error = NULL;
+  g_autoptr (RetroGameInfo) game_info = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
@@ -968,45 +906,19 @@ load_medias (RetroCore  *self,
   file = g_file_new_for_uri (uri);
   path = g_file_get_path (file);
   fullpath = get_needs_full_path (self);
-  if (fullpath) {
-    game_info = retro_game_info_new (path);
-  }
-  else {
-    game_info = retro_game_info_new_with_data (path, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-      g_free (uri);
+  game_info = fullpath ?
+    retro_game_info_new (path) :
+    retro_game_info_new_with_data (path, &tmp_error);
+  retro_propagate_if_error (error, tmp_error);
 
-      return;
-    }
-  }
-  if (!load_game (self, game_info)) {
-    retro_game_info_free (game_info);
-    g_free (path);
-    g_object_unref (file);
-    g_free (uri);
-
+  if (!load_game (self, game_info))
     return;
-  }
-  if (self->disk_control_callback != NULL) {
-    load_discs (self, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-      g_free (uri);
 
-      return;
-    }
-  }
-  retro_game_info_free (game_info);
-  g_free (path);
-  g_object_unref (file);
-  g_free (uri);
+  if (self->disk_control_callback == NULL)
+    return;
+
+  load_discs (self, &tmp_error);
+  retro_propagate_if_error (error, tmp_error);
 }
 
 void retro_core_set_environment_interface (RetroCore *self);
@@ -1325,7 +1237,7 @@ retro_core_boot (RetroCore  *self,
                  GError    **error)
 {
   RetroInit init;
-  GError *tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
@@ -1337,11 +1249,7 @@ retro_core_boot (RetroCore  *self,
   set_is_initiated (self, TRUE);
 
   load_medias (self, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 }
 
 /**
@@ -1364,7 +1272,7 @@ retro_core_set_medias (RetroCore           *self,
   if (self->media_uris != NULL)
     g_strfreev (self->media_uris);
 
-  self->media_uris = g_strdupv ((gchar **) uris);
+  self->media_uris = g_strdupv ((GStrv) uris);
 }
 
 /**
@@ -1383,9 +1291,10 @@ retro_core_set_current_media (RetroCore  *self,
                               GError    **error)
 {
   guint length;
-  GError *tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
+
   length = g_strv_length (self->media_uris);
 
   g_return_if_fail (media_index < length);
@@ -1394,35 +1303,20 @@ retro_core_set_current_media (RetroCore  *self,
     return;
 
   set_disk_ejected (self, TRUE, &tmp_error);
-  if (tmp_error != NULL) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 
   set_disk_image_index (self, media_index, &tmp_error);
-  if (tmp_error != NULL) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 
   set_disk_ejected (self, FALSE, &tmp_error);
-  if (tmp_error != NULL) {
-    g_propagate_error (error, tmp_error);
-
-    return;
-  }
+  retro_propagate_if_error (error, tmp_error);
 }
 
 void
 retro_core_set_default_controller (RetroCore *self,
                                    gint       fd)
 {
-  if (self->default_controller)
-    g_object_unref (self->default_controller);
-
-  self->default_controller = retro_controller_state_new (fd);
+  g_set_object (&self->default_controller, retro_controller_state_new (fd));
 }
 
 void
@@ -1499,7 +1393,7 @@ void
 retro_core_run (RetroCore *self)
 {
   gdouble fps;
-  GSource *source;
+  g_autoptr (GSource) source = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
@@ -1515,7 +1409,6 @@ retro_core_run (RetroCore *self)
   source = retro_main_loop_source_new (fps * self->speed_rate);
   g_source_set_callback (source, (GSourceFunc) run_main_loop, self, NULL);
   self->main_loop = g_source_attach (source, g_main_context_default ());
-  g_source_unref (source);
 }
 
 /**
@@ -1573,7 +1466,7 @@ retro_core_iteration (RetroCore *self)
   RetroSerializeSize serialize_size = NULL;
   RetroSerialize serialize = NULL;
   RetroUnserialize unserialize = NULL;
-  guint8 *data;
+  g_autofree guint8 *data = NULL;
   gsize size;
   gsize new_size;
   gboolean success;
@@ -1629,8 +1522,6 @@ retro_core_iteration (RetroCore *self)
   if (!success) {
     g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
 
-    g_free (data);
-
     return;
   }
 
@@ -1644,8 +1535,6 @@ retro_core_iteration (RetroCore *self)
                 G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
                 new_size, size);
 
-    g_free (data);
-
     return;
   }
 
@@ -1655,12 +1544,8 @@ retro_core_iteration (RetroCore *self)
   if (!success) {
     g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
 
-    g_free (data);
-
     return;
   }
-
-  g_free (data);
 }
 
 /**
@@ -1703,7 +1588,7 @@ retro_core_save_state (RetroCore    *self,
   g_autofree guint8 *data = NULL;
   gsize size;
   gboolean success;
-  g_autoptr (GError) tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (filename != NULL);
@@ -1711,35 +1596,25 @@ retro_core_save_state (RetroCore    *self,
   serialize_size = retro_module_get_serialize_size (self->module);
   size = serialize_size ();
 
-  if (size <= 0) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-                 "Couldn't serialize the internal state: serialization not supported.");
-
-    return;
-  }
+  retro_throw_if_fail (error,
+    size > 0,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+    "Couldn't serialize the internal state: serialization not supported.");
 
   serialize = retro_module_get_serialize (self->module);
   data = g_new0 (guint8, size);
 
   success = serialize (data, size);
 
-  if (!success) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_SERIALIZE,
-                 "Couldn't serialize the internal state: serialization failed.");
-
-    return;
-  }
+  retro_throw_if_fail (error,
+    success,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_SERIALIZE,
+    "Couldn't serialize the internal state: serialization failed.");
 
   g_file_set_contents (filename, (gchar *) data, size, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL))
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't serialize the internal state: %s", tmp_error->message);
+  retro_throw_if_error (error, tmp_error,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+    "Couldn't serialize the internal state: %s", tmp_error->message);
 }
 
 /**
@@ -1760,20 +1635,15 @@ retro_core_load_state (RetroCore    *self,
   gsize expected_size, data_size;
   g_autofree gchar *data = NULL;
   gboolean success;
-  g_autoptr (GError) tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (filename != NULL);
 
   g_file_get_contents (filename, &data, &data_size, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't deserialize the internal state: %s", tmp_error->message);
-
-    return;
-  }
+  retro_throw_if_error (error, tmp_error,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+    "Couldn't deserialize the internal state: %s", tmp_error->message);
 
   /* Some cores, such as MAME and ParaLLEl N64, can only properly restore the
    * state after at least one frame has been run. */
@@ -1792,14 +1662,10 @@ retro_core_load_state (RetroCore    *self,
   serialize_size = retro_module_get_serialize_size (self->module);
   expected_size = serialize_size ();
 
-  if (expected_size == 0) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-                 "Couldn't deserialize the internal state: serialization not supported.");
-
-    return;
-  }
+  retro_throw_if_fail (error,
+    expected_size != 0,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+    "Couldn't deserialize the internal state: serialization not supported.");
 
   if (data_size != expected_size)
     g_critical ("%s expects %"G_GSIZE_FORMAT" bytes for its internal state, but %"
@@ -1811,12 +1677,10 @@ retro_core_load_state (RetroCore    *self,
   unserialize = retro_module_get_unserialize (self->module);
   success = unserialize ((guint8 *) data, data_size);
 
-  if (!success) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-                 "Couldn't deserialize the internal state: deserialization failed.");
-  }
+  retro_throw_if_fail (error,
+    success,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
+    "Couldn't deserialize the internal state: deserialization failed.");
 }
 
 /**
@@ -1860,7 +1724,7 @@ retro_core_save_memory (RetroCore        *self,
   RetroGetMemorySize get_mem_size;
   gchar *data;
   gsize size;
-  g_autoptr (GError) tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (filename != NULL);
@@ -1871,11 +1735,9 @@ retro_core_save_memory (RetroCore        *self,
   size = get_mem_size (memory_type);
 
   g_file_set_contents (filename, data, size, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL))
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't save the memory state: %s", tmp_error->message);
+  retro_throw_if_error (error, tmp_error,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+    "Couldn't save the memory state: %s", tmp_error->message);
 }
 
 /**
@@ -1899,7 +1761,7 @@ retro_core_load_memory (RetroCore        *self,
   gsize memory_region_size;
   g_autofree gchar *data = NULL;
   gsize data_size;
-  GError *tmp_error = NULL;
+  g_autoptr (RetroError) tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (filename != NULL);
@@ -1910,51 +1772,34 @@ retro_core_load_memory (RetroCore        *self,
   memory_region_size = get_mem_region_size (memory_type);
 
   g_file_get_contents (filename, &data, &data_size, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't load the memory state: %s", tmp_error->message);
+  retro_throw_if_error (error, tmp_error,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+    "Couldn't load the memory state: %s", tmp_error->message);
 
-    return;
-  }
+  retro_throw_if_fail (error,
+    memory_region != NULL,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_NO_MEMORY_REGION,
+    "Couldn't load the memory state: %s doesn't have memory region %d",
+      retro_core_get_name (self),
+      memory_type);
 
-  if (memory_region == NULL) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_NO_MEMORY_REGION,
-                 "Couldn't load the memory state: %s doesn't have memory region %d",
-                 retro_core_get_name (self),
-                 memory_type);
+  retro_throw_if_fail (error,
+    memory_region_size != 0,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
+    "Couldn't load the memory state: %s has an unexpected 0-sized non-null "
+    "memory region %d",
+      retro_core_get_name (self),
+      memory_type);
 
-    return;
-  }
-
-  if (memory_region_size == 0) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
-                 "Couldn't load the memory state: %s has an unexpected 0-sized non-null memory region %d",
-                 retro_core_get_name (self),
-                 memory_type);
-
-    return;
-  }
-
-  if (memory_region_size < data_size) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_SIZE_MISMATCH,
-                 "Couldn't load the memory state: %s expects %"G_GSIZE_FORMAT
-                 " bytes for memory region %d: %"G_GSIZE_FORMAT
-                 " bytes were passed",
-                 retro_core_get_name (self),
-                 memory_region_size,
-                 memory_type,
-                 data_size);
-
-    return;
-  }
+  retro_throw_if_fail (error,
+    memory_region_size >= data_size,
+    RETRO_CORE_ERROR, RETRO_CORE_ERROR_SIZE_MISMATCH,
+    "Couldn't load the memory state: %s expects %"G_GSIZE_FORMAT
+    " bytes for memory region %d: %"G_GSIZE_FORMAT" bytes were passed",
+      retro_core_get_name (self),
+      memory_region_size,
+      memory_type,
+      data_size);
 
   if (memory_region_size != data_size)
     g_debug ("%s expects %"G_GSIZE_FORMAT" bytes for memory region %d: %"

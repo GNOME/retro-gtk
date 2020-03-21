@@ -61,6 +61,63 @@ void retro_error_ensure_free (RetroError *error);
   } G_STMT_END
 
 /**
+ * retro_throw_if_error:
+ * @dest: (out callee-allocates) (optional) (nullable): error return location
+ * @src: (transfer full): error to check
+ * @domain: error domain
+ * @code: error code
+ * @format: printf()-style format
+ * @...: args for @format
+ *
+ * Verifies that the source error @src has not been set, which imlplies it is
+ * %NULL.
+ * If the function returns a value, use retro_throw_val_if_error() instead.
+ *
+ * If @src is %NULL, does nothing. If @src is non-%NULL, if @dest is non-%NULL,
+ * then *@dest must be %NULL. A new #GError is created and assigned to *@dest.
+ * Then, free @src, and the current function returns.
+ */
+#define retro_throw_if_error(dest, src, domain, code, format, ...) \
+  G_STMT_START { \
+    if (G_UNLIKELY (src != NULL)) { \
+      g_set_error (dest, domain, code, format __VA_OPT__(,) __VA_ARGS__); \
+      g_clear_error (&src); \
+      return; \
+    } \
+  } G_STMT_END
+
+/**
+ * retro_throw_val_if_error:
+ * @dest: (out callee-allocates) (optional) (nullable): error return location
+ * @src: (transfer full): error to check
+ * @val: the value to return from the current function
+ *       if the expression is not true
+ * @domain: error domain
+ * @code: error code
+ * @format: printf()-style format
+ * @...: args for @format
+ *
+ * Verifies that the source error @src has not been set, which imlplies it is
+ * %NULL.
+ * If the function does not return a value, use retro_throw_if_error() instead.
+ *
+ * If @src evaluates to %FALSE, an error condition has been found and the
+ * current function must throw it and return immediately.
+ *
+ * If @src is %NULL, does nothing. If @src is non-%NULL, if @dest is non-%NULL,
+ * then *@dest must be %NULL. A new #GError is created and assigned to *@dest.
+ * Then, free @src, and @val is returned from the current function.
+ */
+#define retro_throw_val_if_error(dest, src, val, domain, code, format, ...) \
+  G_STMT_START { \
+    if (G_UNLIKELY (src != NULL)) { \
+      g_set_error (dest, domain, code, format __VA_OPT__(,) __VA_ARGS__); \
+      g_clear_error (&src); \
+      return (val); \
+    } \
+  } G_STMT_END
+
+/**
  * retro_throw_if_fail:
  * @err: (out callee-allocates) (optional): a return location for a #GError
  * @expr: the expression to check

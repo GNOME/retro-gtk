@@ -986,15 +986,13 @@ variables_set_cb (IpcRunner *runner,
                   GVariant  *data,
                   RetroCore *self)
 {
-  GVariantIter *iter;
+  g_autoptr (GVariantIter) iter = NULL;
   gchar *key, *value;
 
   g_variant_get (data, "a(ss)", &iter);
 
   while (g_variant_iter_loop (iter, "(ss)", &key, &value))
     insert_variable (self, key, value);
-
-  g_variant_iter_free (iter);
 }
 
 static void

@@ -7,6 +7,7 @@
 #endif
 
 #include <glib-object.h>
+#include <epoxy/gl.h>
 
 G_BEGIN_DECLS
 
@@ -30,5 +31,10 @@ typedef enum
   RETRO_PIXEL_FORMAT_RGB565,
   RETRO_PIXEL_FORMAT_UNKNOWN = -1,
 } RetroPixelFormat;
+
+gboolean retro_pixel_format_to_gl (RetroPixelFormat  pixel_format,
+                                   GLenum           *format,
+                                   GLenum           *type,
+                                   gint             *pixel_size);
 
 G_END_DECLS

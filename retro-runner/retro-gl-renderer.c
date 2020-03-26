@@ -128,17 +128,7 @@ static RetroProcAddress
 retro_gl_renderer_get_proc_address (RetroRenderer *renderer,
                                     const gchar   *sym)
 {
-  RetroGLRenderer *self = RETRO_GL_RENDERER (renderer);
-  RetroProcAddress *out = NULL;
-  g_autofree gchar *sym_mangled = NULL;
-
-  sym_mangled = g_strdup_printf ("epoxy_%s", sym);
-  g_module_symbol (self->gl_module, sym_mangled, (gpointer) &out);
-
-  if (!out)
-    return NULL;
-
-  return *out;
+  return eglGetProcAddress (sym);
 }
 
 static guintptr

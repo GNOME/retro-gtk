@@ -13,7 +13,7 @@ G_BEGIN_DECLS
 
 RetroKeyboardModifierKey retro_keyboard_modifier_key_converter (guint keyval,
                                                                 GdkModifierType modifiers);
-RetroKeyboardKey retro_keyboard_key_converter (guint keyval);
+RetroKeyboardKey retro_keyboard_key_converter (guint16 keycode);
 guint retro_keyboard_key_to_val_converter (RetroKeyboardKey key);
 
 G_END_DECLS

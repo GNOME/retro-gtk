@@ -645,7 +645,7 @@ key_event_cb (GtkWidget   *widget,
     return FALSE;
 
   pressed = event->type == GDK_KEY_PRESS;
-  retro_key = retro_keyboard_key_converter (event->keyval);
+  retro_key = retro_keyboard_key_converter (event->hardware_keycode);
   retro_modifier_key = retro_keyboard_modifier_key_converter (event->keyval, event->state);
   character = gdk_keyval_to_unicode (event->keyval);
 

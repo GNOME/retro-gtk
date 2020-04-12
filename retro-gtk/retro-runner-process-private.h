@@ -4,7 +4,7 @@
 
 #include <glib-object.h>
 
-#include "ipc-runner.h"
+#include "ipc-runner-private.h"
 
 G_BEGIN_DECLS
 

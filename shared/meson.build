@@ -1,9 +1,20 @@
-ipc_runner_src = gnome.gdbus_codegen(
-  'ipc-runner',
+ipc_runner_public_src = gnome.gdbus_codegen(
+  'ipc-runner-public',
   sources: 'org.gnome.Retro.Runner.xml',
   interface_prefix: 'org.gnome.Retro.',
   namespace: 'Ipc'
 )
+
+# Make the generated D-Bus API documentation private.
+
+make_ipc_runner_private = find_program('make-ipc-runner-private.sh')
+
+ipc_runner_src = custom_target('make-ipc-runner-private',
+  output : ['ipc-runner.c', 'ipc-runner-private.h'],
+  input : ipc_runner_public_src,
+  command : [make_ipc_runner_private, '@INPUT@'],
+  install : true,
+  install_dir : 'subdir')
 
 shared_sources = files([
   'retro-controller-codes.c',

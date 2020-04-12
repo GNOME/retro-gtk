@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ipc-runner.h"
+#include "ipc-runner-private.h"
 #include "retro-core.h"
 #include "retro-variable-private.h"
 #include "retro-pixel-format-private.h"

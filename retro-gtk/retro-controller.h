@@ -16,6 +16,17 @@ G_BEGIN_DECLS
 
 G_DECLARE_INTERFACE (RetroController, retro_controller, RETRO, CONTROLLER, GObject)
 
+/**
+ * RetroControllerInterface:
+ * @parent_iface: The parent interface.
+ * @get_input_state: Gets the state from on of the controller's inputs.
+ * @get_controller_type: Gets the type of the controller.
+ * @get_capabilities: Gets the capabilities of the controller.
+ * @get_supports_rumble: Gets whether the controller supports rumble.
+ * @set_rumble_state: Sets the rumble state of the controller.
+ *
+ * An interface for a controller, e.g. a gamepad.
+ **/
 struct _RetroControllerInterface
 {
   GTypeInterface parent_iface;

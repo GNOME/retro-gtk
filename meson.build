@@ -50,6 +50,9 @@ subdir('retro-gtk')
 if get_option('build-tests')
   subdir('tests')
 endif
+if get_option('build-doc')
+  subdir('doc')
+endif
 if get_option('demos')
   subdir('demos')
 endif
@@ -59,13 +62,15 @@ summary = [
   '------',
   'retro-gtk @0@ (@1@)'.format(retro_gtk_version, retro_gtk_api_version),
   '',
-  '     Introspection: @0@'.format(get_option('introspection')),
-  '       Build tests: @0@'.format(get_option('build-tests')),
-  '     Install tests: @0@'.format(get_option('install-tests')),
-  '             Demos: @0@'.format(get_option('demos')),
+  '           Introspection: @0@'.format(get_option('introspection')),
+  '             Build tests: @0@'.format(get_option('build-tests')),
+  '           Install tests: @0@'.format(get_option('install-tests')),
+  '     Build documentation: @0@'.format(get_option('build-doc')),
+  '   Install documentation: @0@'.format(get_option('install-doc')),
+  '                   Demos: @0@'.format(get_option('demos')),
   'Directories:',
-  '            prefix: @0@'.format(retro_gtk_prefix),
-  '           datadir: @0@'.format(retro_gtk_datadir),
+  '                  prefix: @0@'.format(retro_gtk_prefix),
+  '                 datadir: @0@'.format(retro_gtk_datadir),
   '------',
   ''
 ]

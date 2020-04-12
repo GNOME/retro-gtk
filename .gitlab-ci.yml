@@ -3,6 +3,7 @@ stages:
   - build
   - test
   - review
+  - publish
 
 api-visibility:
   stage: lint
@@ -66,6 +67,19 @@ flatpak:demo:
       - _build/meson-logs/meson-log.txt
     expire_in: 2 days
 
+reference:
+  image: registry.gitlab.gnome.org/gnome/gtk/fedora:v16
+  stage: build
+  variables:
+    MESON_ARGS: "--buildtype=release --libdir=lib -Dpulseaudio=disabled -Dintrospection=false -Dbuild-tests=false -Dbuild-doc=true"
+  script:
+    - meson ${MESON_ARGS} _build
+    - ninja -C _build retro-gtk-doc
+    - mv _build/doc/html/ _reference/
+  artifacts:
+    paths:
+      - _reference
+
 review:
   stage: review
   dependencies:
@@ -98,3 +112,15 @@ stop_review:
     - master@GNOME/retro-gtk
     - gnome-3-.*
     - tags
+
+pages:
+  stage: publish
+  dependencies:
+    - reference
+  script:
+    - mv _reference/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

@@ -189,10 +189,10 @@ retro_pixdata_new (gconstpointer    data,
  * retro_pixdata_init:
  * @self: a #RetroPixdata
  * @data: the video data
+ * @pixel_format: the pixel format
+ * @rowstride: the distance in bytes between rows
  * @width: the width
  * @height: the height
- * @pitch: the distance in bytes between rows
- * @pixel_format: the pixel format
  * @aspect_ratio: the aspect ratio to render the video
  *
  * Initializes @self with the given parameters.

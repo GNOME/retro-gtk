@@ -35,3 +35,6 @@ shared_headers = files([
   'retro-memory-type.h',
   'retro-rumble-effect.h',
 ])
+
+shared_enum_headers = files([
+])

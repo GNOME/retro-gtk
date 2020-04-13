@@ -1,8 +1,22 @@
+retro_gtk_include_dir = get_option('includedir') / 'retro-gtk'
+
+retro_gtk_enum_headers = [
+  shared_enum_headers,
+]
+
 retro_gtk_resources = gnome.compile_resources(
   'retro_gtk_resources',
   'retro-gtk.gresource.xml',
   c_name: 'retro_gtk',
   source_dir: '.',
+)
+
+retro_gtk_enums = gnome.mkenums('retro-gtk-enums',
+  h_template: 'retro-gtk-enums.h.in',
+  c_template: 'retro-gtk-enums.c.in',
+  sources: retro_gtk_enum_headers,
+  install_header: true,
+  install_dir: retro_gtk_include_dir,
 )
 
 retro_gtk_sources = [
@@ -32,6 +46,11 @@ retro_gtk_sources = [
 
 retro_gtk_generated_sources = [
   ipc_runner_src,
+  retro_gtk_enums[0],
+]
+
+retro_gtk_generated_headers = [
+  retro_gtk_enums[1],
 ]
 
 retro_gtk_main_header = 'retro-gtk.h'
@@ -71,7 +90,7 @@ retro_gtk_version_h = configure_file(
   output: 'retro-gtk-version.h',
   configuration: version_conf,
   install: true,
-  install_dir: join_paths(get_option('includedir'), 'retro-gtk')
+  install_dir: retro_gtk_include_dir
 )
 
 retro_gtk_c_args = [

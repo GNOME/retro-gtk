@@ -11,10 +11,6 @@
 
 G_BEGIN_DECLS
 
-#define RETRO_TYPE_PIXEL_FORMAT (retro_pixel_format_get_type ())
-
-GType retro_pixel_format_get_type (void) G_GNUC_CONST;
-
 /**
  * RetroPixelFormat:
  * @RETRO_PIXEL_FORMAT_XRGB1555: native endian, the first bit is ignored

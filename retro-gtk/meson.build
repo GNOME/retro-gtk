@@ -2,6 +2,7 @@ retro_gtk_include_dir = get_option('includedir') / 'retro-gtk'
 
 retro_gtk_enum_headers = [
   shared_enum_headers,
+  'retro-video-filter.h',
 ]
 
 retro_gtk_resources = gnome.compile_resources(

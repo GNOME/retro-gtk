@@ -23,9 +23,7 @@ shared_sources = files([
   'retro-framebuffer.c',
   'retro-input.c',
   'retro-memfd.c',
-  'retro-memory-type.c',
   'retro-pixel-format.c',
-  'retro-rumble-effect.c',
 ])
 
 shared_headers = files([
@@ -37,4 +35,8 @@ shared_headers = files([
 ])
 
 shared_enum_headers = files([
+  'retro-controller-codes.h',
+  'retro-controller-type.h',
+  'retro-memory-type.h',
+  'retro-rumble-effect.h',
 ])

@@ -38,26 +38,3 @@ retro_video_filter_from_string (const gchar *filter)
 
   return result;
 }
-
-GType
-retro_video_filter_get_type (void)
-{
-  static volatile gsize retro_video_filter_type = 0;
-
-  if (g_once_init_enter (&retro_video_filter_type)) {
-    static const GEnumValue values[] = {
-      { RETRO_VIDEO_FILTER_SMOOTH, "RETRO_VIDEO_FILTER_SMOOTH", "smooth" },
-      { RETRO_VIDEO_FILTER_SHARP, "RETRO_VIDEO_FILTER_SHARP", "sharp" },
-      { RETRO_VIDEO_FILTER_CRT, "RETRO_VIDEO_FILTER_CRT", "crt" },
-      { RETRO_VIDEO_FILTER_COUNT, "RETRO_VIDEO_FILTER_COUNT", "count" },
-      { 0, NULL, NULL },
-    };
-    GType type;
-
-    type = g_enum_register_static ("RetroVideoFilter", values);
-
-    g_once_init_leave (&retro_video_filter_type, type);
-  }
-
-  return retro_video_filter_type;
-}

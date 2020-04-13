@@ -1,5 +1,10 @@
 /*** BEGIN file-header ***/
 
+#include "retro-controller-codes.h"
+#include "retro-controller-type.h"
+#include "retro-memory-type.h"
+#include "retro-rumble-effect.h"
+#include "retro-video-filter.h"
 
 /*** END file-header ***/
 

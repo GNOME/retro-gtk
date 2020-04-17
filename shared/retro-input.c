@@ -107,7 +107,7 @@ retro_input_get_controller_type (RetroInput *self)
  * @self: a #RetroInput
  * @id: (out): return location for the id
  *
- * Gets the joypad id of %self, if any.
+ * Gets the joypad id of @self, if any.
  *
  * Returns: whether the id was retrieved
  */
@@ -134,7 +134,7 @@ retro_input_get_joypad (RetroInput    *self,
  * @self: a #RetroInput
  * @id: (out): return location for the id
  *
- * Gets the mouse id of %self, if any.
+ * Gets the mouse id of @self, if any.
  *
  * Returns: whether the id was retrieved
  */
@@ -161,7 +161,7 @@ retro_input_get_mouse (RetroInput   *self,
  * @self: a #RetroInput
  * @key: (out): return location for the key
  *
- * Gets the keyboard key of %self, if any.
+ * Gets the keyboard key of @self, if any.
  *
  * Returns: whether the key was retrieved
  */
@@ -188,7 +188,7 @@ retro_input_get_keyboard (RetroInput       *self,
  * @self: a #RetroInput
  * @id: (out): return location for the id
  *
- * Gets the lightgun id of %self, if any.
+ * Gets the lightgun id of @self, if any.
  *
  * Returns: whether the id was retrieved
  */
@@ -216,7 +216,7 @@ retro_input_get_lightgun (RetroInput      *self,
  * @id: (out): return location for the id
  * @index: (out): return location for the index
  *
- * Gets the analog id and index of %self, if any.
+ * Gets the analog id and index of @self, if any.
  *
  * Returns: whether the id and the index were retrieved
  */
@@ -249,7 +249,7 @@ retro_input_get_analog (RetroInput       *self,
  * @self: a #RetroInput
  * @id: (out): return location for the id
  *
- * Gets the pointer id of %self, if any.
+ * Gets the pointer id of @self, if any.
  *
  * Returns: whether the id was retrieved
  */

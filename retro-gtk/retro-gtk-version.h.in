@@ -1,18 +1,16 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-gtk-version
+ * @short_description: Version checking
+ * @title: Version
+ */
+
 #pragma once
 
 #if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
 # error "Only <retro-gtk.h> can be included directly."
 #endif
-
-/**
- * SECTION:retro-gtkversion
- * @short_description: retro-gtk version checking
- *
- * retro-gtk provides macros to check the version of the library
- * at compile-time
- */
 
 /**
  * RETRO_GTK_MAJOR_VERSION:

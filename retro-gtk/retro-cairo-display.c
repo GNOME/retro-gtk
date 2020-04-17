@@ -1,5 +1,13 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * PRIVATE:retro-cairo-display
+ * @short_description: A widget rendering the video output from a core via Cairo
+ * @title: RetroCairoDisplay
+ * @See_also: #RetroGLDisplay
+ * @stability: Private
+ */
+
 #include "retro-cairo-display-private.h"
 
 #include "retro-pixbuf.h"

@@ -310,6 +310,9 @@ retro_pixdata_get_aspect_ratio (RetroPixdata *self)
  *
  * Creates a new #GdkPixbuf from @self.
  *
+ * The #GdkPixbuf stores the intended aspect-ratio, you can access it via
+ * retro_pixbuf_get_aspect_ratio().
+ *
  * Returns: (transfer full): a new #RetroPixdata
  */
 GdkPixbuf *

@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-controller
+ * @short_description: An interface representing an input controller
+ * @title: RetroController
+ * @See_also: #retro-controller-codes
+ */
+
 #include "retro-controller.h"
 
 G_DEFINE_INTERFACE (RetroController, retro_controller, G_TYPE_OBJECT);

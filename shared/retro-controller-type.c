@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-controller-type
+ * @short_description: A controller type enumeration
+ * @title: RetroControllerType
+ * @See_also: #RetroController
+ */
+
 #include "retro-controller-type.h"
 
 #include "retro-controller-codes.h"

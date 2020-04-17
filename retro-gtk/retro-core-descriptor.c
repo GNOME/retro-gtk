@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-core-descriptor
+ * @short_description: An object describing the capabilities and requirements of a Libretro core
+ * @title: RetroCoreDescriptor
+ * @See_also: #RetroCore
+ */
+
 #include "retro-core-descriptor.h"
 
 struct _RetroCoreDescriptor

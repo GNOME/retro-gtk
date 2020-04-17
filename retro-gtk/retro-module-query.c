@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-module-query
+ * @short_description: An object to query the available Libretro cores
+ * @title: RetroModuleQuery
+ * @See_also: #RetroCoreDescriptor, #RetroModuleIterator
+ */
+
 #include "retro-module-query.h"
 
 #include "../retro-gtk-config.h"

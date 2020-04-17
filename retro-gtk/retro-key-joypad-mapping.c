@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-key-joypad-mapping
+ * @short_description: An object mapping keyboard keys to joypad inputs
+ * @title: RetroKeyJoypadMapping
+ * @See_also: #RetroCoreView
+ */
+
 #include "retro-key-joypad-mapping.h"
 
 #include <linux/input-event-codes.h>

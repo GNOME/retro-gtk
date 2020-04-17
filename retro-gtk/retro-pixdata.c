@@ -1,5 +1,20 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-pixdata
+ * @short_description: A structure holding the video output from a #RetroCore
+ * @title: RetroPixdata
+ * @See_also: #GdkPixbuf, #RetroCoreView
+ *
+ * The #RetroPixdata structure holds the internal representation of a
+ * #RetroCore's video output. To use the image, either convert it to a
+ * #GdkPixbuf via retro_pixdata_to_pixbuf() or load it as an OpenGL texture via
+ * retro_pixdata_load_gl_texture().
+ *
+ * The generated #GdkPixbuf will store the intended aspect-ratio, you can access
+ * it via retro_pixbuf_get_aspect_ratio().
+ */
+
 #include "retro-pixdata-private.h"
 
 #include <epoxy/gl.h>

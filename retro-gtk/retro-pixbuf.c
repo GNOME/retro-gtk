@@ -1,5 +1,14 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-pixbuf
+ * @short_description: Functions for #GdkPixbuf
+ * @title: Pixbuf Functions
+ * @See_also: #GdkPixbuf, #RetroCoreView
+ *
+ * Convenience functions to handle the options of a #GdkPixbuf.
+ */
+
 #include "retro-pixbuf.h"
 #include <string.h>
 

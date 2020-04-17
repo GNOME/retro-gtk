@@ -1,5 +1,14 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-log
+ * @short_description: Functions to log a Libretro core
+ * @title: RetroCore Logging Functions
+ * @See_also: #RetroCore
+ *
+ * Convenience functions to connect to the #RetroCore::log signal of #RetroCore.
+ */
+
 #include "retro-core.h"
 
 /**

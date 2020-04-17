@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-module-iterator
+ * @short_description: An object iterating through the available Libretro cores
+ * @title: RetroModuleIterator
+ * @See_also: #RetroCoreDescriptor, #RetroModuleQuery
+ */
+
 #include "retro-module-iterator.h"
 
 struct _RetroModuleIterator

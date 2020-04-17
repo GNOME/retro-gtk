@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-controller-iterator
+ * @short_description: An object iterating through the controllers plugged into a RetroCore
+ * @title: RetroControllerIterator
+ * @See_also: #RetroController, #RetroCore
+ */
+
 #include "retro-controller-iterator-private.h"
 
 struct _RetroControllerIterator

@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-controller-codes
+ * @short_description: Controller input codes and Linux convertion functions
+ * @title: RetroController Codes
+ * @See_also: #RetroController
+ */
+
 #include <linux/input-event-codes.h>
 #include "retro-controller-codes.h"
 

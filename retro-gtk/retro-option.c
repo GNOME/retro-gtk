@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-option
+ * @short_description: An object representing an option from a Libretro core
+ * @title: RetroOption
+ * @See_also: #RetroCore
+ */
+
 #include "retro-option-private.h"
 
 struct _RetroOption

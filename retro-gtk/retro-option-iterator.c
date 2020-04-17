@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-option-iterator
+ * @short_description: An object iterating through the options of a #RetroCore
+ * @title: RetroOptionIterator
+ * @See_also: #RetroCore, #RetroOption
+ */
+
 #include "retro-option-iterator.h"
 
 struct _RetroOptionIterator

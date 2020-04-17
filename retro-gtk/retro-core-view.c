@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-core-view
+ * @short_description: A widget to handle a core's inputs and outputs
+ * @title: RetroCoreView
+ * @See_also: #RetroCore, #RetroVideoFilter
+ */
+
 #include "retro-core-view.h"
 
 #include "retro-cairo-display-private.h"

@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-core
+ * @short_description: An object handling a Libretro core
+ * @title: RetroCore
+ * @See_also: #RetroCoreView
+ */
+
 #include "retro-core.h"
 
 #include <errno.h>

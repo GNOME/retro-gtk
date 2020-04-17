@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-video-filter
+ * @short_description: A video filter enumeration
+ * @title: RetroVideoFilter
+ * @See_also: #RetroCoreView
+ */
+
 #include "retro-video-filter.h"
 
 /**

@@ -1,5 +1,21 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-input
+ * @short_description: A structure representing a controller input
+ * @title: RetroInput
+ * @See_also: #RetroController, #RetroControllerType
+ *
+ * The #RetroInput structure represents an input from a controller, like a
+ * button, an axis, or a key.
+ *
+ * To know the represented input type, first check the input's controller type
+ * via retro_input_get_controller_type(), then use the accessor function
+ * matching it.
+ * E.g. if the controller type is %RETRO_CONTROLLER_TYPE_JOYPAD, you can know
+ * which joypad input type is represented via retro_input_get_joypad().
+ */
+
 #include "retro-input-private.h"
 
 G_DEFINE_BOXED_TYPE (RetroInput, retro_input, retro_input_copy, retro_input_free)

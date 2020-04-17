@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-memory-type
+ * @short_description: A memory type enumeration
+ * @title: RetroMemoryType
+ * @See_also: #RetroCore
+ */
+
 #include "retro-memory-type.h"
 
 GType

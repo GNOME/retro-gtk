@@ -1,5 +1,12 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * SECTION:retro-rumble-effect
+ * @short_description: A rumble effect enumeration
+ * @title: RetroRumbleEffect
+ * @See_also: #RetroController
+ */
+
 #include "retro-rumble-effect.h"
 
 GType

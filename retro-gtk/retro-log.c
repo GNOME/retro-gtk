@@ -12,8 +12,8 @@
  *
  * Logs an error or debugging message.
  *
- * This is a convenience function to forward the log signal of #RetroCore to
- * g_log(), see it for more information.
+ * This is a convenience function to forward the #RetroCore::log signal of
+ * #RetroCore to g_log(), see it for more information.
  */
 void
 retro_g_log (RetroCore      *sender,

@@ -1,5 +1,13 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
+/**
+ * PRIVATE:retro-gl-display
+ * @short_description: A widget rendering the video output from a core via OpenGL
+ * @title: RetroGLDisplay
+ * @See_also: #RetroCairoDisplay
+ * @stability: Private
+ */
+
 #include "retro-gl-display-private.h"
 
 #include <epoxy/gl.h>

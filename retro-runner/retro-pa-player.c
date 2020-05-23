@@ -31,12 +31,7 @@ retro_pa_player_finalize (GObject *object)
   RetroPaPlayer *self = (RetroPaPlayer *)object;
 
   g_clear_object (&self->core);
-
-  if (self->simple != NULL) {
-    pa_simple_free (self->simple);
-    self->simple = NULL;
-  }
-
+  g_clear_pointer (&self->simple, pa_simple_free);
   g_clear_pointer (&self->src, src_delete);
   g_array_unref (self->buffer);
 
@@ -77,9 +72,7 @@ prepare_for_sample_rate (RetroPaPlayer *self,
   sample_spec.rate = (guint32) sample_rate;
   sample_spec.channels = 2;
 
-  if (self->simple != NULL)
-    pa_simple_free (self->simple);
-
+  g_clear_pointer (&self->simple, pa_simple_free);
   self->simple = pa_simple_new (NULL, NULL, PA_STREAM_PLAYBACK, NULL, "",
                                 &sample_spec, NULL, NULL, &error);
   if (!self->simple) {
@@ -231,11 +224,7 @@ retro_pa_player_set_core (RetroPaPlayer *self,
                                0);
   }
 
-  if (self->simple != NULL) {
-    pa_simple_free (self->simple);
-    self->simple = NULL;
-  }
-
+  g_clear_pointer (&self->simple, pa_simple_free);
   src_reset (self->src);
 }
 

@@ -47,7 +47,7 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
   g_autoptr(GError) error = NULL;
   g_autoptr(GUnixFDList) out_fd_list = NULL;
-  GVariantIter *iter;
+  g_autoptr (GVariantIter) iter = NULL;
   gchar *key, *value;
   gint handle, fd;
 
@@ -55,8 +55,6 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
 
   while (g_variant_iter_loop (iter, "(ss)", &key, &value))
     retro_core_override_variable_default (self->core, key, value);
-
-  g_variant_iter_free (iter);
 
   retro_core_set_medias (self->core, medias);
 

@@ -34,7 +34,7 @@ g_key_file_try_get_string (GKeyFile    *key_file,
 static GBytes *
 g_file_try_read_bytes (GFile *file)
 {
-  GFileInputStream *stream;
+  g_autoptr (GFileInputStream) stream = NULL;
   goffset size;
   GBytes *bytes;
   GError *inner_error = NULL;
@@ -51,7 +51,6 @@ g_file_try_read_bytes (GFile *file)
   if (G_UNLIKELY (inner_error != NULL)) {
     g_debug ("%s", inner_error->message);
     g_clear_error (&inner_error);
-    g_object_unref (stream);
 
     return NULL;
   }
@@ -62,7 +61,6 @@ g_file_try_read_bytes (GFile *file)
   if (G_UNLIKELY (inner_error != NULL)) {
     g_debug ("%s", inner_error->message);
     g_clear_error (&inner_error);
-    g_object_unref (stream);
 
     return NULL;
   }
@@ -71,12 +69,9 @@ g_file_try_read_bytes (GFile *file)
   if (G_UNLIKELY (inner_error != NULL)) {
     g_debug ("%s", inner_error->message);
     g_clear_error (&inner_error);
-    g_object_unref (stream);
 
     return NULL;
   }
-
-  g_object_unref (stream);
 
   return bytes;
 }
@@ -85,12 +80,11 @@ static GBytes *
 g_file_try_read_child_bytes (GFile       *parent,
                              const gchar *child_filename)
 {
-  GFile *file;
+  g_autoptr (GFile) file = NULL;
   GBytes *bytes;
 
   file = g_file_get_child (parent, child_filename);
   bytes = g_file_try_read_bytes (file);
-  g_object_unref (file);
 
   return bytes;
 }

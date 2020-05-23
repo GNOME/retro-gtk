@@ -88,7 +88,7 @@ retro_module_finalize (GObject *object)
   }
 
   if (!self->is_a_copy)
-    g_hash_table_remove (retro_module_loaded_modules, self->file_name);\
+    g_hash_table_remove (retro_module_loaded_modules, self->file_name);
 
   g_free (self->file_name);
   g_module_close (self->module);

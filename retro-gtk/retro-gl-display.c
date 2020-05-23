@@ -168,12 +168,13 @@ draw_texture (RetroGLDisplay  *self,
   GLfloat source_width, source_height;
   GLfloat target_width, target_height;
   GLfloat output_width, output_height;
+  RetroGLSLShader *shader = retro_glsl_filter_get_shader (filter);
 
-  retro_glsl_filter_use_program (filter);
+  retro_glsl_shader_use_program (shader);
 
-  retro_glsl_filter_apply_texture_params (filter);
+  retro_glsl_shader_apply_texture_params (shader);
 
-  retro_glsl_filter_set_uniform_1f (filter, "relative_aspect_ratio",
+  retro_glsl_shader_set_uniform_1f (shader, "relative_aspect_ratio",
     (gfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self)) /
     (gfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self)) /
     self->aspect_ratio);
@@ -185,15 +186,15 @@ draw_texture (RetroGLDisplay  *self,
   output_width = (GLfloat) gtk_widget_get_allocated_width (GTK_WIDGET (self));
   output_height = (GLfloat) gtk_widget_get_allocated_height (GTK_WIDGET (self));
 
-  retro_glsl_filter_set_uniform_4f (filter, "sourceSize[0]",
+  retro_glsl_shader_set_uniform_4f (shader, "sourceSize[0]",
                                     source_width, source_height,
                                     1.0f / source_width, 1.0f / source_height);
 
-  retro_glsl_filter_set_uniform_4f (filter, "targetSize",
+  retro_glsl_shader_set_uniform_4f (shader, "targetSize",
                                     target_width, target_height,
                                     1.0f / target_width, 1.0f / target_height);
 
-  retro_glsl_filter_set_uniform_4f (filter, "outputSize",
+  retro_glsl_shader_set_uniform_4f (shader, "outputSize",
                                     output_width, output_height,
                                     1.0f / output_width, 1.0f / output_height);
 
@@ -223,8 +224,9 @@ realize (RetroGLDisplay *self)
   glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (elements), elements, GL_STATIC_DRAW);
 
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
-    self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], NULL);
-    retro_glsl_filter_prepare_program (self->glsl_filter[filter], &inner_error);
+    RetroGLSLShader *shader;
+
+    self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], &inner_error);
     if (G_UNLIKELY (inner_error != NULL)) {
       g_critical ("Shader program %s creation failed: %s",
                   filter_uris[filter],
@@ -235,7 +237,9 @@ realize (RetroGLDisplay *self)
       continue;
     }
 
-    retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
+    shader = retro_glsl_filter_get_shader (self->glsl_filter[filter]);
+
+    retro_glsl_shader_set_attribute_pointer (shader,
                                              "position",
                                              sizeof (((RetroVertex *) NULL)->position) / sizeof (float),
                                              GL_FLOAT,
@@ -243,7 +247,7 @@ realize (RetroGLDisplay *self)
                                              sizeof (RetroVertex),
                                              (const GLvoid *) offsetof (RetroVertex, position));
 
-    retro_glsl_filter_set_attribute_pointer (self->glsl_filter[filter],
+    retro_glsl_shader_set_attribute_pointer (shader,
                                              "texCoord",
                                              sizeof (((RetroVertex *) NULL)->texture_coordinates) / sizeof (float),
                                              GL_FLOAT,
@@ -261,8 +265,10 @@ realize (RetroGLDisplay *self)
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  if (self->glsl_filter[filter] != NULL)
-    retro_glsl_filter_use_program (self->glsl_filter[filter]);
+  if (self->glsl_filter[filter] != NULL) {
+    RetroGLSLShader *shader = retro_glsl_filter_get_shader (self->glsl_filter[filter]);
+    retro_glsl_shader_use_program (shader);
+  }
 
   glClearColor (0, 0, 0, 1);
 }

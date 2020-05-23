@@ -48,6 +48,14 @@ G_DEFINE_TYPE (RetroModule, retro_module, G_TYPE_OBJECT)
 #define fetch_function(self, name) \
   g_module_symbol (self->module, "retro_"#name, (gpointer) &self->name)
 
+#define define_function_getter(Type, name) \
+  Type \
+  retro_module_get_##name (RetroModule *self) \
+  { \
+    g_return_val_if_fail (self != NULL, NULL); \
+    return self->name; \
+  } \
+
 /* Private */
 
 static gchar *
@@ -189,170 +197,24 @@ retro_module_new (const gchar *file_name)
   return self;
 }
 
-RetroCallbackSetter
-retro_module_get_set_environment (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_environment;
-}
-
-RetroCallbackSetter
-retro_module_get_set_video_refresh (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_video_refresh;
-}
-
-RetroCallbackSetter
-retro_module_get_set_audio_sample (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_audio_sample;
-}
-
-RetroCallbackSetter
-retro_module_get_set_audio_sample_batch (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_audio_sample_batch;
-}
-
-RetroCallbackSetter
-retro_module_get_set_input_poll (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_input_poll;
-}
-
-RetroCallbackSetter
-retro_module_get_set_input_state (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_input_state;
-}
-
-RetroInit
-retro_module_get_init (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->init;
-}
-
-RetroDeinit
-retro_module_get_deinit (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->deinit;
-}
-
-RetroApiVersion
-retro_module_get_api_version (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->api_version;
-}
-
-RetroGetSystemInfo
-retro_module_get_get_system_info (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->get_system_info;
-}
-
-RetroGetSystemAvInfo
-retro_module_get_get_system_av_info (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->get_system_av_info;
-}
-
-RetroSetControllerPortDevice
-retro_module_get_set_controller_port_device (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->set_controller_port_device;
-}
-
-RetroReset
-retro_module_get_reset (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->reset;
-}
-
-RetroRun
-retro_module_get_run (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->run;
-}
-
-RetroSerializeSize
-retro_module_get_serialize_size (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->serialize_size;
-}
-
-RetroSerialize
-retro_module_get_serialize (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->serialize;
-}
-
-RetroUnserialize
-retro_module_get_unserialize (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->unserialize;
-}
-
-RetroLoadGame
-retro_module_get_load_game (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->load_game;
-}
-
-RetroUnloadGame
-retro_module_get_unload_game (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->unload_game;
-}
-
-RetroGetMemoryData
-retro_module_get_get_memory_data (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->get_memory_data;
-}
-
-RetroGetMemorySize
-retro_module_get_get_memory_size (RetroModule *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-
-  return self->get_memory_size;
-}
+define_function_getter (RetroCallbackSetter, set_environment)
+define_function_getter (RetroCallbackSetter, set_video_refresh)
+define_function_getter (RetroCallbackSetter, set_audio_sample)
+define_function_getter (RetroCallbackSetter, set_audio_sample_batch)
+define_function_getter (RetroCallbackSetter, set_input_poll)
+define_function_getter (RetroCallbackSetter, set_input_state)
+define_function_getter (RetroInit, init)
+define_function_getter (RetroDeinit, deinit)
+define_function_getter (RetroApiVersion, api_version)
+define_function_getter (RetroGetSystemInfo, get_system_info)
+define_function_getter (RetroGetSystemAvInfo, get_system_av_info)
+define_function_getter (RetroSetControllerPortDevice, set_controller_port_device)
+define_function_getter (RetroReset, reset)
+define_function_getter (RetroRun, run)
+define_function_getter (RetroSerializeSize, serialize_size)
+define_function_getter (RetroSerialize, serialize)
+define_function_getter (RetroUnserialize, unserialize)
+define_function_getter (RetroLoadGame, load_game)
+define_function_getter (RetroUnloadGame, unload_game)
+define_function_getter (RetroGetMemoryData, get_memory_data);
+define_function_getter (RetroGetMemorySize, get_memory_size);

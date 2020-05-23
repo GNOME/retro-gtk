@@ -45,6 +45,9 @@ struct _RetroModule
 
 G_DEFINE_TYPE (RetroModule, retro_module, G_TYPE_OBJECT)
 
+#define fetch_function(self, name) \
+  g_module_symbol (self->module, "retro_"#name, (gpointer) &self->name)
+
 /* Private */
 
 static gchar *
@@ -120,7 +123,6 @@ RetroModule *
 retro_module_new (const gchar *file_name)
 {
   RetroModule *self = NULL;
-  gpointer function;
   GError *inner_error = NULL;
 
   g_return_val_if_fail (file_name != NULL, NULL);
@@ -162,48 +164,27 @@ retro_module_new (const gchar *file_name)
     load_module (self, self->file_name);
   }
 
-  g_module_symbol (self->module, "retro_set_environment", &function);
-  self->set_environment = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_set_video_refresh", &function);
-  self->set_video_refresh = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_set_audio_sample", &function);
-  self->set_audio_sample = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_set_audio_sample_batch", &function);
-  self->set_audio_sample_batch = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_set_input_poll", &function);
-  self->set_input_poll = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_set_input_state", &function);
-  self->set_input_state = (RetroCallbackSetter) function;
-  g_module_symbol (self->module, "retro_init", &function);
-  self->init = (RetroInit) function;
-  g_module_symbol (self->module, "retro_deinit", &function);
-  self->deinit = (RetroDeinit) function;
-  g_module_symbol (self->module, "retro_api_version", &function);
-  self->api_version = (RetroApiVersion) function;
-  g_module_symbol (self->module, "retro_get_system_info", &function);
-  self->get_system_info = (RetroGetSystemInfo) function;
-  g_module_symbol (self->module, "retro_get_system_av_info", &function);
-  self->get_system_av_info = (RetroGetSystemAvInfo) function;
-  g_module_symbol (self->module, "retro_set_controller_port_device", &function);
-  self->set_controller_port_device = (RetroSetControllerPortDevice) function;
-  g_module_symbol (self->module, "retro_reset", &function);
-  self->reset = (RetroReset) function;
-  g_module_symbol (self->module, "retro_run", &function);
-  self->run = (RetroRun) function;
-  g_module_symbol (self->module, "retro_serialize_size", &function);
-  self->serialize_size = (RetroSerializeSize) function;
-  g_module_symbol (self->module, "retro_serialize", &function);
-  self->serialize = (RetroSerialize) function;
-  g_module_symbol (self->module, "retro_unserialize", &function);
-  self->unserialize = (RetroUnserialize) function;
-  g_module_symbol (self->module, "retro_load_game", &function);
-  self->load_game = (RetroLoadGame) function;
-  g_module_symbol (self->module, "retro_unload_game", &function);
-  self->unload_game = (RetroUnloadGame) function;
-  g_module_symbol (self->module, "retro_get_memory_data", &function);
-  self->get_memory_data = (RetroGetMemoryData) function;
-  g_module_symbol (self->module, "retro_get_memory_size", &function);
-  self->get_memory_size = (RetroGetMemorySize) function;
+  fetch_function (self, set_environment);
+  fetch_function (self, set_video_refresh);
+  fetch_function (self, set_audio_sample);
+  fetch_function (self, set_audio_sample_batch);
+  fetch_function (self, set_input_poll);
+  fetch_function (self, set_input_state);
+  fetch_function (self, init);
+  fetch_function (self, deinit);
+  fetch_function (self, api_version);
+  fetch_function (self, get_system_info);
+  fetch_function (self, get_system_av_info);
+  fetch_function (self, set_controller_port_device);
+  fetch_function (self, reset);
+  fetch_function (self, run);
+  fetch_function (self, serialize_size);
+  fetch_function (self, serialize);
+  fetch_function (self, unserialize);
+  fetch_function (self, load_game);
+  fetch_function (self, unload_game);
+  fetch_function (self, get_memory_data);
+  fetch_function (self, get_memory_size);
 
   return self;
 }

@@ -820,10 +820,7 @@ load_discs (RetroCore  *self,
 {
   guint length;
   gboolean fullpath;
-  GFile *file;
-  gchar *path;
   guint index;
-  RetroGameInfo *game_info = NULL;
   GError *tmp_error = NULL;
 
   set_disk_ejected (self, TRUE, &tmp_error);
@@ -852,40 +849,24 @@ load_discs (RetroCore  *self,
 
   fullpath = get_needs_full_path (self);
   for (index = 0; index < length; index++) {
-    file = g_file_new_for_uri (self->media_uris[index]);
-    path = g_file_get_path (file);
+    g_autoptr (GFile) file = g_file_new_for_uri (self->media_uris[index]);
+    g_autofree gchar *path = g_file_get_path (file);
+    g_autoptr (RetroGameInfo) game_info = fullpath ?
+      retro_game_info_new (path) :
+      retro_game_info_new_with_data (path, &tmp_error);
 
-    if (fullpath) {
-      game_info = retro_game_info_new (path);
-    }
-    else {
-      game_info = retro_game_info_new_with_data (path, &tmp_error);
-      if (G_UNLIKELY (tmp_error != NULL)) {
-        g_propagate_error (error, tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_propagate_error (error, tmp_error);
 
-        if (game_info != NULL)
-          retro_game_info_free (game_info);
-        g_free (path);
-        g_object_unref (file);
-
-        return;
-      }
+      return;
     }
 
     replace_disk_image_index (self, index, game_info, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-
       return;
     }
-
-    retro_game_info_free (game_info);
-    g_free (path);
-    g_object_unref (file);
   }
 
   set_disk_ejected (self, FALSE, &tmp_error);
@@ -949,11 +930,9 @@ load_medias (RetroCore  *self,
              GError    **error)
 {
   guint length;
-  gchar *uri;
-  GFile *file;
-  gchar *path;
-  gboolean fullpath;
-  RetroGameInfo *game_info = NULL;
+  g_autoptr (GFile) file = NULL;
+  g_autofree gchar *path = NULL;
+  g_autoptr (RetroGameInfo) game_info = NULL;
   GError *tmp_error = NULL;
 
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
@@ -964,49 +943,29 @@ load_medias (RetroCore  *self,
     return;
   }
 
-  uri = g_strdup (self->media_uris[0]);
-  file = g_file_new_for_uri (uri);
+  file = g_file_new_for_uri (self->media_uris[0]);
   path = g_file_get_path (file);
-  fullpath = get_needs_full_path (self);
-  if (fullpath) {
-    game_info = retro_game_info_new (path);
-  }
-  else {
-    game_info = retro_game_info_new_with_data (path, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-      g_free (uri);
+  game_info = get_needs_full_path (self) ?
+    retro_game_info_new (path) :
+    retro_game_info_new_with_data (path, &tmp_error);
 
-      return;
-    }
-  }
-  if (!load_game (self, game_info)) {
-    retro_game_info_free (game_info);
-    g_free (path);
-    g_object_unref (file);
-    g_free (uri);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
 
     return;
   }
+
+  if (!load_game (self, game_info))
+    return;
+
   if (self->disk_control_callback != NULL) {
     load_discs (self, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
-      retro_game_info_free (game_info);
-      g_free (path);
-      g_object_unref (file);
-      g_free (uri);
 
       return;
     }
   }
-  retro_game_info_free (game_info);
-  g_free (path);
-  g_object_unref (file);
-  g_free (uri);
 }
 
 void retro_core_set_environment_interface (RetroCore *self);
@@ -1386,6 +1345,7 @@ retro_core_set_current_media (RetroCore  *self,
   GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
+
   length = g_strv_length (self->media_uris);
 
   g_return_if_fail (media_index < length);
@@ -1419,10 +1379,9 @@ void
 retro_core_set_default_controller (RetroCore *self,
                                    gint       fd)
 {
-  if (self->default_controller)
-    g_object_unref (self->default_controller);
+  g_return_if_fail (RETRO_IS_CORE (self));
 
-  self->default_controller = retro_controller_state_new (fd);
+  g_set_object (&self->default_controller, retro_controller_state_new (fd));
 }
 
 void
@@ -1499,7 +1458,7 @@ void
 retro_core_run (RetroCore *self)
 {
   gdouble fps;
-  GSource *source;
+  g_autoptr (GSource) source = NULL;
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
@@ -1515,7 +1474,6 @@ retro_core_run (RetroCore *self)
   source = retro_main_loop_source_new (fps * self->speed_rate);
   g_source_set_callback (source, (GSourceFunc) run_main_loop, self, NULL);
   self->main_loop = g_source_attach (source, g_main_context_default ());
-  g_source_unref (source);
 }
 
 /**
@@ -1573,7 +1531,7 @@ retro_core_iteration (RetroCore *self)
   RetroSerializeSize serialize_size = NULL;
   RetroSerialize serialize = NULL;
   RetroUnserialize unserialize = NULL;
-  guint8 *data;
+  g_autofree guint8 *data = NULL;
   gsize size;
   gsize new_size;
   gboolean success;
@@ -1629,8 +1587,6 @@ retro_core_iteration (RetroCore *self)
   if (!success) {
     g_critical ("Couldn't run ahead: serialization unexpectedly failed.");
 
-    g_free (data);
-
     return;
   }
 
@@ -1644,8 +1600,6 @@ retro_core_iteration (RetroCore *self)
                 G_GSIZE_FORMAT", expected %"G_GSIZE_FORMAT" or less.",
                 new_size, size);
 
-    g_free (data);
-
     return;
   }
 
@@ -1655,12 +1609,8 @@ retro_core_iteration (RetroCore *self)
   if (!success) {
     g_critical ("Couldn't run ahead: deserialization unexpectedly failed.");
 
-    g_free (data);
-
     return;
   }
-
-  g_free (data);
 }
 
 /**

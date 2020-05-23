@@ -32,6 +32,7 @@ retro_gtk_sources = [
   'retro-core-view-controller.c',
   'retro-gl-display.c',
   'retro-glsl-filter.c',
+  'retro-glsl-shader.c',
   'retro-keyboard.c',
   'retro-key-joypad-mapping.c',
   'retro-log.c',

@@ -13,6 +13,7 @@ private_headers = [
   'retro-framebuffer-private.h',
   'retro-gl-display-private.h',
   'retro-glsl-filter-private.h',
+  'retro-glsl-shader-private.h',
   'retro-input-private.h',
   'retro-keyboard-key-private.h',
   'retro-keyboard-private.h',

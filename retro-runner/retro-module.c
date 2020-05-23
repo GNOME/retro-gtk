@@ -57,17 +57,15 @@ get_absolute_path (const gchar *file_name)
 }
 
 static void
-try_delete_file (GFile *file)
+try_delete_and_unref_file (GFile *file)
 {
-  GError *inner_error = NULL;
-
-  g_assert (file != NULL);
+  g_autoptr (GError) inner_error = NULL;
 
   g_file_delete (file, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
+  if (G_UNLIKELY (inner_error != NULL))
     g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
-  }
+
+  g_object_unref (file);
 }
 
 static void
@@ -82,10 +80,7 @@ retro_module_finalize (GObject *object)
 {
   RetroModule *self = RETRO_MODULE (object);
 
-  if (self->tmp_file != NULL) {
-    try_delete_file (self->tmp_file);
-    g_object_unref (self->tmp_file);
-  }
+  g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
 
   if (!self->is_a_copy)
     g_hash_table_remove (retro_module_loaded_modules, self->file_name);
@@ -143,10 +138,7 @@ retro_module_new (const gchar *file_name)
     if (G_UNLIKELY (inner_error != NULL)) {
       g_debug ("%s", inner_error->message);
 
-      if (self->tmp_file != NULL) {
-        try_delete_file (self->tmp_file);
-        g_clear_object (&self->tmp_file);
-      }
+      g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
 
       self->is_a_copy = FALSE;
       load_module (self, self->file_name);
@@ -156,10 +148,7 @@ retro_module_new (const gchar *file_name)
     if (G_UNLIKELY (inner_error != NULL)) {
       g_debug ("%s", inner_error->message);
 
-      if (self->tmp_file != NULL) {
-        try_delete_file (self->tmp_file);
-        g_clear_object (&self->tmp_file);
-      }
+      g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
 
       self->is_a_copy = FALSE;
       load_module (self, self->file_name);

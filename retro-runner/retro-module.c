@@ -47,6 +47,15 @@ G_DEFINE_TYPE (RetroModule, retro_module, G_TYPE_OBJECT)
 
 /* Private */
 
+static gchar *
+get_absolute_path (const gchar *file_name)
+{
+  g_autoptr (GFile) file = g_file_new_for_path (file_name);
+  g_autoptr (GFile) absolute_path_file = g_file_resolve_relative_path (file, "");
+
+  return g_file_get_path (absolute_path_file);
+}
+
 static void
 try_delete_file (GFile *file)
 {
@@ -116,9 +125,6 @@ RetroModule *
 retro_module_new (const gchar *file_name)
 {
   RetroModule *self = NULL;
-  GFile *file;
-  GFileIOStream *ios = NULL;
-  GFile *absolute_path_file;
   gpointer function;
   GError *inner_error = NULL;
 
@@ -126,13 +132,13 @@ retro_module_new (const gchar *file_name)
 
   self = (RetroModule*) g_object_new (RETRO_TYPE_MODULE, NULL);
 
-  file = g_file_new_for_path (file_name);
-  absolute_path_file = g_file_resolve_relative_path (file, "");
-  self->file_name = g_file_get_path (absolute_path_file);
+  self->file_name = get_absolute_path (file_name);
   self->is_a_copy = FALSE;
 
   if (g_hash_table_contains (retro_module_loaded_modules, self->file_name)) {
-    file = g_file_new_for_path (self->file_name);
+    g_autoptr (GFile) file = g_file_new_for_path (self->file_name);
+    g_autoptr (GFileIOStream) ios = NULL;
+
     self->tmp_file = g_file_new_tmp (NULL, &ios, &inner_error);
     if (G_UNLIKELY (inner_error != NULL)) {
       g_debug ("%s", inner_error->message);
@@ -161,11 +167,6 @@ retro_module_new (const gchar *file_name)
     }
     self->is_a_copy = TRUE;
     load_module (self, self->file_name);
-
-    if (ios != NULL)
-      g_object_unref (ios);
-    if (file != NULL)
-      g_object_unref (file);
   }
   else {
     g_hash_table_add (retro_module_loaded_modules, g_strdup (self->file_name));

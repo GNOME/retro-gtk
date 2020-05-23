@@ -115,7 +115,7 @@ log_cb (guint level, const gchar *format, ...)
   RetroCore *self = retro_core_get_instance ();
   const gchar *log_domain;
   GLogLevelFlags log_level;
-  gchar *message;
+  g_autofree gchar *message = NULL;
   va_list args;
 
   switch (level) {
@@ -148,8 +148,6 @@ log_cb (guint level, const gchar *format, ...)
 
   log_domain = retro_core_get_name (self);
   g_signal_emit_by_name (self, "log", log_domain, log_level, message);
-
-  g_free (message);
 }
 
 /* Environment commands */

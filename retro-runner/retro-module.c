@@ -119,7 +119,6 @@ retro_module_new (const gchar *file_name)
   GFile *file;
   GFileIOStream *ios = NULL;
   GFile *absolute_path_file;
-  gchar *tmp_file_name;
   gpointer function;
   GError *inner_error = NULL;
 
@@ -161,9 +160,7 @@ retro_module_new (const gchar *file_name)
       g_clear_error (&inner_error);
     }
     self->is_a_copy = TRUE;
-    tmp_file_name = g_file_get_path (self->tmp_file);
     load_module (self, self->file_name);
-    g_free (tmp_file_name);
 
     if (ios != NULL)
       g_object_unref (ios);

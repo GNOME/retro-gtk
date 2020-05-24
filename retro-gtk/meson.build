@@ -23,7 +23,6 @@ retro_gtk_enums = gnome.mkenums('retro-gtk-enums',
 retro_gtk_sources = [
   shared_sources,
   retro_gtk_resources,
-  'retro-cairo-display.c',
   'retro-controller.c',
   'retro-controller-iterator.c',
   'retro-core.c',

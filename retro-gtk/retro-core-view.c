@@ -9,7 +9,6 @@
 
 #include "retro-core-view.h"
 
-#include "retro-cairo-display-private.h"
 #include "retro-gl-display-private.h"
 #include "retro-controller-codes.h"
 #include "retro-core-view-controller-private.h"

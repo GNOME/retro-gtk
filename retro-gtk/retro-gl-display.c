@@ -4,7 +4,6 @@
  * PRIVATE:retro-gl-display
  * @short_description: A widget rendering the video output from a core via OpenGL
  * @title: RetroGLDisplay
- * @See_also: #RetroCairoDisplay
  * @stability: Private
  */
 

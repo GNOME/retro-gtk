@@ -1391,7 +1391,11 @@ retro_core_set_default_controller (RetroCore *self,
 {
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  g_set_object (&self->default_controller, retro_controller_state_new (fd));
+  /* We cannot use g_set_object() because it would reference the new object,
+   * leaking its initial reference.
+   */
+  g_clear_object (&self->default_controller);
+  self->default_controller = retro_controller_state_new (fd);
 }
 
 void

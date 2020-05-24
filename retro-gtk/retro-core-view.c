@@ -127,7 +127,7 @@ grab (RetroCoreView *self,
 {
   GdkSeat *seat;
   GdkDisplay *display;
-  GdkCursor *cursor;
+  g_autoptr (GdkCursor) cursor = NULL;
   GdkScreen *screen = NULL;
   GdkMonitor *monitor;
   GdkRectangle monitor_geometry;
@@ -136,11 +136,8 @@ grab (RetroCoreView *self,
   g_assert (window != NULL);
   g_assert (event != NULL);
 
-  if (self->grabbed_device != NULL)
-    g_object_unref (self->grabbed_device);
-
-  if (self->grabbed_screen != NULL)
-    g_object_unref (self->grabbed_screen);
+  g_clear_object (&self->grabbed_device);
+  g_clear_object (&self->grabbed_screen);
 
   self->grabbed_device = g_object_ref (device);
   seat = gdk_device_get_seat (device);
@@ -160,8 +157,6 @@ grab (RetroCoreView *self,
   recenter_pointer (self);
 
   g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
-
-  g_object_unref (cursor);
 }
 
 static void
@@ -652,7 +647,6 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
                                            RetroCore     *core)
 {
   RetroControllerType type;
-  RetroController *controller;
   guint64 capabilities;
 
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
@@ -663,12 +657,12 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
   for (type = RETRO_CONTROLLER_TYPE_NONE;
        type < RETRO_CONTROLLER_TYPE_COUNT;
        type++) {
-    if ((capabilities & (1 << type)) == 0)
-      continue;
+    if ((capabilities & (1 << type)) != 0) {
+      g_autoptr (RetroController) controller =
+        retro_core_view_as_controller (self, type);
 
-    controller = retro_core_view_as_controller (self, type);
-    retro_core_set_default_controller (core, type, controller);
-    g_object_unref (controller);
+      retro_core_set_default_controller (core, type, controller);
+    }
   }
 }
 

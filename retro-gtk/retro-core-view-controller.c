@@ -24,8 +24,7 @@ retro_core_view_controller_get_input_state (RetroController *base,
                                             RetroInput      *input)
 {
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
-  gpointer view;
-  gint16 result;
+  g_autoptr (RetroCoreView) view = NULL;
 
   if (retro_input_get_controller_type (input) != self->controller_type)
     return 0;
@@ -35,11 +34,7 @@ retro_core_view_controller_get_input_state (RetroController *base,
   if (view == NULL)
     return 0;
 
-  result = retro_core_view_get_input_state (RETRO_CORE_VIEW (view), input);
-
-  g_object_unref (G_OBJECT (view));
-
-  return result;
+  return retro_core_view_get_input_state (view, input);
 }
 
 static RetroControllerType
@@ -54,17 +49,13 @@ static guint64
 retro_core_view_controller_get_capabilities (RetroController *base)
 {
   RetroCoreViewController *self = RETRO_CORE_VIEW_CONTROLLER (base);
-  gpointer view;
+  g_autoptr (RetroCoreView) view = g_weak_ref_get (&self->view);
   guint64 capabilities;
-
-  view = g_weak_ref_get (&self->view);
 
   if (view == NULL)
     return 0;
 
-  capabilities = retro_core_view_get_controller_capabilities (RETRO_CORE_VIEW (view));
-
-  g_object_unref (G_OBJECT (view));
+  capabilities = retro_core_view_get_controller_capabilities (view);
 
   return capabilities & (1 << self->controller_type);
 }

@@ -651,7 +651,6 @@ void
 retro_core_view_set_as_default_controller (RetroCoreView *self,
                                            RetroCore     *core)
 {
-  RetroController *controller;
   guint64 capabilities;
 
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
@@ -662,12 +661,13 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
   for (RetroControllerType type = RETRO_CONTROLLER_TYPE_NONE;
        type < RETRO_CONTROLLER_TYPE_COUNT;
        type++) {
+    g_autoptr (RetroController) controller = NULL;
+
     if ((capabilities & (1 << type)) == 0)
       continue;
 
     controller = retro_core_view_as_controller (self, type);
     retro_core_set_default_controller (core, type, controller);
-    g_object_unref (controller);
   }
 }
 

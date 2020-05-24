@@ -22,6 +22,14 @@ retro_gl_steal_object (GLuint *ptr)
 }
 
 static inline void
+retro_gl_clear_texture (GLuint *ptr)
+{
+  glDeleteTextures (1, ptr);
+
+  *ptr = 0;
+}
+
+static inline void
 retro_gl_autocleanup_delete_shader (GLuint *ptr)
 {
   if (*ptr == 0)

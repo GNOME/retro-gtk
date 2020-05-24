@@ -10,6 +10,7 @@
 #include "retro-gl-display-private.h"
 
 #include <epoxy/gl.h>
+#include "retro-gl-private.h"
 #include "retro-glsl-filter-private.h"
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
@@ -63,10 +64,7 @@ static void
 clear_video (RetroGLDisplay *self)
 {
   g_clear_object (&self->pixbuf);
-  if (self->pixdata != NULL) {
-    retro_pixdata_free (self->pixdata);
-    self->pixdata = NULL;
-  }
+  g_clear_pointer (&self->pixdata, retro_pixdata_free);
 }
 
 static void
@@ -255,8 +253,7 @@ realize (RetroGLDisplay *self)
                                              (const GLvoid *) offsetof (RetroVertex, texture_coordinates));
   }
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_texture (&self->texture);
   glGenTextures (1, &self->texture);
   glBindTexture (GL_TEXTURE_2D, self->texture);
 
@@ -279,8 +276,7 @@ unrealize (RetroGLDisplay *self)
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_texture (&self->texture);
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
 }
@@ -314,14 +310,11 @@ retro_gl_display_finalize (GObject *object)
   RetroGLDisplay *self = (RetroGLDisplay *) object;
   RetroVideoFilter filter;
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_texture (&self->texture);
   for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
-  if (self->core != NULL)
-    g_object_unref (self->core);
-  if (self->pixbuf != NULL)
-    g_object_unref (self->pixbuf);
+  g_clear_object (&self->core);
+  g_clear_object (&self->pixbuf);
 
   G_OBJECT_CLASS (retro_gl_display_parent_class)->finalize (object);
 }

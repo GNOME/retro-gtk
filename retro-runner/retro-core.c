@@ -1381,7 +1381,10 @@ retro_core_set_default_controller (RetroCore *self,
 {
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  g_set_object (&self->default_controller, retro_controller_state_new (fd));
+  if (self->default_controller)
+    g_object_unref (self->default_controller);
+
+  self->default_controller = retro_controller_state_new (fd);
 }
 
 void

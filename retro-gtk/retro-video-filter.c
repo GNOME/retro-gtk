@@ -21,7 +21,7 @@
 RetroVideoFilter
 retro_video_filter_from_string (const gchar *filter)
 {
-  GEnumClass* enum_class;
+  g_autoptr (GEnumClass) enum_class = NULL;
   RetroVideoFilter result;
   GEnumValue* eval = NULL;
 
@@ -33,8 +33,6 @@ retro_video_filter_from_string (const gchar *filter)
   result = (eval == NULL) ?
     RETRO_VIDEO_FILTER_SMOOTH :
     (RetroVideoFilter) eval->value;
-
-  g_type_class_unref (enum_class);
 
   return result;
 }

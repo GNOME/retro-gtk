@@ -2,6 +2,8 @@
 
 #include "retro-glsl-shader-private.h"
 
+#include "retro-gl-private.h"
+
 struct _RetroGLSLShader
 {
   GObject parent_instance;
@@ -28,14 +30,11 @@ create_shader (GBytes  *source_bytes,
                GLenum   shader_type,
                GError **error)
 {
-  const gchar *source;
-  gint size;
-  GLuint shader;
+  const gchar *source = g_bytes_get_data (source_bytes, NULL);
+  gint size = g_bytes_get_size (source_bytes);
+  retro_gl_autodelete_shader GLuint shader = glCreateShader (shader_type);
   gint status;
 
-  source = g_bytes_get_data (source_bytes, NULL);
-  size = g_bytes_get_size (source_bytes);
-  shader = glCreateShader (shader_type);
   glShaderSource (shader, 1, &source, &size);
   glCompileShader (shader);
 
@@ -53,12 +52,10 @@ create_shader (GBytes  *source_bytes,
                  shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment",
                  buffer);
 
-    glDeleteShader (shader);
-
     return 0;
   }
 
-  return shader;
+  return retro_gl_steal_object (&shader);
 }
 
 static void
@@ -96,8 +93,8 @@ retro_glsl_shader_new (GBytes  *vertex,
 {
   g_autoptr (RetroGLSLShader) self = NULL;
   gint status = 0;
-  GLuint vertex_shader;
-  GLuint fragment_shader;
+  retro_gl_autodelete_shader GLuint vertex_shader = 0;
+  retro_gl_autodelete_shader GLuint fragment_shader = 0;
   GError *inner_error = NULL;
 
   g_return_val_if_fail (vertex != NULL, NULL);
@@ -122,7 +119,6 @@ retro_glsl_shader_new (GBytes  *vertex,
   fragment_shader = create_shader (self->fragment, GL_FRAGMENT_SHADER, &inner_error);
   if (G_UNLIKELY (inner_error != NULL)) {
     g_propagate_error (error, inner_error);
-    glDeleteShader (vertex_shader);
 
     return NULL;
   }
@@ -144,14 +140,11 @@ retro_glsl_shader_new (GBytes  *vertex,
     g_set_error (error, RETRO_GLSL_SHADER_ERROR, RETRO_GLSL_SHADER_ERROR_COULDNT_LINK,
                  "Linking failure in program: %s", buffer);
 
-    glDeleteShader (vertex_shader);
-    glDeleteShader (fragment_shader);
-
     return NULL;
   }
 
-  glDetachShader (self->program, vertex_shader);
-  glDetachShader (self->program, fragment_shader);
+  glDetachShader (self->program, retro_gl_steal_object (&vertex_shader));
+  glDetachShader (self->program, retro_gl_steal_object (&fragment_shader));
 
   return g_steal_pointer (&self);
 }

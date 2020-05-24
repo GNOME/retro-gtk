@@ -80,17 +80,14 @@ has_group_prefixed (RetroCoreDescriptor *self,
                     const gchar         *group_prefix,
                     const gchar         *group_suffix)
 {
-  gchar *group;
-  gboolean result;
+  g_autofree gchar *group = NULL;
 
   g_assert (group_prefix != NULL);
   g_assert (group_suffix != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
-  result = g_key_file_has_group (self->key_file, group);
-  g_free (group);
 
-  return result;
+  return g_key_file_has_group (self->key_file, group);
 }
 
 static gboolean
@@ -100,7 +97,7 @@ has_key_prefixed (RetroCoreDescriptor  *self,
                   const gchar          *key,
                   GError              **error)
 {
-  gchar *group;
+  g_autofree gchar *group = NULL;
   gboolean result;
   GError *tmp_error = NULL;
 
@@ -114,13 +111,10 @@ has_key_prefixed (RetroCoreDescriptor  *self,
                                key,
                                &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_free (group);
     g_propagate_error (error, tmp_error);
 
     return FALSE;
   }
-
-  g_free (group);
 
   return result;
 }
@@ -132,7 +126,7 @@ get_string_prefixed (RetroCoreDescriptor  *self,
                      const gchar          *key,
                      GError              **error)
 {
-  gchar *group;
+  g_autofree gchar *group = NULL;
   gchar *result;
   GError *tmp_error = NULL;
 
@@ -147,13 +141,10 @@ get_string_prefixed (RetroCoreDescriptor  *self,
                                   key,
                                   &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_free (group);
     g_propagate_error (error, tmp_error);
 
     return NULL;
   }
-
-  g_free (group);
 
   return result;
 }
@@ -166,7 +157,7 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
                           gsize                *length,
                           GError              **error)
 {
-  gchar *group;
+  g_autofree gchar *group = NULL;
   gchar **result;
   GError *tmp_error = NULL;
 
@@ -182,13 +173,10 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
                                        length,
                                        &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-  g_free (group);
     g_propagate_error (error, tmp_error);
 
     return NULL;
   }
-
-  g_free (group);
 
   return result;
 }
@@ -279,9 +267,8 @@ check_platform_group (RetroCoreDescriptor  *self,
                       GError              **error)
 {
   gboolean has_key;
-  gchar **firmwares;
-  gchar **firmware_p;
-  gchar *firmware_group;
+  g_auto (GStrv) firmwares = NULL;
+  GStrv firmware_p;
   GError *tmp_error = NULL;
 
   g_assert (group != NULL);
@@ -316,7 +303,8 @@ check_platform_group (RetroCoreDescriptor  *self,
   }
 
   for (firmware_p = firmwares; *firmware_p != NULL; firmware_p++) {
-    firmware_group = g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
+    g_autofree gchar *firmware_group =
+      g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
     if (!g_key_file_has_group (self->key_file, firmware_group)) {
       g_set_error (error,
                    RETRO_CORE_DESCRIPTOR_ERROR,
@@ -327,16 +315,9 @@ check_platform_group (RetroCoreDescriptor  *self,
                    firmware_group,
                    group);
 
-      g_free (firmware_group);
-      g_strfreev (firmwares);
-
       return;
     }
-
-    g_free (firmware_group);
   }
-
-  g_strfreev (firmwares);
 }
 
 static void
@@ -413,16 +394,13 @@ retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
 gchar *
 retro_core_descriptor_get_uri (RetroCoreDescriptor *self)
 {
-  gchar *result;
-  GFile *file;
+  g_autoptr (GFile) file = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   file = g_file_new_for_path (self->filename);
-  result = g_file_get_uri (file);
-  g_object_unref (file);
 
-  return result;
+  return g_file_get_uri (file);
 }
 
 /**
@@ -454,8 +432,7 @@ gboolean
 retro_core_descriptor_get_is_game (RetroCoreDescriptor  *self,
                                    GError              **error)
 {
-  gchar *type;
-  gboolean is_game;
+  g_autofree gchar *type = NULL;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
@@ -470,10 +447,7 @@ retro_core_descriptor_get_is_game (RetroCoreDescriptor  *self,
     return FALSE;
   }
 
-  is_game = g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_GAME) == 0;
-  g_free (type);
-
-  return is_game;
+  return g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_GAME) == 0;
 }
 
 /**
@@ -489,8 +463,7 @@ gboolean
 retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
                                        GError              **error)
 {
-  gchar *type;
-  gboolean is_game;
+  g_autofree gchar *type = NULL;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
@@ -505,10 +478,7 @@ retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
     return FALSE;
   }
 
-  is_game = g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_EMULATOR) == 0;
-  g_free (type);
-
-  return is_game;
+  return g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_EMULATOR) == 0;
 }
 
 /**
@@ -543,8 +513,7 @@ GIcon *
 retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
                                 GError              **error)
 {
-  gchar *icon_name;
-  GIcon *icon;
+  g_autofree gchar *icon_name = NULL;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
@@ -559,10 +528,7 @@ retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
     return NULL;
   }
 
-  icon = G_ICON (g_themed_icon_new (icon_name));
-  g_free (icon_name);
-
-  return icon;
+  return G_ICON (g_themed_icon_new (icon_name));
 }
 
 /**
@@ -599,41 +565,31 @@ GFile *
 retro_core_descriptor_get_module_file (RetroCoreDescriptor  *self,
                                        GError              **error)
 {
-  GFile *file;
-  GFile *dir;
-  gchar *module;
-  GFile *module_file;
+  g_autoptr (GFile) file = NULL;
+  g_autoptr (GFile) dir = NULL;
+  g_autofree gchar *module = NULL;
+  g_autoptr (GFile) module_file = NULL;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   file = g_file_new_for_path (self->filename);
   dir = g_file_get_parent (file);
-  g_object_unref (file);
   if (dir == NULL)
     return NULL;
 
   module = retro_core_descriptor_get_module (self, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
-    g_object_unref (dir);
 
     return NULL;
   }
 
   module_file = g_file_get_child (dir, module);
-  if (!g_file_query_exists (module_file, NULL)) {
-    g_object_unref (dir);
-    g_free (module);
-    g_object_unref (module_file);
-
+  if (!g_file_query_exists (module_file, NULL))
     return NULL;
-  }
 
-  g_object_unref (dir);
-  g_free (module);
-
-  return module_file;
+  return g_steal_pointer (&module_file);
 }
 
 /**
@@ -857,7 +813,7 @@ retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
                                                  const gchar          *firmware,
                                                  GError              **error)
 {
-  gchar *group;
+  g_autofree gchar *group = NULL;
   gboolean result;
   GError *tmp_error = NULL;
 
@@ -870,13 +826,10 @@ retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
                                    RETRO_CORE_DESCRIPTOR_FIRMWARE_MANDATORY_KEY,
                                    &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_free (group);
     g_propagate_error (error, tmp_error);
 
     return FALSE;
   }
-
-  g_free (group);
 
   return result;
 }
@@ -898,7 +851,7 @@ retro_core_descriptor_get_platform_supports_mime_types (RetroCoreDescriptor  *se
                                                         const gchar * const  *mime_types,
                                                         GError              **error)
 {
-  gchar **supported_mime_types;
+  g_auto (GStrv) supported_mime_types = NULL;
   gsize supported_mime_types_length;
   GError *tmp_error = NULL;
 
@@ -919,13 +872,8 @@ retro_core_descriptor_get_platform_supports_mime_types (RetroCoreDescriptor  *se
 
   for (; *mime_types != NULL; mime_types++)
     if (!g_strv_contains ((const char * const *) supported_mime_types,
-                          *mime_types)) {
-      g_strfreev (supported_mime_types);
-
+                          *mime_types))
       return FALSE;
-    }
-
-  g_strfreev (supported_mime_types);
 
   return TRUE;
 }
@@ -943,8 +891,8 @@ RetroCoreDescriptor *
 retro_core_descriptor_new (const gchar  *filename,
                            GError      **error)
 {
-  RetroCoreDescriptor *self;
-  gchar ** groups;
+  g_autoptr (RetroCoreDescriptor) self = NULL;
+  g_auto (GStrv) groups = NULL;
   gsize groups_length;
   gsize i;
   GError *tmp_error = NULL;
@@ -959,7 +907,6 @@ retro_core_descriptor_new (const gchar  *filename,
                              G_KEY_FILE_NONE,
                              &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_object_unref (self);
     g_propagate_error (error, tmp_error);
 
     return NULL;
@@ -967,7 +914,6 @@ retro_core_descriptor_new (const gchar  *filename,
 
   check_libretro_group (self, &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
-    g_object_unref (self);
     g_propagate_error (error, tmp_error);
 
     return NULL;
@@ -979,8 +925,6 @@ retro_core_descriptor_new (const gchar  *filename,
                           RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX)) {
       check_platform_group (self, groups[i], &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
-        g_strfreev (groups);
-        g_object_unref (self);
         g_propagate_error (error, tmp_error);
 
         return NULL;
@@ -990,8 +934,6 @@ retro_core_descriptor_new (const gchar  *filename,
                                RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX)) {
       check_firmware_group (self, groups[i], &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
-        g_strfreev (groups);
-        g_object_unref (self);
         g_propagate_error (error, tmp_error);
 
         return NULL;
@@ -999,7 +941,5 @@ retro_core_descriptor_new (const gchar  *filename,
     }
   }
 
-  g_strfreev (groups);
-
-  return self;
+  return g_steal_pointer (&self);
 }

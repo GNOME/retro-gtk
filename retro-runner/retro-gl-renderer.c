@@ -4,6 +4,7 @@
 
 #include <gio/gio.h>
 #include "epoxy/egl.h"
+#include "retro-gl-private.h"
 
 #define MAX_EGL_ATTRS 30
 
@@ -189,20 +190,9 @@ retro_gl_renderer_finalize (GObject *object)
    * so that it actually has a chance to run */
   self->callback->context_destroy ();
 
-  if (self->texture) {
-    glDeleteTextures (1, &self->texture);
-    self->texture = 0;
-  }
-
-  if (self->renderbuffer) {
-    glDeleteRenderbuffers (1, &self->renderbuffer);
-    self->renderbuffer = 0;
-  }
-
-  if (self->framebuffer) {
-    glDeleteFramebuffers (1, &self->framebuffer);
-    self->framebuffer = 0;
-  }
+  retro_gl_clear_object_n (&self->texture, 1, glDeleteTextures);
+  retro_gl_clear_object_n (&self->renderbuffer, 1, glDeleteRenderbuffers);
+  retro_gl_clear_object_n (&self->framebuffer, 1, glDeleteFramebuffers);
 
   eglDestroyContext (self->display, self->context);
   self->context = EGL_NO_CONTEXT;

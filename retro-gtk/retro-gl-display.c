@@ -11,6 +11,7 @@
 
 #include <epoxy/gl.h>
 #include "retro-error-private.h"
+#include "retro-gl-private.h"
 #include "retro-glsl-filter-private.h"
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
@@ -254,8 +255,7 @@ realize (RetroGLDisplay *self)
                                              (const GLvoid *) offsetof (RetroVertex, texture_coordinates));
   }
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_object_n (&self->texture, 1, glDeleteTextures);
   glGenTextures (1, &self->texture);
   glBindTexture (GL_TEXTURE_2D, self->texture);
 
@@ -276,8 +276,7 @@ unrealize (RetroGLDisplay *self)
 {
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_object_n (&self->texture, 1, glDeleteTextures);
   for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
 }
@@ -310,8 +309,7 @@ retro_gl_display_finalize (GObject *object)
 {
   RetroGLDisplay *self = (RetroGLDisplay *) object;
 
-  glDeleteTextures (1, &self->texture);
-  self->texture = 0;
+  retro_gl_clear_object_n (&self->texture, 1, glDeleteTextures);
   for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
   g_clear_object (&self->core);

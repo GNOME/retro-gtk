@@ -9,7 +9,7 @@
 
 #include "retro-controller-type.h"
 
-#include "retro-controller-codes.h"
+#include "retro-controller-codes-private.h"
 #include "retro-keyboard-key-private.h"
 
 int

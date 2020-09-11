@@ -32,7 +32,6 @@ GType retro_joypad_id_get_type (void) G_GNUC_CONST;
  * @RETRO_JOYPAD_ID_R2: the second right shoulder button
  * @RETRO_JOYPAD_ID_L3: the left thumb button
  * @RETRO_JOYPAD_ID_R3: the right thumb button
- * @RETRO_JOYPAD_ID_COUNT: the number of ids
  *
  * Represents the buttons for the Libretro gamepad. The available buttons are
  * the same as the W3C Standard Gamepad, the SDL GameController and many other
@@ -59,7 +58,6 @@ typedef enum
   RETRO_JOYPAD_ID_R2,
   RETRO_JOYPAD_ID_L3,
   RETRO_JOYPAD_ID_R3,
-  RETRO_JOYPAD_ID_COUNT,
 } RetroJoypadId;
 
 guint16 retro_joypad_id_to_button_code (RetroJoypadId joypad_id);
@@ -80,7 +78,6 @@ GType retro_mouse_id_get_type (void) G_GNUC_CONST;
  * @RETRO_MOUSE_ID_MIDDLE: the middle button of a mouse
  * @RETRO_MOUSE_ID_HORIZ_WHEELUP: the horizontal up direction of a mouse wheel
  * @RETRO_MOUSE_ID_HORIZ_WHEELDOWN: the horizontal down direction of a mouse wheel
- * @RETRO_MOUSE_ID_COUNT: the number of ids
  *
  * Represents the inputs for the Libretro mouse.
  */
@@ -95,7 +92,6 @@ typedef enum
   RETRO_MOUSE_ID_MIDDLE,
   RETRO_MOUSE_ID_HORIZ_WHEELUP,
   RETRO_MOUSE_ID_HORIZ_WHEELDOWN,
-  RETRO_MOUSE_ID_COUNT,
 } RetroMouseId;
 
 #define RETRO_TYPE_LIGHTGUN_ID (retro_lightgun_id_get_type ())
@@ -111,7 +107,6 @@ GType retro_lightgun_id_get_type (void) G_GNUC_CONST;
  * @RETRO_LIGHTGUN_ID_TURBO: the turbo button of a lightgun
  * @RETRO_LIGHTGUN_ID_PAUSE: the pause button of a lightgun
  * @RETRO_LIGHTGUN_ID_START: the start button of a lightgun
- * @RETRO_LIGHTGUN_ID_COUNT: the number of ids
  *
  * Represents the inputs for the Libretro lightgun.
  */
@@ -124,7 +119,6 @@ typedef enum
   RETRO_LIGHTGUN_ID_TURBO,
   RETRO_LIGHTGUN_ID_PAUSE,
   RETRO_LIGHTGUN_ID_START,
-  RETRO_LIGHTGUN_ID_COUNT,
 } RetroLightgunId;
 
 #define RETRO_TYPE_ANALOG_ID (retro_analog_id_get_type ())
@@ -135,7 +129,6 @@ GType retro_analog_id_get_type (void) G_GNUC_CONST;
  * RetroAnalogId:
  * @RETRO_ANALOG_ID_X: the X axis of an analog stick
  * @RETRO_ANALOG_ID_Y: the Y axis of an analog stick
- * @RETRO_ANALOG_ID_COUNT: the number of ids
  *
  * Represents the axes of the analog sticks for the Libretro gamepad.
  */
@@ -143,7 +136,6 @@ typedef enum
 {
   RETRO_ANALOG_ID_X,
   RETRO_ANALOG_ID_Y,
-  RETRO_ANALOG_ID_COUNT,
 } RetroAnalogId;
 
 #define RETRO_TYPE_ANALOG_INDEX (retro_analog_index_get_type ())
@@ -154,7 +146,6 @@ GType retro_analog_index_get_type (void) G_GNUC_CONST;
  * RetroAnalogIndex:
  * @RETRO_ANALOG_INDEX_LEFT: the left analog stick
  * @RETRO_ANALOG_INDEX_RIGHT: the right analog stick
- * @RETRO_ANALOG_INDEX_COUNT: the number of indexes
  *
  * Represents the analog sticks for the Libretro gamepad.
  */
@@ -162,7 +153,6 @@ typedef enum
 {
   RETRO_ANALOG_INDEX_LEFT,
   RETRO_ANALOG_INDEX_RIGHT,
-  RETRO_ANALOG_INDEX_COUNT,
 } RetroAnalogIndex;
 
 #define RETRO_TYPE_POINTER_ID (retro_pointer_id_get_type ())
@@ -174,7 +164,6 @@ GType retro_pointer_id_get_type (void) G_GNUC_CONST;
  * @RETRO_POINTER_ID_X: the X axis of a pointer
  * @RETRO_POINTER_ID_Y: the Y axis of a pointer
  * @RETRO_POINTER_ID_PRESSED: the pression of a pointer
- * @RETRO_POINTER_ID_COUNT: the number of ids
  *
  * Represents the inputs for the Libretro pointer.
  */
@@ -183,7 +172,6 @@ typedef enum
   RETRO_POINTER_ID_X,
   RETRO_POINTER_ID_Y,
   RETRO_POINTER_ID_PRESSED,
-  RETRO_POINTER_ID_COUNT,
 } RetroPointerId;
 
 G_END_DECLS

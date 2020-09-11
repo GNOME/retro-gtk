@@ -10,7 +10,7 @@
 #include "retro-core-view.h"
 
 #include "retro-gl-display-private.h"
-#include "retro-controller-codes.h"
+#include "retro-controller-codes-private.h"
 #include "retro-core-view-controller-private.h"
 #include "retro-input-private.h"
 #include "retro-keyboard-private.h"

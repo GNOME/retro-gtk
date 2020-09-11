@@ -10,6 +10,7 @@
 #include "retro-key-joypad-mapping.h"
 
 #include <linux/input-event-codes.h>
+#include "retro-controller-codes-private.h"
 
 static guint16 DEFAULT_KEY_JOYPAD_BUTTON_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
   KEY_S,

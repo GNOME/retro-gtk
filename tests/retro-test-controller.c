@@ -20,8 +20,7 @@
 
 #include "retro-test-controller.h"
 
-#define RETRO_ANALOG_ID_INDEX_COUNT 4
-#define RETRO_ANALOG_ID_INDEX(id, index) ((index << 1) | id)
+#define RETRO_ID_INDEX(id_count, id, index) (index * id_count + id)
 #define RETRO_CONTROLLER_TYPE_COUNT (RETRO_CONTROLLER_TYPE_POINTER + 1)
 #define RETRO_RUMBLE_EFFECT_COUNT (RETRO_RUMBLE_EFFECT_WEAK + 1)
 
@@ -72,10 +71,13 @@ retro_test_controller_get_input_state (RetroController *base,
   case RETRO_CONTROLLER_TYPE_ANALOG: {
     RetroAnalogId id;
     RetroAnalogIndex index;
+    gint id_count;
     if (!retro_input_get_analog (input, &id, &index))
       return 0;
 
-    return self->state[RETRO_CONTROLLER_TYPE_ANALOG][RETRO_ANALOG_ID_INDEX(id, index)];
+    id_count = retro_controller_type_get_id_count (RETRO_CONTROLLER_TYPE_ANALOG);
+
+    return self->state[RETRO_CONTROLLER_TYPE_ANALOG][RETRO_ID_INDEX (id_count, id, index)];
   }
   case RETRO_CONTROLLER_TYPE_POINTER: {
     RetroPointerId id;
@@ -86,7 +88,6 @@ retro_test_controller_get_input_state (RetroController *base,
   }
   case RETRO_CONTROLLER_TYPE_NONE:
   case RETRO_CONTROLLER_TYPE_KEYBOARD:
-  case RETRO_CONTROLLER_TYPE_COUNT:
   default:
     return 0;
   }
@@ -127,11 +128,16 @@ static void
 retro_test_controller_finalize (GObject *object)
 {
   RetroTestController *self = RETRO_TEST_CONTROLLER (object);
-  gsize i;
 
-  for (i = 0; i < RETRO_CONTROLLER_TYPE_COUNT; i++)
-    if (self->state[i] != NULL)
-      g_free (self->state[i]);
+  for (RetroControllerType type = 0; type < RETRO_CONTROLLER_TYPE_COUNT; type++) {
+    if (type == RETRO_CONTROLLER_TYPE_NONE ||
+        type == RETRO_CONTROLLER_TYPE_KEYBOARD )
+      continue;
+
+    if (self->state[type] != NULL)
+      g_free (self->state[type]);
+  }
+
   g_free (self->state);
 
   G_OBJECT_CLASS (retro_test_controller_parent_class)->finalize (object);
@@ -149,11 +155,14 @@ static void
 retro_test_controller_init (RetroTestController *self)
 {
   self->state = g_new0 (gint16 *, RETRO_CONTROLLER_TYPE_COUNT);
-  self->state[RETRO_CONTROLLER_TYPE_JOYPAD] = g_new0 (gint16, RETRO_JOYPAD_ID_COUNT);
-  self->state[RETRO_CONTROLLER_TYPE_MOUSE] = g_new0 (gint16, RETRO_MOUSE_ID_COUNT);
-  self->state[RETRO_CONTROLLER_TYPE_LIGHTGUN] = g_new0 (gint16, RETRO_LIGHTGUN_ID_COUNT);
-  self->state[RETRO_CONTROLLER_TYPE_ANALOG] = g_new0 (gint16, RETRO_ANALOG_ID_INDEX_COUNT);
-  self->state[RETRO_CONTROLLER_TYPE_POINTER] = g_new0 (gint16, RETRO_POINTER_ID_COUNT);
+  for (RetroControllerType type = 0; type < RETRO_CONTROLLER_TYPE_COUNT; type++) {
+    if (type == RETRO_CONTROLLER_TYPE_NONE ||
+        type == RETRO_CONTROLLER_TYPE_KEYBOARD)
+      continue;
+
+    gint i = retro_controller_type_get_id_count (type) * retro_controller_type_get_index_count (type);
+    self->state[type] = g_new0 (gint16, i);
+  }
 }
 
 static void
@@ -182,61 +191,40 @@ retro_test_controller_new (RetroControllerType controller_type)
 void
 retro_test_controller_reset (RetroTestController *self)
 {
-  memset (self->state[RETRO_CONTROLLER_TYPE_JOYPAD], 0, RETRO_JOYPAD_ID_COUNT * sizeof (gint16));
-  memset (self->state[RETRO_CONTROLLER_TYPE_MOUSE], 0, RETRO_MOUSE_ID_COUNT * sizeof (gint16));
-  memset (self->state[RETRO_CONTROLLER_TYPE_LIGHTGUN], 0, RETRO_LIGHTGUN_ID_COUNT * sizeof (gint16));
-  memset (self->state[RETRO_CONTROLLER_TYPE_ANALOG], 0, RETRO_ANALOG_ID_INDEX_COUNT * sizeof (gint16));
-  memset (self->state[RETRO_CONTROLLER_TYPE_POINTER], 0, RETRO_POINTER_ID_COUNT * sizeof (gint16));
+  for (RetroControllerType type = 0; type < RETRO_CONTROLLER_TYPE_COUNT; type++) {
+    if (type == RETRO_CONTROLLER_TYPE_NONE ||
+        type == RETRO_CONTROLLER_TYPE_KEYBOARD)
+      continue;
+
+    gint i = retro_controller_type_get_id_count (type) * retro_controller_type_get_index_count (type);
+    memset (self->state[type], 0, i * sizeof (gint16));
+  }
 }
 
 void
 retro_test_controller_set_input_state (RetroTestController  *self,
                                        RetroControllerState *state)
 {
+  RetroControllerType type;
+  gint id_count, index_count;
+
   g_return_if_fail (self != NULL);
 
-  switch (state->type & RETRO_CONTROLLER_TYPE_TYPE_MASK) {
-  case RETRO_CONTROLLER_TYPE_JOYPAD:
-    if (state->id < RETRO_JOYPAD_ID_COUNT) {
-      self->state[RETRO_CONTROLLER_TYPE_JOYPAD][state->id] = state->value;
-      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
-    }
+  type = state->type & RETRO_CONTROLLER_TYPE_TYPE_MASK;
 
-    break;
-  case RETRO_CONTROLLER_TYPE_MOUSE:
-    if (state->id < RETRO_MOUSE_ID_COUNT) {
-      self->state[RETRO_CONTROLLER_TYPE_MOUSE][state->id] = state->value;
-      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
-    }
+  if (type == RETRO_CONTROLLER_TYPE_NONE ||
+      type == RETRO_CONTROLLER_TYPE_KEYBOARD ||
+      type >= RETRO_CONTROLLER_TYPE_COUNT)
+    return;
 
-    break;
-  case RETRO_CONTROLLER_TYPE_LIGHTGUN:
-    if (state->id < RETRO_LIGHTGUN_ID_COUNT) {
-      self->state[RETRO_CONTROLLER_TYPE_LIGHTGUN][state->id] = state->value;
-      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
-    }
+  id_count = retro_controller_type_get_id_count (type);
+  index_count = retro_controller_type_get_index_count (type);
 
-    break;
-  case RETRO_CONTROLLER_TYPE_ANALOG:
-    if (state->id < RETRO_ANALOG_ID_COUNT && state->index < RETRO_ANALOG_INDEX_COUNT) {
-      self->state[RETRO_CONTROLLER_TYPE_ANALOG][RETRO_ANALOG_ID_INDEX (state->id, state->index)] = state->value;
-      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
-    }
+  if (state->id >= id_count || state->index >= index_count)
+    return;
 
-    break;
-  case RETRO_CONTROLLER_TYPE_POINTER:
-    if (state->id < RETRO_POINTER_ID_COUNT) {
-      self->state[RETRO_CONTROLLER_TYPE_POINTER][state->id] = state->value;
-      retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
-    }
-
-    break;
-  case RETRO_CONTROLLER_TYPE_NONE:
-  case RETRO_CONTROLLER_TYPE_KEYBOARD:
-  case RETRO_CONTROLLER_TYPE_COUNT:
-  default:
-    break;
-  }
+  self->state[type][RETRO_ID_INDEX (id_count, state->id, state->index)] = state->value;
+  retro_controller_emit_state_changed (RETRO_CONTROLLER (self));
 }
 
 guint16

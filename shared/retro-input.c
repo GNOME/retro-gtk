@@ -18,6 +18,8 @@
 
 #include "retro-input-private.h"
 
+#include "retro-controller-codes-private.h"
+
 G_DEFINE_BOXED_TYPE (RetroInput, retro_input, retro_input_copy, retro_input_free)
 
 /* Private */

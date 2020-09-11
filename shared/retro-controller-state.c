@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include "retro-controller-codes-private.h"
 #include "retro-controller-type.h"
 #include "retro-input-private.h"
 

@@ -8,7 +8,7 @@
  */
 
 #include <linux/input-event-codes.h>
-#include "retro-controller-codes.h"
+#include "retro-controller-codes-private.h"
 
 static guint16 RETRO_JOYPAD_ID_EVENT_CODE_MAPPING[RETRO_JOYPAD_ID_COUNT] = {
   BTN_A,

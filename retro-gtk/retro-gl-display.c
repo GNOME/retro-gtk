@@ -14,6 +14,8 @@
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
 
+#define RETRO_VIDEO_FILTER_COUNT (RETRO_VIDEO_FILTER_CRT + 1)
+
 struct _RetroGLDisplay
 {
   GtkGLArea parent_instance;

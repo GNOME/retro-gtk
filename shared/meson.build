@@ -13,8 +13,7 @@ ipc_runner_src = custom_target('make-ipc-runner-private',
   output : ['ipc-runner.c', 'ipc-runner-private.h'],
   input : ipc_runner_public_src,
   command : [make_ipc_runner_private, '@INPUT@'],
-  install : true,
-  install_dir : 'subdir')
+)
 
 shared_sources = files([
   'retro-controller-codes.c',

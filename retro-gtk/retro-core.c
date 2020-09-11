@@ -27,6 +27,8 @@
 #include "retro-pixdata-private.h"
 #include "retro-runner-process-private.h"
 
+#define RETRO_CONTROLLER_TYPE_COUNT (RETRO_CONTROLLER_TYPE_POINTER + 1)
+
 #define RETRO_CORE_ERROR (retro_core_error_quark ())
 
 enum {

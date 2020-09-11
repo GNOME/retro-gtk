@@ -9,6 +9,8 @@
 #include "retro-controller-type.h"
 #include "retro-input-private.h"
 
+#define RETRO_CONTROLLER_TYPE_COUNT (RETRO_CONTROLLER_TYPE_POINTER + 1)
+
 typedef struct {
   gboolean is_dirty;
   gboolean supports_rumble;

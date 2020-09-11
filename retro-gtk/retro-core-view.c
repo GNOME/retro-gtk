@@ -15,6 +15,8 @@
 #include "retro-input-private.h"
 #include "retro-keyboard-private.h"
 
+#define RETRO_CONTROLLER_TYPE_COUNT (RETRO_CONTROLLER_TYPE_POINTER + 1)
+
 struct _RetroCoreView
 {
   GtkEventBox parent_instance;

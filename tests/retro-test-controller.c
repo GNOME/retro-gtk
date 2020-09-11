@@ -22,6 +22,7 @@
 
 #define RETRO_ANALOG_ID_INDEX_COUNT 4
 #define RETRO_ANALOG_ID_INDEX(id, index) ((index << 1) | id)
+#define RETRO_RUMBLE_EFFECT_COUNT (RETRO_RUMBLE_EFFECT_WEAK + 1)
 
 struct _RetroTestController
 {

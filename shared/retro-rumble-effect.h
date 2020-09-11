@@ -18,7 +18,6 @@ GType retro_rumble_effect_get_type (void) G_GNUC_CONST;
  * RetroRumbleEffect:
  * @RETRO_RUMBLE_EFFECT_STRONG: the strong rumble effect
  * @RETRO_RUMBLE_EFFECT_WEAK: the weak rumble effect
- * @RETRO_RUMBLE_EFFECT_COUNT: the number of rumble effects
  *
  * Represents the strength of the rumble effect.
  */
@@ -26,7 +25,6 @@ typedef enum
 {
   RETRO_RUMBLE_EFFECT_STRONG,
   RETRO_RUMBLE_EFFECT_WEAK,
-  RETRO_RUMBLE_EFFECT_COUNT,
 } RetroRumbleEffect;
 
 G_END_DECLS

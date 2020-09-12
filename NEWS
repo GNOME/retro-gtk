@@ -1,3 +1,18 @@
+=============
+Version 1.0.0
+=============
+
+* Major API overhaul and API version bump, detailing all the changes
+  would be ridiculous and hence won't be done.
+* Run Libretro cores isolated in a dedicated subprocess, similarly to
+  how modern web browsers handle web pages.
+* Support Libretro cores rendering their video with OpenGL.
+* Improve the Libretro core timing accuracy.
+* Resample the Libretro core's audio output to ensure it matches its
+  play speed.
+* Publish the nightly reference manual at
+  https://gnome.pages.gitlab.gnome.org/retro-gtk/.
+
 ==============
 Version 0.18.1
 ==============

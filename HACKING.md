@@ -42,13 +42,21 @@ CI
 
 ### The Short Explanation
 
-The short explanation must be brief and describe the change as shortly as possible. You should describe the change and not the intended effect, this is left to the long explanation. Use the imperative form, start with a capital letter (if relevant) and don't use terminal punctuation.
+The short explanation must be brief and describe the change as shortly as
+possible. You should describe the change and not the intended effect, this is
+left to the long explanation. Use the imperative form, start with a capital
+letter (if relevant) and don't use terminal punctuation.
 
-No need to prefix the full namespace to methods you mention if the type is in the tag already; you can refer to them via `*_set_property()` or via `the set_property() method`. No need to specify the accessors of a property, just mention the property's name.
+No need to prefix the full namespace to methods you mention if the type is in
+the tag already; you can refer to them via `*_set_property()` or via
+`the set_property() method`. No need to specify the accessors of a property,
+just mention the property's name.
 
 The short explanation is the only part of a commit that can't be omitted.
 
-Try to keep the first line (hence, the tag and the short explanation) under 50 characters, but longer lines are accepted if agreed they can't be shortened without losing useful information.
+Try to keep the first line (hence, the tag and the short explanation) under 50
+characters, but longer lines are accepted if agreed they can't be shortened
+without losing useful information.
 
 Good short explanations:
 ```
@@ -68,7 +76,12 @@ my-type: Add retro_my_type_my_method()
 
 ### The Long Explanation
 
-The long explanations lets you describe anything that you deem important and can't be explained by the short explanation only. Use as many lines as you need, and leave an empty line between each paragraph. Try to limit the lines to 75 characters, but try to fill lines as much as possible withinh that limit. Do not break function names or URLs, give them their own line if they are too large to fit within the a single one.
+The long explanations lets you describe anything that you deem important and
+can't be explained by the short explanation only. Use as many lines as you need,
+and leave an empty line between each paragraph. Try to limit the lines to 75
+characters, but try to fill lines as much as possible withinh that limit. Do not
+break function names or URLs, give them their own line if they are too large to
+fit within the a single one.
 
 Use proper prose with proper punctuation.
 
@@ -85,7 +98,8 @@ to RetroMyType to allow…
 
 ### The Issue Reference
 
-If there is an issue fixed by your commit, specify it at the end of your commit message. It must be in the following format: `Fixes $ISSUE_URL.`.
+If there is an issue fixed by your commit, specify it at the end of your commit
+message. It must be in the following format: `Fixes $ISSUE_URL.`.
 
 Do not simply use the issue number.
 

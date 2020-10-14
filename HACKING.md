@@ -11,7 +11,7 @@ any external or private interfaces changed, what bugs were fixed (with
 bug tracker reference if applicable) and so forth. Be concise but not
 too brief.
 
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/issues/1.
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
 ```
 
 ### The Tag
@@ -105,12 +105,12 @@ Do not simply use the issue number.
 
 Good issue references:
 ```
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/issues/1.
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
 ```
 
 Bad issue references:
 ```
 Fixes #1
-Fix https://gitlab.gnome.org/GNOME/retro-gtk/issues/1.
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/issues/1
+Fix https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
 ```

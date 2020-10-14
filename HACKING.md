@@ -11,7 +11,7 @@ any external or private interfaces changed, what bugs were fixed (with
 bug tracker reference if applicable) and so forth. Be concise but not
 too brief.
 
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
 ```
 
 ### The Tag
@@ -99,18 +99,18 @@ to RetroMyType to allow…
 ### The Issue Reference
 
 If there is an issue fixed by your commit, specify it at the end of your commit
-message. It must be in the following format: `Fixes $ISSUE_URL.`.
+message. It must be in the following format: `Fixes $ISSUE_URL`.
 
 Do not simply use the issue number.
 
 Good issue references:
 ```
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
 ```
 
 Bad issue references:
 ```
 Fixes #1
-Fix https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
-Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
+Fix https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
+Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1.
 ```

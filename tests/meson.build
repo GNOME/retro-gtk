@@ -1,8 +1,8 @@
-retro_gtk_libexecdir = join_paths(retro_gtk_prefix, get_option('libexecdir'))
-installed_test_bindir = join_paths(retro_gtk_libexecdir, 'installed-tests', retro_gtk_module)
-installed_test_datadir = join_paths(retro_gtk_datadir, 'installed-tests', retro_gtk_module)
+retro_gtk_libexecdir = retro_gtk_prefix / get_option('libexecdir')
+installed_test_bindir = retro_gtk_libexecdir / 'installed-tests' / retro_gtk_module
+installed_test_datadir = retro_gtk_datadir / 'installed-tests' / retro_gtk_module
 
-testlibretrodir = join_paths(installed_test_datadir, 'libretro')
+testlibretrodir = installed_test_datadir / 'libretro'
 testexecdir = installed_test_bindir
 testdatadir = installed_test_datadir
 
@@ -42,9 +42,9 @@ installed_conf.set('testexecdir', testexecdir)
 installed_conf.set('testdatadir', testdatadir)
 
 build_conf = configuration_data()
-build_conf.set('testlibretrodir', join_paths(meson.build_root(), 'tests'))
-build_conf.set('testexecdir', join_paths(meson.build_root(), 'tests'))
-build_conf.set('testdatadir', join_paths(meson.source_root(), 'tests'))
+build_conf.set('testlibretrodir', meson.build_root() / 'tests')
+build_conf.set('testexecdir', meson.build_root() / 'tests')
+build_conf.set('testdatadir', meson.source_root() / 'tests')
 
 test_c_args = [
   '-DRETRO_LOG_DOMAIN="Retro"',

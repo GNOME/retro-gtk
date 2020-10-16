@@ -193,5 +193,5 @@ export_packages: 'retro-gtk',
         version: meson.project_version(),
         subdirs: 'retro-gtk',
        requires: 'glib-2.0',
-    install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+    install_dir: get_option('libdir') / 'pkgconfig'
 )

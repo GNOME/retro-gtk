@@ -4,15 +4,15 @@ project('retro-gtk','c',
 )
 
 retro_gtk_prefix = get_option('prefix')
-retro_gtk_datadir = join_paths(retro_gtk_prefix, get_option('datadir'))
+retro_gtk_datadir = retro_gtk_prefix / get_option('datadir')
 
 cc = meson.get_compiler('c')
 gnome = import('gnome')
 
 prefix = get_option('prefix')
-libdir = join_paths(prefix, get_option('libdir'))
-libexecdir = join_paths(prefix, get_option('libexecdir'))
-libretrodir = join_paths(libdir, 'libretro')
+libdir = prefix / get_option('libdir')
+libexecdir = prefix / get_option('libexecdir')
+libretrodir = libdir / 'libretro'
 
 confinc = include_directories('.')
 shared_inc = include_directories('shared')
@@ -37,7 +37,7 @@ samplerate = dependency ('samplerate', required : get_option('pulseaudio'))
 
 config_h = configuration_data()
 config_h.set_quoted ('RETRO_PLUGIN_PATH', ':'.join ([libretrodir, libdir]))
-config_h.set_quoted ('RETRO_RUNNER_PATH', join_paths (libexecdir, 'retro-runner'))
+config_h.set_quoted ('RETRO_RUNNER_PATH', libexecdir / 'retro-runner')
 
 configure_file(
   output: 'retro-gtk-config.h',

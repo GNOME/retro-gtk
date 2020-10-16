@@ -152,20 +152,22 @@ if get_option('introspection')
     symbol_prefix: 'retro',
   )
 
-  retro_gtk_vapi_packages = [
-    'gio-2.0',
-    'glib-2.0',
-    'gmodule-2.0',
-    'gobject-2.0',
-    'gtk+-3.0',
-  ]
+  if get_option('vapi')
+    retro_gtk_vapi_packages = [
+      'gio-2.0',
+      'glib-2.0',
+      'gmodule-2.0',
+      'gobject-2.0',
+      'gtk+-3.0',
+    ]
 
-  gnome.generate_vapi(
-    retro_gtk_module,
-    install: true,
-    packages: retro_gtk_vapi_packages,
-    sources: retro_gtk_gir[0],
-  )
+    gnome.generate_vapi(
+      retro_gtk_module,
+      install: true,
+      packages: retro_gtk_vapi_packages,
+      sources: retro_gtk_gir[0],
+    )
+  endif
 
   retro_gtk_dep_sources += retro_gtk_gir
 endif

@@ -67,6 +67,7 @@ summary = [
   '     Build documentation: @0@'.format(get_option('build-doc')),
   '   Install documentation: @0@'.format(get_option('install-doc')),
   '           Introspection: @0@'.format(get_option('introspection')),
+  '           Vala bindings: @0@'.format(get_option('vapi')),
   'Dependencies:',
   '              PulseAudio: @0@'.format(get_option('pulseaudio').enabled()),
   'Directories:',

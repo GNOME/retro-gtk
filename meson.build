@@ -8,8 +8,8 @@ gnome = import('gnome')
 
 prefix = get_option('prefix')
 libdir = prefix / get_option('libdir')
-libexecdir = prefix / get_option('libexecdir')
 libretrodir = libdir / 'libretro'
+libexecdir = prefix / get_option('libexecdir')
 datadir = prefix / get_option('datadir')
 
 confinc = include_directories('.')

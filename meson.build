@@ -3,9 +3,6 @@ project('retro-gtk','c',
   meson_version: '>= 0.50.0',
 )
 
-retro_gtk_prefix = get_option('prefix')
-retro_gtk_datadir = retro_gtk_prefix / get_option('datadir')
-
 cc = meson.get_compiler('c')
 gnome = import('gnome')
 
@@ -13,6 +10,7 @@ prefix = get_option('prefix')
 libdir = prefix / get_option('libdir')
 libexecdir = prefix / get_option('libexecdir')
 libretrodir = libdir / 'libretro'
+datadir = prefix / get_option('datadir')
 
 confinc = include_directories('.')
 shared_inc = include_directories('shared')
@@ -69,8 +67,8 @@ summary = [
   '   Install documentation: @0@'.format(get_option('install-doc')),
   '                   Demos: @0@'.format(get_option('demos')),
   'Directories:',
-  '                  prefix: @0@'.format(retro_gtk_prefix),
-  '                 datadir: @0@'.format(retro_gtk_datadir),
+  '                  prefix: @0@'.format(prefix),
+  '                 datadir: @0@'.format(datadir),
   '------',
   ''
 ]

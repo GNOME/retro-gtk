@@ -1,6 +1,5 @@
-retro_gtk_libexecdir = retro_gtk_prefix / get_option('libexecdir')
-installed_test_bindir = retro_gtk_libexecdir / 'installed-tests' / retro_gtk_module
-installed_test_datadir = retro_gtk_datadir / 'installed-tests' / retro_gtk_module
+installed_test_bindir = libexecdir / 'installed-tests' / retro_gtk_module
+installed_test_datadir = datadir / 'installed-tests' / retro_gtk_module
 
 testlibretrodir = installed_test_datadir / 'libretro'
 testexecdir = installed_test_bindir

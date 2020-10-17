@@ -30,6 +30,8 @@
 
   <chapter id="overview">
     <title>RetroGTK Overview</title>
+
+    <xi:include href="libretro-core-descriptor.xml"/>
   </chapter>
 
   <chapter id="core-api">

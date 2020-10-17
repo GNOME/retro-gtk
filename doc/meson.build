@@ -26,6 +26,7 @@ private_headers = [
 ]
 
 content_files = [
+  'libretro-core-descriptor.xml',
 ]
 
 gnome.gtkdoc(

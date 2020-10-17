@@ -1,0 +1,433 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY % gtkdocentities SYSTEM "xml/gtkdocentities.ent">
+  %gtkdocentities;
+]>
+
+<refentry id="libretro-core-descriptor">
+  <refmeta>
+    <refentrytitle>Libretro Core Descriptor Specification 1.0</refentrytitle>
+    <manvolnum>3</manvolnum>
+  </refmeta>
+
+  <refnamediv/>
+
+  <refsect2>
+    <title>Introduction</title>
+
+    <para>
+      This is the first version of the Libretro Core Descriptor specification
+      used by <application>&package_string;</application>.
+      These descriptor specification's goal is to help Libretro frontends to
+      know the capabilities and requirements of a Libretro core, avoiding the
+      user to manually select one or to hardcode this information.
+    </para>
+    <para>
+      This specification is mainly thought for Libretro cores installed
+      system-wide in <literal>$(libdir)/libretro</literal>, where the Libretro
+      core descriptor files are expected to be found with the
+      <literal>.libretro</literal> suffix.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>Why Not RetroArch .info Files? </title>
+
+    <para>
+      <ulink url="https://www.retroarch.com/">RetroArch</ulink>
+      <literal>.info</literal> files have a few problems like lacking:
+      <itemizedlist>
+        <listitem>order and readability;</listitem>
+        <listitem>a specification;</listitem>
+        <listitem>some information necessary to help
+          <application>&package_string;</application> picking the right core for
+          the game to run.
+        </listitem>
+      </itemizedlist>
+      Their syntax also feels a bit out of place in the realm of GNOME.
+    </para>
+
+    <para>
+      It's problably the
+      <ulink url="https://en.wikipedia.org/wiki/Not_invented_here">NIH syndrome</ulink>
+      hitting again, but better can probably be done for
+      <application>&package_string;</application> with this Libretro core
+      descriptor specification by focusing on improving readability and
+      extensibility, by making the files blend better into the GNOME environment
+      and by supporting the needs of <application>&package_string;</application>
+      better.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>Basic Format of the File</title>
+
+    <para>
+      The basic format of the file is the same as the
+      <ulink url="https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s02.html">Freedesktop desktop entries</ulink>,
+      which is implemented in the Glib as
+      <ulink url="https://developer.gnome.org/glib/stable/glib-Key-value-file-parser.html">GKeyFile</ulink>.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>Recognized Libretro Core Descriptor Keys</title>
+
+    <refsect3>
+      <title>Types</title>
+
+      <para>
+        The Libretro cores can be of different types, different types don't have
+        access to the same sections.
+      </para>
+      <para>
+        The current version of the Libretro core description specification
+        recognizes these types:
+        <itemizedlist>
+          <listitem>
+            <literal>Game</literal>: represents a standalone game; games should
+            only contain the <literal>Libretro</literal> section and must be
+            run without a game file;
+          </listitem>
+          <listitem>
+            <literal>Emulator</literal>: represents a video game console
+            emulator; emulators must be run with a game, they must support at
+            least one platform and the platforms may require firmwares.
+          </listitem>
+        </itemizedlist>
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Libretro Entry</title>
+
+      <para>
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Value Type</td>
+              <td>Required</td>
+              <td>Description</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Type</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>To allow the addition of new types in the future (such as <literal>Engine</literal>), implementations should ignore descriptors with an unknown type.</td>
+            </tr>
+            <tr>
+              <td>Version</td>
+              <td>string</td>
+              <td>No</td>
+              <td>Version of the Libretro Core Descriptor Specification that the descriptor conforms with. Descriptors that conform with this version of the specification should use 1.0. Note that the version field is not required to be present.</td>
+            </tr>
+            <tr>
+              <td>Name</td>
+              <td>localestring</td>
+              <td>Yes</td>
+              <td>Specific name of the Libretro core, for example "Nestopia".</td>
+            </tr>
+            <tr>
+              <td>Icon</td>
+              <td>localestring</td>
+              <td>No</td>
+              <td>Icon to display in the Libretro frontend, etc. If the name is an absolute path, the given file will be used. If the name is not an absolute path, the algorithm described in the <ulink url="https://freedesktop.org/wiki/Standards/icon-theme-spec">Icon Theme Specification</ulink> will be used to locate the icon.</td>
+            </tr>
+            <tr>
+              <td>Module</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>Module file containing the Libretro core this descriptor is describing.</td>
+            </tr>
+            <tr>
+              <td>LibretroVersion</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>The version of Libretro implemented by this core.</td>
+            </tr>
+            <tr>
+              <td>Authors</td>
+              <td>localestring(s)</td>
+              <td>No</td>
+              <td>The authors names in the form "<literal>My Name</literal>" or "<literal>My Name &lt;myname@email.com&gt;</literal>".</td>
+            </tr>
+            <tr>
+              <td>Categories</td>
+              <td>string(s)</td>
+              <td>No</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>License</td>
+              <td>string(s)</td>
+              <td>No</td>
+              <td>A license identifier from the <ulink url="https://spdx.org/licenses/">SPDX License List</ulink> or MAME.</td>
+            </tr>
+          </tbody>
+        </table>
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Platforms</title>
+
+      <para>
+        Only available to the <literal>Emulator</literal> type.
+
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Value Type</td>
+              <td>Required</td>
+              <td>Description</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MimeType</td>
+              <td>string(s)</td>
+              <td>Yes</td>
+              <td>The MIME type(s) supported by this Libretro core.</td>
+            </tr>
+            <tr>
+              <td>Firmwares</td>
+              <td>string(s)</td>
+              <td>No</td>
+              <td>The firmwares used for this platform.</td>
+            </tr>
+          </tbody>
+        </table>
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Firmwares</title>
+
+      <para>
+        Only available to the <literal>Emulator</literal> type.
+
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Value Type</td>
+              <td>Required</td>
+              <td>Description</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Path</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>The path to the firmware file. If relative, it is from the "system" directory (cf. the Libretro API).</td>
+            </tr>
+            <tr>
+              <td>MD5</td>
+              <td>string</td>
+              <td>No</td>
+              <td>The MD5 checksum of the firmware file.</td>
+            </tr>
+            <tr>
+              <td>SHA-512</td>
+              <td>string</td>
+              <td>No</td>
+              <td>The SHA-512 checksum of the firmware file.</td>
+            </tr>
+            <tr>
+              <td>Mandatory</td>
+              <td>boolean</td>
+              <td>Yes</td>
+              <td>Whether the firmware is mandatory to run the games or not. All mandatory firmwares for a platform must exist in order to run a game from that platform, even if not all are actually needed: being stricter than needed helps solving complex cases like per-region firmwares or requiring multiple firmwares.</td>
+            </tr>
+          </tbody>
+        </table>
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Known Platforms</title>
+
+      <para>
+        To help Libretro cores advertise which platforms they support and to
+        help Libretro frontends find a core for a specific platform, it is
+        better to have a unique known name per platform.
+      </para>
+
+      <para>
+        To ensure consistency in the names, here are the rules to set the name
+        of a platform:
+        <itemizedlist>
+          <listitem>
+            regional variants of a platform are not different platforms;
+          </listitem>
+          <listitem>
+            subsystems can be considered different platforms;
+          </listitem>
+          <listitem>
+            if a platform has been officially released in the USA then use its
+            name there, otherwise use its name in the country it has first been
+            released to;
+          </listitem>
+          <listitem>
+            put the name in CamelCase, using only ASCII letters and digits (no
+            hyphenation, no spaces…).
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        Following is a list of well known platforms, feel free to expand it as
+        long as you follow the previous rules.
+        <itemizedlist>
+          <listitem>Amiga</listitem>
+          <listitem>Atari2600</listitem>
+          <listitem>Atari5200</listitem>
+          <listitem>Atari7800</listitem>
+          <listitem>DOOM</listitem>
+          <listitem>Dreamcast</listitem>
+          <listitem>FamicomDiskSystem</listitem>
+          <listitem>GameBoy</listitem>
+          <listitem>GameBoyColor</listitem>
+          <listitem>GameBoyAdvance</listitem>
+          <listitem>GameCube</listitem>
+          <listitem>GameGear</listitem>
+          <listitem>MAME</listitem>
+          <listitem>NeoGeoPocket</listitem>
+          <listitem>NintendoEntertainmentSystem</listitem>
+          <listitem>Nintendo64</listitem>
+          <listitem>NintendoDS</listitem>
+          <listitem>Nintendo3DS</listitem>
+          <listitem>PlayStation</listitem>
+          <listitem>PlayStation2</listitem>
+          <listitem>PlayStation3</listitem>
+          <listitem>PlayStation4</listitem>
+          <listitem>PlayStationPortable</listitem>
+          <listitem>PlayStationVita</listitem>
+          <listitem>Sega32X</listitem>
+          <listitem>SegaCD</listitem>
+          <listitem>SegaCD32X</listitem>
+          <listitem>SegaGenesis</listitem>
+          <listitem>SegaMasterSystem</listitem>
+          <listitem>SegaPico</listitem>
+          <listitem>SegaSaturn</listitem>
+          <listitem>SG1000</listitem>
+          <listitem>SuperNintendoEntertainmentSystem</listitem>
+          <listitem>TurboGrafx16</listitem>
+          <listitem>TurboGrafxCD</listitem>
+          <listitem>Wii</listitem>
+          <listitem>WiiU</listitem>
+          <listitem>WiiWare</listitem>
+        </itemizedlist>
+      </para>
+    </refsect3>
+  </refsect2>
+
+  <refsect2>
+    <title>Extending the Format</title>
+
+    <para>
+      It is possible to add custom keys, to do so the key must have the form
+      <literal>X-PRODUCT-KEY</literal>, where <literal>PRODUCT</literal> is the
+      name of the party adding the key in CamelCase and <literal>KEY</literal>
+      is the actual key in CamelCase; for example:
+      <literal>X-RetroArch-CustomKey</literal>.
+    </para>
+
+    <para>
+      It is also possible to add custom groups, to do so the group must have the
+      form <literal>[X-PRODUCT GROUPNAME]</literal>, where
+      <literal>PRODUCT</literal> is the name of the party adding the key in
+      CamelCase and <literal>GROUPNAME</literal> is the actual group name; for
+      example: <literal>[X-RetroArch CustomGroup]</literal>.
+    </para>
+
+    <para>
+      These rules are necessary to avoid name clashes between keys and group
+      added by different products.
+      See
+      <ulink url="https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s11.html"/>
+      for more information.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>Example</title>
+
+    <para>
+      An example Libretro descriptor entry for a standalone game:
+      <informalexample><programlisting>
+        [Libretro]
+        Type=Game
+        Version=1.0
+        Name=My Game
+        Icon=my-game
+        Module=my-game_libretro.so
+        LibretroVersion=1
+        Authors=John Smith;Jane Doe &lt;janedoe@example.com&gt;;
+        License=GPL-3.0+;
+      </programlisting></informalexample>
+    </para>
+
+    <para>
+      An example Libretro descriptor entry for a Sega Genesis emulator:
+      <informalexample><programlisting>
+        [Libretro]
+        Type=Emulator
+        Version=1.0
+        Name=My Genesis Emulator
+        Icon=my-genesis-emulator
+        Module=my-genesis-emulator_libretro.so
+        LibretroVersion=1
+        Authors=John Smith;Jane Doe &lt;janedoe@example.com&gt;;
+        License=GPL-3.0+;
+
+        [Platform:SegaGenesis]
+        MimeType=application/x-genesis-rom;
+
+        [Platform:Sega32X]
+        MimeType=application/x-genesis-32x-rom;
+
+        [Platform:SegaCD]
+        MimeType=application/x-cue;application/x-sega-cd-rom;
+        Firmwares=SegaCDE;SegaCDJ;SegaCDU;
+
+        [Firmware:SegaCDE]
+        Path=bios_CD_E.bin
+        MD5=e66fa1dc5820d254611fdcdba0662372
+        SHA-512=b3725b0577260d8e2b12b782869573824741f5cbe09f2bc49fd8b2346229d1b308a9f54ef08177aa26be7a3580fa8317d0426a2ef7f6bb5103ce039c8e25148f
+        Mandatory=true
+
+        [Firmware:SegaCDJ]
+        Path=bios_CD_J.bin
+        MD5=2efd74e3232ff260e371b99f84024f7f
+        SHA-512=abdaecbc7222392ba4c0c25bc700316ec0a80fcf3e3080a49d6b736fea58e6ec750ac8c477b8ae016c76cf536c1442d834c243fab939d17b856fbc9ed8db8fde
+        Mandatory=true
+
+        [Firmware:SegaCDU]
+        Path=bios_CD_U.bin
+        MD5=278a9397d192149e84e820ac621a8edd
+        SHA-512=abc4347551b6b8a9b4b913b333c8bc35f47cc85e35be1155c7a7287dad05373d0e497f2b73fde56f7ed43fae6d1287faaed3cbf338700a21396262e4180b9158
+        Mandatory=true
+      </programlisting></informalexample>
+    </para>
+
+  </refsect2>
+
+  <refsect2>
+    <title>References</title>
+
+    <para>
+      <itemizedlist>
+        <listitem><ulink url="https://github.com/libretro/libretro-super/tree/master/dist/info">The libretro-super info files</ulink></listitem>
+        <listitem><ulink url="https://specifications.freedesktop.org/desktop-entry-spec/latest/">The desktop entry specification</ulink></listitem>
+      </itemizedlist>
+    </para>
+  </refsect2>
+</refentry>

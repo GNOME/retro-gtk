@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY % gtkdocentities SYSTEM "xml/gtkdocentities.ent">
+  %gtkdocentities;
+]>
+
+<refentry id="reference-test-case">
+  <refmeta>
+    <refentrytitle>Retro Reference Test Case Specification 1.0</refentrytitle>
+    <manvolnum>3</manvolnum>
+  </refmeta>
+
+  <refnamediv/>
+
+  <refsect2>
+    <title>Introduction</title>
+
+    <para>
+      This is the first version of the reference test case specification used by
+      <literal>retro-reftest</literal>.
+      These test cases will run a series of interdependent smaller tests on a
+      Libretro core to ensure it behaves as expected.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>The Tests</title>
+
+    <para>
+      The tests are based on
+      <ulink url="https://developer.gnome.org/glib/stable/glib-Testing.html">the Glib test framework</ulink>,
+      as such they must have a path describing the test which will be used as
+      the root for all the tests it runs.
+    </para>
+
+    <para>
+      First, the fllowing tests will be run in this order:
+      <itemizedlist>
+        <listitem>
+          <literal>Boot</literal>: Tests loading the core with the optional
+          medias and booting it.
+        </listitem>
+        <listitem>
+          <literal>Options</literal>: If options are specified, tests that the
+          ones offered by the core are as expected.
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      Then the following tests will be run on specific frames:
+      <itemizedlist>
+        <listitem>
+          <literal>FastForward</literal>: If there is a gap between the last ran
+          frame and the frame to run, quickly run all the inbetween frames.
+        </listitem>
+        <listitem>
+          One of the following state tests can be run:
+          <itemizedlist>
+            <listitem>
+              <literal>State None</literal>: If specified, will test that no state
+              can be accessed.
+            </listitem>
+            <listitem>
+              <literal>State Refresh</literal>: If specified, will test that the
+              sate can be accessed by saving and instantaneously reloading it.
+            </listitem>
+          </itemizedlist>
+        </listitem>
+        <listitem>
+          <literal>Run</literal>: Will run the frame.
+        </listitem>
+        <listitem>
+          <literal>Video</literal>: If specified, will test that the video
+          output is as expected.
+        </listitem>
+      </itemizedlist>
+    </para>
+
+  </refsect2>
+
+  <refsect2>
+    <title>Basic Format of the File</title>
+
+    <para>
+      The basic format of the file is the same as the
+      <ulink url="https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s02.html">Freedesktop desktop entries</ulink>,
+      which is implemented in the Glib as
+      <ulink url="https://developer.gnome.org/glib/stable/glib-Key-value-file-parser.html">GKeyFile</ulink>.
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>Recognized Keys</title>
+
+    <refsect3>
+      <title>Retro Reftest</title>
+
+      <para>
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Value Type</td>
+              <td>Required</td>
+              <td>Description</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Path</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>The test path as understood by <ulink url="https://developer.gnome.org/glib/stable/glib-Testing.html">the Glib test framework</ulink> to be used as the root for the test paths of this test case.</td>
+            </tr>
+            <tr>
+              <td>Core</td>
+              <td>string</td>
+              <td>Yes</td>
+              <td>The path (absolute or relative to this file's location) to the Libretro core's module.</td>
+            </tr>
+            <tr>
+              <td>Medias</td>
+              <td>string(s)</td>
+              <td>No</td>
+              <td>A list of media paths (absolute or relative to this file's location) to be loaded by the core.</td>
+            </tr>
+          </tbody>
+        </table>
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Options</title>
+
+      <para>
+        If this group is present, the <literal>Options</literal> test will be
+        added.
+        This group lists the expected options set by the tested Libretro core
+        via <literal>RETRO_ENVIRONMENT_SET_VARIABLES</literal>, the keys
+        correspond to these options’ keys and the values are string lists
+        listing the available values. To check that the core has no option, add
+        an empty <literal>Options</literal> group.
+      </para>
+    </refsect3>
+
+    <refsect3>
+      <title>Frames</title>
+
+      <para>
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Value Type</td>
+              <td>Required</td>
+              <td>Description</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>State</td>
+              <td>string</td>
+              <td>No</td>
+              <td>One of <literal>None</literal> or <literal>Refresh</literal>.</td>
+            </tr>
+            <tr>
+              <td>Video</td>
+              <td>string</td>
+              <td>No</td>
+              <td>The path (absolute or relative to this file's location) to the expected video output image.</td>
+            </tr>
+          </tbody>
+        </table>
+      </para>
+    </refsect3>
+  </refsect2>
+
+  <refsect2>
+    <title>Example</title>
+
+    <para>
+      An example test case for a test core and its expected output:
+      <informalexample><programlisting>
+        [Retro Reftest]
+        Path=/test
+        Core=/app/lib/libretro/test_libretro.so
+
+        [Options]
+        test_aspect=4:3;16:9;
+        test_samplerate=30000;20000;
+        test_opt0=false;true;
+        test_opt1=0;
+        test_opt2=0;1;foo;3;
+
+        [Frame 0]
+        State=Refresh
+        Video=test.png
+      </programlisting></informalexample>
+    </para>
+    <para>
+      <informalexample><programlisting>
+        /test/Boot: OK
+        /test/Options: OK
+        /test/0/State Refresh: OK
+        /test/0/Run: OK
+        /test/0/Video: OK
+      </programlisting></informalexample>
+    </para>
+
+    <para>
+      An example test case for a Sega Genesis emulator and its expected output:
+      <informalexample><programlisting>
+        [Retro Reftest]
+        Path=/blastem/240pSuite
+        Core=/app/lib/libretro/blastem_libretro.so
+        Medias=240pTestSuite-v15.gen;
+
+        [Frame 150]
+        Video=blastem.240pSuite.150.png
+      </programlisting></informalexample>
+    </para>
+    <para>
+      <informalexample><programlisting>
+        /blastem/240pSuite/Boot: OK
+        /blastem/240pSuite/150/FastForward: OK
+        /blastem/240pSuite/150/Run: OK
+        /blastem/240pSuite/150/Video: OK
+      </programlisting></informalexample>
+    </para>
+  </refsect2>
+
+  <refsect2>
+    <title>References</title>
+
+    <para>
+      <itemizedlist>
+        <listitem><ulink url="https://specifications.freedesktop.org/desktop-entry-spec/latest/">The desktop entry specification</ulink></listitem>
+      </itemizedlist>
+    </para>
+  </refsect2>
+</refentry>

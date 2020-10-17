@@ -32,6 +32,7 @@
     <title>RetroGTK Overview</title>
 
     <xi:include href="libretro-core-descriptor.xml"/>
+    <xi:include href="reference-test-case.xml"/>
   </chapter>
 
   <chapter id="core-api">

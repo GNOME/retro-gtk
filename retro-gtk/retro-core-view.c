@@ -52,7 +52,7 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 enum {
-  SIG_CONTROLLER_STATE_CHANGED_SIGNAL,
+  SIGNAL_CONTROLLER_STATE_CHANGED,
   N_SIGNALS,
 };
 
@@ -161,7 +161,7 @@ grab (RetroCoreView *self,
 
   recenter_pointer (self);
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   g_object_unref (cursor);
 }
@@ -181,7 +181,7 @@ ungrab (RetroCoreView *self)
   g_clear_object (&self->grabbed_device);
   g_clear_object (&self->grabbed_screen);
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 }
 
 static gboolean get_key_state (RetroCoreView *self,
@@ -205,7 +205,7 @@ key_press_event_cb (GtkWidget     *source,
   set_input_pressed (self->keyval_state, event->keyval);
 
   if (changed)
-    g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+    g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -218,7 +218,7 @@ key_release_event_cb (GtkWidget     *source,
   set_input_released (self->key_state, event->hardware_keycode);
   set_input_released (self->keyval_state, event->keyval);
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -246,7 +246,7 @@ button_press_event_cb (GtkWidget      *source,
                                                    &self->pointer_y);
   }
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -258,7 +258,7 @@ button_release_event_cb (GtkWidget      *source,
 {
   set_input_released (self->mouse_button_state, event->button);
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -274,7 +274,7 @@ focus_out_event_cb (GtkWidget     *source,
   reset_input (self->key_state);
   reset_input (self->mouse_button_state);
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -303,7 +303,7 @@ motion_notify_event_cb (GtkWidget      *source,
 
   }
 
-  g_signal_emit (self, signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 
   return FALSE;
 }
@@ -461,7 +461,7 @@ retro_core_view_class_init (RetroCoreViewClass *klass)
    *
    * Stability: Private
    */
-  signals[SIG_CONTROLLER_STATE_CHANGED_SIGNAL] =
+  signals[SIGNAL_CONTROLLER_STATE_CHANGED] =
     g_signal_new ("controller-state-changed",
                   RETRO_TYPE_CORE_VIEW,
                   G_SIGNAL_RUN_LAST,

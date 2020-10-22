@@ -12,7 +12,7 @@
 G_DEFINE_INTERFACE (RetroController, retro_controller, G_TYPE_OBJECT);
 
 enum {
-  SIG_STATE_CHANGED_SIGNAL,
+  SIGNAL_STATE_CHANGED,
   N_SIGNALS,
 };
 
@@ -21,7 +21,7 @@ static guint signals[N_SIGNALS];
 static void
 retro_controller_default_init (RetroControllerInterface *iface)
 {
-  signals[SIG_STATE_CHANGED_SIGNAL] =
+  signals[SIGNAL_STATE_CHANGED] =
     g_signal_new ("state-changed",
                   G_TYPE_FROM_INTERFACE (iface),
                   G_SIGNAL_RUN_FIRST,
@@ -179,5 +179,5 @@ retro_controller_emit_state_changed (RetroController *self)
 {
   g_return_if_fail (RETRO_IS_CONTROLLER (self));
 
-  g_signal_emit (self, signals[SIG_STATE_CHANGED_SIGNAL], 0);
+  g_signal_emit (self, signals[SIGNAL_STATE_CHANGED], 0);
 }

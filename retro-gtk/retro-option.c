@@ -21,7 +21,7 @@ struct _RetroOption
 G_DEFINE_TYPE (RetroOption, retro_option, G_TYPE_OBJECT)
 
 enum {
-  SIG_VALUE_CHANGED,
+  SIGNAL_VALUE_CHANGED,
   N_SIGNALS,
 };
 
@@ -58,7 +58,7 @@ retro_option_class_init (RetroOptionClass *klass)
 
   object_class->finalize = retro_option_finalize;
 
-  signals[SIG_VALUE_CHANGED] =
+  signals[SIGNAL_VALUE_CHANGED] =
     g_signal_new ("value-changed", RETRO_TYPE_OPTION, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
@@ -177,7 +177,7 @@ retro_option_set_value (RetroOption  *self,
 
   self->value = i;
 
-  g_signal_emit (self, signals[SIG_VALUE_CHANGED], 0);
+  g_signal_emit (self, signals[SIGNAL_VALUE_CHANGED], 0);
 }
 
 RetroOption *

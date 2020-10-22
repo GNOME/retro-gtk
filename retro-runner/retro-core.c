@@ -45,14 +45,14 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 enum {
-  SIG_VIDEO_OUTPUT_SIGNAL,
-  SIG_AUDIO_OUTPUT_SIGNAL,
-  SIG_ITERATED_SIGNAL,
-  SIG_LOG_SIGNAL,
-  SIG_SHUTDOWN_SIGNAL,
-  SIG_MESSAGE_SIGNAL,
-  SIG_VARIABLES_SET_SIGNAL,
-  SIG_SET_RUMBLE_STATE_SIGNAL,
+  SIGNAL_VIDEO_OUTPUT,
+  SIGNAL_AUDIO_OUTPUT,
+  SIGNAL_ITERATED,
+  SIGNAL_LOG,
+  SIGNAL_SHUTDOWN,
+  SIGNAL_MESSAGE,
+  SIGNAL_VARIABLES_SET,
+  SIGNAL_SET_RUMBLE_STATE,
   N_SIGNALS,
 };
 
@@ -431,7 +431,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::video-output signal is emitted each time a new video frame is emitted
    * by the core.
    */
-  signals[SIG_VIDEO_OUTPUT_SIGNAL] =
+  signals[SIGNAL_VIDEO_OUTPUT] =
     g_signal_new ("video-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
                   0, NULL, NULL,
                   NULL,
@@ -448,7 +448,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::audio-output signal is emitted each time a new audio frame is emitted
    * by the core.
    */
-  signals[SIG_AUDIO_OUTPUT_SIGNAL] =
+  signals[SIGNAL_AUDIO_OUTPUT] =
     g_signal_new ("audio-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -468,7 +468,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * internally, ::iterated will be emitted only once, after the perceived
    * iteration is completed.
    */
-  signals[SIG_ITERATED_SIGNAL] =
+  signals[SIGNAL_ITERATED] =
     g_signal_new ("iterated", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -484,7 +484,7 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The ::log signal is emitted each time the core emits a message to log.
    */
-  signals[SIG_LOG_SIGNAL] =
+  signals[SIGNAL_LOG] =
     g_signal_new ("log", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -502,7 +502,7 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The core must be released or re-started in order to function anew.
    */
-  signals[SIG_SHUTDOWN_SIGNAL] =
+  signals[SIGNAL_SHUTDOWN] =
     g_signal_new ("shutdown", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -518,7 +518,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::message signal is emitted each time the core emits a message to
    * display during a given amount of frames.
    */
-  signals[SIG_MESSAGE_SIGNAL] =
+  signals[SIGNAL_MESSAGE] =
     g_signal_new ("message", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -538,7 +538,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * @variables will be invalid after the signal emission, copy it in some way
    * if you want to keep it.
    */
-  signals[SIG_VARIABLES_SET_SIGNAL] =
+  signals[SIGNAL_VARIABLES_SET] =
     g_signal_new ("variables-set", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
                   0, NULL, NULL,
                   NULL,
@@ -556,7 +556,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::set-rumble-state signal is emitted when the core requests
    * controller on the port @port to set rumble state.
    */
-  signals[SIG_SET_RUMBLE_STATE_SIGNAL] =
+  signals[SIGNAL_SET_RUMBLE_STATE] =
     g_signal_new ("set-rumble-state", RETRO_TYPE_CORE, G_SIGNAL_RUN_FIRST,
                   0, NULL, NULL,
                   NULL,
@@ -1515,7 +1515,7 @@ static inline void
 emit_iterated (RetroCore **self)
 {
   if (*self)
-    g_signal_emit (*self, signals[SIG_ITERATED_SIGNAL], 0);
+    g_signal_emit (*self, signals[SIGNAL_ITERATED], 0);
 }
 
 /**

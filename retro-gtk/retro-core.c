@@ -112,11 +112,11 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 enum {
-  SIG_VIDEO_OUTPUT_SIGNAL,
-  SIG_LOG_SIGNAL,
-  SIG_SHUTDOWN_SIGNAL,
-  SIG_MESSAGE_SIGNAL,
-  SIG_CRASHED_SIGNAL,
+  SIGNAL_VIDEO_OUTPUT,
+  SIGNAL_LOG,
+  SIGNAL_SHUTDOWN,
+  SIGNAL_MESSAGE,
+  SIGNAL_CRASHED,
   N_SIGNALS,
 };
 
@@ -497,7 +497,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * @pixdata will be invalid after the signal emission, copy it in some way if
    * you want to keep it.
    */
-  signals[SIG_VIDEO_OUTPUT_SIGNAL] =
+  signals[SIGNAL_VIDEO_OUTPUT] =
     g_signal_new ("video-output", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -516,7 +516,7 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The ::log signal is emitted each time the core emits a message to log.
    */
-  signals[SIG_LOG_SIGNAL] =
+  signals[SIGNAL_LOG] =
     g_signal_new ("log", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -534,7 +534,7 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The core must be released or re-started in order to function anew.
    */
-  signals[SIG_SHUTDOWN_SIGNAL] =
+  signals[SIGNAL_SHUTDOWN] =
     g_signal_new ("shutdown", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -550,7 +550,7 @@ retro_core_class_init (RetroCoreClass *klass)
    * The ::message signal is emitted each time the core emits a message to
    * display during a given amount of frames.
    */
-  signals[SIG_MESSAGE_SIGNAL] =
+  signals[SIGNAL_MESSAGE] =
     g_signal_new ("message", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -566,7 +566,7 @@ retro_core_class_init (RetroCoreClass *klass)
    *
    * The ::crash signal is emitted when the core crashes.
    */
-  signals[SIG_CRASHED_SIGNAL] =
+  signals[SIGNAL_CRASHED] =
     g_signal_new ("crashed", RETRO_TYPE_CORE, G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
                   NULL,
@@ -610,7 +610,7 @@ static void
 crash (RetroCore *self,
        GError    *error)
 {
-  g_signal_emit (self, signals[SIG_CRASHED_SIGNAL], 0, error->message);
+  g_signal_emit (self, signals[SIGNAL_CRASHED], 0, error->message);
 }
 
 static void
@@ -633,9 +633,9 @@ exit_cb (RetroRunnerProcess *process,
          RetroCore          *self)
 {
   if (success)
-    g_signal_emit (self, signals[SIG_SHUTDOWN_SIGNAL], 0);
+    g_signal_emit (self, signals[SIGNAL_SHUTDOWN], 0);
   else
-    g_signal_emit (self, signals[SIG_CRASHED_SIGNAL], 0, error);
+    g_signal_emit (self, signals[SIGNAL_CRASHED], 0, error);
 }
 
 static gboolean
@@ -932,7 +932,7 @@ video_output_cb (IpcRunner *runner,
   retro_pixdata_init (&pixdata, pixels, pixel_format, rowstride,
                       width, height, aspect_ratio);
 
-  g_signal_emit (self, signals[SIG_VIDEO_OUTPUT_SIGNAL], 0, &pixdata);
+  g_signal_emit (self, signals[SIGNAL_VIDEO_OUTPUT], 0, &pixdata);
 
   retro_framebuffer_unlock (self->framebuffer);
 }
@@ -1012,7 +1012,7 @@ message_cb (IpcRunner   *runner,
             guint        frames,
             RetroCore   *self)
 {
-  g_signal_emit (self, signals[SIG_MESSAGE_SIGNAL], 0, message, frames);
+  g_signal_emit (self, signals[SIGNAL_MESSAGE], 0, message, frames);
 }
 
 static void
@@ -1022,7 +1022,7 @@ log_cb (IpcRunner   *runner,
         const gchar *message,
         RetroCore   *self)
 {
-  g_signal_emit (self, signals[SIG_LOG_SIGNAL], 0, domain, level, message);
+  g_signal_emit (self, signals[SIGNAL_LOG], 0, domain, level, message);
 }
 
 static GVariant *

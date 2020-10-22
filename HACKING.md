@@ -17,7 +17,7 @@ Fixes https://gitlab.gnome.org/GNOME/retro-gtk/-/issues/1
 ### The Tag
 
 The tag tells which part of the software is affected; it must be in kebab-case,
-it shouldn't include fle extensions, and it shouldn't have the *retro-* prefix.
+it shouldn't include fle extensions, and it shouldn't have the `retro-` prefix.
 
 If the change is too global to be relevant to any specific part, you can omit
 the tag completely.

@@ -479,6 +479,11 @@ retro_core_view_init (RetroCoreView *self)
   g_object_set ((GtkWidget*) self, "can-default", TRUE, NULL);
   g_object_set ((GtkWidget*) self, "can-focus", TRUE, NULL);
 
+  gtk_widget_add_events (GTK_WIDGET (self),
+                         GDK_KEY_PRESS_MASK |
+                         GDK_KEY_RELEASE_MASK |
+                         GDK_TOUCH_MASK);
+
   self->display = g_object_ref_sink (retro_gl_display_new ());
   gtk_widget_set_visible (GTK_WIDGET (self->display), TRUE);
   g_object_set (GTK_WIDGET (self->display), "can-focus", FALSE, NULL);

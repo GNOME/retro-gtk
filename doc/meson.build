@@ -7,6 +7,7 @@ docpath = get_option('datadir') / 'gtk-doc' / 'html'
 private_headers = [
   'ipc-runner-private.h',
   'retro-cairo-display-private.h',
+  'retro-controller-codes-private.h',
   'retro-controller-iterator-private.h',
   'retro-controller-state-private.h',
   'retro-core-view-controller-private.h',

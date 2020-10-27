@@ -8,11 +8,13 @@
 ]>
 <book id="index">
   <bookinfo>
-    <title>RetroGTK Reference Manual</title>
+    <title>&package_name; Reference Manual</title>
     <releaseinfo>
-      <para>This document is the API reference for RetroGTK &package_version;.</para>
       <para>
-        <ulink type="http" url="&package_url;">RetroGTK</ulink> is a
+        This document is the API reference for &package_name; &package_version;.
+      </para>
+      <para>
+        <ulink type="http" url="&package_url;">&package_name;</ulink> is a
         <ulink type="http" url="https://www.libretro.com/">Libretro</ulink>
         frontend as a library.
       </para>
@@ -29,7 +31,7 @@
   </bookinfo>
 
   <chapter id="overview">
-    <title>RetroGTK Overview</title>
+    <title>&package_name; Overview</title>
 
     <xi:include href="libretro-core-descriptor.xml"/>
     <xi:include href="reference-test-case.xml"/>

@@ -1,7 +1,7 @@
 ent_conf = configuration_data()
 ent_conf.set('PACKAGE', 'retro-gtk')
 ent_conf.set('PACKAGE_BUGREPORT', 'https://gitlab.gnome.org/GNOME/retro-gtk/issues')
-ent_conf.set('PACKAGE_NAME', 'retro-gtk')
+ent_conf.set('PACKAGE_NAME', 'RetroGTK')
 ent_conf.set('PACKAGE_STRING', 'retro-gtk')
 ent_conf.set('PACKAGE_TARNAME', 'retro-gtk-' + retro_gtk_version)
 ent_conf.set('PACKAGE_URL', 'https://gitlab.gnome.org/GNOME/retro-gtk')

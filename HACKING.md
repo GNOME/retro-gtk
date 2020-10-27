@@ -544,6 +544,38 @@ FooBaz *baz = foo_bar_generate_baz (bar);
 g_object_unref (baz);
 ```
 
+## Documentation Style
+
+### XML Documentation
+
+This describes how to write XML documentation like the reference manual.
+
+Indent with two spaces.
+
+Start paragraphs on a new line, indented.
+Break lines in paragraphs after 80 characters when possible, including the
+indentation.
+Start sentences on a new line so they can be changed without having to reflow
+the whole paragraph.
+
+Don't break lines in the middle of inlined elements like links, only before or
+after.
+It is acceptable to let the element exceeds the 80 characters limit if you have
+no other choice, e.g. if a URL you are linking to is too long.
+
+### MarkDown Documentation
+
+This describes how to write MarkDown documentation like README.md or HACKING.md.
+
+Break lines in paragraphs after 80 characters when possible.
+Start sentences on a new line so they can be changed without having to reflow
+the whole paragraph.
+
+Don't break lines in the middle of inlined elements like links, only before or
+after.
+It is acceptable to let the element exceeds the 80 characters limit if you have
+no other choice, e.g. if a URL you are linking to is too long.
+
 ## Commit Message Style
 
 Commit messages have 4 parts: a tag, a short explanation, a long explanation,

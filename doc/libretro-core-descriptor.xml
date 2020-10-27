@@ -19,7 +19,7 @@
 
     <para>
       This is the first version of the Libretro Core Descriptor specification
-      used by <application>&package_string;</application>.
+      used by <application>&package_name;</application>.
       These descriptor specification's goal is to help Libretro frontends to
       know the capabilities and requirements of a Libretro core, avoiding the
       user to manually select one or to hardcode this information.
@@ -42,7 +42,7 @@
         <listitem>order and readability;</listitem>
         <listitem>a specification;</listitem>
         <listitem>some information necessary to help
-          <application>&package_string;</application> picking the right core for
+          <application>&package_name;</application> picking the right core for
           the game to run.
         </listitem>
       </itemizedlist>
@@ -53,10 +53,10 @@
       It's problably the
       <ulink url="https://en.wikipedia.org/wiki/Not_invented_here">NIH syndrome</ulink>
       hitting again, but better can probably be done for
-      <application>&package_string;</application> with this Libretro core
+      <application>&package_name;</application> with this Libretro core
       descriptor specification by focusing on improving readability and
       extensibility, by making the files blend better into the GNOME environment
-      and by supporting the needs of <application>&package_string;</application>
+      and by supporting the needs of <application>&package_name;</application>
       better.
     </para>
   </refsect2>

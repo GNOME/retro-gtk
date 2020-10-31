@@ -42,7 +42,7 @@ create_shader (GBytes  *source_bytes,
   glGetShaderiv (shader, GL_COMPILE_STATUS, &status);
   if (status == GL_FALSE) {
     g_autofree gchar *buffer = NULL;
-    gint log_length;
+    gint log_length = 0;
 
     glGetShaderiv (shader, GL_INFO_LOG_LENGTH, &log_length);
     buffer = g_malloc (log_length + 1);
@@ -134,8 +134,8 @@ retro_glsl_shader_new (GBytes  *vertex,
 
   glGetProgramiv (self->program, GL_LINK_STATUS, &status);
   if (status == GL_FALSE) {
+    g_autofree gchar *buffer = NULL;
     gint log_length = 0;
-    g_autofree gchar *buffer;
 
     glGetProgramiv (self->program, GL_INFO_LOG_LENGTH, &log_length);
     buffer = g_malloc (log_length + 1);

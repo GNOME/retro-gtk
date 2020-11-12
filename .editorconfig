@@ -17,7 +17,7 @@ tab_size = 2
 indent_style = space
 max_line_length = 80
 
-[*.{ui,xml,modules}]
+[*.{json,module,ui,xml,yaml,yml}]
 indent_size = 2
 tab_size = 2
 indent_style = space

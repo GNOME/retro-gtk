@@ -5,7 +5,7 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-[*.{c,h}]
+[*.{c,h,h.in}]
 indent_size = 2
 tab_size = 2
 indent_style = space

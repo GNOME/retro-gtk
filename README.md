@@ -1,4 +1,4 @@
-# retro-gtk
+# RetroGTK
 
 The GTK+ Libretro frontend framework.
 
@@ -6,7 +6,7 @@ The GTK+ Libretro frontend framework.
 video game console emulators, video games and similar multimedia software. Such
 plugins are called Libretro cores.
 
-retro-gtk is a framework easing the usage of Libretro cores in conjunction with
+RetroGTK is a framework easing the usage of Libretro cores in conjunction with
 [GTK+](https://www.gtk.org/).
 
 It encourages the cores to be installed in a well defined centralized place —
@@ -16,7 +16,7 @@ them to come with [Libretro core descriptors]
 
 ## Example
 
-Writing a Libretro frontend with retro-gtk can be as simple as the following
+Writing a Libretro application with RetroGTK can be as simple as the following
 Vala code:
 
 ```vala
@@ -55,7 +55,7 @@ int main (string[] args) {
 
 ## Dependencies
 
-retro-gtk depends on the following libraries at compile time and at run time:
+RetroGTK depends on the following libraries at compile time and at run time:
 - gobject-2.0
 - glib-2.0
 - gio-2.0

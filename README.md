@@ -12,7 +12,7 @@ retro-gtk is a framework easing the usage of Libretro cores in conjunction with
 It encourages the cores to be installed in a well defined centralized place —
 namely the `libretro` subdirectory of your `lib` directory — and it recommends
 them to come with [Libretro core descriptors]
-(https://wiki.gnome.org/Apps/Games/Documentation/LibretroDescriptorSpec).
+(https://gnome.pages.gitlab.gnome.org/retro-gtk/doc/master/libretro-core-descriptor.html).
 
 ## Example
 

@@ -78,15 +78,3 @@ reference:
   artifacts:
     paths:
       - _reference
-
-pages:
-  stage: publish
-  dependencies:
-    - reference
-  script:
-    - mv _reference/ public/
-  artifacts:
-    paths:
-      - public
-  only:
-    - master

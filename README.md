@@ -6,7 +6,7 @@ The GTK Libretro frontend framework.
 video game console emulators, video games and similar multimedia software. Such
 plugins are called Libretro cores.
 
-RetroGTK is a framework easing the usage of Libretro cores in conjunction with
+RetroGTK is a framework easing the use of Libretro cores in conjunction with
 [GTK](https://www.gtk.org/).
 
 It encourages the cores to be installed in a well defined centralized place —

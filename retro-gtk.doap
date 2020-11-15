@@ -5,9 +5,9 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">retro-gtk</name>
-  <shortdesc xml:lang="en">Toolkit to write GTK+ 3 based Libretro frontends</shortdesc>
-  <description xml:lang="en">retro-gtk is a toolkit allowing to easily write GTK+ 3 based Libretro frontends.</description>
+  <name xml:lang="en">RetroGTK</name>
+  <shortdesc xml:lang="en">The GTK Libretro frontend framework</shortdesc>
+  <description xml:lang="en">RetroGTK is a framework easing the use of Libretro cores in conjunction with GTK.</description>
   <homepage rdf:resource="https://gnome.pages.gitlab.gnome.org/retro-gtk/" />
   <download-page rdf:resource="http://download.gnome.org/sources/retro-gtk/" />
   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/retro-gtk/issues" />

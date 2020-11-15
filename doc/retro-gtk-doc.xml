@@ -16,11 +16,6 @@
         <ulink role="online-location" url="https://gnome.pages.gitlab.gnome.org/retro-gtk/">https://gnome.pages.gitlab.gnome.org/retro-gtk/</ulink>.
       </para>
       <para>
-        <ulink type="http" url="&package_url;">&package_name;</ulink> is a
-        <ulink type="http" url="https://www.libretro.com/">Libretro</ulink>
-        frontend as a library.
-      </para>
-      <para>
         If you find any issues in this API reference, please report it using
         <ulink type="http" url="&package_bugreport;">the bugtracker</ulink>.
       </para>
@@ -34,6 +29,30 @@
 
   <chapter id="overview">
     <title>&package_name; Overview</title>
+
+    <para>
+      &package_name;, the GTK Libretro frontend framework.
+    </para>
+
+    <para>
+      <ulink type="http" url="https://www.libretro.com/">Libretro</ulink> is a
+      plugin format design to implement video game console emulators, video
+      games and similar multimedia software.
+      Such plugins are called Libretro cores.
+    </para>
+
+    <para>
+      &package_name; is a framework easing the use of Libretro cores in
+      conjunction with
+      <ulink type="http" url="https://www.gtk.org/">GTK</ulink>.
+    </para>
+
+    <para>
+      It encourages the cores to be installed in a well defined centralized
+      place — namely the <filename>libretro</filename> subdirectory of your
+      <filename>lib</filename> directory — and it recommends them to come with
+      Libretro core descriptors.
+    </para>
 
     <xi:include href="libretro-core-descriptor.xml"/>
     <xi:include href="reference-test-case.xml"/>

@@ -1,9 +1,11 @@
 #!/bin/bash
 
-DOC_DIR=public/doc/
+DOC_DIR=public/doc
 REFS="
 master
 "
+
+LATEST_STABLE_1=1.0
 
 IFS='
 '
@@ -20,3 +22,6 @@ for REF in $REFS; do
   rm "$REF.zip"
   rm -rf "$REF"
 done
+
+cp -r $DOC_DIR/master $DOC_DIR/$LATEST_STABLE_1
+cp -r $DOC_DIR/$LATEST_STABLE_1 $DOC_DIR/1-latest

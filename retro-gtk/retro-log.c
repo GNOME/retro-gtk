@@ -9,6 +9,8 @@
  * Convenience functions to connect to the #RetroCore::log signal of #RetroCore.
  */
 
+#include "retro-log.h"
+
 #include "retro-core.h"
 
 /**

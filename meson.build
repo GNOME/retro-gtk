@@ -55,29 +55,29 @@ if get_option('demos')
   subdir('demos')
 endif
 
-summary = [
-  '',
-  '------',
-  'retro-gtk @0@ (@1@)'.format(retro_gtk_version, retro_gtk_api_version),
-  '',
-  '                   Demos: @0@'.format(get_option('demos')),
-  '             Build tests: @0@'.format(get_option('build-tests')),
-  '           Install tests: @0@'.format(get_option('install-tests')),
-  'Documentation and introspection:',
-  '     Build documentation: @0@'.format(get_option('build-doc')),
-  '   Install documentation: @0@'.format(get_option('install-doc')),
-  '           Introspection: @0@'.format(get_option('introspection')),
-  '           Vala bindings: @0@'.format(get_option('vapi')),
-  'Dependencies:',
-  '              PulseAudio: @0@'.format(get_option('pulseaudio').enabled()),
-  'Directories:',
-  '                  prefix: @0@'.format(prefix),
-  '                  libdir: @0@'.format(libdir),
-  '             libretrodir: @0@'.format(libretrodir),
-  '              libexecdir: @0@'.format(libexecdir),
-  '                 datadir: @0@'.format(datadir),
-  '------',
-  ''
-]
-
-message('\n'.join(summary))
+summary(
+  {
+    'Demos': get_option('demos'),
+    'Build tests': get_option('build-tests'),
+    'Install tests': get_option('install-tests'),
+  }, section: 'Demos and tests')
+summary(
+  {
+    'Build documentation': get_option('build-doc'),
+    'Install documentation': get_option('install-doc'),
+    'Introspection': get_option('introspection'),
+    'Vala bindings': get_option('vapi'),
+  }, section: 'Documentation and introspection')
+summary(
+  {
+    'PulseAudio': get_option('pulseaudio').enabled(),
+  }, section: 'Optional dependencies')
+summary(
+  {
+    'prefix': prefix,
+    'bindir': prefix / get_option('bindir'),
+    'libdir': libdir,
+    'libexecdir': libexecdir,
+    'libretrodir': libretrodir,
+    'datadir': datadir,
+  }, section: 'Directories')

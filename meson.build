@@ -1,6 +1,6 @@
 project('retro-gtk','c',
   version: '1.0.2',
-  meson_version: '>= 0.50.0',
+  meson_version: '>= 0.53.0',
 )
 
 cc = meson.get_compiler('c')

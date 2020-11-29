@@ -1,4 +1,18 @@
 =============
+Version 1.0.1
+=============
+
+* RetroCoreView: Add the key press, key release and touch event masks
+  to ensure it receives all the events it can handle, and hence to
+  ensure that these input methods work as expected.
+* Meson: Add the vapi option to allow disabling building Vala bindings.
+* Documentation:
+ - Add the Libretro Core Descriptor Specification 1.0 section.
+ - Add the Retro Reference Test Case Specification 1.0 section.
+* Clean up the documentation, README.md, HACKING.md, retro-gtk.doap,
+  .editorconfig, update-from-retroarch, the Meson files, and more.
+
+=============
 Version 1.0.0
 =============
 

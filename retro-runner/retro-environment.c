@@ -154,7 +154,7 @@ log_cb (guint level, const gchar *format, ...)
 
 static gboolean
 get_can_dupe (RetroCore *self,
-              gboolean  *can_dupe)
+              bool      *can_dupe)
 {
   *can_dupe = TRUE;
 
@@ -243,7 +243,7 @@ get_log_callback (RetroCore        *self,
 
 static gboolean
 get_overscan (RetroCore *self,
-              gboolean  *overscan)
+              bool      *overscan)
 {
   *overscan = self->overscan;
 
@@ -416,7 +416,7 @@ set_rotation (RetroCore           *self,
 
 static gboolean
 set_support_no_game (RetroCore *self,
-                     gboolean  *support_no_game)
+                     bool      *support_no_game)
 {
   retro_core_set_support_no_game (self, *support_no_game);
 
@@ -464,7 +464,7 @@ environment_core_command (RetroCore *self,
 
   switch (cmd) {
   case RETRO_ENVIRONMENT_GET_CAN_DUPE:
-    return get_can_dupe (self, (gboolean *) data);
+    return get_can_dupe (self, (bool *) data);
 
   case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
     return get_content_directory (self, (const gchar **) data);
@@ -482,7 +482,7 @@ environment_core_command (RetroCore *self,
     return get_log_callback (self, (RetroLogCallback *) data);
 
   case RETRO_ENVIRONMENT_GET_OVERSCAN:
-    return get_overscan (self, (gboolean *) data);
+    return get_overscan (self, (bool *) data);
 
   case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
     return get_rumble_callback (self, (RetroRumbleCallback *) data);
@@ -524,7 +524,7 @@ environment_core_command (RetroCore *self,
     return set_rotation (self, (RetroRotation *) data);
 
   case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
-    return set_support_no_game (self, (gboolean *) data);
+    return set_support_no_game (self, (bool *) data);
 
   case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
     return set_system_av_info (self, (RetroSystemAvInfo *) data);

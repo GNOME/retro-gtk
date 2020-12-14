@@ -11,6 +11,7 @@ private_headers = [
   'retro-controller-iterator-private.h',
   'retro-controller-state-private.h',
   'retro-core-view-controller-private.h',
+  'retro-debug-private.h',
   'retro-framebuffer-private.h',
   'retro-gl-display-private.h',
   'retro-glsl-filter-private.h',

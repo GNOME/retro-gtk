@@ -13,7 +13,10 @@
 #endif
 
 #include "ipc-runner-impl-private.h"
+#include "retro-debug-private.h"
 #include "retro-pa-player-private.h"
+
+#define RETRO_RUNNER_PRGNAME "retro-runner"
 
 static gboolean
 run_main_loop (GMainLoop        *loop,
@@ -43,6 +46,16 @@ run_main_loop (GMainLoop        *loop,
   return TRUE;
 }
 
+static void
+print_backtrace_on_sigsegv_cb (int        sig,
+                               siginfo_t *si,
+                               void      *unused)
+{
+  g_on_error_stack_trace (RETRO_RUNNER_PRGNAME);
+
+  exit (EXIT_FAILURE);
+}
+
 /* Adapted from GNOME Builder's gnome-builder-git.c */
 gint
 main (gint    argc,
@@ -58,7 +71,7 @@ main (gint    argc,
   /* Arguments: application name, core filename */
   g_assert (argc >= 3);
 
-  g_set_prgname ("retro-runner");
+  g_set_prgname (RETRO_RUNNER_PRGNAME);
   g_set_application_name (argv[1]);
 
 #ifdef __linux__
@@ -68,6 +81,17 @@ main (gint    argc,
 #else
 #error "Please submit a patch to support parent-death signal on your OS"
 #endif
+
+  if (G_UNLIKELY (retro_is_debug ())) {
+    struct sigaction sa;
+
+    sa.sa_flags = SA_SIGINFO;
+    sigemptyset (&sa.sa_mask);
+    sa.sa_sigaction = print_backtrace_on_sigsegv_cb;
+
+    if (G_UNLIKELY (sigaction (SIGSEGV, &sa, NULL) == -1))
+      g_critical ("Couldn't set a SIGSEGV handler.");
+  }
 
   loop = g_main_loop_new (NULL, FALSE);
 

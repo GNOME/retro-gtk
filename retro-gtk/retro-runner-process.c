@@ -218,23 +218,6 @@ create_connection (GSubprocessLauncher  *launcher,
   return connection;
 }
 
-static gboolean
-is_debug (void)
-{
-  gchar **envp;
-  const gchar *env_value;
-  gboolean result = FALSE;
-
-  envp = g_get_environ ();
-  env_value = g_environ_getenv (envp, "RETRO_DEBUG");
-
-  result = (g_strcmp0 ("1", env_value) == 0);
-
-  g_strfreev (envp);
-
-  return result;
-}
-
 /**
  * retro_runner_process_start:
  * @self: a #RetroRunnerProcess
@@ -260,24 +243,12 @@ retro_runner_process_start (RetroRunnerProcess  *self,
   if (!(connection = create_connection (launcher, 3, error)))
     return;
 
-  if (is_debug ()) {
-    if (!(process = g_subprocess_launcher_spawn (launcher, &tmp_error,
-                                                 "gdb", "-batch", "-ex", "run",
-                                                 "-ex", "bt", "--args",
-                                                 RETRO_RUNNER_PATH,
-                                                 g_get_application_name (),
-                                                 self->filename, NULL))) {
-      g_propagate_error (error, tmp_error);
-      return;
-    }
-  } else {
-    if (!(process = g_subprocess_launcher_spawn (launcher, &tmp_error,
-                                                 RETRO_RUNNER_PATH,
-                                                 g_get_application_name (),
-                                                 self->filename, NULL))) {
-      g_propagate_error (error, tmp_error);
-      return;
-    }
+  if (!(process = g_subprocess_launcher_spawn (launcher, &tmp_error,
+                                               RETRO_RUNNER_PATH,
+                                               g_get_application_name (),
+                                               self->filename, NULL))) {
+    g_propagate_error (error, tmp_error);
+    return;
   }
 
   if (!(self->connection = g_dbus_connection_new_sync (G_IO_STREAM (connection),

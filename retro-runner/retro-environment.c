@@ -356,6 +356,20 @@ get_system_directory (RetroCore    *self,
 }
 
 static gboolean
+get_username (RetroCore    *self,
+              const gchar **username)
+{
+  *(username) = retro_core_get_user_name (self);
+
+  if (**username == '\0')
+    *(username) = NULL;
+
+  retro_debug ("Get username: %s", *username);
+
+  return TRUE;
+}
+
+static gboolean
 get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
@@ -652,6 +666,9 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
     return get_system_directory (self, (const gchar **) data);
 
+  case RETRO_ENVIRONMENT_GET_USERNAME:
+    return get_username (self, (const gchar **) data);
+
   case RETRO_ENVIRONMENT_GET_VARIABLE:
     return get_variable (self, (RetroVariable *) data);
 
@@ -700,7 +717,6 @@ environment_core_command (RetroCore *self,
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE);
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_GET_PERF_INTERFACE);
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE);
-  RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_GET_USERNAME);
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK);
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_SET_CONTROLLER_INFO);
   RETRO_UNIMPLEMENT_ENVIRONMENT (RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK);

@@ -1214,22 +1214,6 @@ RETRO_API bool retro_load_game_special(
 );
 ```
 
-## User Name
-
-The user name accessor is unimplemented.
-
-```
-#define RETRO_ENVIRONMENT_GET_USERNAME 38
-                                           /* const char **
-                                            * Returns the specified username of the frontend, if specified by the user.
-                                            * This username can be used as a nickname for a core that has online facilities
-                                            * or any other mode where personalization of the user is desirable.
-                                            * The returned value can be NULL.
-                                            * If this environ callback is used by a core that requires a valid username,
-                                            * a default username should be specified by the core.
-                                            */
-```
-
 ## Variables
 
 The varibles system is implemented but unused.

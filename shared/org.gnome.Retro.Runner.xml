@@ -7,6 +7,7 @@
     <property name="SystemDirectory" type="s" access="readwrite"/>
     <property name="ContentDirectory" type="s" access="readwrite"/>
     <property name="SaveDirectory" type="s" access="readwrite"/>
+    <property name="UserName" type="s" access="readwrite"/>
     <property name="GameLoaded" type="b" access="read"/>
     <property name="FramesPerSecond" type="d" access="read"/>
     <property name="SupportNoGame" type="b" access="read"/>

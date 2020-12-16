@@ -28,6 +28,9 @@ void retro_core_set_content_directory (RetroCore   *self,
 const gchar *retro_core_get_save_directory (RetroCore *self);
 void retro_core_set_save_directory (RetroCore   *self,
                                     const gchar *save_directory);
+const gchar *retro_core_get_user_name (RetroCore *self);
+void retro_core_set_user_name (RetroCore   *self,
+                               const gchar *user_name);
 gboolean retro_core_get_is_initiated (RetroCore *self);
 gboolean retro_core_get_game_loaded (RetroCore *self);
 gboolean retro_core_get_support_no_game (RetroCore *self);

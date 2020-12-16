@@ -33,6 +33,7 @@ enum {
   PROP_SYSTEM_DIRECTORY,
   PROP_CONTENT_DIRECTORY,
   PROP_SAVE_DIRECTORY,
+  PROP_USER_NAME,
   PROP_IS_INITIATED,
   PROP_GAME_LOADED,
   PROP_SUPPORT_NO_GAME,
@@ -164,6 +165,10 @@ retro_core_get_property (GObject    *object,
     g_value_set_string (value, retro_core_get_save_directory (self));
 
     break;
+  case PROP_USER_NAME:
+    g_value_set_string (value, retro_core_get_user_name (self));
+
+    break;
   case PROP_GAME_LOADED:
     g_value_set_boolean (value, retro_core_get_game_loaded (self));
 
@@ -214,6 +219,10 @@ retro_core_set_property (GObject      *object,
     break;
   case PROP_SAVE_DIRECTORY:
     retro_core_set_save_directory (self, g_value_get_string (value));
+
+    break;
+  case PROP_USER_NAME:
+    retro_core_set_user_name (self, g_value_get_string (value));
 
     break;
   case PROP_RUNAHEAD:
@@ -314,6 +323,21 @@ retro_core_class_init (RetroCoreClass *klass)
     g_param_spec_string ("save-directory",
                          "Save directory",
                          "The save directory",
+                         NULL,
+                         G_PARAM_READWRITE |
+                         G_PARAM_STATIC_NAME |
+                         G_PARAM_STATIC_NICK |
+                         G_PARAM_STATIC_BLURB);
+
+  /**
+   * RetroCore:user-name:
+   *
+   * The name of the user.
+   */
+  properties[PROP_USER_NAME] =
+    g_param_spec_string ("user-name",
+                         "User name",
+                         "The user name",
                          NULL,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
@@ -1182,6 +1206,43 @@ retro_core_set_save_directory (RetroCore   *self,
   g_free (self->save_directory);
   self->save_directory = g_strdup (save_directory);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SAVE_DIRECTORY]);
+}
+
+/**
+ * retro_core_get_user_name:
+ * @self: a #RetroCore
+ *
+ * Gets the name of the user.
+ *
+ * Returns: the name of the user
+ */
+const gchar *
+retro_core_get_user_name (RetroCore *self)
+{
+  g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
+
+  return self->user_name;
+}
+
+/**
+ * retro_core_set_user_name:
+ * @self: a #RetroCore
+ * @user_name: the user name
+ *
+ * Sets the name of the user.
+ */
+void
+retro_core_set_user_name (RetroCore   *self,
+                          const gchar *user_name)
+{
+  g_return_if_fail (RETRO_IS_CORE (self));
+
+  if (g_strcmp0 (user_name, retro_core_get_user_name (self)) == 0)
+    return;
+
+  g_free (self->user_name);
+  self->user_name = g_strdup (user_name);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER_NAME]);
 }
 
 /**

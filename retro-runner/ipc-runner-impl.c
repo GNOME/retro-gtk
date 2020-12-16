@@ -503,6 +503,9 @@ ipc_runner_impl_constructed (GObject *object)
   g_object_bind_property (self->core, "save-directory",
                           self,       "save-directory",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (self->core, "user-name",
+                          self,       "user-name",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   g_object_bind_property (self->core, "game-loaded",
                           self,       "game-loaded",
                           G_BINDING_SYNC_CREATE);

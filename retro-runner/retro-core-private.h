@@ -32,6 +32,7 @@ struct _RetroCore
   gchar *libretro_path;
   gchar *content_directory;
   gchar *save_directory;
+  gchar *user_name;
   gboolean is_initiated;
   gboolean game_loaded;
   gboolean support_no_game;

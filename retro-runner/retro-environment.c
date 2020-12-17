@@ -577,6 +577,11 @@ environment_core_command (RetroCore *self,
   case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
   case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:
   default:
+    if (cmd & RETRO_ENVIRONMENT_EXPERIMENTAL)
+      g_critical ("Unknown experimental command %d", cmd ^ RETRO_ENVIRONMENT_EXPERIMENTAL);
+    else
+      g_critical ("Unknown command %d", cmd);
+
     return FALSE;
   }
 }

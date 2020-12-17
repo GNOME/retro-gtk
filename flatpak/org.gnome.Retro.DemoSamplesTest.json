@@ -37,6 +37,12 @@
         "/share/doc",
         "/share/gir-1.0"
     ],
+    "build-options" : {
+        "env" : {
+            "G_MESSAGES_DEBUG" : "RetroEnvironment",
+            "RETRO_DEBUG" : "1"
+        }
+    },
     "modules" : [
         "libretro-cores/libretro-samples.json",
         /*

@@ -336,11 +336,11 @@ set_hw_render (RetroCore             *self,
     break;
 
   case RETRO_HW_CONTEXT_VULKAN:
-    g_critical ("Vulkan support isn't implemented");
+    g_critical ("Couldn't set hardware render callback: Vulkan support is unimplemented");
 
     return FALSE;
   default:
-    g_critical ("Unknown context type: %d", callback->context_type);
+    g_critical ("Couldn't set hardware render callback for unknown context type %d", callback->context_type);
 
     return FALSE;
   }

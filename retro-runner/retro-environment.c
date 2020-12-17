@@ -339,6 +339,10 @@ set_hw_render (RetroCore             *self,
     g_critical ("Couldn't set hardware render callback: Vulkan support is unimplemented");
 
     return FALSE;
+  case RETRO_HW_CONTEXT_DIRECT3D:
+    g_critical ("Couldn't set hardware render callback: Direct3D is unsupported");
+
+    return FALSE;
   default:
     g_critical ("Couldn't set hardware render callback for unknown context type %d", callback->context_type);
 

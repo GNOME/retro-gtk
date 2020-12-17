@@ -427,6 +427,12 @@ static gboolean
 set_rotation (RetroCore           *self,
               const RetroRotation *rotation)
 {
+  if (G_UNLIKELY (*rotation >= CLOCKWISE)) {
+    g_critical ("Couldn't set unknown rotation %d", *rotation);
+
+    return FALSE;
+  }
+
   self->rotation = *rotation;
 
   return TRUE;

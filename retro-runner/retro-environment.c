@@ -407,6 +407,17 @@ static gboolean
 set_pixel_format (RetroCore              *self,
                   const RetroPixelFormat *pixel_format)
 {
+  switch (*pixel_format) {
+  case RETRO_PIXEL_FORMAT_XRGB1555:
+  case RETRO_PIXEL_FORMAT_XRGB8888:
+  case RETRO_PIXEL_FORMAT_RGB565:
+    break;
+  default:
+    g_critical ("Couldn't set unknown pixel format %d", *pixel_format);
+
+    return FALSE;
+  }
+
   self->pixel_format = *pixel_format;
 
   return TRUE;

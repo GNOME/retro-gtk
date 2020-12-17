@@ -285,8 +285,11 @@ get_variable (RetroCore     *self,
 
   value = g_hash_table_lookup (self->variables, variable->key);
 
-  if (!value)
+  if (G_UNLIKELY (!value)) {
+    g_critical ("Couldn't get variable %s", variable->key);
+
     return FALSE;
+  }
 
   variable->value = value;
 

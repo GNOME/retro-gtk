@@ -3,10 +3,13 @@
 #include "retro-core-private.h"
 
 #include <stdbool.h>
+#include "retro-debug-private.h"
 #include "retro-input-private.h"
 #include "retro-gl-renderer-private.h"
 #include "retro-hw-render-callback-private.h"
 #include "retro-rumble-effect.h"
+
+#define TRUENESS(boolean) ((boolean) ? "true" : "false")
 
 #define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000
 #define RETRO_ENVIRONMENT_PRIVATE 0x20000
@@ -136,7 +139,7 @@ log_cb (guint level, const gchar *format, ...)
 
     break;
   default:
-    g_debug ("Unexpected log level: %d", level);
+    retro_debug ("Unexpected log level: %d", level);
 
     return;
   }
@@ -150,6 +153,58 @@ log_cb (guint level, const gchar *format, ...)
   g_signal_emit_by_name (self, "log", log_domain, log_level, message);
 }
 
+static const gchar *
+get_input_string (RetroInputDescriptor *descriptor) {
+  const gchar *controller_type_name = NULL;
+  g_autoptr (GEnumClass) index_enum_class = NULL;
+  g_autoptr (GEnumClass) id_enum_class = NULL;
+  GEnumValue *id_enum_value;
+
+  switch (descriptor->controller_type & RETRO_CONTROLLER_TYPE_TYPE_MASK) {
+  case RETRO_CONTROLLER_TYPE_JOYPAD:
+    controller_type_name = "joypad";
+    id_enum_class = g_type_class_ref (RETRO_TYPE_JOYPAD_ID);
+    break;
+  case RETRO_CONTROLLER_TYPE_MOUSE:
+    controller_type_name = "mouse";
+    id_enum_class = g_type_class_ref (RETRO_TYPE_MOUSE_ID);
+    break;
+  case RETRO_CONTROLLER_TYPE_LIGHTGUN:
+    controller_type_name = "lightgun";
+    id_enum_class = g_type_class_ref (RETRO_TYPE_LIGHTGUN_ID);
+    break;
+  case RETRO_CONTROLLER_TYPE_ANALOG:
+    controller_type_name = "analog";
+    index_enum_class = g_type_class_ref (RETRO_TYPE_ANALOG_INDEX);
+    id_enum_class = g_type_class_ref (RETRO_TYPE_ANALOG_ID);
+    break;
+  case RETRO_CONTROLLER_TYPE_POINTER:
+    controller_type_name = "pointer";
+    id_enum_class = g_type_class_ref (RETRO_TYPE_POINTER_ID);
+    break;
+  case RETRO_CONTROLLER_TYPE_KEYBOARD:
+    return g_strdup ("keyboard key");
+  case RETRO_CONTROLLER_TYPE_NONE:
+    return g_strdup ("none");
+  default:
+    return g_strdup ("unknown input");
+  }
+
+  id_enum_value = g_enum_get_value (id_enum_class, descriptor->id);
+
+  if (index_enum_class) {
+    GEnumValue *index_enum_value = g_enum_get_value (index_enum_class, descriptor->index);
+
+    return (index_enum_value && id_enum_value) ?
+      g_strdup_printf ("%s %s %s", controller_type_name, index_enum_value->value_nick, id_enum_value->value_nick) :
+      g_strdup_printf ("unknown %s input", controller_type_name);
+  }
+
+  return (id_enum_value) ?
+    g_strdup_printf ("%s %s", controller_type_name, id_enum_value->value_nick) :
+    g_strdup_printf ("unknown %s input", controller_type_name);
+}
+
 /* Environment commands */
 
 static gboolean
@@ -157,6 +212,8 @@ get_can_dupe (RetroCore *self,
               bool      *can_dupe)
 {
   *can_dupe = TRUE;
+
+  retro_debug ("Get can dupe: true");
 
   return TRUE;
 }
@@ -167,6 +224,8 @@ get_content_directory (RetroCore    *self,
 {
   *(content_directory) = retro_core_get_content_directory (self);
 
+  retro_debug ("Get content directory: %s", *content_directory);
+
   return TRUE;
 }
 
@@ -175,6 +234,8 @@ get_input_device_capabilities (RetroCore *self,
                                guint64   *capabilities)
 {
   *capabilities = retro_core_get_controller_capabilities (self);
+
+  retro_debug ("Get input device capabilities");
 
   return TRUE;
 }
@@ -220,6 +281,8 @@ get_language (RetroCore *self,
 
   *language = values[language_i].language;
 
+  retro_debug ("Get language: %s", values[language_i].locale);
+
   return TRUE;
 }
 
@@ -228,6 +291,8 @@ get_libretro_path (RetroCore    *self,
                    const gchar **libretro_directory)
 {
   *(libretro_directory) = retro_core_get_libretro_path (self);
+
+  retro_debug ("Get libretro directory: %s", *libretro_directory);
 
   return TRUE;
 }
@@ -238,6 +303,8 @@ get_log_callback (RetroCore        *self,
 {
   cb->log = log_cb;
 
+  retro_debug ("Get log callback");
+
   return TRUE;
 }
 
@@ -246,6 +313,8 @@ get_overscan (RetroCore *self,
               bool      *overscan)
 {
   *overscan = self->overscan;
+
+  retro_debug ("Get overscan: %s", TRUENESS (*overscan));
 
   return TRUE;
 }
@@ -256,6 +325,8 @@ get_rumble_callback (RetroCore           *self,
 {
   cb->set_rumble_state = rumble_callback_set_rumble_state;
 
+  retro_debug ("Get rumble callback");
+
   return TRUE;
 }
 
@@ -265,6 +336,8 @@ get_save_directory (RetroCore    *self,
 {
   *(save_directory) = retro_core_get_save_directory (self);
 
+  retro_debug ("Get save directory: %s", *save_directory);
+
   return TRUE;
 }
 
@@ -273,6 +346,8 @@ get_system_directory (RetroCore    *self,
                       const gchar **system_directory)
 {
   *(system_directory) = retro_core_get_system_directory (self);
+
+  retro_debug ("Get system directory: %s", *system_directory);
 
   return TRUE;
 }
@@ -293,6 +368,8 @@ get_variable (RetroCore     *self,
 
   variable->value = value;
 
+  retro_debug ("Get variable %s: %s", variable->key, variable->value);
+
   return TRUE;
 }
 
@@ -302,6 +379,8 @@ get_variable_update (RetroCore *self,
                      bool      *update)
 {
   *update = retro_core_get_variable_update (self);
+
+  retro_debug ("Get variable update: %s", TRUENESS (*update));
 
   return TRUE;
 }
@@ -332,6 +411,8 @@ set_hw_render (RetroCore             *self,
   case RETRO_HW_CONTEXT_OPENGLES2:
   case RETRO_HW_CONTEXT_OPENGLES3:
   case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+    retro_debug ("Set hardware render callback: OpenGL");
+
     self->renderer = retro_gl_renderer_new (self, callback);
     break;
 
@@ -359,6 +440,8 @@ static gboolean
 set_disk_control_interface (RetroCore                *self,
                             RetroDiskControlCallback *callback)
 {
+  retro_debug ("Set disk control callback");
+
   self->disk_control_callback = callback;
 
   return TRUE;
@@ -368,6 +451,11 @@ static gboolean
 set_geometry (RetroCore         *self,
               RetroGameGeometry *geometry)
 {
+  retro_debug ("Set geometry: base %u × %u, max %u × %u, aspect ratio %f",
+               geometry->base_width, geometry->base_height,
+               geometry->max_width, geometry->max_height,
+               geometry->aspect_ratio);
+
   retro_core_set_geometry (self, geometry);
 
   return TRUE;
@@ -379,7 +467,16 @@ set_input_descriptors (RetroCore            *self,
 {
   int length;
 
-  for (length = 0 ; descriptors[length].description ; length++);
+  for (length = 0 ; descriptors[length].description ; length++)
+    retro_debug ("Set input descriptor: port %u, type %u, index %u, id %u (%s%s): %s",
+                 descriptors[length].port,
+                 descriptors[length].controller_type,
+                 descriptors[length].index,
+                 descriptors[length].id,
+                 get_input_string (&descriptors[length]),
+                 (descriptors[length].controller_type & ~RETRO_CONTROLLER_TYPE_TYPE_MASK) ? ", specialized" : "",
+                 descriptors[length].description);
+
   retro_core_set_controller_descriptors (self, descriptors, length);
 
   return TRUE;
@@ -389,6 +486,8 @@ static gboolean
 set_keyboard_callback (RetroCore             *self,
                        RetroKeyboardCallback *callback)
 {
+  retro_debug ("Set keyboard callback");
+
   self->keyboard_callback = *callback;
 
   return TRUE;
@@ -398,6 +497,8 @@ static gboolean
 set_message (RetroCore          *self,
              const RetroMessage *message)
 {
+  retro_debug ("Emit message for %u frames: %s", message->frames, message->msg);
+
   g_signal_emit_by_name (self, "message", message->msg, message->frames);
 
   return TRUE;
@@ -409,8 +510,16 @@ set_pixel_format (RetroCore              *self,
 {
   switch (*pixel_format) {
   case RETRO_PIXEL_FORMAT_XRGB1555:
+    retro_debug ("Set pixel format: XRGB1555");
+
+    break;
   case RETRO_PIXEL_FORMAT_XRGB8888:
+    retro_debug ("Set pixel format: XRGB8888");
+
+    break;
   case RETRO_PIXEL_FORMAT_RGB565:
+    retro_debug ("Set pixel format: RGB565");
+
     break;
   default:
     g_critical ("Couldn't set unknown pixel format %d", *pixel_format);
@@ -433,6 +542,8 @@ set_rotation (RetroCore           *self,
     return FALSE;
   }
 
+  retro_debug ("Set rotation: %d°", *rotation * 90);
+
   self->rotation = *rotation;
 
   return TRUE;
@@ -442,6 +553,8 @@ static gboolean
 set_support_no_game (RetroCore *self,
                      bool      *support_no_game)
 {
+  retro_debug ("Set support no game: %s", TRUENESS (*support_no_game));
+
   retro_core_set_support_no_game (self, *support_no_game);
 
   return TRUE;
@@ -451,6 +564,12 @@ static gboolean
 set_system_av_info (RetroCore         *self,
                     RetroSystemAvInfo *system_av_info)
 {
+  retro_debug ("Set system AV info: base %u × %u, max %u × %u, aspect ratio %f, %lf FPS, %lf Hz",
+               system_av_info->geometry.base_width, system_av_info->geometry.base_height,
+               system_av_info->geometry.max_width, system_av_info->geometry.max_height,
+               system_av_info->geometry.aspect_ratio,
+               system_av_info->timing.fps, system_av_info->timing.sample_rate);
+
   retro_core_set_system_av_info (self, system_av_info);
 
   return TRUE;
@@ -462,8 +581,11 @@ set_variables (RetroCore     *self,
 {
   int i;
 
-  for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++)
+  for (i = 0 ; variable_array[i].key && variable_array[i].value ; i++) {
+    retro_debug ("Set variable %s: %s", variable_array[i].key, variable_array[i].value);
+
     retro_core_insert_variable (self, &variable_array[i]);
+  }
 
   g_signal_emit_by_name (self, "variables-set", variable_array);
 
@@ -473,6 +595,8 @@ set_variables (RetroCore     *self,
 static gboolean
 shutdown (RetroCore *self)
 {
+  retro_debug ("Emit shutdown");
+
   g_signal_emit_by_name (self, "shutdown");
 
   return TRUE;

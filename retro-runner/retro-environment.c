@@ -9,6 +9,9 @@
 #include "retro-hw-render-callback-private.h"
 #include "retro-rumble-effect.h"
 
+#undef G_LOG_DOMAIN
+#define G_LOG_DOMAIN "RetroEnvironment"
+
 #define TRUENESS(boolean) ((boolean) ? "true" : "false")
 
 #define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000

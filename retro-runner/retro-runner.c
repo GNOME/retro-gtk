@@ -47,9 +47,9 @@ run_main_loop (GMainLoop        *loop,
 }
 
 static void
-print_backtrace_on_sigsegv_cb (int        sig,
-                               siginfo_t *si,
-                               void      *unused)
+print_backtrace_on_crash_cb (int        sig,
+                             siginfo_t *si,
+                             void      *unused)
 {
   g_on_error_stack_trace (RETRO_RUNNER_PRGNAME);
 
@@ -87,10 +87,13 @@ main (gint    argc,
 
     sa.sa_flags = SA_SIGINFO;
     sigemptyset (&sa.sa_mask);
-    sa.sa_sigaction = print_backtrace_on_sigsegv_cb;
+    sa.sa_sigaction = print_backtrace_on_crash_cb;
 
     if (G_UNLIKELY (sigaction (SIGSEGV, &sa, NULL) == -1))
       g_critical ("Couldn't set a SIGSEGV handler.");
+
+    if (G_UNLIKELY (sigaction (SIGABRT, &sa, NULL) == -1))
+      g_critical ("Couldn't set a SIGABRT handler.");
   }
 
   loop = g_main_loop_new (NULL, FALSE);

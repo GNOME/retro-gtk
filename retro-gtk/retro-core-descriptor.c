@@ -524,6 +524,8 @@ gchar *
 retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
                                 GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return g_key_file_get_string (self->key_file,
                                 RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
                                 RETRO_CORE_DESCRIPTOR_NAME_KEY,
@@ -649,6 +651,8 @@ gboolean
 retro_core_descriptor_has_platform (RetroCoreDescriptor *self,
                                     const gchar         *platform)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
+
   return has_group_prefixed (self,
                            RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
                            platform);
@@ -669,6 +673,8 @@ retro_core_descriptor_has_firmwares (RetroCoreDescriptor  *self,
                                      const gchar          *platform,
                                      GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
+
   return has_key_prefixed (self,
                            RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
                            platform,
@@ -691,6 +697,8 @@ retro_core_descriptor_has_firmware_md5 (RetroCoreDescriptor  *self,
                                         const gchar          *firmware,
                                         GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
+
   return has_key_prefixed (self,
                            RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
                            firmware,
@@ -713,6 +721,8 @@ retro_core_descriptor_has_firmware_sha512 (RetroCoreDescriptor  *self,
                                            const gchar          *firmware,
                                            GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
+
   return has_key_prefixed (self,
                            RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
                            firmware,
@@ -740,6 +750,8 @@ retro_core_descriptor_get_mime_type (RetroCoreDescriptor  *self,
                                      gsize                *length,
                                      GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return get_string_list_prefixed (self,
                                    RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
                                    platform,
@@ -768,6 +780,8 @@ retro_core_descriptor_get_firmwares (RetroCoreDescriptor  *self,
                                      gsize                *length,
                                      GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return get_string_list_prefixed (self,
                                    RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
                                    platform,
@@ -791,6 +805,8 @@ retro_core_descriptor_get_firmware_path (RetroCoreDescriptor  *self,
                                          const gchar          *firmware,
                                          GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return get_string_prefixed (self,
                               RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
                               firmware,
@@ -813,6 +829,8 @@ retro_core_descriptor_get_firmware_md5 (RetroCoreDescriptor  *self,
                                         const gchar          *firmware,
                                         GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return get_string_prefixed (self,
                               RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
                               firmware,
@@ -835,6 +853,8 @@ retro_core_descriptor_get_firmware_sha512 (RetroCoreDescriptor  *self,
                                            const gchar          *firmware,
                                            GError              **error)
 {
+  g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
+
   return get_string_prefixed (self,
                               RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
                               firmware,

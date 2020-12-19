@@ -397,7 +397,12 @@ get_variable_update (RetroCore *self,
 {
   *update = retro_core_get_variable_update (self);
 
-  retro_debug ("Get variable update: %s", TRUENESS (*update));
+  /* We purposefully don't log when no variable update is detected because it's
+   * not very useful to debug and it would print on every iteration, causing
+   * slowdowns.
+   */
+  if (*update)
+    retro_debug ("Get variable update: updated");
 
   return TRUE;
 }

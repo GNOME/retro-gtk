@@ -16,8 +16,8 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (RetroModuleIterator, retro_module_iterator, RETRO, MODULE_ITERATOR, GObject)
 
 RetroModuleIterator *retro_module_iterator_new (const gchar * const *lookup_paths,
-                                                gboolean             recursive);
-RetroCoreDescriptor *retro_module_iterator_get (RetroModuleIterator *self);
+                                                gboolean             recursive) G_GNUC_WARN_UNUSED_RESULT;
+RetroCoreDescriptor *retro_module_iterator_get (RetroModuleIterator *self) G_GNUC_WARN_UNUSED_RESULT;
 gboolean retro_module_iterator_next (RetroModuleIterator *self);
 
 G_END_DECLS

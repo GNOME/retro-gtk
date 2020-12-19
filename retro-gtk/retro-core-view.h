@@ -19,7 +19,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroCoreView, retro_core_view, RETRO, CORE_VIEW, GtkEventBox)
 
-RetroCoreView *retro_core_view_new (void);
+RetroCoreView *retro_core_view_new (void) G_GNUC_WARN_UNUSED_RESULT;
 
 void retro_core_view_set_core (RetroCoreView *self,
                                RetroCore     *core);
@@ -32,7 +32,7 @@ void retro_core_view_set_key_joypad_mapping (RetroCoreView         *self,
                                              RetroKeyJoypadMapping *mapping);
 RetroKeyJoypadMapping *retro_core_view_get_key_joypad_mapping (RetroCoreView *self);
 RetroController *retro_core_view_as_controller (RetroCoreView       *self,
-                                                RetroControllerType  controller_type);
+                                                RetroControllerType  controller_type) G_GNUC_WARN_UNUSED_RESULT;
 void retro_core_view_set_as_default_controller (RetroCoreView *self,
                                                 RetroCore     *core);
 gint16 retro_core_view_get_input_state (RetroCoreView *self,

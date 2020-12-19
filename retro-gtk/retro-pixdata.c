@@ -30,6 +30,13 @@ G_DEFINE_BOXED_TYPE (RetroPixdata, retro_pixdata, retro_pixdata_copy, retro_pixd
 
 /* Private */
 
+static RetroPixdata *retro_pixdata_new (gconstpointer    data,
+                                        RetroPixelFormat pixel_format,
+                                        gsize            rowstride,
+                                        gsize            width,
+                                        gsize            height,
+                                        gfloat           aspect_ratio) G_GNUC_WARN_UNUSED_RESULT;
+
 typedef struct {
   guint16 b: 5;
   guint16 g: 5;

@@ -13,6 +13,6 @@ G_BEGIN_DECLS
 typedef RetroController * (*RetroControllerIteratorGetController) (gpointer data);
 
 RetroControllerIterator *retro_controller_iterator_new (GHashTable                           *controllers,
-                                                        RetroControllerIteratorGetController  func);
+                                                        RetroControllerIteratorGetController  func) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS

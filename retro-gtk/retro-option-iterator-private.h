@@ -10,6 +10,6 @@
 
 G_BEGIN_DECLS
 
-RetroOptionIterator *retro_option_iterator_new (GHashTable *options);
+RetroOptionIterator *retro_option_iterator_new (GHashTable *options) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS

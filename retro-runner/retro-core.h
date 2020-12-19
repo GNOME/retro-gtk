@@ -16,7 +16,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroCore, retro_core, RETRO, CORE, GObject)
 
-RetroCore *retro_core_new (const gchar *filename);
+RetroCore *retro_core_new (const gchar *filename) G_GNUC_WARN_UNUSED_RESULT;
 guint retro_core_get_api_version (RetroCore *self);
 const gchar *retro_core_get_filename (RetroCore *self);
 const gchar *retro_core_get_system_directory (RetroCore *self);

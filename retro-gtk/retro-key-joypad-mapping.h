@@ -15,8 +15,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroKeyJoypadMapping, retro_key_joypad_mapping, RETRO, KEY_JOYPAD_MAPPING, GObject)
 
-RetroKeyJoypadMapping *retro_key_joypad_mapping_new ();
-RetroKeyJoypadMapping *retro_key_joypad_mapping_new_default ();
+RetroKeyJoypadMapping *retro_key_joypad_mapping_new () G_GNUC_WARN_UNUSED_RESULT;
+RetroKeyJoypadMapping *retro_key_joypad_mapping_new_default () G_GNUC_WARN_UNUSED_RESULT;
 void retro_key_joypad_mapping_set_button_key (RetroKeyJoypadMapping *self,
                                               RetroJoypadId          button,
                                               guint16                hardware_keycode);

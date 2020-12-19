@@ -17,7 +17,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroCore, retro_core, RETRO, CORE, GObject)
 
-RetroCore *retro_core_new (const gchar *filename);
+RetroCore *retro_core_new (const gchar *filename) G_GNUC_WARN_UNUSED_RESULT;
 guint retro_core_get_api_version (RetroCore *self);
 const gchar *retro_core_get_filename (RetroCore *self);
 const gchar *retro_core_get_system_directory (RetroCore *self);
@@ -69,7 +69,7 @@ void retro_core_set_controller (RetroCore       *self,
                                 RetroController *controller);
 void retro_core_set_keyboard (RetroCore *self,
                               GtkWidget *widget);
-RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self);
+RetroControllerIterator *retro_core_iterate_controllers (RetroCore *self) G_GNUC_WARN_UNUSED_RESULT;
 guint retro_core_get_runahead (RetroCore *self);
 void retro_core_set_runahead (RetroCore *self,
                               guint      runahead);
@@ -80,7 +80,7 @@ gboolean retro_core_has_option (RetroCore   *self,
                                 const gchar *key);
 RetroOption *retro_core_get_option (RetroCore   *self,
                                     const gchar *key);
-RetroOptionIterator *retro_core_iterate_options (RetroCore *self);
+RetroOptionIterator *retro_core_iterate_options (RetroCore *self) G_GNUC_WARN_UNUSED_RESULT;
 void retro_core_override_option_default (RetroCore   *self,
                                          const gchar *key,
                                          const gchar *value);

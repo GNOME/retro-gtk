@@ -16,7 +16,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (RetroCoreDescriptor, retro_core_descriptor, RETRO, CORE_DESCRIPTOR, GObject)
 
 RetroCoreDescriptor *retro_core_descriptor_new (const gchar  *filename,
-                                                GError      **error);
+                                                GError      **error) G_GNUC_WARN_UNUSED_RESULT;
 gboolean retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
                                          GError              **error);
 gchar *retro_core_descriptor_get_uri (RetroCoreDescriptor *self);
@@ -26,13 +26,13 @@ gboolean retro_core_descriptor_get_is_game (RetroCoreDescriptor  *self,
 gboolean retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
                                                 GError              **error);
 char *retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
-                                      GError              **error);
+                                      GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 GIcon *retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
-                                       GError              **error);
+                                       GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 char *retro_core_descriptor_get_module (RetroCoreDescriptor  *self,
-                                        GError              **error);
+                                        GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 GFile *retro_core_descriptor_get_module_file (RetroCoreDescriptor  *self,
-                                              GError              **error);
+                                              GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gboolean retro_core_descriptor_has_platform (RetroCoreDescriptor *self,
                                              const gchar         *platform);
 gboolean retro_core_descriptor_has_firmwares (RetroCoreDescriptor  *self,
@@ -47,20 +47,20 @@ gboolean retro_core_descriptor_has_firmware_sha512 (RetroCoreDescriptor  *self,
 gchar **retro_core_descriptor_get_mime_type (RetroCoreDescriptor  *self,
                                              const gchar          *platform,
                                              gsize                *length,
-                                             GError              **error);
+                                             GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gchar **retro_core_descriptor_get_firmwares (RetroCoreDescriptor  *self,
                                              const gchar          *platform,
                                              gsize                *length,
-                                             GError              **error);
+                                             GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gchar *retro_core_descriptor_get_firmware_path (RetroCoreDescriptor  *self,
                                                 const gchar          *firmware,
-                                                GError              **error);
+                                                GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gchar * retro_core_descriptor_get_firmware_md5 (RetroCoreDescriptor  *self,
                                                 const gchar          *firmware,
-                                                GError              **error);
+                                                GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gchar * retro_core_descriptor_get_firmware_sha512 (RetroCoreDescriptor  *self,
                                                    const gchar          *firmware,
-                                                   GError              **error);
+                                                   GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 gboolean retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
                                                           const gchar          *firmware,
                                                           GError              **error);

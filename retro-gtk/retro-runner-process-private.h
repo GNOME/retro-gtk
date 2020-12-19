@@ -12,7 +12,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroRunnerProcess, retro_runner_process, RETRO, RUNNER_PROCESS, GObject)
 
-RetroRunnerProcess *retro_runner_process_new (const gchar *filename);
+RetroRunnerProcess *retro_runner_process_new (const gchar *filename) G_GNUC_WARN_UNUSED_RESULT;
 
 void retro_runner_process_start (RetroRunnerProcess  *self,
                                  GError             **error);

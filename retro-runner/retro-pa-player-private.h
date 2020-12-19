@@ -17,7 +17,7 @@ typedef struct _RetroCore RetroCore;
 
 G_DECLARE_FINAL_TYPE (RetroPaPlayer, retro_pa_player, RETRO, PA_PLAYER, GObject)
 
-RetroPaPlayer *retro_pa_player_new (void);
+RetroPaPlayer *retro_pa_player_new (void) G_GNUC_WARN_UNUSED_RESULT;
 void retro_pa_player_set_core (RetroPaPlayer *self,
                                RetroCore     *core);
 

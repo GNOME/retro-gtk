@@ -15,7 +15,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroModuleQuery, retro_module_query, RETRO, MODULE_QUERY, GObject)
 
-RetroModuleQuery *retro_module_query_new (gboolean recursive);
-RetroModuleIterator *retro_module_query_iterator (RetroModuleQuery *self);
+RetroModuleQuery *retro_module_query_new (gboolean recursive) G_GNUC_WARN_UNUSED_RESULT;
+RetroModuleIterator *retro_module_query_iterator (RetroModuleQuery *self) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS

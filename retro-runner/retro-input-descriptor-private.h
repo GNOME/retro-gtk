@@ -24,8 +24,8 @@ struct _RetroInputDescriptor
   gchar *description;
 };
 
-RetroInputDescriptor     *retro_input_descriptor_new   (void);
-RetroInputDescriptor     *retro_input_descriptor_copy  (RetroInputDescriptor *self);
+RetroInputDescriptor     *retro_input_descriptor_new   (void) G_GNUC_WARN_UNUSED_RESULT;
+RetroInputDescriptor     *retro_input_descriptor_copy  (RetroInputDescriptor *self) G_GNUC_WARN_UNUSED_RESULT;
 void                      retro_input_descriptor_free  (RetroInputDescriptor *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroInputDescriptor, retro_input_descriptor_free)

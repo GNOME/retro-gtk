@@ -18,8 +18,8 @@ GType retro_input_get_type (void) G_GNUC_CONST;
 
 typedef union _RetroInput RetroInput;
 
-RetroInput *retro_input_new (void);
-RetroInput *retro_input_copy (RetroInput *self);
+RetroInput *retro_input_new (void) G_GNUC_WARN_UNUSED_RESULT;
+RetroInput *retro_input_copy (RetroInput *self) G_GNUC_WARN_UNUSED_RESULT;
 void retro_input_free (RetroInput *self);
 RetroControllerType retro_input_get_controller_type (RetroInput *self);
 gboolean retro_input_get_joypad (RetroInput    *self,

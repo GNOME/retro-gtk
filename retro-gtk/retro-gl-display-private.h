@@ -16,7 +16,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (RetroGLDisplay, retro_gl_display, RETRO, GL_DISPLAY, GtkGLArea)
 
-RetroGLDisplay *retro_gl_display_new (void);
+RetroGLDisplay *retro_gl_display_new (void) G_GNUC_WARN_UNUSED_RESULT;
 GdkPixbuf *retro_gl_display_get_pixbuf (RetroGLDisplay *self);
 void retro_gl_display_set_pixbuf (RetroGLDisplay *self,
                                   GdkPixbuf      *pixbuf);

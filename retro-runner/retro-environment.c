@@ -587,7 +587,7 @@ video_refresh_cb (guint8 *data,
   if (self->renderer) {
     gint pixel_size;
 
-    if (data && data != RETRO_HW_FRAME_BUFFER_VALID) {
+    if (G_UNLIKELY (data && data != RETRO_HW_FRAME_BUFFER_VALID)) {
       g_critical ("Video data must be NULL or RETRO_HW_FRAME_BUFFER_VALID if "
                   "rendering to hardware.");
 

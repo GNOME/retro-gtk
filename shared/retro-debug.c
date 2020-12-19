@@ -6,7 +6,7 @@ gboolean
 retro_is_debug (void)
 {
   static gsize init = 0;
-  gboolean debug = FALSE;
+  static gboolean debug = FALSE;
 
   if (g_once_init_enter (&init)) {
     g_auto(GStrv) envp = g_get_environ ();

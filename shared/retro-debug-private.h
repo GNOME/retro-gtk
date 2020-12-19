@@ -12,4 +12,10 @@ G_BEGIN_DECLS
 
 gboolean retro_is_debug (void);
 
+#define retro_debug(...) \
+  G_STMT_START { \
+    if (G_UNLIKELY (retro_is_debug ())) \
+      g_debug (__VA_ARGS__); \
+  } G_STMT_END
+
 G_END_DECLS

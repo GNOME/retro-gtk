@@ -22,7 +22,7 @@ retro_demo_open (GApplication  *application,
                  const gchar   *hint)
 {
   RetroDemoApplication *self;
-  char *module_path;
+  g_autofree char *module_path = NULL;
   GError *error = NULL;
 
   self = RETRO_DEMO_APPLICATION (application);
@@ -35,19 +35,17 @@ retro_demo_open (GApplication  *application,
 
   module_path = g_file_get_path (files[0]);
   self->core = retro_core_new (module_path);
-  g_free (module_path);
 
   if (self->core == NULL)
     return;
 
   if (n_files > 1) {
-    gchar **medias;
+    g_auto (GStrv) medias = NULL;
 
     medias = g_new0 (gchar *, n_files);
     for (gsize i = 1; i < n_files; i++)
       medias[i - 1] = g_file_get_uri (files[i]);
     retro_core_set_medias (self->core, (const gchar *const *) medias);
-    g_strfreev (medias);
   }
 
   retro_core_boot (self->core, &error);
@@ -72,8 +70,7 @@ retro_demo_application_finalize (GObject *object)
 {
   RetroDemoApplication *self = RETRO_DEMO_APPLICATION (object);
 
-  if (self->core != NULL)
-    g_object_unref (self->core);
+  g_clear_object (&self->core);
 
   G_OBJECT_CLASS (retro_demo_application_parent_class)->finalize (object);
 }
@@ -133,7 +130,7 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  RetroDemoApplication *app;
+  g_autoptr (RetroDemoApplication) app = NULL;
   int status;
 
   g_set_prgname ("retro-demo");
@@ -141,7 +138,6 @@ main (gint   argc,
 
   app = retro_demo_application_new();
   status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
 
   return status;
 }

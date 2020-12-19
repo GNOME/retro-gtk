@@ -317,10 +317,8 @@ retro_gl_display_finalize (GObject *object)
   self->texture = 0;
   for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
-  if (self->core != NULL)
-    g_object_unref (self->core);
-  if (self->pixbuf != NULL)
-    g_object_unref (self->pixbuf);
+  g_clear_object (&self->core);
+  g_clear_object (&self->pixbuf);
 
   G_OBJECT_CLASS (retro_gl_display_parent_class)->finalize (object);
 }

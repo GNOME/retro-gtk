@@ -129,7 +129,7 @@ grab (RetroCoreView *self,
 {
   GdkSeat *seat;
   GdkDisplay *display;
-  GdkCursor *cursor;
+  g_autoptr (GdkCursor) cursor = NULL;
   GdkScreen *screen = NULL;
   GdkMonitor *monitor;
   GdkRectangle monitor_geometry;
@@ -138,13 +138,6 @@ grab (RetroCoreView *self,
   g_assert (window != NULL);
   g_assert (event != NULL);
 
-  if (self->grabbed_device != NULL)
-    g_object_unref (self->grabbed_device);
-
-  if (self->grabbed_screen != NULL)
-    g_object_unref (self->grabbed_screen);
-
-  self->grabbed_device = g_object_ref (device);
   seat = gdk_device_get_seat (device);
   display = gdk_device_get_display (device);
   cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
@@ -153,17 +146,17 @@ grab (RetroCoreView *self,
   gdk_monitor_get_geometry (monitor, &monitor_geometry);
 
   gdk_device_get_position (device, &screen, &self->position_on_grab_x, &self->position_on_grab_y);
-  self->grabbed_screen = g_object_ref (screen);
   self->screen_center_x = monitor_geometry.x + monitor_geometry.width / 2;
   self->screen_center_y = monitor_geometry.y + monitor_geometry.height / 2;
   self->mouse_x_delta = 0;
   self->mouse_y_delta = 0;
 
+  g_set_object (&self->grabbed_device, device);
+  g_set_object (&self->grabbed_screen, screen);
+
   recenter_pointer (self);
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
-
-  g_object_unref (cursor);
 }
 
 static void

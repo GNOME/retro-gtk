@@ -185,9 +185,9 @@ retro_option_new (const gchar  *key,
                   const gchar  *definition,
                   GError      **error)
 {
-  RetroOption *self;
+  g_autoptr (RetroOption) self;
   gchar *description_separator;
-  gchar **values;
+  g_auto(GStrv) values = NULL;
 
   g_return_val_if_fail (key != NULL, NULL);
   g_return_val_if_fail (definition != NULL, NULL);
@@ -204,8 +204,6 @@ retro_option_new (const gchar  *key,
 
   values = g_strsplit (description_separator + 2, "|", 0);
   if (G_UNLIKELY (*values == NULL)) {
-    g_strfreev (values);
-
     g_set_error_literal (error,
                          RETRO_OPTION_ERROR,
                          RETRO_OPTION_ERROR_NO_VALUES,
@@ -219,7 +217,7 @@ retro_option_new (const gchar  *key,
   self->key = g_strdup (key);
   self->description = g_strndup (definition,
                                  description_separator - definition);
-  self->values = values;
+  self->values = g_steal_pointer (&values);
 
-  return self;
+  return g_steal_pointer (&self);
 }

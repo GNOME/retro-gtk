@@ -116,13 +116,11 @@ retro_core_finalize (GObject *object)
   deinit = retro_module_get_deinit (self->module);
   deinit ();
 
-  if (self->media_uris != NULL)
-    g_strfreev (self->media_uris);
+  g_clear_pointer (&self->media_uris, g_strfreev);
 
   g_object_unref (self->module);
   g_object_unref (self->framebuffer);
-  if (self->default_controller)
-    g_object_unref (self->default_controller);
+  g_clear_object (&self->default_controller);
   g_hash_table_unref (self->controllers);
   g_hash_table_unref (self->variables);
   g_hash_table_unref (self->variable_overrides);
@@ -1321,9 +1319,7 @@ retro_core_set_medias (RetroCore           *self,
   g_return_if_fail (RETRO_IS_CORE (self));
   g_return_if_fail (!retro_core_get_is_initiated (self));
 
-  if (self->media_uris != NULL)
-    g_strfreev (self->media_uris);
-
+  g_clear_pointer (&self->media_uris, g_strfreev);
   self->media_uris = g_strdupv ((gchar **) uris);
 }
 

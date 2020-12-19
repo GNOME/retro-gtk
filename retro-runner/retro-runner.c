@@ -51,6 +51,18 @@ print_backtrace_on_crash_cb (int        sig,
                              siginfo_t *si,
                              void      *unused)
 {
+  switch (sig) {
+  case SIGABRT:
+    g_critical ("Received signal SIGABRT, abnormal termination:");
+    break;
+  case SIGSEGV:
+    g_critical ("Received signal SIGSEGV, segmentation fault:");
+    break;
+  default:
+    g_critical ("Received unexpected signal %d:", sig);
+    break;
+  }
+
   g_on_error_stack_trace (RETRO_RUNNER_PRGNAME);
 
   exit (EXIT_FAILURE);

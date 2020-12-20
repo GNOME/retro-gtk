@@ -835,15 +835,6 @@ struct retro_memory_map
 };
 ```
 
-## Mouse
-
-The following mouse buttons are unimplemented:
-
-```
-#define RETRO_DEVICE_ID_MOUSE_BUTTON_4         9
-#define RETRO_DEVICE_ID_MOUSE_BUTTON_5         10
-```
-
 ## Overscan
 
 Overscan is implemented by `RetroCore.overscan` but is never set and can't be

@@ -78,6 +78,8 @@ GType retro_mouse_id_get_type (void) G_GNUC_CONST;
  * @RETRO_MOUSE_ID_MIDDLE: the middle button of a mouse
  * @RETRO_MOUSE_ID_HORIZ_WHEELUP: the horizontal up direction of a mouse wheel
  * @RETRO_MOUSE_ID_HORIZ_WHEELDOWN: the horizontal down direction of a mouse wheel
+ * @RETRO_MOUSE_ID_BUTTON_4: the fourth button of a mouse
+ * @RETRO_MOUSE_ID_BUTTON_5: the fifth button of a mouse
  *
  * Represents the inputs for the Libretro mouse.
  */
@@ -92,6 +94,8 @@ typedef enum
   RETRO_MOUSE_ID_MIDDLE,
   RETRO_MOUSE_ID_HORIZ_WHEELUP,
   RETRO_MOUSE_ID_HORIZ_WHEELDOWN,
+  RETRO_MOUSE_ID_BUTTON_4,
+  RETRO_MOUSE_ID_BUTTON_5,
 } RetroMouseId;
 
 #define RETRO_TYPE_LIGHTGUN_ID (retro_lightgun_id_get_type ())

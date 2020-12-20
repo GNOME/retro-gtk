@@ -1238,7 +1238,7 @@ retro_core_get_support_no_game (RetroCore *self)
 /**
  * retro_core_set_support_no_game:
  * @self: a #RetroCore
- * @support_no_game: the save directory
+ * @support_no_game: whether the core supports running with no game
  *
  * Sets whether the core supports running with no game.
  */

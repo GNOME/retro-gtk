@@ -553,8 +553,8 @@ set_rotation (RetroCore           *self,
 }
 
 static gboolean
-set_support_no_game (RetroCore *self,
-                     bool      *support_no_game)
+set_support_no_game (RetroCore  *self,
+                     const bool *support_no_game)
 {
   retro_debug ("Set support no game: %s", TRUENESS (*support_no_game));
 
@@ -685,7 +685,7 @@ environment_core_command (RetroCore *self,
     return set_rotation (self, (RetroRotation *) data);
 
   case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
-    return set_support_no_game (self, (bool *) data);
+    return set_support_no_game (self, (const bool *) data);
 
   case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
     return set_system_av_info (self, (RetroSystemAvInfo *) data);

@@ -1248,6 +1248,8 @@ retro_core_set_support_no_game (RetroCore *self,
 {
   g_return_if_fail (RETRO_IS_CORE (self));
 
+  support_no_game = !!support_no_game;
+
   if (retro_core_get_support_no_game (self) == support_no_game)
     return;
 

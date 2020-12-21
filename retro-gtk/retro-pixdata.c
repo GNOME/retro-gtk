@@ -151,13 +151,6 @@ rgba8888_from_video (gconstpointer  src,
   }
 }
 
-static void
-pixels_free (guchar   *pixels,
-             gpointer  data)
-{
-  g_free (pixels);
-}
-
 /**
  * retro_pixdata_new:
  * @data: the video data
@@ -360,7 +353,7 @@ retro_pixdata_to_pixbuf (RetroPixdata *self)
                                      GDK_COLORSPACE_RGB, TRUE, 8,
                                      self->width, self->height,
                                      self->width * sizeof (rgba8888),
-                                     pixels_free, NULL);
+                                     (GdkPixbufDestroyNotify) g_free, NULL);
 
   /* x-dpi and y-dpi are deprecated, retro_pixbuf_get_aspect_ratio() and
    * retro_pixbuf_set_aspect_ratio() should be used instead. */

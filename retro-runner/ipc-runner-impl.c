@@ -457,12 +457,11 @@ variables_set_cb (RetroCore     *core,
                   RetroVariable *variables,
                   IpcRunnerImpl *self)
 {
-  gint i;
   GVariantBuilder* builder;
 
   builder = g_variant_builder_new (G_VARIANT_TYPE ("a(ss)"));
 
-  for (i = 0; variables[i].key && variables[i].value; i++)
+  for (gsize i = 0; variables[i].key && variables[i].value; i++)
     g_variant_builder_add (builder, "(ss)", variables[i].key, variables[i].value);
 
   if (retro_core_get_is_initiated (self->core))

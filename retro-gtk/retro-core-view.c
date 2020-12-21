@@ -658,7 +658,6 @@ void
 retro_core_view_set_as_default_controller (RetroCoreView *self,
                                            RetroCore     *core)
 {
-  RetroControllerType type;
   RetroController *controller;
   guint64 capabilities;
 
@@ -667,7 +666,7 @@ retro_core_view_set_as_default_controller (RetroCoreView *self,
 
   capabilities = retro_core_view_get_controller_capabilities (self);
 
-  for (type = RETRO_CONTROLLER_TYPE_NONE;
+  for (RetroControllerType type = RETRO_CONTROLLER_TYPE_NONE;
        type < RETRO_CONTROLLER_TYPE_COUNT;
        type++) {
     if ((capabilities & (1 << type)) == 0)

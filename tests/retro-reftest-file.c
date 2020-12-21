@@ -362,7 +362,6 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   gchar **key_file_medias;
   gsize key_file_medias_length = 0;
   gchar **media_uris;
-  gint i;
   GFile *media_file;
   GError *tmp_error = NULL;
 
@@ -400,7 +399,7 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   }
 
   media_uris = g_new0 (gchar *, key_file_medias_length + 1);
-  for (i = 0; i < key_file_medias_length; i++) {
+  for (gsize i = 0; i < key_file_medias_length; i++) {
     media_file = get_sibling (self, key_file_medias[i]);
     media_uris[i] = g_file_get_uri (media_file);
     g_object_unref (media_file);
@@ -424,7 +423,7 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
                                 GError           **error)
 {
   gchar **keys, **values;
-  gsize i, keys_length = 0;
+  gsize keys_length = 0;
   GHashTable *options;
   GError *tmp_error = NULL;
 
@@ -439,7 +438,7 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
   }
 
   options = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_strfreev);
-  for (i = 0; i < keys_length; i++) {
+  for (gsize i = 0; i < keys_length; i++) {
     values = g_key_file_get_string_list (self->key_file,
                                          RETRO_REFTEST_FILE_OPTIONS_GROUP,
                                          keys[i],
@@ -468,7 +467,6 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
 {
   gboolean has_controllers;
   gchar **controller_names;
-  gsize i;
   GArray *controllers;
   RetroControllerType type;
   GError *tmp_error = NULL;
@@ -499,7 +497,7 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
 
   controllers = g_array_sized_new (TRUE, TRUE, sizeof (RetroTestController *), *length);
   g_array_set_clear_func (controllers, (GDestroyNotify) g_object_pointer_unref);
-  for (i = 0; controller_names[i] != NULL; i++) {
+  for (gsize i = 0; controller_names[i] != NULL; i++) {
     if (g_str_equal (controller_names[i], "Joypad"))
       type = RETRO_CONTROLLER_TYPE_JOYPAD;
     else
@@ -515,7 +513,7 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
 GList *
 retro_reftest_file_get_frames (RetroReftestFile *self)
 {
-  gsize i, groups_length = 0;
+  gsize groups_length = 0;
   gchar **groups;
   gchar *frame_number_string;
   guint frame_number;
@@ -531,7 +529,7 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
 
   groups = g_key_file_get_groups (self->key_file, &groups_length);
 
-  for (i = 0; i < groups_length; i++) {
+  for (gsize i = 0; i < groups_length; i++) {
     if (!g_str_has_prefix (groups[i], RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX))
       continue;
 
@@ -630,8 +628,8 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 {
   GHashTable *controllers;
   gchar *group;
-  gchar **keys, **key_i;
-  gchar **inputs, **input_i;
+  gchar **keys;
+  gchar **inputs;
   guint *controller_number;
   gchar *controller_number_string;
   RetroControllerState *state;
@@ -648,7 +646,7 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 
   controllers = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, (GDestroyNotify) g_array_unref);
 
-  for (key_i = keys; *key_i != NULL; key_i++) {
+  for (GStrv key_i = keys; *key_i != NULL; key_i++) {
     if (!g_str_has_prefix (*key_i, RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX))
       continue;
 
@@ -666,7 +664,7 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
     inputs = g_key_file_get_string_list (self->key_file, group, *key_i, NULL, &tmp_error);
     states = g_array_new (TRUE, TRUE, sizeof (RetroControllerState *));
     g_array_set_clear_func (states, (GDestroyNotify) g_pointer_free);
-    for (input_i = inputs; *input_i != NULL; input_i++) {
+    for (GStrv input_i = inputs; *input_i != NULL; input_i++) {
       state = state_from_string (*input_i);
       if (state == NULL) {
         g_critical ("Invalid controller input: %s. Skipping.", *input_i);

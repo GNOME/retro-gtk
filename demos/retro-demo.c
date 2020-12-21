@@ -42,10 +42,9 @@ retro_demo_open (GApplication  *application,
 
   if (n_files > 1) {
     gchar **medias;
-    gint i;
 
     medias = g_new0 (gchar *, n_files);
-    for (i = 1; i < n_files; i++)
+    for (gsize i = 1; i < n_files; i++)
       medias[i - 1] = g_file_get_uri (files[i]);
     retro_core_set_medias (self->core, (const gchar *const *) medias);
     g_strfreev (medias);

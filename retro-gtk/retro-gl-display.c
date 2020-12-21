@@ -208,7 +208,7 @@ realize (RetroGLDisplay *self)
   GLuint vertex_buffer_object;
   GLuint vertex_array_object;
   GLuint element_buffer_object;
-  RetroVideoFilter filter;
+  RetroVideoFilter current_filter;
   GError *inner_error = NULL;
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
@@ -224,7 +224,7 @@ realize (RetroGLDisplay *self)
   glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
   glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (elements), elements, GL_STATIC_DRAW);
 
-  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
+  for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
     RetroGLSLShader *shader;
 
     self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], &inner_error);
@@ -262,12 +262,12 @@ realize (RetroGLDisplay *self)
   glGenTextures (1, &self->texture);
   glBindTexture (GL_TEXTURE_2D, self->texture);
 
-  filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
+  current_filter = self->filter >= RETRO_VIDEO_FILTER_COUNT ?
     RETRO_VIDEO_FILTER_SMOOTH :
     self->filter;
 
-  if (self->glsl_filter[filter] != NULL) {
-    RetroGLSLShader *shader = retro_glsl_filter_get_shader (self->glsl_filter[filter]);
+  if (self->glsl_filter[current_filter] != NULL) {
+    RetroGLSLShader *shader = retro_glsl_filter_get_shader (self->glsl_filter[current_filter]);
     retro_glsl_shader_use_program (shader);
   }
 
@@ -277,13 +277,11 @@ realize (RetroGLDisplay *self)
 static void
 unrealize (RetroGLDisplay *self)
 {
-  RetroVideoFilter filter;
-
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
   glDeleteTextures (1, &self->texture);
   self->texture = 0;
-  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
+  for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
 }
 
@@ -314,11 +312,10 @@ static void
 retro_gl_display_finalize (GObject *object)
 {
   RetroGLDisplay *self = (RetroGLDisplay *) object;
-  RetroVideoFilter filter;
 
   glDeleteTextures (1, &self->texture);
   self->texture = 0;
-  for (filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
+  for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++)
     g_clear_object (&self->glsl_filter[filter]);
   if (self->core != NULL)
     g_object_unref (self->core);

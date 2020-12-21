@@ -820,7 +820,6 @@ load_discs (RetroCore  *self,
 {
   guint length;
   gboolean fullpath;
-  guint index;
   GError *tmp_error = NULL;
 
   set_disk_ejected (self, TRUE, &tmp_error);
@@ -848,7 +847,7 @@ load_discs (RetroCore  *self,
   }
 
   fullpath = get_needs_full_path (self);
-  for (index = 0; index < length; index++) {
+  for (gsize index = 0; index < length; index++) {
     g_autoptr (GFile) file = g_file_new_for_uri (self->media_uris[index]);
     g_autofree gchar *path = g_file_get_path (file);
     g_autoptr (RetroGameInfo) game_info = fullpath ?

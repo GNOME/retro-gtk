@@ -167,7 +167,6 @@ static void
 retro_core_finalize (GObject *object)
 {
   RetroCore *self = RETRO_CORE (object);
-  gint i;
 
   retro_core_set_keyboard (self, NULL);
   g_object_unref (self->framebuffer);
@@ -175,7 +174,7 @@ retro_core_finalize (GObject *object)
   if (self->media_uris != NULL)
     g_strfreev (self->media_uris);
 
-  for (i = 0; i < RETRO_CONTROLLER_TYPE_COUNT; i++)
+  for (gsize i = 0; i < RETRO_CONTROLLER_TYPE_COUNT; i++)
     if (self->default_controllers[i])
       free_default_controller_info (self->default_controllers[i]);
   g_object_unref (self->default_controller_state);
@@ -1123,7 +1122,7 @@ retro_core_boot (RetroCore  *self,
   GHashTableIter iter;
   RetroCoreControllerInfo *info;
   g_autoptr (GPtrArray) medias_array = NULL;
-  gint length, i;
+  gint length;
   GError *tmp_error = NULL;
   IpcRunner *proxy;
   GVariant *variables;
@@ -1166,7 +1165,7 @@ retro_core_boot (RetroCore  *self,
   medias_array = g_ptr_array_new ();
   if (self->media_uris) {
     length = g_strv_length (self->media_uris);
-    for (i = 0; i < length; i++)
+    for (gsize i = 0; i < length; i++)
       g_ptr_array_add (medias_array, self->media_uris[i]);
   }
   g_ptr_array_add (medias_array, NULL);
@@ -1545,7 +1544,7 @@ sync_controller_for_type (RetroControllerState *state,
 {
   RetroInput input;
   g_autofree gint16 *data = NULL;
-  gint id, index, max_id, max_index, next;
+  gint max_id, max_index, next;
 
   if (!retro_controller_has_capability (controller, type))
     return;
@@ -1556,8 +1555,8 @@ sync_controller_for_type (RetroControllerState *state,
   data = g_new (gint16, max_index * max_id);
   next = 0;
 
-  for (index = 0; index < max_index; index++) {
-    for (id = 0; id < max_id; id++) {
+  for (gint index = 0; index < max_index; index++) {
+    for (gint id = 0; id < max_id; id++) {
       retro_input_init (&input, type, id, index);
       data[next++] = retro_controller_get_input_state (controller, &input);
     }
@@ -1579,14 +1578,13 @@ static void
 controller_state_changed_cb (RetroController         *controller,
                              RetroCoreControllerInfo *info)
 {
-  gint type;
   gboolean rumble = retro_controller_get_supports_rumble (info->controller);
 
   retro_controller_state_lock (info->state);
 
   retro_controller_state_set_supports_rumble (info->state, rumble);
 
-  for (type = 1; type < RETRO_CONTROLLER_TYPE_COUNT; type++)
+  for (gsize type = 1; type < RETRO_CONTROLLER_TYPE_COUNT; type++)
     if (retro_controller_has_capability (info->controller, type))
       sync_controller_for_type (info->state, info->controller, type);
     else

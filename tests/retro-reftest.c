@@ -206,7 +206,7 @@ pixdata_equal (GdkPixbuf  *test,
   if (memcmp (gdk_pixbuf_get_pixels (test),
               gdk_pixbuf_get_pixels (ref),
               gdk_pixbuf_get_byte_length (test)) != 0) {
-    gint x, y, width, height, n_channels, rowstride;
+    gint width, height, n_channels, rowstride;
     const guchar *test_pixels, *ref_pixels;
 
     rowstride = gdk_pixbuf_get_rowstride (test);
@@ -220,23 +220,23 @@ pixdata_equal (GdkPixbuf  *test,
     g_assert_cmpint (height, >=, 0);
     g_assert_cmpint (n_channels, >=, 0);
 
-    for (y = 0; y < height; y++) {
-      for (x = 0; x < width; x++) {
+    for (gsize y = 0; y < height; y++) {
+      for (gsize x = 0; x < width; x++) {
         if (memcmp (&test_pixels[x * n_channels], &ref_pixels[x * n_channels], n_channels) != 0) {
           if (n_channels == 4) {
-            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data at %ux%u is #%02X%02X%02X%02X, but should be #%02X%02X%02X%02X",
+            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data at %"G_GSIZE_FORMAT"x%"G_GSIZE_FORMAT" is #%02X%02X%02X%02X, but should be #%02X%02X%02X%02X",
                          x, y,
                          test_pixels[x * n_channels + 0], test_pixels[x * n_channels + 1], test_pixels[x * n_channels + 2], test_pixels[x * n_channels + 3],
                          ref_pixels[x * n_channels + 0], ref_pixels[x * n_channels + 1], ref_pixels[x * n_channels + 2], ref_pixels[x * n_channels + 3]);
           }
           else if (n_channels == 3) {
-            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data at %ux%u is #%02X%02X%02X, but should be #%02X%02X%02X",
+            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data at %"G_GSIZE_FORMAT"x%"G_GSIZE_FORMAT" is #%02X%02X%02X, but should be #%02X%02X%02X",
                          x, y,
                          test_pixels[x * n_channels + 0], test_pixels[x * n_channels + 1], test_pixels[x * n_channels + 2],
                          ref_pixels[x * n_channels + 0], ref_pixels[x * n_channels + 1], ref_pixels[x * n_channels + 2]);
           }
           else
-            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data differ at %ux%u", x, y);
+            g_set_error (error, GDK_PIXBUF_ERROR, 0, "Image data differ at %"G_GSIZE_FORMAT"x%"G_GSIZE_FORMAT, x, y);
 
           return FALSE;
         }
@@ -359,7 +359,6 @@ retro_reftest_test_run (RetroReftestRun *run)
   GHashTableIter iter;
   guint *controller_i;
   GArray *states;
-  gsize state_i;
   RetroControllerState *state;
   RetroTestController *controller;
 
@@ -379,8 +378,7 @@ retro_reftest_test_run (RetroReftestRun *run)
         continue;
 
       retro_test_controller_reset (controller);
-      state_i = 0;
-      for (state_i = 0;
+      for (gsize state_i = 0;
            (state = g_array_index (states, RetroControllerState *, state_i)) != NULL;
            state_i++) {
 
@@ -623,7 +621,7 @@ static void
 retro_reftest_setup_for_file (GFile *file)
 {
   RetroReftestFile *reftest_file;
-  GList *frames, *frame;
+  GList *frames;
   guint current_frame_number, frame_number;
   gboolean has_test;
   RetroReftestData *data;
@@ -670,7 +668,7 @@ retro_reftest_setup_for_file (GFile *file)
 
   frames = retro_reftest_file_get_frames (reftest_file);
   current_frame_number = 0;
-  for (frame = frames; frame != NULL; frame = frame->next) {
+  for (GList *frame = frames; frame != NULL; frame = frame->next) {
     frame_number = *((guint *) frame->data);
 
     /* FastForward */
@@ -705,14 +703,13 @@ main (int argc,
       gchar **argv)
 {
   GFile *file;
-  gint i;
 
   g_setenv ("GDK_RENDERING", "image", FALSE);
 
   if (!parse_command_line (&argc, &argv))
     return 1;
 
-  for (i = 1; i < argc; i++) {
+  for (gsize i = 1; i < argc; i++) {
     file = g_file_new_for_commandline_arg (argv[i]);
     retro_reftest_setup_for_file (file);
     g_object_unref (file);

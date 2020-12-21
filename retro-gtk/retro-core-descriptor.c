@@ -280,7 +280,6 @@ check_platform_group (RetroCoreDescriptor  *self,
 {
   gboolean has_key;
   gchar **firmwares;
-  gchar **firmware_p;
   gchar *firmware_group;
   GError *tmp_error = NULL;
 
@@ -315,7 +314,7 @@ check_platform_group (RetroCoreDescriptor  *self,
     return;
   }
 
-  for (firmware_p = firmwares; *firmware_p != NULL; firmware_p++) {
+  for (GStrv firmware_p = firmwares; *firmware_p != NULL; firmware_p++) {
     firmware_group = g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
     if (!g_key_file_has_group (self->key_file, firmware_group)) {
       g_set_error (error,
@@ -966,7 +965,6 @@ retro_core_descriptor_new (const gchar  *filename,
   RetroCoreDescriptor *self;
   gchar ** groups;
   gsize groups_length;
-  gsize i;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (filename != NULL, NULL);
@@ -994,7 +992,7 @@ retro_core_descriptor_new (const gchar  *filename,
   }
 
   groups = g_key_file_get_groups (self->key_file, &groups_length);
-  for (i = 0; i < groups_length; i++) {
+  for (gsize i = 0; i < groups_length; i++) {
     if (g_str_has_prefix (groups[i],
                           RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX)) {
       check_platform_group (self, groups[i], &tmp_error);

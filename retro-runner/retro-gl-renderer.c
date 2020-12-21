@@ -173,12 +173,9 @@ retro_gl_renderer_snapshot (RetroRenderer    *renderer,
 
   check_gl_errors ("snapshot");
 
-  if (self->callback->bottom_left_origin) {
-    gsize i;
-
-    for (i = 0; i < size; i += rowstride)
+  if (self->callback->bottom_left_origin)
+    for (gsize i = 0; i < size; i += rowstride)
       memcpy (&data[i], &self->buf_flip[size - i - rowstride], rowstride);
-  }
 
   eglSwapBuffers (self->display, self->context);
 }

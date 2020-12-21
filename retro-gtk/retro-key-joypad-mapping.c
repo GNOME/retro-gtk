@@ -131,11 +131,10 @@ RetroKeyJoypadMapping *
 retro_key_joypad_mapping_new_default (void)
 {
   RetroKeyJoypadMapping *self;
-  RetroJoypadId button;
 
   self = g_object_new (RETRO_TYPE_KEY_JOYPAD_MAPPING, NULL);
 
-  for (button = 0; button < RETRO_JOYPAD_ID_COUNT; button ++)
+  for (RetroJoypadId button = 0; button < RETRO_JOYPAD_ID_COUNT; button ++)
     /* GDK adds 8 to the Linux input event codes to create the hardware keycode.
      * These codes are the only ones not coming from GDK so lets standardize on
      * what GDK does.

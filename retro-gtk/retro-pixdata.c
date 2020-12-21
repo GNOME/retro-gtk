@@ -137,14 +137,12 @@ rgba8888_from_video (gconstpointer  src,
                      gsize          pitch,
                      GetRGBA8888    get_pixel)
 {
-  gsize src_row, dst_row, src_col;
-
   for (gsize row = 0 ; row < height ; row++) {
-    src_row = row * pitch;
-    dst_row = row * width;
+    gsize src_row = row * pitch;
+    gsize dst_row = row * width;
 
     for (gsize col = 0 ; col < width ; col++) {
-      src_col = col * pixel_size;
+      gsize src_col = col * pixel_size;
 
       dst[dst_row + col] = get_pixel (src_row + src_col + src);
     }

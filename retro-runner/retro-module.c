@@ -11,14 +11,10 @@
 #include <stdio.h>
 #include "retro-module-private.h"
 
-static GHashTable *retro_module_loaded_modules;
-
 struct _RetroModule
 {
   GObject parent_instance;
   gchar *file_name;
-  gboolean is_a_copy;
-  GFile *tmp_file;
   GModule *module;
   RetroCallbackSetter set_environment;
   RetroCallbackSetter set_video_refresh;
@@ -68,18 +64,6 @@ get_absolute_path (const gchar *file_name)
 }
 
 static void
-try_delete_and_unref_file (GFile *file)
-{
-  g_autoptr (GError) inner_error = NULL;
-
-  g_file_delete (file, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL))
-    g_debug ("%s", inner_error->message);
-
-  g_object_unref (file);
-}
-
-static void
 load_module (RetroModule *self,
              const gchar *file_name)
 {
@@ -90,11 +74,6 @@ static void
 retro_module_finalize (GObject *object)
 {
   RetroModule *self = RETRO_MODULE (object);
-
-  g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
-
-  if (!self->is_a_copy)
-    g_hash_table_remove (retro_module_loaded_modules, self->file_name);
 
   g_free (self->file_name);
   g_module_close (self->module);
@@ -108,8 +87,6 @@ retro_module_class_init (RetroModuleClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = retro_module_finalize;
-
-  retro_module_loaded_modules = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
 }
 
 static void
@@ -131,46 +108,14 @@ RetroModule *
 retro_module_new (const gchar *file_name)
 {
   RetroModule *self = NULL;
-  GError *inner_error = NULL;
 
   g_return_val_if_fail (file_name != NULL, NULL);
 
   self = (RetroModule*) g_object_new (RETRO_TYPE_MODULE, NULL);
 
   self->file_name = get_absolute_path (file_name);
-  self->is_a_copy = FALSE;
 
-  if (g_hash_table_contains (retro_module_loaded_modules, self->file_name)) {
-    g_autoptr (GFile) file = g_file_new_for_path (self->file_name);
-    g_autoptr (GFileIOStream) ios = NULL;
-
-    self->tmp_file = g_file_new_tmp (NULL, &ios, &inner_error);
-    if (G_UNLIKELY (inner_error != NULL)) {
-      g_debug ("%s", inner_error->message);
-
-      g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
-
-      self->is_a_copy = FALSE;
-      load_module (self, self->file_name);
-      g_clear_error (&inner_error);
-    }
-    g_file_copy (file, self->tmp_file, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, &inner_error);
-    if (G_UNLIKELY (inner_error != NULL)) {
-      g_debug ("%s", inner_error->message);
-
-      g_clear_pointer (&self->tmp_file, try_delete_and_unref_file);
-
-      self->is_a_copy = FALSE;
-      load_module (self, self->file_name);
-      g_clear_error (&inner_error);
-    }
-    self->is_a_copy = TRUE;
-    load_module (self, self->file_name);
-  }
-  else {
-    g_hash_table_add (retro_module_loaded_modules, g_strdup (self->file_name));
-    load_module (self, self->file_name);
-  }
+  load_module (self, self->file_name);
 
   fetch_function (self, set_environment);
   fetch_function (self, set_video_refresh);

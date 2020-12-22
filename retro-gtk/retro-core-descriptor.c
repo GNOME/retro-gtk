@@ -28,26 +28,26 @@ enum {
 
 G_DEFINE_QUARK (retro-core-descriptor-error, retro_core_descriptor_error)
 
-#define RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP "Libretro"
-#define RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX "Platform:"
-#define RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX "Firmware:"
+#define LIBRETRO_GROUP "Libretro"
+#define PLATFORM_GROUP_PREFIX "Platform:"
+#define FIRMWARE_GROUP_PREFIX "Firmware:"
 
-#define RETRO_CORE_DESCRIPTOR_TYPE_KEY "Type"
-#define RETRO_CORE_DESCRIPTOR_NAME_KEY "Name"
-#define RETRO_CORE_DESCRIPTOR_ICON_KEY "Icon"
-#define RETRO_CORE_DESCRIPTOR_MODULE_KEY "Module"
-#define RETRO_CORE_DESCRIPTOR_LIBRETRO_VERSION_KEY "LibretroVersion"
+#define TYPE_KEY "Type"
+#define NAME_KEY "Name"
+#define ICON_KEY "Icon"
+#define MODULE_KEY "Module"
+#define LIBRETRO_VERSION_KEY "LibretroVersion"
 
-#define RETRO_CORE_DESCRIPTOR_PLATFORM_MIME_TYPE_KEY "MimeType"
-#define RETRO_CORE_DESCRIPTOR_PLATFORM_FIRMWARES_KEY "Firmwares"
+#define PLATFORM_MIME_TYPE_KEY "MimeType"
+#define PLATFORM_FIRMWARES_KEY "Firmwares"
 
-#define RETRO_CORE_DESCRIPTOR_FIRMWARE_PATH_KEY "Path"
-#define RETRO_CORE_DESCRIPTOR_FIRMWARE_MD5_KEY "MD5"
-#define RETRO_CORE_DESCRIPTOR_FIRMWARE_SHA512_KEY "SHA-512"
-#define RETRO_CORE_DESCRIPTOR_FIRMWARE_MANDATORY_KEY "Mandatory"
+#define FIRMWARE_PATH_KEY "Path"
+#define FIRMWARE_MD5_KEY "MD5"
+#define FIRMWARE_SHA512_KEY "SHA-512"
+#define FIRMWARE_MANDATORY_KEY "Mandatory"
 
-#define RETRO_CORE_DESCRIPTOR_TYPE_GAME "Game"
-#define RETRO_CORE_DESCRIPTOR_TYPE_EMULATOR "Emulator"
+#define TYPE_GAME "Game"
+#define TYPE_EMULATOR "Emulator"
 
 /* Private */
 
@@ -206,8 +206,8 @@ check_has_required_key (RetroCoreDescriptor  *self,
   g_assert (key != NULL);
 
   has_key = g_key_file_has_key (self->key_file,
-                                RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                RETRO_CORE_DESCRIPTOR_TYPE_KEY,
+                                LIBRETRO_GROUP,
+                                TYPE_KEY,
                                 &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -233,8 +233,8 @@ check_libretro_group (RetroCoreDescriptor  *self,
   GError *tmp_error = NULL;
 
   check_has_required_key (self,
-                          RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                          RETRO_CORE_DESCRIPTOR_TYPE_KEY,
+                          LIBRETRO_GROUP,
+                          TYPE_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -243,8 +243,8 @@ check_libretro_group (RetroCoreDescriptor  *self,
   }
 
   check_has_required_key (self,
-                          RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                          RETRO_CORE_DESCRIPTOR_NAME_KEY,
+                          LIBRETRO_GROUP,
+                          NAME_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -253,8 +253,8 @@ check_libretro_group (RetroCoreDescriptor  *self,
   }
 
   check_has_required_key (self,
-                          RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                          RETRO_CORE_DESCRIPTOR_MODULE_KEY,
+                          LIBRETRO_GROUP,
+                          MODULE_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -263,8 +263,8 @@ check_libretro_group (RetroCoreDescriptor  *self,
   }
 
   check_has_required_key (self,
-                          RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                          RETRO_CORE_DESCRIPTOR_LIBRETRO_VERSION_KEY,
+                          LIBRETRO_GROUP,
+                          LIBRETRO_VERSION_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -287,12 +287,12 @@ check_platform_group (RetroCoreDescriptor  *self,
 
   check_has_required_key (self,
                           group,
-                          RETRO_CORE_DESCRIPTOR_PLATFORM_MIME_TYPE_KEY,
+                          PLATFORM_MIME_TYPE_KEY,
                           &tmp_error);
 
   has_key = g_key_file_has_key (self->key_file,
                                 group,
-                                RETRO_CORE_DESCRIPTOR_PLATFORM_FIRMWARES_KEY,
+                                PLATFORM_FIRMWARES_KEY,
                                 &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -305,7 +305,7 @@ check_platform_group (RetroCoreDescriptor  *self,
 
   firmwares = g_key_file_get_string_list (self->key_file,
                                           group,
-                                          RETRO_CORE_DESCRIPTOR_PLATFORM_FIRMWARES_KEY,
+                                          PLATFORM_FIRMWARES_KEY,
                                           NULL,
                                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
@@ -315,7 +315,7 @@ check_platform_group (RetroCoreDescriptor  *self,
   }
 
   for (GStrv firmware_p = firmwares; *firmware_p != NULL; firmware_p++) {
-    firmware_group = g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
+    firmware_group = g_strconcat (FIRMWARE_GROUP_PREFIX, *firmware_p, NULL);
     if (!g_key_file_has_group (self->key_file, firmware_group)) {
       g_set_error (error,
                    RETRO_CORE_DESCRIPTOR_ERROR,
@@ -349,7 +349,7 @@ check_firmware_group (RetroCoreDescriptor  *self,
 
   check_has_required_key (self,
                           group,
-                          RETRO_CORE_DESCRIPTOR_FIRMWARE_PATH_KEY,
+                          FIRMWARE_PATH_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -359,7 +359,7 @@ check_firmware_group (RetroCoreDescriptor  *self,
 
   check_has_required_key (self,
                           group,
-                          RETRO_CORE_DESCRIPTOR_FIRMWARE_MANDATORY_KEY,
+                          FIRMWARE_MANDATORY_KEY,
                           &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -389,8 +389,8 @@ retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   has_icon = g_key_file_has_key (self->key_file,
-                                 RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                 RETRO_CORE_DESCRIPTOR_ICON_KEY,
+                                 LIBRETRO_GROUP,
+                                 ICON_KEY,
                                  &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -460,16 +460,16 @@ retro_core_descriptor_get_is_game (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   type = g_key_file_get_string (self->key_file,
-                                  RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                  RETRO_CORE_DESCRIPTOR_TYPE_KEY,
-                                  &tmp_error);
+                                LIBRETRO_GROUP,
+                                TYPE_KEY,
+                                &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
     return FALSE;
   }
 
-  is_game = g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_GAME) == 0;
+  is_game = g_strcmp0 (type, TYPE_GAME) == 0;
   g_free (type);
 
   return is_game;
@@ -495,16 +495,16 @@ retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   type = g_key_file_get_string (self->key_file,
-                                  RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                  RETRO_CORE_DESCRIPTOR_TYPE_KEY,
-                                  &tmp_error);
+                                LIBRETRO_GROUP,
+                                TYPE_KEY,
+                                &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 
     return FALSE;
   }
 
-  is_game = g_strcmp0 (type, RETRO_CORE_DESCRIPTOR_TYPE_EMULATOR) == 0;
+  is_game = g_strcmp0 (type, TYPE_EMULATOR) == 0;
   g_free (type);
 
   return is_game;
@@ -526,8 +526,8 @@ retro_core_descriptor_get_name (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return g_key_file_get_string (self->key_file,
-                                RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                RETRO_CORE_DESCRIPTOR_NAME_KEY,
+                                LIBRETRO_GROUP,
+                                NAME_KEY,
                                 error);
 }
 
@@ -551,8 +551,8 @@ retro_core_descriptor_get_icon (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   icon_name = g_key_file_get_string (self->key_file,
-                                     RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                     RETRO_CORE_DESCRIPTOR_ICON_KEY,
+                                     LIBRETRO_GROUP,
+                                     ICON_KEY,
                                      &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
@@ -582,8 +582,8 @@ retro_core_descriptor_get_module (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   return g_key_file_get_string (self->key_file,
-                                RETRO_CORE_DESCRIPTOR_LIBRETRO_GROUP,
-                                RETRO_CORE_DESCRIPTOR_MODULE_KEY,
+                                LIBRETRO_GROUP,
+                                MODULE_KEY,
                                 error);
 }
 
@@ -653,7 +653,7 @@ retro_core_descriptor_has_platform (RetroCoreDescriptor *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   return has_group_prefixed (self,
-                           RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
+                           PLATFORM_GROUP_PREFIX,
                            platform);
 }
 
@@ -675,9 +675,9 @@ retro_core_descriptor_has_firmwares (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   return has_key_prefixed (self,
-                           RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
+                           PLATFORM_GROUP_PREFIX,
                            platform,
-                           RETRO_CORE_DESCRIPTOR_PLATFORM_FIRMWARES_KEY,
+                           PLATFORM_FIRMWARES_KEY,
                            error);
 }
 
@@ -699,9 +699,9 @@ retro_core_descriptor_has_firmware_md5 (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   return has_key_prefixed (self,
-                           RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
+                           FIRMWARE_GROUP_PREFIX,
                            firmware,
-                           RETRO_CORE_DESCRIPTOR_FIRMWARE_MD5_KEY,
+                           FIRMWARE_MD5_KEY,
                            error);
 }
 
@@ -723,9 +723,9 @@ retro_core_descriptor_has_firmware_sha512 (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
 
   return has_key_prefixed (self,
-                           RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
+                           FIRMWARE_GROUP_PREFIX,
                            firmware,
-                           RETRO_CORE_DESCRIPTOR_FIRMWARE_SHA512_KEY,
+                           FIRMWARE_SHA512_KEY,
                            error);
 }
 
@@ -752,9 +752,9 @@ retro_core_descriptor_get_mime_type (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return get_string_list_prefixed (self,
-                                   RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
+                                   PLATFORM_GROUP_PREFIX,
                                    platform,
-                                   RETRO_CORE_DESCRIPTOR_PLATFORM_MIME_TYPE_KEY,
+                                   PLATFORM_MIME_TYPE_KEY,
                                    length,
                                    error);
 }
@@ -782,9 +782,9 @@ retro_core_descriptor_get_firmwares (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return get_string_list_prefixed (self,
-                                   RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX,
+                                   PLATFORM_GROUP_PREFIX,
                                    platform,
-                                   RETRO_CORE_DESCRIPTOR_PLATFORM_FIRMWARES_KEY,
+                                   PLATFORM_FIRMWARES_KEY,
                                    length,
                                    error);
 }
@@ -807,9 +807,9 @@ retro_core_descriptor_get_firmware_path (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return get_string_prefixed (self,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
+                              FIRMWARE_GROUP_PREFIX,
                               firmware,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_PATH_KEY,
+                              FIRMWARE_PATH_KEY,
                               error);
 }
 
@@ -831,9 +831,9 @@ retro_core_descriptor_get_firmware_md5 (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return get_string_prefixed (self,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
+                              FIRMWARE_GROUP_PREFIX,
                               firmware,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_MD5_KEY,
+                              FIRMWARE_MD5_KEY,
                               error);
 }
 
@@ -855,9 +855,9 @@ retro_core_descriptor_get_firmware_sha512 (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   return get_string_prefixed (self,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX,
+                              FIRMWARE_GROUP_PREFIX,
                               firmware,
-                              RETRO_CORE_DESCRIPTOR_FIRMWARE_SHA512_KEY,
+                              FIRMWARE_SHA512_KEY,
                               error);
 }
 
@@ -883,10 +883,10 @@ retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
   g_return_val_if_fail (firmware != NULL, FALSE);
 
-  group = g_strconcat (RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX, firmware, NULL);
+  group = g_strconcat (FIRMWARE_GROUP_PREFIX, firmware, NULL);
   result = g_key_file_get_boolean (self->key_file,
                                    group,
-                                   RETRO_CORE_DESCRIPTOR_FIRMWARE_MANDATORY_KEY,
+                                   FIRMWARE_MANDATORY_KEY,
                                    &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_free (group);
@@ -994,7 +994,7 @@ retro_core_descriptor_new (const gchar  *filename,
   groups = g_key_file_get_groups (self->key_file, &groups_length);
   for (gsize i = 0; i < groups_length; i++) {
     if (g_str_has_prefix (groups[i],
-                          RETRO_CORE_DESCRIPTOR_PLATFORM_GROUP_PREFIX)) {
+                          PLATFORM_GROUP_PREFIX)) {
       check_platform_group (self, groups[i], &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
         g_strfreev (groups);
@@ -1005,7 +1005,7 @@ retro_core_descriptor_new (const gchar  *filename,
       }
     }
     else if (g_str_has_prefix (groups[i],
-                               RETRO_CORE_DESCRIPTOR_FIRMWARE_GROUP_PREFIX)) {
+                               FIRMWARE_GROUP_PREFIX)) {
       check_firmware_group (self, groups[i], &tmp_error);
       if (G_UNLIKELY (tmp_error != NULL)) {
         g_strfreev (groups);

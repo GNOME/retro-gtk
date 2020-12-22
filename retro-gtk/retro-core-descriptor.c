@@ -81,16 +81,16 @@ has_group_prefixed (RetroCoreDescriptor *self,
                     const gchar         *group_suffix)
 {
   gchar *group;
-  gboolean result;
+  gboolean has_group;
 
   g_assert (group_prefix != NULL);
   g_assert (group_suffix != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
-  result = g_key_file_has_group (self->key_file, group);
+  has_group = g_key_file_has_group (self->key_file, group);
   g_free (group);
 
-  return result;
+  return has_group;
 }
 
 static gboolean
@@ -101,7 +101,7 @@ has_key_prefixed (RetroCoreDescriptor  *self,
                   GError              **error)
 {
   gchar *group;
-  gboolean result;
+  gboolean has_key;
   GError *tmp_error = NULL;
 
   g_assert (group_prefix != NULL);
@@ -109,10 +109,10 @@ has_key_prefixed (RetroCoreDescriptor  *self,
   g_assert (key != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
-  result = g_key_file_has_key (self->key_file,
-                               group,
-                               key,
-                               &tmp_error);
+  has_key = g_key_file_has_key (self->key_file,
+                                group,
+                                key,
+                                &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_free (group);
     g_propagate_error (error, tmp_error);
@@ -122,7 +122,7 @@ has_key_prefixed (RetroCoreDescriptor  *self,
 
   g_free (group);
 
-  return result;
+  return has_key;
 }
 
 static gchar *
@@ -133,7 +133,7 @@ get_string_prefixed (RetroCoreDescriptor  *self,
                      GError              **error)
 {
   gchar *group;
-  gchar *result;
+  gchar *string;
   GError *tmp_error = NULL;
 
   g_assert (group_prefix != NULL);
@@ -142,7 +142,7 @@ get_string_prefixed (RetroCoreDescriptor  *self,
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
 
-  result = g_key_file_get_string (self->key_file,
+  string = g_key_file_get_string (self->key_file,
                                   group,
                                   key,
                                   &tmp_error);
@@ -155,7 +155,7 @@ get_string_prefixed (RetroCoreDescriptor  *self,
 
   g_free (group);
 
-  return result;
+  return string;
 }
 
 static gchar **
@@ -167,7 +167,7 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
                           GError              **error)
 {
   gchar *group;
-  gchar **result;
+  gchar **list;
   GError *tmp_error = NULL;
 
   g_assert (group_prefix != NULL);
@@ -176,11 +176,11 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
   g_assert (length != NULL);
 
   group = g_strconcat (group_prefix, group_suffix, NULL);
-  result = g_key_file_get_string_list (self->key_file,
-                                       group,
-                                       key,
-                                       length,
-                                       &tmp_error);
+  list = g_key_file_get_string_list (self->key_file,
+                                     group,
+                                     key,
+                                     length,
+                                     &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
   g_free (group);
     g_propagate_error (error, tmp_error);
@@ -190,7 +190,7 @@ get_string_list_prefixed (RetroCoreDescriptor  *self,
 
   g_free (group);
 
-  return result;
+  return list;
 }
 
 static void
@@ -412,16 +412,16 @@ retro_core_descriptor_has_icon (RetroCoreDescriptor  *self,
 gchar *
 retro_core_descriptor_get_uri (RetroCoreDescriptor *self)
 {
-  gchar *result;
   GFile *file;
+  gchar *uri;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), NULL);
 
   file = g_file_new_for_path (self->filename);
-  result = g_file_get_uri (file);
+  uri = g_file_get_uri (file);
   g_object_unref (file);
 
-  return result;
+  return uri;
 }
 
 /**
@@ -489,7 +489,7 @@ retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
                                        GError              **error)
 {
   gchar *type;
-  gboolean is_game;
+  gboolean is_emulator;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
@@ -504,10 +504,10 @@ retro_core_descriptor_get_is_emulator (RetroCoreDescriptor  *self,
     return FALSE;
   }
 
-  is_game = g_strcmp0 (type, TYPE_EMULATOR) == 0;
+  is_emulator = g_strcmp0 (type, TYPE_EMULATOR) == 0;
   g_free (type);
 
-  return is_game;
+  return is_emulator;
 }
 
 /**
@@ -877,17 +877,17 @@ retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
                                                  GError              **error)
 {
   gchar *group;
-  gboolean result;
+  gboolean is_mandatory;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_CORE_DESCRIPTOR (self), FALSE);
   g_return_val_if_fail (firmware != NULL, FALSE);
 
   group = g_strconcat (FIRMWARE_GROUP_PREFIX, firmware, NULL);
-  result = g_key_file_get_boolean (self->key_file,
-                                   group,
-                                   FIRMWARE_MANDATORY_KEY,
-                                   &tmp_error);
+  is_mandatory = g_key_file_get_boolean (self->key_file,
+                                         group,
+                                         FIRMWARE_MANDATORY_KEY,
+                                         &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_free (group);
     g_propagate_error (error, tmp_error);
@@ -897,7 +897,7 @@ retro_core_descriptor_get_is_firmware_mandatory (RetroCoreDescriptor  *self,
 
   g_free (group);
 
-  return result;
+  return is_mandatory;
 }
 
 /**

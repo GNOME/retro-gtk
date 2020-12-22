@@ -275,6 +275,11 @@ check_platform_group (RetroCoreDescriptor  *self,
                           group,
                           PLATFORM_MIME_TYPE_KEY,
                           &tmp_error);
+  if (G_UNLIKELY (tmp_error != NULL)) {
+    g_propagate_error (error, tmp_error);
+
+    return;
+  }
 
   has_key = g_key_file_has_key (self->key_file,
                                 group,

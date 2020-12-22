@@ -10,6 +10,7 @@
 #include "retro-gl-display-private.h"
 
 #include <epoxy/gl.h>
+#include "retro-error-private.h"
 #include "retro-glsl-filter-private.h"
 #include "retro-pixbuf.h"
 #include "retro-pixdata.h"
@@ -209,7 +210,6 @@ realize (RetroGLDisplay *self)
   GLuint vertex_array_object;
   GLuint element_buffer_object;
   RetroVideoFilter current_filter;
-  GError *inner_error = NULL;
 
   gtk_gl_area_make_current (GTK_GL_AREA (self));
 
@@ -227,16 +227,16 @@ realize (RetroGLDisplay *self)
   for (RetroVideoFilter filter = 0; filter < RETRO_VIDEO_FILTER_COUNT; filter++) {
     RetroGLSLShader *shader;
 
-    self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], &inner_error);
-    if (G_UNLIKELY (inner_error != NULL)) {
+    retro_try ({
+      self->glsl_filter[filter] = retro_glsl_filter_new (filter_uris[filter], &catch);
+    }, catch, {
       g_critical ("Shader program %s creation failed: %s",
                   filter_uris[filter],
-                  inner_error->message);
+                  catch->message);
       g_clear_object (&self->glsl_filter[filter]);
-      g_clear_error (&inner_error);
 
       continue;
-    }
+    });
 
     shader = retro_glsl_filter_get_shader (self->glsl_filter[filter]);
 

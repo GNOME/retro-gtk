@@ -17,6 +17,7 @@
 #include "retro-controller-iterator-private.h"
 #include "retro-controller-state-private.h"
 #include "retro-controller-type.h"
+#include "retro-error-private.h"
 #include "retro-framebuffer-private.h"
 #include "retro-input-private.h"
 #include "retro-keyboard-private.h"
@@ -1020,26 +1021,24 @@ insert_variable (RetroCore   *self,
                  const gchar *value)
 {
   RetroOption *option;
-  GError *tmp_error = NULL;
 
-  option = retro_option_new (key, value, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_debug ("%s", tmp_error->message);
-    g_clear_error (&tmp_error);
+  retro_try ({
+    option = retro_option_new (key, value, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return;
-  }
+  });
 
   if (g_hash_table_contains (self->option_overrides, key)) {
     gchar *override;
 
     override = g_hash_table_lookup (self->option_overrides, key);
-    retro_option_set_value (option, override, &tmp_error);
-
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_debug ("%s", tmp_error->message);
-      g_clear_error (&tmp_error);
-    }
+    retro_try ({
+      retro_option_set_value (option, override, &catch);
+    }, catch, {
+      g_debug ("%s", catch->message);
+    });
   }
 
   g_hash_table_insert (self->options, g_strdup (key), option);
@@ -1193,11 +1192,12 @@ retro_core_boot (RetroCore  *self,
 
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  retro_runner_process_start (self->process, &tmp_error);
-  if (tmp_error) {
-    crash (self, tmp_error);
+  retro_try ({
+    retro_runner_process_start (self->process, &catch);
+  }, catch, {
+    crash (self, catch);
     return;
-  }
+  });
 
   proxy = retro_runner_process_get_proxy (self->process);
   g_signal_connect_object (proxy, "variables-set", G_CALLBACK (variables_set_cb), self, 0);
@@ -1251,11 +1251,12 @@ retro_core_boot (RetroCore  *self,
 
   g_variant_get (framebuffer_variant, "h", &handle);
   if (G_LIKELY (handle < g_unix_fd_list_get_length (out_fd_list))) {
-    fd = g_unix_fd_list_get (out_fd_list, handle, &tmp_error);
-    if (tmp_error) {
-      crash (self, tmp_error);
+    retro_try ({
+      fd = g_unix_fd_list_get (out_fd_list, handle, &catch);
+    }, catch, {
+      crash (self, catch);
       return;
-    }
+    });
   } else {
     g_critical ("Invalid framebuffer handle");
     return;

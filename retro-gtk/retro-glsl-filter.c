@@ -2,6 +2,8 @@
 
 #include "retro-glsl-filter-private.h"
 
+#include "retro-error-private.h"
+
 struct _RetroGLSLFilter
 {
   GObject parent_instance;
@@ -18,15 +20,14 @@ g_key_file_try_get_string (GKeyFile    *key_file,
                            const gchar *key)
 {
   const gchar *value;
-  GError *inner_error = NULL;
 
-  value = g_key_file_get_string (key_file, group, key, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
+  retro_try ({
+    value = g_key_file_get_string (key_file, group, key, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return NULL;
-  }
+  });
 
   return value;
 }
@@ -37,41 +38,40 @@ g_file_try_read_bytes (GFile *file)
   g_autoptr (GFileInputStream) stream = NULL;
   goffset size;
   GBytes *bytes;
-  GError *inner_error = NULL;
 
-  stream = g_file_read (file, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
-
-    return NULL;
-  }
-
-  g_seekable_seek (G_SEEKABLE (stream), 0, G_SEEK_END, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
+  retro_try ({
+    stream = g_file_read (file, NULL, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return NULL;
-  }
+  });
+
+  retro_try ({
+    g_seekable_seek (G_SEEKABLE (stream), 0, G_SEEK_END, NULL, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
+
+    return NULL;
+  });
 
   size = g_seekable_tell (G_SEEKABLE (stream));
 
-  g_seekable_seek (G_SEEKABLE (stream), 0, G_SEEK_SET, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
+  retro_try ({
+    g_seekable_seek (G_SEEKABLE (stream), 0, G_SEEK_SET, NULL, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return NULL;
-  }
+  });
 
-  bytes = g_input_stream_read_bytes (G_INPUT_STREAM (stream), size, NULL, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_debug ("%s", inner_error->message);
-    g_clear_error (&inner_error);
+  retro_try ({
+    bytes = g_input_stream_read_bytes (G_INPUT_STREAM (stream), size, NULL, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return NULL;
-  }
+  });
 
   return bytes;
 }
@@ -119,7 +119,6 @@ retro_glsl_filter_new (const char  *uri,
   g_autoptr (GFile) parent = NULL;
   g_autoptr (GBytes) bytes = NULL;
   const gchar *value;
-  GError *inner_error = NULL;
 
   g_return_val_if_fail (uri != NULL, NULL);
 
@@ -129,12 +128,9 @@ retro_glsl_filter_new (const char  *uri,
     return NULL;
 
   key_file = g_key_file_new ();
-  g_key_file_load_from_bytes (key_file, bytes, G_KEY_FILE_NONE, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    g_key_file_load_from_bytes (key_file, bytes, G_KEY_FILE_NONE, &catch);
+  }, catch, error, NULL);
 
   self = g_object_new (RETRO_TYPE_GLSL_FILTER, NULL);
 
@@ -172,16 +168,13 @@ retro_glsl_filter_new (const char  *uri,
   if (fragment == NULL)
     fragment = g_file_try_read_child_bytes (parent, "sharp.fs");
 
-  self->shader = retro_glsl_shader_new (vertex,
-                                        fragment,
-                                        wrap,
-                                        filter,
-                                        &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    self->shader = retro_glsl_shader_new (vertex,
+                                          fragment,
+                                          wrap,
+                                          filter,
+                                          &catch);
+  }, catch, error, NULL);
 
   return g_steal_pointer (&self);
 }

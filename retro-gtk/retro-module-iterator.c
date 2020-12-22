@@ -9,6 +9,8 @@
 
 #include "retro-module-iterator.h"
 
+#include "retro-error-private.h"
+
 struct _RetroModuleIterator
 {
   GObject parent_instance;
@@ -120,7 +122,6 @@ iterate_next_in_current_path (RetroModuleIterator  *self,
   g_autoptr (GFile) core_descriptor_file = NULL;
   g_autofree gchar *core_descriptor_path = NULL;
   RetroCoreDescriptor *core_descriptor;
-  GError *tmp_error = NULL;
 
   g_assert (G_IS_FILE (directory));
   g_assert (G_IS_FILE_INFO (info));
@@ -150,14 +151,13 @@ iterate_next_in_current_path (RetroModuleIterator  *self,
 
   core_descriptor_file = g_file_get_child (directory, core_descriptor_basename);
   core_descriptor_path = g_file_get_path (core_descriptor_file);
-  core_descriptor = retro_core_descriptor_new (core_descriptor_path, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_debug ("%s", tmp_error->message);
-
-    g_error_free (tmp_error);
+  retro_try ({
+    core_descriptor = retro_core_descriptor_new (core_descriptor_path, &catch);
+  }, catch, {
+    g_debug ("%s", catch->message);
 
     return FALSE;
-  }
+  });
 
   g_clear_object (&self->core_descriptor);
   self->core_descriptor = core_descriptor;
@@ -171,7 +171,6 @@ next_in_current_path (RetroModuleIterator  *self,
 {
   g_autoptr (GFile) directory = NULL;
   gboolean found = FALSE;
-  GError *tmp_error = NULL;
 
   if (self->sub_directory != NULL && next_in_sub_directory (self))
     return TRUE;
@@ -179,18 +178,18 @@ next_in_current_path (RetroModuleIterator  *self,
   directory = g_file_new_for_path (self->directories[self->current_directory]);
 
   if (self->file_enumerator == NULL) {
-    self->file_enumerator =
-      g_file_enumerate_children (directory,
-                                 "",
-                                 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                 NULL,
-                                 &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-      g_clear_object (&self->file_enumerator);
+    g_autoptr (GFileEnumerator) file_enumerator = NULL;
 
-      return FALSE;
-    }
+    retro_try_propagate_val ({
+      file_enumerator =
+        g_file_enumerate_children (directory,
+                                   "",
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                   NULL,
+                                   &catch);
+    }, catch, error, FALSE);
+
+    self->file_enumerator = g_steal_pointer (&file_enumerator);
   }
 
   if (self->file_enumerator == NULL)
@@ -199,22 +198,16 @@ next_in_current_path (RetroModuleIterator  *self,
   while (TRUE) {
     g_autoptr (GFileInfo) info = NULL;
 
-    info = g_file_enumerator_next_file (self->file_enumerator, NULL, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-
-      return FALSE;
-    }
+    retro_try_propagate_val ({
+      info = g_file_enumerator_next_file (self->file_enumerator, NULL, &catch);
+    }, catch, error, FALSE);
 
     if (info == NULL)
       break;
 
-    found = iterate_next_in_current_path (self, directory, info, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-
-      return FALSE;
-    }
+    retro_try_propagate_val ({
+      found = iterate_next_in_current_path (self, directory, info, &catch);
+    }, catch, error, FALSE);
 
     if (found)
       return TRUE;
@@ -258,19 +251,18 @@ gboolean
 retro_module_iterator_next (RetroModuleIterator *self)
 {
   gboolean found_next_in_current_path;
-  GError *tmp_error = NULL;
 
   g_return_val_if_fail (RETRO_IS_MODULE_ITERATOR (self), FALSE);
 
   while (self->directories[self->current_directory] != NULL) {
     set_current_directory_as_visited (self);
 
-    found_next_in_current_path = next_in_current_path (self, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_debug ("%s", tmp_error->message);
-      g_clear_error (&tmp_error);
+    retro_try ({
+      found_next_in_current_path = next_in_current_path (self, &catch);
+    }, catch, {
+      g_debug ("%s", catch->message);
       found_next_in_current_path = FALSE;
-    }
+    });
 
     if (found_next_in_current_path)
       return TRUE;

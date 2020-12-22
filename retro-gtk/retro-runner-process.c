@@ -7,6 +7,7 @@
 #include <glib-unix.h>
 #include <gio/gunixconnection.h>
 #include <sys/socket.h>
+#include "retro-error-private.h"
 
 struct _RetroRunnerProcess
 {
@@ -233,7 +234,6 @@ retro_runner_process_start (RetroRunnerProcess  *self,
   g_autoptr(GSocketConnection) connection = NULL;
   g_autoptr(GSubprocessLauncher) launcher = NULL;
   g_autoptr(GSubprocess) process = NULL;
-  GError *tmp_error = NULL;
 
   g_return_if_fail (RETRO_IS_RUNNER_PROCESS (self));
   g_return_if_fail (!G_IS_DBUS_CONNECTION (self->connection));
@@ -243,22 +243,20 @@ retro_runner_process_start (RetroRunnerProcess  *self,
   if (!(connection = create_connection (launcher, 3, error)))
     return;
 
-  if (!(process = g_subprocess_launcher_spawn (launcher, &tmp_error,
+  retro_try_propagate ({
+    process = g_subprocess_launcher_spawn (launcher, &catch,
                                                RETRO_RUNNER_PATH,
                                                g_get_application_name (),
-                                               self->filename, NULL))) {
-    g_propagate_error (error, tmp_error);
-    return;
-  }
+                                               self->filename, NULL);
+  }, catch, error);
 
-  if (!(self->connection = g_dbus_connection_new_sync (G_IO_STREAM (connection),
+  retro_try_propagate ({
+    self->connection = g_dbus_connection_new_sync (G_IO_STREAM (connection),
                                                        NULL,
                                                        G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING |
                                                        G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT,
-                                                       NULL, NULL, &tmp_error))) {
-    g_propagate_error (error, tmp_error);
-    return;
-  }
+                                                       NULL, NULL, &catch);
+  }, catch, error);
 
   g_dbus_connection_start_message_processing (self->connection);
 
@@ -266,11 +264,11 @@ retro_runner_process_start (RetroRunnerProcess  *self,
   g_subprocess_wait_check_async (process, self->cancellable,
                                  (GAsyncReadyCallback) wait_check_cb, self);
 
-  self->proxy = ipc_runner_proxy_new_sync (self->connection, 0, NULL,
-                                           "/org/gnome/Retro/Runner", NULL,
-                                           &tmp_error);
-  if (!self->proxy)
-    g_propagate_error (error, tmp_error);
+  retro_try_propagate ({
+    self->proxy = ipc_runner_proxy_new_sync (self->connection, 0, NULL,
+                                             "/org/gnome/Retro/Runner", NULL,
+                                             &catch);
+  }, catch, error);
 }
 
 /**
@@ -284,15 +282,14 @@ void
 retro_runner_process_stop (RetroRunnerProcess  *self,
                            GError             **error)
 {
-  GError *tmp_error = NULL;
-
   g_return_if_fail (RETRO_IS_RUNNER_PROCESS (self));
   g_return_if_fail (G_IS_DBUS_CONNECTION (self->connection));
 
   g_cancellable_cancel (self->cancellable);
 
-  if (!g_dbus_connection_close_sync (self->connection, NULL, &tmp_error))
-    g_propagate_error (error, tmp_error);
+  retro_try_propagate ({
+    g_dbus_connection_close_sync (self->connection, NULL, &catch);
+  }, catch, error);
 
   g_clear_object (&self->proxy);
   g_clear_object (&self->connection);

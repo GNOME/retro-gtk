@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include "retro-test-controller.h"
+#include "retro-error-private.h"
 
 struct _RetroReftestFile
 {
@@ -356,28 +357,25 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   g_auto (GStrv) key_file_medias = NULL;
   gsize key_file_medias_length = 0;
   g_auto (GStrv) media_uris = NULL;
-  GError *tmp_error = NULL;
 
-  key_file_core = g_key_file_get_string (self->key_file,
-                                         RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                         RETRO_REFTEST_FILE_CORE_KEY,
-                                         &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    key_file_core = g_key_file_get_string (self->key_file,
+                                           RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                           RETRO_REFTEST_FILE_CORE_KEY,
+                                           &catch);
+  }, catch, error, NULL);
 
   core_file = get_sibling (self, key_file_core);
   path = g_file_get_path (core_file);
   core = retro_core_new (path);
 
-  key_file_medias = g_key_file_get_string_list (self->key_file,
-                                                RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                                RETRO_REFTEST_FILE_MEDIAS_KEY,
-                                                &key_file_medias_length,
-                                                &tmp_error);
-  g_clear_error (&tmp_error);
+  retro_try ({
+    key_file_medias = g_key_file_get_string_list (self->key_file,
+                                                  RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                                  RETRO_REFTEST_FILE_MEDIAS_KEY,
+                                                  &key_file_medias_length,
+                                                  &catch);
+  }, catch, {});
 
   if (key_file_medias == NULL)
     return core;
@@ -411,32 +409,25 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
   g_auto (GStrv) keys = NULL;
   gsize keys_length = 0;
   g_autoptr (GHashTable) options = NULL;
-  GError *tmp_error = NULL;
 
-  keys = g_key_file_get_keys (self->key_file,
-                              RETRO_REFTEST_FILE_OPTIONS_GROUP,
-                              &keys_length,
-                              &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    keys = g_key_file_get_keys (self->key_file,
+                                RETRO_REFTEST_FILE_OPTIONS_GROUP,
+                                &keys_length,
+                                &catch);
+  }, catch, error, NULL);
 
   options = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_strfreev);
   for (gsize i = 0; i < keys_length; i++) {
     g_auto (GStrv) values = NULL;
 
-    values = g_key_file_get_string_list (self->key_file,
-                                         RETRO_REFTEST_FILE_OPTIONS_GROUP,
-                                         keys[i],
-                                         NULL,
-                                         &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_propagate_error (error, tmp_error);
-
-      return NULL;
-    }
+    retro_try_propagate_val ({
+      values = g_key_file_get_string_list (self->key_file,
+                                           RETRO_REFTEST_FILE_OPTIONS_GROUP,
+                                           keys[i],
+                                           NULL,
+                                           &catch);
+    }, catch, error, NULL);
 
     g_hash_table_insert (options, g_strdup (keys[i]), g_steal_pointer (&values));
   }
@@ -453,31 +444,24 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
   g_auto (GStrv) controller_names = NULL;
   g_autoptr (GArray) controllers = NULL;
   RetroControllerType type;
-  GError *tmp_error = NULL;
 
-  has_controllers = g_key_file_has_key (self->key_file,
-                                        RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                        RETRO_REFTEST_FILE_CONTROLLERS_KEY,
-                                        &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    has_controllers = g_key_file_has_key (self->key_file,
+                                          RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                          RETRO_REFTEST_FILE_CONTROLLERS_KEY,
+                                          &catch);
+  }, catch, error, NULL);
 
   if (!has_controllers)
     return NULL;
 
-  controller_names = g_key_file_get_string_list (self->key_file,
-                                                 RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
-                                                 RETRO_REFTEST_FILE_CONTROLLERS_KEY,
-                                                 length,
-                                                 &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    controller_names = g_key_file_get_string_list (self->key_file,
+                                                   RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
+                                                   RETRO_REFTEST_FILE_CONTROLLERS_KEY,
+                                                   length,
+                                                   &catch);
+  }, catch, error, NULL);
 
   controllers = g_array_sized_new (TRUE, TRUE, sizeof (RetroTestController *), *length);
   g_array_set_clear_func (controllers, (GDestroyNotify) g_object_pointer_unref);
@@ -584,17 +568,13 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
                               GError           **error)
 {
   g_autofree gchar *key_file_video = NULL;
-  GError *tmp_error = NULL;
 
-  key_file_video = g_key_file_get_string (self->key_file,
-                                          g_hash_table_lookup (self->frames, &frame),
-                                          RETRO_REFTEST_FILE_FRAME_VIDEO_KEY,
-                                          &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    key_file_video = g_key_file_get_string (self->key_file,
+                                            g_hash_table_lookup (self->frames, &frame),
+                                            RETRO_REFTEST_FILE_FRAME_VIDEO_KEY,
+                                            &catch);
+  }, catch, error, NULL);
 
   return get_sibling (self, key_file_video);
 }
@@ -609,15 +589,11 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
   g_auto (GStrv) keys = NULL;
   RetroControllerState *state;
   GArray *states;
-  GError *tmp_error = NULL;
 
   group = g_hash_table_lookup (self->frames, &frame);
-  keys = g_key_file_get_keys (self->key_file, group, NULL, &tmp_error);
-  if (G_UNLIKELY (tmp_error != NULL)) {
-    g_propagate_error (error, tmp_error);
-
-    return NULL;
-  }
+  retro_try_propagate_val ({
+    keys = g_key_file_get_keys (self->key_file, group, NULL, &catch);
+  }, catch, error, NULL);
 
   controllers = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, (GDestroyNotify) g_array_unref);
 
@@ -631,21 +607,21 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 
     controller_number_string = *key_i + strlen (RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX);
     controller_number = g_new (guint, 1);
-    *controller_number = str_to_uint (controller_number_string, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_critical ("Invalid controller key [%s]: %s", *key_i, tmp_error->message);
-      g_clear_error (&tmp_error);
+    retro_try ({
+      *controller_number = str_to_uint (controller_number_string, &catch);
+    }, catch, {
+      g_critical ("Invalid controller key [%s]: %s", *key_i, catch->message);
 
       continue;
-    }
+    });
 
-    inputs = g_key_file_get_string_list (self->key_file, group, *key_i, NULL, &tmp_error);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_critical ("%s", tmp_error->message);
-      g_clear_error (&tmp_error);
+    retro_try ({
+      inputs = g_key_file_get_string_list (self->key_file, group, *key_i, NULL, &catch);
+    }, catch, {
+      g_critical ("%s", catch->message);
 
       continue;
-    }
+    });
 
     states = g_array_new (TRUE, TRUE, sizeof (RetroControllerState *));
     g_array_set_clear_func (states, (GDestroyNotify) g_pointer_free);

@@ -2,6 +2,8 @@
 
 #include "retro-glsl-shader-private.h"
 
+#include "retro-error-private.h"
+
 struct _RetroGLSLShader
 {
   GObject parent_instance;
@@ -98,7 +100,6 @@ retro_glsl_shader_new (GBytes  *vertex,
   gint status = 0;
   GLuint vertex_shader;
   GLuint fragment_shader;
-  GError *inner_error = NULL;
 
   g_return_val_if_fail (vertex != NULL, NULL);
   g_return_val_if_fail (fragment != NULL, NULL);
@@ -112,20 +113,17 @@ retro_glsl_shader_new (GBytes  *vertex,
   self->wrap = wrap;
   self->filter = filter;
 
-  vertex_shader = create_shader (self->vertex, GL_VERTEX_SHADER, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
+  retro_try_propagate_val ({
+    vertex_shader = create_shader (self->vertex, GL_VERTEX_SHADER, &catch);
+  }, catch, error, NULL);
 
-    return NULL;
-  }
-
-  fragment_shader = create_shader (self->fragment, GL_FRAGMENT_SHADER, &inner_error);
-  if (G_UNLIKELY (inner_error != NULL)) {
-    g_propagate_error (error, inner_error);
+  retro_try ({
+    fragment_shader = create_shader (self->fragment, GL_FRAGMENT_SHADER, &catch);
+  }, catch, {
     glDeleteShader (vertex_shader);
 
     return NULL;
-  }
+  });
 
   self->program = glCreateProgram ();
   glAttachShader (self->program, vertex_shader);

@@ -92,7 +92,7 @@ set_current_directory_as_visited (RetroModuleIterator *self)
 
   current_directory_file = g_file_new_for_path (self->directories[self->current_directory]);
   current_directory_path = g_file_get_path (current_directory_file);
-  g_hash_table_add (self->visited, current_directory_path);
+  g_hash_table_add (self->visited, g_steal_pointer (&current_directory_path));
 }
 
 static gboolean

@@ -336,18 +336,22 @@ retro_gl_renderer_new (RetroCore             *core,
   check_egl_errors ("eglBindAPI");
 
   i = 0;
+
   context_attribs[i++] = EGL_CONTEXT_MAJOR_VERSION;
   context_attribs[i++] = major_version;
-  context_attribs[i++] = EGL_CONTEXT_MINOR_VERSION;
-  context_attribs[i++] = minor_version;
-  context_attribs[i++] = EGL_CONTEXT_OPENGL_PROFILE_MASK;
-  context_attribs[i++] = use_compat_profile ?
-    EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT :
-    EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
+
+  if (!is_opengl_es) {
+    context_attribs[i++] = EGL_CONTEXT_MINOR_VERSION;
+    context_attribs[i++] = minor_version;
+    context_attribs[i++] = EGL_CONTEXT_OPENGL_PROFILE_MASK;
+    context_attribs[i++] = use_compat_profile ?
+      EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT :
+      EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
+  }
 
   if (callback->debug_context) {
-    context_attribs[i++] = EGL_CONTEXT_FLAGS_KHR;
-    context_attribs[i++] = EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR;
+    context_attribs[i++] = EGL_CONTEXT_OPENGL_DEBUG;
+    context_attribs[i++] = EGL_TRUE;
   }
 
   context_attribs[i++] = EGL_NONE;

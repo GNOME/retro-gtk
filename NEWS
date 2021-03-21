@@ -1,4 +1,31 @@
 =============
+Version 1.0.2
+=============
+
+* RetroCoreDescriptor: Propagate an accidentally unhandled error.
+* Implement mouse buttons 4 and 5.
+* Fix the GLES context initialization.
+* Drop the code making temporary copies of the core to avoid static
+  variable collisions, this isn't needed anymore as such collisions
+  can't happen since a single instance of a core is used per subprocess.
+* Debug:
+ - Catch SIGSEGV, SIGABRT or any crash on the runner and print a
+   backtrace when the RETRO_DEBUG environement variable is set to 1.
+ - Print more debug info o successful Libretro environement commands
+   when the RETRO_DEBUG environement variable is set to 1.
+* Libretro environment commands:
+ - Set the log domain to RetroEnvironment.
+ - Fix ABI issues by corretly using bool instead of gboolean for command
+   parameters.
+ - Prevent setting unknown pixel formats and rotations.
+ - Better log hardware rendering context support errors.
+ - Log a critical error when getting a variable failed.
+ - Log a critical error when receiving un unknown and unimplemented
+   commands.
+* Generalize usage of auto cleanups.
+* Many code style cleanups.
+
+=============
 Version 1.0.1
 =============
 

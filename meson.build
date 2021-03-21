@@ -1,5 +1,5 @@
 project('retro-gtk','c',
-  version: '1.0.1',
+  version: '1.0.2',
   meson_version: '>= 0.50.0',
 )
 

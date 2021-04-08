@@ -68,12 +68,12 @@ set_input_pressed (GHashTable *table,
 
   if (g_hash_table_contains (table, &input))
     g_hash_table_replace (table,
-                          g_memdup (&input, sizeof (guint)),
-                          g_memdup (&value, sizeof (gboolean)));
+                          g_memdup2 (&input, sizeof (guint)),
+                          g_memdup2 (&value, sizeof (gboolean)));
   else
     g_hash_table_insert (table,
-                         g_memdup (&input, sizeof (guint)),
-                         g_memdup (&value, sizeof (gboolean)));
+                         g_memdup2 (&input, sizeof (guint)),
+                         g_memdup2 (&value, sizeof (gboolean)));
 }
 
 static void

@@ -179,7 +179,7 @@ retro_pixdata_new (gconstpointer    data,
   g_return_val_if_fail (aspect_ratio > 0.f, NULL);
 
   self = g_slice_new0 (RetroPixdata);
-  self->data = g_memdup (data, rowstride * height);
+  self->data = g_memdup2 (data, rowstride * height);
   self->pixel_format = pixel_format;
   self->rowstride = rowstride;
   self->width = width;

@@ -43,7 +43,7 @@ retro_game_info_copy (RetroGameInfo *self)
   copy = g_slice_new0 (RetroGameInfo);
 
   copy->path = g_strdup (self->path);
-  copy->data = g_memdup (self, self->size);
+  copy->data = g_memdup2 (self, self->size);
   copy->size = self->size;
   copy->meta = g_strdup (self->meta);
 

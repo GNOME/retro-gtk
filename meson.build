@@ -19,7 +19,7 @@ retro_gtk_version = meson.project_version()
 retro_gtk_api_version = '1'
 retro_gtk_module = 'retro-gtk-' + retro_gtk_api_version
 
-glib_version = '>= 2.50'
+glib_version = '>= 2.68'
 gtk_version = '>= 3.22'
 
 epoxy = dependency ('epoxy')

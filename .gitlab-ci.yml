@@ -1,66 +1,66 @@
+include: https://gitlab.gnome.org/GNOME/citemplates/raw/master/flatpak/flatpak_ci_initiative.yml
+
 stages:
   - pre
   - build
-  - test
-  - publish
+
+variables:
+  FLATPAK_BUILD_DIR: app
+  FLATPAK_MODULE: retro-gtk
+  MANIFEST_PATH: flatpak/org.gnome.Retro.UnitTests.json
+  SHARED_MESON_ARGS: >-
+    --buildtype=release
+    -Dpulseaudio=disabled
 
 lint:
   stage: pre
   script:
     - tools/check-api-visibility.sh
 
-variables:
-  BUNDLE: "retro-demo-samples-test-git.flatpak"
-
-flatpak:tests:
+dependencies:
   image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
-  stage: test
+  stage: pre
   tags:
     - flatpak
-  variables:
-    MANIFEST_PATH: "flatpak/org.gnome.Retro.UnitTests.json"
-    FLATPAK_MODULE: "retro-gtk"
-    FLATPAK_BUILD_DIR: "unit-tests"
-    MESON_ARGS: "--libdir=lib -Dinstall-tests=true -Dpulseaudio=disabled"
   script:
     - flatpak-builder --user --disable-rofiles-fuse --stop-at=${FLATPAK_MODULE} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
-    - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${MESON_ARGS} _build_tests
-    - flatpak build ${FLATPAK_BUILD_DIR} ninja -C _build_tests install
-    - flatpak-builder --user --disable-rofiles-fuse --finish-only --repo=repo ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
-    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --disable-rofiles-fuse --run unit-tests ${MANIFEST_PATH} retro-unit-tests
+  artifacts:
+    paths:
+      - ${FLATPAK_BUILD_DIR}
 
-flatpak:demo:
+unit-tests:
   image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
   stage: build
   tags:
     - flatpak
   variables:
-    MANIFEST_PATH: "flatpak/org.gnome.Retro.DemoSamplesTest.json"
-    RUNTIME_REPO: "https://sdk.gnome.org/gnome-nightly.flatpakrepo"
-    FLATPAK_MODULE: "retro-gtk"
-    FLATPAK_BUILD_DIR: "app"
-    MESON_ARGS: ""
+    FLATPAK_BUILD_DIR: unit-tests
+    MESON_ARGS: >-
+      -Dinstall-tests=true
   script:
+    # Somehow we need to rebuild the Flatpak here, in a different dir, otherwise installing it will fail.
     - flatpak-builder --user --disable-rofiles-fuse --stop-at=${FLATPAK_MODULE} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
-    - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${MESON_ARGS} _build
+    - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${SHARED_MESON_ARGS} ${MESON_ARGS} _build
     - flatpak build ${FLATPAK_BUILD_DIR} ninja -C _build install
     - flatpak-builder --user --disable-rofiles-fuse --finish-only --repo=repo ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
-    - flatpak build-bundle repo ${BUNDLE} --runtime-repo=${RUNTIME_REPO} org.gnome.Retro.DemoSamplesTest
-  artifacts:
-    paths:
-      - ${BUNDLE}
-      - _build/meson-logs/meson-log.txt
-    expire_in: 2 days
+    - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --disable-rofiles-fuse --run ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH} retro-unit-tests
 
-reference:
-  image: registry.gitlab.gnome.org/gnome/gtk/fedora:v16
+doc:
+  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
   stage: build
+  dependencies:
+    - dependencies
+  tags:
+    - flatpak
   variables:
-    MESON_ARGS: "--buildtype=release --libdir=lib -Dpulseaudio=disabled -Dintrospection=false -Dbuild-tests=false -Dbuild-doc=true"
+    MESON_ARGS: >-
+      -Dbuild-doc=true
+      -Dbuild-tests=false
+      -Dintrospection=false
   script:
-    - meson ${MESON_ARGS} _build
-    - ninja -C _build retro-gtk-doc
-    - mv _build/doc/html/ _reference/
+    - flatpak build ${FLATPAK_BUILD_DIR} meson --prefix=/app ${SHARED_MESON_ARGS} ${MESON_ARGS} _build
+    - flatpak build ${FLATPAK_BUILD_DIR} ninja -C _build retro-gtk-doc
+    - mv _build/doc/html/ _doc/
   artifacts:
     paths:
-      - _reference
+      - _doc

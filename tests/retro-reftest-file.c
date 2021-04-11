@@ -101,7 +101,7 @@ static void
 retro_reftest_file_constructed (GObject *object)
 {
   RetroReftestFile *self = (RetroReftestFile *) object;
-  gchar *path;
+  g_autofree gchar *path = NULL;
   GError *error = NULL;
 
   self->key_file = g_key_file_new ();
@@ -113,8 +113,6 @@ retro_reftest_file_constructed (GObject *object)
     g_clear_error (&error);
   }
 
-  g_free (path);
-
   G_OBJECT_CLASS (retro_reftest_file_parent_class)->constructed (object);
 }
 
@@ -125,10 +123,8 @@ retro_reftest_file_finalize (GObject *object)
 
   g_object_unref (self->file);
   g_key_file_unref (self->key_file);
-  if (self->path != NULL)
-    g_free (self->path);
-  if (self->frames != NULL)
-    g_hash_table_unref (self->frames);
+  g_clear_pointer (&self->path, g_free);
+  g_clear_pointer (&self->frames, g_hash_table_unref);
 
   G_OBJECT_CLASS (retro_reftest_file_parent_class)->finalize (object);
 }
@@ -202,16 +198,14 @@ static GFile *
 get_sibling (RetroReftestFile *self,
               const gchar      *path)
 {
-  GFile *parent, *sibling;
+  g_autoptr (GFile) parent = NULL;
 
   if (path[0] == '/')
     return g_file_new_for_path (path);
 
   parent = g_file_get_parent (self->file);
-  sibling = g_file_get_child (parent, path);
-  g_object_unref (parent);
 
-  return sibling;
+  return g_file_get_child (parent, path);
 }
 
 const gchar *
@@ -232,8 +226,8 @@ retro_reftest_file_peek_path (RetroReftestFile *self)
 }
 
 static guint
-str_to_uint (gchar   *string,
-             GError **error)
+str_to_uint (const gchar  *string,
+             GError      **error)
 {
   gchar *string_end;
   guint64 number_long;
@@ -356,13 +350,12 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
                              GError           **error)
 {
   RetroCore *core;
-  gchar *key_file_core;
-  GFile *core_file;
-  gchar *path;
-  gchar **key_file_medias;
+  g_autofree gchar *key_file_core = NULL;
+  g_autoptr (GFile) core_file = NULL;
+  g_autofree gchar *path = NULL;
+  g_auto (GStrv) key_file_medias = NULL;
   gsize key_file_medias_length = 0;
-  gchar **media_uris;
-  GFile *media_file;
+  g_auto (GStrv) media_uris = NULL;
   GError *tmp_error = NULL;
 
   key_file_core = g_key_file_get_string (self->key_file,
@@ -376,11 +369,8 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   }
 
   core_file = get_sibling (self, key_file_core);
-  g_free (key_file_core);
   path = g_file_get_path (core_file);
-  g_object_unref (core_file);
   core = retro_core_new (path);
-  g_free (path);
 
   key_file_medias = g_key_file_get_string_list (self->key_file,
                                                 RETRO_REFTEST_FILE_RETRO_REFTEST_GROUP,
@@ -392,22 +382,18 @@ retro_reftest_file_get_core (RetroReftestFile  *self,
   if (key_file_medias == NULL)
     return core;
 
-  if (key_file_medias_length == 0) {
-    g_strfreev (key_file_medias);
-
+  if (key_file_medias_length == 0)
     return core;
-  }
 
   media_uris = g_new0 (gchar *, key_file_medias_length + 1);
   for (gsize i = 0; i < key_file_medias_length; i++) {
+    g_autoptr (GFile) media_file = NULL;
+
     media_file = get_sibling (self, key_file_medias[i]);
     media_uris[i] = g_file_get_uri (media_file);
-    g_object_unref (media_file);
   }
-  g_strfreev (key_file_medias);
 
   retro_core_set_medias (core, (const gchar* const *) media_uris);
-  g_strfreev (media_uris);
 
   return core;
 }
@@ -422,9 +408,9 @@ GHashTable *
 retro_reftest_file_get_options (RetroReftestFile  *self,
                                 GError           **error)
 {
-  gchar **keys, **values;
+  g_auto (GStrv) keys = NULL;
   gsize keys_length = 0;
-  GHashTable *options;
+  g_autoptr (GHashTable) options = NULL;
   GError *tmp_error = NULL;
 
   keys = g_key_file_get_keys (self->key_file,
@@ -439,6 +425,8 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
 
   options = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_strfreev);
   for (gsize i = 0; i < keys_length; i++) {
+    g_auto (GStrv) values = NULL;
+
     values = g_key_file_get_string_list (self->key_file,
                                          RETRO_REFTEST_FILE_OPTIONS_GROUP,
                                          keys[i],
@@ -446,18 +434,14 @@ retro_reftest_file_get_options (RetroReftestFile  *self,
                                          &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
-      g_strfreev (keys);
-      g_hash_table_unref (options);
 
       return NULL;
     }
 
-    g_hash_table_insert (options, g_strdup (keys[i]), values);
+    g_hash_table_insert (options, g_strdup (keys[i]), g_steal_pointer (&values));
   }
 
-  g_strfreev (keys);
-
-  return options;
+  return g_steal_pointer (&options);
 }
 
 GArray *
@@ -466,8 +450,8 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
                                     GError           **error)
 {
   gboolean has_controllers;
-  gchar **controller_names;
-  GArray *controllers;
+  g_auto (GStrv) controller_names = NULL;
+  g_autoptr (GArray) controllers = NULL;
   RetroControllerType type;
   GError *tmp_error = NULL;
 
@@ -505,17 +489,15 @@ retro_reftest_file_get_controllers (RetroReftestFile  *self,
 
     g_array_index (controllers, RetroTestController *, i) = retro_test_controller_new (type);
   }
-  g_strfreev (controller_names);
 
-  return controllers;
+  return g_steal_pointer (&controllers);
 }
 
 GList *
 retro_reftest_file_get_frames (RetroReftestFile *self)
 {
   gsize groups_length = 0;
-  gchar **groups;
-  gchar *frame_number_string;
+  g_auto (GStrv) groups = NULL;
   guint frame_number;
   guint *key;
   GError *error = NULL;
@@ -530,6 +512,8 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
   groups = g_key_file_get_groups (self->key_file, &groups_length);
 
   for (gsize i = 0; i < groups_length; i++) {
+    const gchar *frame_number_string;
+
     if (!g_str_has_prefix (groups[i], RETRO_REFTEST_FILE_FRAME_GROUP_PREFIX))
       continue;
 
@@ -556,8 +540,6 @@ retro_reftest_file_get_frames (RetroReftestFile *self)
 
     g_hash_table_insert (self->frames, key, g_strdup (groups[i]));
   }
-
-  g_strfreev (groups);
 
   return g_list_sort (g_hash_table_get_keys (self->frames),
                       (GCompareFunc) uint_compare);
@@ -601,8 +583,7 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
                               guint              frame,
                               GError           **error)
 {
-  gchar *key_file_video;
-  GFile *video_file;
+  g_autofree gchar *key_file_video = NULL;
   GError *tmp_error = NULL;
 
   key_file_video = g_key_file_get_string (self->key_file,
@@ -615,10 +596,7 @@ retro_reftest_file_get_video (RetroReftestFile  *self,
     return NULL;
   }
 
-  video_file = get_sibling (self, key_file_video);
-  g_free (key_file_video);
-
-  return video_file;
+  return get_sibling (self, key_file_video);
 }
 
 GHashTable *
@@ -628,10 +606,7 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 {
   GHashTable *controllers;
   gchar *group;
-  gchar **keys;
-  gchar **inputs;
-  guint *controller_number;
-  gchar *controller_number_string;
+  g_auto (GStrv) keys = NULL;
   RetroControllerState *state;
   GArray *states;
   GError *tmp_error = NULL;
@@ -647,6 +622,10 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
   controllers = g_hash_table_new_full (g_int_hash, g_int_equal, g_free, (GDestroyNotify) g_array_unref);
 
   for (GStrv key_i = keys; *key_i != NULL; key_i++) {
+    g_auto (GStrv) inputs = NULL;
+    g_autofree guint *controller_number = NULL;
+    const gchar *controller_number_string;
+
     if (!g_str_has_prefix (*key_i, RETRO_REFTEST_FILE_FRAME_CONTROLLER_PREFIX))
       continue;
 
@@ -656,12 +635,18 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_critical ("Invalid controller key [%s]: %s", *key_i, tmp_error->message);
       g_clear_error (&tmp_error);
-      g_free (controller_number);
 
       continue;
     }
 
     inputs = g_key_file_get_string_list (self->key_file, group, *key_i, NULL, &tmp_error);
+    if (G_UNLIKELY (tmp_error != NULL)) {
+      g_critical ("%s", tmp_error->message);
+      g_clear_error (&tmp_error);
+
+      continue;
+    }
+
     states = g_array_new (TRUE, TRUE, sizeof (RetroControllerState *));
     g_array_set_clear_func (states, (GDestroyNotify) g_pointer_free);
     for (GStrv input_i = inputs; *input_i != NULL; input_i++) {
@@ -674,18 +659,9 @@ retro_reftest_file_get_controller_states (RetroReftestFile  *self,
 
       g_array_append_val (states, state);
     }
-    g_strfreev (inputs);
 
-    g_hash_table_insert (controllers, controller_number, states);
-    if (G_UNLIKELY (tmp_error != NULL)) {
-      g_critical ("%s", tmp_error->message);
-      g_clear_error (&tmp_error);
-      g_free (controller_number);
-
-      continue;
-    }
+    g_hash_table_insert (controllers, g_steal_pointer (&controller_number), states);
   }
-  g_strfreev (keys);
 
   return controllers;
 }

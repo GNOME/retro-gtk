@@ -122,6 +122,8 @@ retro_reftest_video_unref (RetroReftestVideo *self) {
   self->refs--;
 }
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (RetroReftestData, retro_reftest_data_unref)
+
 static gboolean
 parse_command_line (int    *argc,
                     char ***argv)
@@ -279,7 +281,7 @@ retro_reftest_test_options (RetroReftestOptions *options)
   const gchar **options_values, **core_values;
   GHashTableIter iter;
   gsize i;
-  RetroOptionIterator *option_iterator;
+  g_autoptr (RetroOptionIterator) option_iterator = NULL;
 
   core = options->data->core;
 
@@ -301,7 +303,6 @@ retro_reftest_test_options (RetroReftestOptions *options)
     if (!g_hash_table_contains (options->options, core_key)) {
       g_test_fail ();
       g_test_message ("Unexpected option found: %s.", core_key);
-      g_object_unref (option_iterator);
 
       return;
     }
@@ -313,7 +314,6 @@ retro_reftest_test_options (RetroReftestOptions *options)
 
       g_test_fail ();
       g_test_message ("Unexpxected value found for option %s: expected %s, got %s.", core_key, options_values[i], core_values[i]);
-      g_object_unref (option_iterator);
 
       return;
     }
@@ -321,7 +321,6 @@ retro_reftest_test_options (RetroReftestOptions *options)
     if (options_values[i] != NULL) {
       g_test_fail ();
       g_test_message ("Expected value not found for option %s: %s.", core_key, options_values[i]);
-      g_object_unref (option_iterator);
 
       return;
     }
@@ -329,12 +328,10 @@ retro_reftest_test_options (RetroReftestOptions *options)
     if (core_values[i] != NULL) {
       g_test_fail ();
       g_test_message ("Unexpected value found for option %s: %s.", core_key, core_values[i]);
-      g_object_unref (option_iterator);
 
       return;
     }
   }
-  g_object_unref (option_iterator);
 }
 
 static void
@@ -428,8 +425,9 @@ retro_reftest_test_state_refresh (RetroReftestData *data)
 static void
 retro_reftest_test_video (RetroReftestVideo *video)
 {
-  GdkPixbuf *screenshot, *reference_screenshot;
-  gchar *path;
+  g_autoptr (GdkPixbuf) screenshot = NULL;
+  g_autoptr (GdkPixbuf) reference_screenshot = NULL;
+  g_autofree gchar *path = NULL;
   GError *error = NULL;
 
   screenshot = retro_pixdata_to_pixbuf (video->data->pixdata);
@@ -449,37 +447,28 @@ retro_reftest_test_video (RetroReftestVideo *video)
                      NULL);
     g_assert_no_error (error);
 
-    g_free (path);
-    g_object_unref (screenshot);
-
     return;
   }
 
   reference_screenshot = gdk_pixbuf_new_from_file (path, &error);
   g_assert_no_error (error);
-  g_free (path);
 
   pixdata_equal (screenshot, reference_screenshot, &error);
   if (error != NULL) {
     g_test_message ("%s", error->message);
     g_clear_error (&error);
-    g_object_unref (screenshot);
-    g_object_unref (reference_screenshot);
 
     g_test_fail ();
 
     return;
   }
-
-  g_object_unref (screenshot);
-  g_object_unref (reference_screenshot);
 }
 
 static void
 retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
                              RetroReftestData *data)
 {
-  gchar *test_path;
+  g_autofree gchar *test_path = NULL;
 
   test_path = g_strdup_printf ("%s/Boot",
                                retro_reftest_file_peek_path (reftest_file));
@@ -487,7 +476,6 @@ retro_reftest_add_boot_test (RetroReftestFile *reftest_file,
                              retro_reftest_data_ref (data),
                              (GTestDataFunc) retro_reftest_test_boot,
                              (GDestroyNotify) retro_reftest_data_unref);
-  g_free (test_path);
 }
 
 static void
@@ -495,7 +483,7 @@ retro_reftest_add_options_test (RetroReftestFile *reftest_file,
                                 RetroReftestData *data)
 {
   RetroReftestOptions *options;
-  gchar *test_path;
+  g_autofree gchar *test_path = NULL;
   GError *error = NULL;
 
   options = g_new0 (RetroReftestOptions, 1);
@@ -508,7 +496,6 @@ retro_reftest_add_options_test (RetroReftestFile *reftest_file,
                              options,
                              (GTestDataFunc) retro_reftest_test_options,
                              (GDestroyNotify) retro_reftest_options_unref);
-  g_free (test_path);
 }
 
 static void
@@ -517,7 +504,7 @@ retro_reftest_add_fast_forward_test (RetroReftestFile *reftest_file,
                                      RetroReftestData *data)
 {
   RetroReftestRun *run;
-  gchar *test_path;
+  g_autofree gchar *test_path = NULL;
 
   run = g_new0 (RetroReftestRun, 1);
   run->data = retro_reftest_data_ref (data);
@@ -529,7 +516,6 @@ retro_reftest_add_fast_forward_test (RetroReftestFile *reftest_file,
                              run,
                              (GTestDataFunc) retro_reftest_test_fast_forward,
                              (GDestroyNotify) retro_reftest_run_unref);
-  g_free (test_path);
 }
 
 static void
@@ -538,7 +524,7 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
                             RetroReftestData *data)
 {
   RetroReftestRun *run;
-  gchar *test_path;
+  g_autofree gchar *test_path = NULL;
   GError *error = NULL;
 
   run = g_new0 (RetroReftestRun, 1);
@@ -553,7 +539,6 @@ retro_reftest_add_run_test (RetroReftestFile *reftest_file,
                              run,
                              (GTestDataFunc) retro_reftest_test_run,
                              (GDestroyNotify) retro_reftest_run_unref);
-  g_free (test_path);
 }
 
 static void
@@ -561,8 +546,8 @@ retro_reftest_add_state_test (RetroReftestFile *reftest_file,
                               guint             frame_number,
                               RetroReftestData *data)
 {
-  gchar *state;
-  gchar *test_path;
+  g_autofree gchar *state = NULL;
+  g_autofree gchar *test_path = NULL;
   GError *error = NULL;
 
   state = retro_reftest_file_get_state (reftest_file, frame_number, &error);
@@ -576,7 +561,6 @@ retro_reftest_add_state_test (RetroReftestFile *reftest_file,
                                retro_reftest_data_ref (data),
                                (GTestDataFunc) retro_reftest_test_state_none,
                                (GDestroyNotify) retro_reftest_data_unref);
-    g_free (test_path);
   }
   else if (g_str_equal (state, "Refresh")) {
     test_path = g_strdup_printf ("%s/%u/State Refresh",
@@ -586,7 +570,6 @@ retro_reftest_add_state_test (RetroReftestFile *reftest_file,
                                retro_reftest_data_ref (data),
                                (GTestDataFunc) retro_reftest_test_state_refresh,
                                (GDestroyNotify) retro_reftest_data_unref);
-    g_free (test_path);
   }
   else {
     g_critical ("Not a state test: %s.", state);
@@ -600,7 +583,7 @@ retro_reftest_add_video_test (RetroReftestFile *reftest_file,
                               RetroReftestData *data)
 {
   RetroReftestVideo *video;
-  gchar *test_path;
+  g_autofree gchar *test_path = NULL;
   GError *error = NULL;
 
   video = g_new0 (RetroReftestVideo, 1);
@@ -614,27 +597,24 @@ retro_reftest_add_video_test (RetroReftestFile *reftest_file,
                              video,
                              (GTestDataFunc) retro_reftest_test_video,
                              (GDestroyNotify) retro_reftest_video_unref);
-  g_free (test_path);
 }
 
 static void
 retro_reftest_setup_for_file (GFile *file)
 {
   RetroReftestFile *reftest_file;
-  GList *frames;
+  g_autoptr (GList) frames = NULL;
   guint current_frame_number, frame_number;
   gboolean has_test;
-  RetroReftestData *data;
+  g_autoptr (RetroReftestData) data = NULL;
   GError *error = NULL;
 
   reftest_file = retro_reftest_file_new (file);
   data = g_new0 (RetroReftestData, 1);
   data->core = retro_reftest_file_get_core (reftest_file, &error);
   if (error != NULL) {
-    gchar *path = g_file_get_path (file);
+    g_autofree gchar *path = g_file_get_path (file);
     g_critical ("Invalid test file %s: %s", path, error->message);
-    g_free (path);
-    retro_reftest_data_unref (data);
     g_object_unref (reftest_file);
     g_clear_error (&error);
 
@@ -644,10 +624,8 @@ retro_reftest_setup_for_file (GFile *file)
                                                           &data->controllers_length,
                                                           &error);
   if (error != NULL) {
-    gchar *path = g_file_get_path (file);
+    g_autofree gchar *path = g_file_get_path (file);
     g_critical ("Invalid test file %s: %s", path, error->message);
-    g_free (path);
-    retro_reftest_data_unref (data);
     g_object_unref (reftest_file);
     g_clear_error (&error);
 
@@ -692,8 +670,6 @@ retro_reftest_setup_for_file (GFile *file)
 
     current_frame_number = frame_number + 1;
   }
-  g_list_free (frames);
-  retro_reftest_data_unref (data);
 
   g_signal_connect_swapped (data->core, "video-output", (GCallback) video_output_cb, data);
 }
@@ -702,17 +678,14 @@ int
 main (int argc,
       gchar **argv)
 {
-  GFile *file;
-
   g_setenv ("GDK_RENDERING", "image", FALSE);
 
   if (!parse_command_line (&argc, &argv))
     return 1;
 
   for (gsize i = 1; i < argc; i++) {
-    file = g_file_new_for_commandline_arg (argv[i]);
+    g_autoptr (GFile) file = g_file_new_for_commandline_arg (argv[i]);
     retro_reftest_setup_for_file (file);
-    g_object_unref (file);
   }
 
   return g_test_run ();

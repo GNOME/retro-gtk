@@ -22,9 +22,9 @@ struct _RetroGameInfo
   gchar *meta;
 };
 
-RetroGameInfo *retro_game_info_new (const gchar *file_name);
-RetroGameInfo * retro_game_info_new_with_data (const gchar  *file_name,
-                                               GError      **error);
+RetroGameInfo *retro_game_info_new (const gchar  *uri,
+                                    gboolean      needs_full_path,
+                                    GError      **error);
 RetroGameInfo *retro_game_info_copy (RetroGameInfo *self);
 void retro_game_info_free (RetroGameInfo *self);
 

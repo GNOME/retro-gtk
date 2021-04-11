@@ -870,12 +870,9 @@ load_discs (RetroCore  *self,
 
   fullpath = get_needs_full_path (self);
   for (gsize index = 0; index < length; index++) {
-    g_autoptr (GFile) file = g_file_new_for_uri (self->media_uris[index]);
-    g_autofree gchar *path = g_file_get_path (file);
-    g_autoptr (RetroGameInfo) game_info = fullpath ?
-      retro_game_info_new (path) :
-      retro_game_info_new_with_data (path, &tmp_error);
+    g_autoptr (RetroGameInfo) game_info = NULL;
 
+    game_info = retro_game_info_new (self->media_uris[index], fullpath, &tmp_error);
     if (G_UNLIKELY (tmp_error != NULL)) {
       g_propagate_error (error, tmp_error);
 
@@ -951,8 +948,6 @@ load_medias (RetroCore  *self,
              GError    **error)
 {
   guint length;
-  g_autoptr (GFile) file = NULL;
-  g_autofree gchar *path = NULL;
   g_autoptr (RetroGameInfo) game_info = NULL;
   GError *tmp_error = NULL;
 
@@ -964,12 +959,7 @@ load_medias (RetroCore  *self,
     return;
   }
 
-  file = g_file_new_for_uri (self->media_uris[0]);
-  path = g_file_get_path (file);
-  game_info = get_needs_full_path (self) ?
-    retro_game_info_new (path) :
-    retro_game_info_new_with_data (path, &tmp_error);
-
+  game_info = retro_game_info_new (self->media_uris[0], get_needs_full_path (self), &tmp_error);
   if (G_UNLIKELY (tmp_error != NULL)) {
     g_propagate_error (error, tmp_error);
 

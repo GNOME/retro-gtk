@@ -219,6 +219,20 @@ create_connection (GSubprocessLauncher  *launcher,
   return connection;
 }
 
+static gchar *
+get_runner_path (void)
+{
+  g_auto(GStrv) envp = NULL;
+  const gchar *runner_path;
+
+  envp = g_get_environ ();
+  runner_path = g_environ_getenv (envp, "RETRO_RUNNER");
+  if (runner_path)
+    return g_strdup (runner_path);
+
+  return g_strdup (RETRO_RUNNER_PATH);
+}
+
 /**
  * retro_runner_process_start:
  * @self: a #RetroRunnerProcess
@@ -233,6 +247,7 @@ retro_runner_process_start (RetroRunnerProcess  *self,
 {
   g_autoptr(GSocketConnection) connection = NULL;
   g_autoptr(GSubprocessLauncher) launcher = NULL;
+  g_autofree gchar *runner_path = NULL;
   g_autoptr(GSubprocess) process = NULL;
 
   g_return_if_fail (RETRO_IS_RUNNER_PROCESS (self));
@@ -243,9 +258,11 @@ retro_runner_process_start (RetroRunnerProcess  *self,
   if (!(connection = create_connection (launcher, 3, error)))
     return;
 
+  runner_path = get_runner_path ();
+
   retro_try_propagate ({
     process = g_subprocess_launcher_spawn (launcher, &catch,
-                                               RETRO_RUNNER_PATH,
+                                               runner_path,
                                                g_get_application_name (),
                                                self->filename, NULL);
   }, catch, error);

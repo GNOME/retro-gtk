@@ -103,6 +103,7 @@ retro_demo_activate (GApplication *application)
   gtk_widget_show_all (GTK_WIDGET (window));
   gtk_application_add_window (GTK_APPLICATION (application),
                               GTK_WINDOW (window));
+  g_signal_connect_swapped (self->core, "shutdown", G_CALLBACK (gtk_window_close), window);
 
   retro_core_run (self->core);
 }

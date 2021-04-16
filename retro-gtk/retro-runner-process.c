@@ -262,17 +262,17 @@ retro_runner_process_start (RetroRunnerProcess  *self,
 
   retro_try_propagate ({
     process = g_subprocess_launcher_spawn (launcher, &catch,
-                                               runner_path,
-                                               g_get_application_name (),
-                                               self->filename, NULL);
+                                           runner_path,
+                                           g_get_application_name (),
+                                           self->filename, NULL);
   }, catch, error);
 
   retro_try_propagate ({
     self->connection = g_dbus_connection_new_sync (G_IO_STREAM (connection),
-                                                       NULL,
-                                                       G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING |
-                                                       G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT,
-                                                       NULL, NULL, &catch);
+                                                   NULL,
+                                                   G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING |
+                                                   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT,
+                                                   NULL, NULL, &catch);
   }, catch, error);
 
   g_dbus_connection_start_message_processing (self->connection);

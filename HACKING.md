@@ -87,6 +87,11 @@ function (…) {
 }
 ```
 
+### Function Result
+
+If a public function transfers ownership of its returned value, explicit that by
+giving the function the `G_GNUC_WARN_UNUSED_RESULT` attribute.
+
 ### Function Order
 
 Functions are defined in the following order:

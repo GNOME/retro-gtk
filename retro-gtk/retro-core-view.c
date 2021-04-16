@@ -596,10 +596,8 @@ retro_core_view_set_key_joypad_mapping (RetroCoreView         *self,
   g_return_if_fail (RETRO_IS_CORE_VIEW (self));
   g_return_if_fail (mapping == NULL || RETRO_IS_KEY_JOYPAD_MAPPING (mapping));
 
-  g_object_unref (self->key_joypad_mapping);
-  if (mapping != NULL)
-    self->key_joypad_mapping = g_object_ref (mapping);
-  else
+  g_set_object (&self->key_joypad_mapping, mapping);
+  if (self->key_joypad_mapping == NULL)
     self->key_joypad_mapping = retro_key_joypad_mapping_new ();
 }
 

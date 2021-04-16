@@ -66,10 +66,7 @@ static void
 clear_video (RetroGLDisplay *self)
 {
   g_clear_object (&self->pixbuf);
-  if (self->pixdata != NULL) {
-    retro_pixdata_free (self->pixdata);
-    self->pixdata = NULL;
-  }
+  g_clear_pointer (&self->pixdata, retro_pixdata_free);
 }
 
 static void

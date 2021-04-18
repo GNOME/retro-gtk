@@ -6,10 +6,14 @@
 #include <sys/mman.h>
 #include <gio/gunixfdlist.h>
 #include "retro-core-private.h"
+#include "retro-error-private.h"
 #include "retro-keyboard-key-private.h"
 #ifdef PULSEAUDIO_ENABLED
 #include "retro-pa-player-private.h"
 #endif
+
+#define retro_try_propagate_dbus(try, catch, invocation) \
+  retro_try (try, catch, { g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), catch); return TRUE; })
 
 struct _IpcRunnerImpl
 {
@@ -45,7 +49,6 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
                              GVariant              *default_controller)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
   g_autoptr(GUnixFDList) out_fd_list = NULL;
   g_autoptr (GVariantIter) iter = NULL;
   gchar *key, *value;
@@ -60,12 +63,9 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
 
   g_variant_get (default_controller, "h", &handle);
   if (G_LIKELY (handle < g_unix_fd_list_get_length (fd_list))) {
-    fd = g_unix_fd_list_get (fd_list, handle, &error);
-    if (error) {
-      g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-      return TRUE;
-    }
+    retro_try_propagate_dbus ({
+      fd = g_unix_fd_list_get (fd_list, handle, &catch);
+    }, catch, invocation);
   } else {
     g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
                                            G_DBUS_ERROR,
@@ -76,13 +76,14 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
   }
 
   retro_core_set_default_controller (self->core, fd);
-  retro_core_boot (self->core, &error);
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
+  retro_try ({
+    retro_core_boot (self->core, &catch);
+  }, catch, {
+    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), catch);
     g_variant_unref (self->variables);
 
     return TRUE;
-  }
+  });
 
   /* DBus doesn't support nulls, so create an empty array instead */
   if (!self->variables) {
@@ -95,13 +96,14 @@ ipc_runner_impl_handle_boot (IpcRunner             *runner,
 
   out_fd_list = g_unix_fd_list_new ();
   fd = retro_core_get_framebuffer_fd (self->core);
-  handle = g_unix_fd_list_append (out_fd_list, fd, &error);
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
+  retro_try ({
+    handle = g_unix_fd_list_append (out_fd_list, fd, &catch);
+  }, catch, {
+    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), catch);
     g_variant_unref (self->variables);
 
     return TRUE;
-  }
+  });
 
   ipc_runner_complete_boot (runner, invocation, out_fd_list,
                             self->variables, g_variant_new ("h", handle));
@@ -117,14 +119,10 @@ ipc_runner_impl_handle_set_current_media (IpcRunner             *runner,
                                           uint                   index)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
 
-  retro_core_set_current_media (self->core, index, &error);
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-    return TRUE;
-  }
+  retro_try_propagate_dbus ({
+    retro_core_set_current_media (self->core, index, &catch);
+  }, catch, invocation);
 
   ipc_runner_complete_set_current_media (runner, invocation);
 
@@ -208,14 +206,10 @@ ipc_runner_impl_handle_save_state (IpcRunner             *runner,
                                    const gchar           *filename)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
 
-  retro_core_save_state (self->core, filename, &error);
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-    return TRUE;
-  }
+  retro_try_propagate_dbus ({
+    retro_core_save_state (self->core, filename, &catch);
+  }, catch, invocation);
 
   ipc_runner_complete_save_state (runner, invocation);
 
@@ -228,15 +222,10 @@ ipc_runner_impl_handle_load_state (IpcRunner             *runner,
                                    const gchar           *filename)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
 
-  retro_core_load_state (self->core, filename, &error);
-
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-    return TRUE;
-  }
+  retro_try_propagate_dbus ({
+    retro_core_load_state (self->core, filename, &catch);
+  }, catch, invocation);
 
   ipc_runner_complete_load_state (runner, invocation);
 
@@ -265,15 +254,10 @@ ipc_runner_impl_handle_save_memory (IpcRunner             *runner,
                                     const gchar           *filename)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
 
-  retro_core_save_memory (self->core, memory_type, filename, &error);
-
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-    return TRUE;
-  }
+  retro_try_propagate_dbus ({
+    retro_core_save_memory (self->core, memory_type, filename, &catch);
+  }, catch, invocation);
 
   ipc_runner_complete_save_memory (runner, invocation);
 
@@ -287,15 +271,10 @@ ipc_runner_impl_handle_load_memory (IpcRunner             *runner,
                                     const gchar           *filename)
 {
   IpcRunnerImpl *self = IPC_RUNNER_IMPL (runner);
-  g_autoptr(GError) error = NULL;
 
-  retro_core_load_memory (self->core, memory_type, filename, &error);
-
-  if (error) {
-    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-    return TRUE;
-  }
+  retro_try_propagate_dbus ({
+    retro_core_load_memory (self->core, memory_type, filename, &catch);
+  }, catch, invocation);
 
   ipc_runner_complete_load_memory (runner, invocation);
 
@@ -329,17 +308,13 @@ ipc_runner_handle_set_controller (IpcRunner             *runner,
   gint fd;
 
   if (type != RETRO_CONTROLLER_TYPE_NONE) {
-    g_autoptr(GError) error = NULL;
     gint handle;
 
     g_variant_get (data_handle, "h", &handle);
     if (G_LIKELY (handle < g_unix_fd_list_get_length (fd_list))) {
-      fd = g_unix_fd_list_get (fd_list, handle, &error);
-      if (error) {
-        g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-
-        return TRUE;
-      }
+      retro_try_propagate_dbus ({
+        fd = g_unix_fd_list_get (fd_list, handle, &catch);
+      }, catch, invocation);
     } else {
       g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
                                              G_DBUS_ERROR,

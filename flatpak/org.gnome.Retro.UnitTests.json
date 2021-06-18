@@ -49,7 +49,7 @@
                 {
                     "type" : "script",
                     "commands" : [
-                        "PATH=$PATH:/app/libexec/installed-tests/retro-gtk-1/",
+                        "PATH=$PATH:/app/libexec/installed-tests/retro-gtk-2/",
                         "RETURN=0",
                         "retro_test()",
                         "{",
@@ -72,7 +72,7 @@
                         "  rm \"$RESULT\"",
                         "  return $RETURN",
                         "}",
-                        "cd /app/share/installed-tests/retro-gtk-1/",
+                        "cd /app/share/installed-tests/retro-gtk-2/",
                         "retro_test RetroCore libretro/libretro-dummy.so",
                         "retro_test retro-reftest `find . -name '*.reftest'`",
                         "cd /app/tests",

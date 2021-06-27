@@ -38,6 +38,7 @@ struct _RetroCoreView
   gboolean pointer_is_on_display;
   gdouble pointer_x;
   gdouble pointer_y;
+  gboolean dragging;
 };
 
 G_DEFINE_TYPE (RetroCoreView, retro_core_view, GTK_TYPE_WIDGET)
@@ -182,11 +183,10 @@ key_released_cb (RetroCoreView   *self,
 }
 
 static void
-pressed_cb (RetroCoreView *self,
-            gint           n_press,
-            gdouble        x,
-            gdouble        y,
-            GtkGesture    *gesture)
+drag_begin_cb (RetroCoreView *self,
+               gdouble        start_x,
+               gdouble        start_y,
+               GtkGesture    *gesture)
 {
   guint button = gtk_gesture_single_get_current_button (GTK_GESTURE_SINGLE (gesture));
 
@@ -207,20 +207,44 @@ pressed_cb (RetroCoreView *self,
     set_input_pressed (self->mouse_button_state, button);
     self->pointer_is_on_display =
       retro_gl_display_get_coordinates_on_display (self->display,
-                                                   x,
-                                                   y,
+                                                   start_x,
+                                                   start_y,
                                                    &self->pointer_x,
                                                    &self->pointer_y);
   }
+
+  self->dragging = TRUE;
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 }
 
 static void
-released_cb (RetroCoreView *self,
-             gint           n_press,
-             gdouble        x,
-             gdouble        y,
+drag_update_cb (RetroCoreView *self,
+                gdouble        offset_x,
+                gdouble        offset_y,
+                GtkGesture    *gesture)
+{
+  gdouble start_x, start_y;
+
+  if (retro_core_view_get_can_grab_pointer (self))
+    return;
+
+  gtk_gesture_drag_get_start_point (GTK_GESTURE_DRAG (gesture), &start_x, &start_y);
+
+  self->pointer_is_on_display =
+    retro_gl_display_get_coordinates_on_display (self->display,
+                                                 start_x + offset_x,
+                                                 start_y + offset_y,
+                                                 &self->pointer_x,
+                                                 &self->pointer_y);
+
+  g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
+}
+
+static void
+drag_end_cb (RetroCoreView *self,
+             gdouble        offset_x,
+             gdouble        offset_y,
              GtkGesture    *gesture)
 
 {
@@ -229,6 +253,8 @@ released_cb (RetroCoreView *self,
   gtk_gesture_set_state (gesture, GTK_EVENT_SEQUENCE_CLAIMED);
 
   set_input_released (self->mouse_button_state, button);
+
+  self->dragging = FALSE;
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
 }
@@ -247,12 +273,15 @@ leave_cb (RetroCoreView *self)
   return GDK_EVENT_PROPAGATE;
 }
 
-static gboolean
+static void
 motion_cb (RetroCoreView      *self,
            gdouble             x,
            gdouble             y,
            GtkEventController *controller)
 {
+  if (self->dragging)
+    return;
+
   if (retro_core_view_get_can_grab_pointer (self)) {
     GdkDevice *device = gtk_event_controller_get_current_event_device (controller);
 
@@ -274,8 +303,6 @@ motion_cb (RetroCoreView      *self,
   }
 
   g_signal_emit (self, signals[SIGNAL_CONTROLLER_STATE_CHANGED], 0);
-
-  return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
@@ -489,9 +516,10 @@ retro_core_view_init (RetroCoreView *self)
   g_signal_connect_swapped (controller, "motion", G_CALLBACK (motion_cb), self);
   gtk_widget_add_controller (GTK_WIDGET (self), controller);
 
-  controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
-  g_signal_connect_swapped (controller, "pressed", G_CALLBACK (pressed_cb), self);
-  g_signal_connect_swapped (controller, "released", G_CALLBACK (released_cb), self);
+  controller = GTK_EVENT_CONTROLLER (gtk_gesture_drag_new ());
+  g_signal_connect_swapped (controller, "drag-begin", G_CALLBACK (drag_begin_cb), self);
+  g_signal_connect_swapped (controller, "drag-update", G_CALLBACK (drag_update_cb), self);
+  g_signal_connect_swapped (controller, "drag-end", G_CALLBACK (drag_end_cb), self);
   gtk_widget_add_controller (GTK_WIDGET (self), controller);
 }
 

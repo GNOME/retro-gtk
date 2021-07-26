@@ -329,7 +329,7 @@ static gboolean
 get_overscan (RetroCore *self,
               bool      *overscan)
 {
-  *overscan = self->overscan;
+  *overscan = !!self->overscan;
 
   retro_debug ("Get overscan: %s", TRUENESS (*overscan));
 
@@ -409,7 +409,7 @@ static gboolean
 get_variable_update (RetroCore *self,
                      bool      *update)
 {
-  *update = retro_core_get_variable_update (self);
+  *update = !!retro_core_get_variable_update (self);
 
   /* We purposefully don't log when no variable update is detected because it's
    * not very useful to debug and it would print on every iteration, causing

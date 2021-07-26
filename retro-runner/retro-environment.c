@@ -361,7 +361,7 @@ get_username (RetroCore    *self,
 {
   *(username) = retro_core_get_user_name (self);
 
-  if (**username == '\0')
+  if (g_strcmp0 (*username, "") == 0)
     *(username) = NULL;
 
   retro_debug ("Get username: %s", *username);

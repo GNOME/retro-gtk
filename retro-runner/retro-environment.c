@@ -119,6 +119,8 @@ rumble_callback_set_rumble_state (guint             port,
 {
   RetroCore *self = retro_core_get_instance ();
 
+  g_return_val_if_fail (self, FALSE);
+
   if (!retro_core_get_controller_supports_rumble (self, port))
     return FALSE;
 
@@ -135,6 +137,8 @@ log_cb (guint level, const gchar *format, ...)
   GLogLevelFlags log_level;
   g_autofree gchar *message = NULL;
   va_list args;
+
+  g_return_if_fail (self);
 
   switch (level) {
   case RETRO_LOG_LEVEL_DEBUG:
@@ -174,6 +178,8 @@ get_input_string (RetroInputDescriptor *descriptor) {
   g_autoptr (GEnumClass) index_enum_class = NULL;
   g_autoptr (GEnumClass) id_enum_class = NULL;
   GEnumValue *id_enum_value;
+
+  g_return_val_if_fail (descriptor, NULL);
 
   switch (descriptor->controller_type & RETRO_CONTROLLER_TYPE_TYPE_MASK) {
   case RETRO_CONTROLLER_TYPE_JOYPAD:
@@ -226,6 +232,9 @@ static gboolean
 get_can_dupe (RetroCore *self,
               bool      *can_dupe)
 {
+  g_assert (self);
+  g_return_val_if_fail (can_dupe, FALSE);
+
   *can_dupe = TRUE;
 
   retro_debug ("Get can dupe: true");
@@ -237,6 +246,9 @@ static gboolean
 get_content_directory (RetroCore    *self,
                        const gchar **content_directory)
 {
+  g_assert (self);
+  g_return_val_if_fail (content_directory, FALSE);
+
   *(content_directory) = retro_core_get_content_directory (self);
   retro_sanitize_string (content_directory);
 
@@ -249,6 +261,9 @@ static gboolean
 get_input_device_capabilities (RetroCore *self,
                                guint64   *capabilities)
 {
+  g_assert (self);
+  g_return_val_if_fail (capabilities, FALSE);
+
   *capabilities = retro_core_get_controller_capabilities (self);
 
   retro_debug ("Get input device capabilities");
@@ -286,6 +301,9 @@ get_language (RetroCore *self,
   const gchar * const *locales = g_get_language_names ();
   gsize language_i = 0;
 
+  g_assert (self);
+  g_return_val_if_fail (language, FALSE);
+
   for (gsize locale_i = 0; locales[locale_i] != NULL; locale_i++) {
     for (language_i = 0;
          !g_str_equal (values[language_i].locale, "C") &&
@@ -306,6 +324,9 @@ static gboolean
 get_libretro_path (RetroCore    *self,
                    const gchar **libretro_directory)
 {
+  g_assert (self);
+  g_return_val_if_fail (libretro_directory, FALSE);
+
   *(libretro_directory) = retro_core_get_libretro_path (self);
   retro_sanitize_string (libretro_directory);
 
@@ -318,6 +339,9 @@ static gboolean
 get_log_callback (RetroCore        *self,
                   RetroLogCallback *cb)
 {
+  g_assert (self);
+  g_return_val_if_fail (cb, FALSE);
+
   cb->log = log_cb;
 
   retro_debug ("Get log callback");
@@ -329,6 +353,9 @@ static gboolean
 get_overscan (RetroCore *self,
               bool      *overscan)
 {
+  g_assert (self);
+  g_return_val_if_fail (overscan, FALSE);
+
   *overscan = !!self->overscan;
 
   retro_debug ("Get overscan: %s", TRUENESS (*overscan));
@@ -340,6 +367,9 @@ static gboolean
 get_rumble_callback (RetroCore           *self,
                      RetroRumbleCallback *cb)
 {
+  g_assert (self);
+  g_return_val_if_fail (cb, FALSE);
+
   cb->set_rumble_state = rumble_callback_set_rumble_state;
 
   retro_debug ("Get rumble callback");
@@ -351,6 +381,9 @@ static gboolean
 get_save_directory (RetroCore    *self,
                     const gchar **save_directory)
 {
+  g_assert (self);
+  g_return_val_if_fail (save_directory, FALSE);
+
   *(save_directory) = retro_core_get_save_directory (self);
   retro_sanitize_string (save_directory);
 
@@ -363,6 +396,9 @@ static gboolean
 get_system_directory (RetroCore    *self,
                       const gchar **system_directory)
 {
+  g_assert (self);
+  g_return_val_if_fail (system_directory, FALSE);
+
   *(system_directory) = retro_core_get_system_directory (self);
   retro_sanitize_string (system_directory);
 
@@ -375,6 +411,9 @@ static gboolean
 get_username (RetroCore    *self,
               const gchar **username)
 {
+  g_assert (self);
+  g_return_val_if_fail (username, FALSE);
+
   *(username) = retro_core_get_user_name (self);
   retro_sanitize_string (username);
 
@@ -388,6 +427,9 @@ get_variable (RetroCore     *self,
               RetroVariable *variable)
 {
   gchar *value;
+
+  g_assert (self);
+  g_return_val_if_fail (variable, FALSE);
 
   value = g_hash_table_lookup (self->variables, variable->key);
 
@@ -409,6 +451,9 @@ static gboolean
 get_variable_update (RetroCore *self,
                      bool      *update)
 {
+  g_assert (self);
+  g_return_val_if_fail (update, FALSE);
+
   *update = !!retro_core_get_variable_update (self);
 
   /* We purposefully don't log when no variable update is detected because it's
@@ -426,6 +471,9 @@ hw_rendering_callback_get_proc_address (const gchar *sym)
 {
   RetroCore *self = retro_core_get_instance ();
 
+  g_assert (self);
+  g_return_val_if_fail (sym, FALSE);
+
   return retro_renderer_get_proc_address (self->renderer, sym);
 }
 
@@ -434,6 +482,8 @@ hw_rendering_callback_get_current_framebuffer ()
 {
   RetroCore *self = retro_core_get_instance ();
 
+  g_assert (self);
+
   return retro_renderer_get_current_framebuffer (self->renderer);
 }
 
@@ -441,6 +491,9 @@ static gboolean
 set_hw_render (RetroCore             *self,
                RetroHWRenderCallback *callback)
 {
+  g_assert (self);
+  g_return_val_if_fail (callback, FALSE);
+
   switch (callback->context_type) {
   case RETRO_HW_CONTEXT_OPENGL:
   case RETRO_HW_CONTEXT_OPENGL_CORE:
@@ -476,6 +529,9 @@ static gboolean
 set_disk_control_interface (RetroCore                *self,
                             RetroDiskControlCallback *callback)
 {
+  g_assert (self);
+  g_return_val_if_fail (callback, FALSE);
+
   retro_debug ("Set disk control callback");
 
   self->disk_control_callback = callback;
@@ -487,6 +543,9 @@ static gboolean
 set_geometry (RetroCore         *self,
               RetroGameGeometry *geometry)
 {
+  g_assert (self);
+  g_return_val_if_fail (geometry, FALSE);
+
   retro_debug ("Set geometry: base %u × %u, max %u × %u, aspect ratio %f",
                geometry->base_width, geometry->base_height,
                geometry->max_width, geometry->max_height,
@@ -502,6 +561,9 @@ set_input_descriptors (RetroCore            *self,
                        RetroInputDescriptor *descriptors)
 {
   int length;
+
+  g_assert (self);
+  g_return_val_if_fail (descriptors, FALSE);
 
   for (length = 0 ; descriptors[length].description ; length++)
     retro_debug ("Set input descriptor: port %u, type %u, index %u, id %u (%s%s): %s",
@@ -522,6 +584,9 @@ static gboolean
 set_keyboard_callback (RetroCore             *self,
                        RetroKeyboardCallback *callback)
 {
+  g_assert (self);
+  g_return_val_if_fail (callback, FALSE);
+
   retro_debug ("Set keyboard callback");
 
   self->keyboard_callback = *callback;
@@ -533,6 +598,9 @@ static gboolean
 set_message (RetroCore          *self,
              const RetroMessage *message)
 {
+  g_assert (self);
+  g_return_val_if_fail (message, FALSE);
+
   retro_debug ("Emit message for %u frames: %s", message->frames, message->msg);
 
   g_signal_emit_by_name (self, "message", message->msg, message->frames);
@@ -544,6 +612,9 @@ static gboolean
 set_pixel_format (RetroCore              *self,
                   const RetroPixelFormat *pixel_format)
 {
+  g_assert (self);
+  g_return_val_if_fail (pixel_format, FALSE);
+
   switch (*pixel_format) {
   case RETRO_PIXEL_FORMAT_XRGB1555:
     retro_debug ("Set pixel format: XRGB1555");
@@ -572,6 +643,9 @@ static gboolean
 set_rotation (RetroCore           *self,
               const RetroRotation *rotation)
 {
+  g_assert (self);
+  g_return_val_if_fail (rotation, FALSE);
+
   if (G_UNLIKELY (*rotation >= CLOCKWISE)) {
     g_critical ("Couldn't set unknown rotation %d", *rotation);
 
@@ -589,6 +663,9 @@ static gboolean
 set_support_no_game (RetroCore  *self,
                      const bool *support_no_game)
 {
+  g_assert (self);
+  g_return_val_if_fail (support_no_game, FALSE);
+
   retro_debug ("Set support no game: %s", TRUENESS (*support_no_game));
 
   retro_core_set_support_no_game (self, *support_no_game);
@@ -600,6 +677,9 @@ static gboolean
 set_system_av_info (RetroCore         *self,
                     RetroSystemAvInfo *system_av_info)
 {
+  g_assert (self);
+  g_return_val_if_fail (system_av_info, FALSE);
+
   retro_debug ("Set system AV info: base %u × %u, max %u × %u, aspect ratio %f, %lf FPS, %lf Hz",
                system_av_info->geometry.base_width, system_av_info->geometry.base_height,
                system_av_info->geometry.max_width, system_av_info->geometry.max_height,
@@ -615,6 +695,9 @@ static gboolean
 set_variables (RetroCore     *self,
                RetroVariable *variable_array)
 {
+  g_assert (self);
+  g_return_val_if_fail (variable_array, FALSE);
+
   for (gsize i = 0 ; variable_array[i].key && variable_array[i].value ; i++) {
     retro_debug ("Set variable %s: %s", variable_array[i].key, variable_array[i].value);
 
@@ -629,6 +712,8 @@ set_variables (RetroCore     *self,
 static gboolean
 shutdown (RetroCore *self)
 {
+  g_assert (self);
+
   retro_debug ("Emit shutdown");
 
   g_signal_emit_by_name (self, "shutdown");

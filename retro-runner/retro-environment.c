@@ -42,7 +42,6 @@
 #define RETRO_ENVIRONMENT_GET_LOG_INTERFACE 27
 #define RETRO_ENVIRONMENT_GET_PERF_INTERFACE 28
 #define RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE 29
-#define RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY 30 /* Old name, kept for compatibility. */
 #define RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY 30
 #define RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY 31
 #define RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO 32
@@ -243,16 +242,16 @@ get_can_dupe (RetroCore *self,
 }
 
 static gboolean
-get_content_directory (RetroCore    *self,
-                       const gchar **content_directory)
+get_core_assets_directory (RetroCore    *self,
+                           const gchar **core_assets_directory)
 {
   g_assert (self);
-  g_return_val_if_fail (content_directory, FALSE);
+  g_return_val_if_fail (core_assets_directory, FALSE);
 
-  *(content_directory) = retro_core_get_content_directory (self);
-  retro_sanitize_string (content_directory);
+  *(core_assets_directory) = retro_core_get_content_directory (self);
+  retro_sanitize_string (core_assets_directory);
 
-  retro_debug ("Get content directory: %s", *content_directory);
+  retro_debug ("Get core assets directory: %s", *core_assets_directory);
 
   return TRUE;
 }
@@ -740,11 +739,11 @@ environment_core_command (RetroCore *self,
     return FALSE;
 
   switch (cmd) {
+  case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
+    return get_core_assets_directory (self, (const gchar **) data);
+
   case RETRO_ENVIRONMENT_GET_CAN_DUPE:
     return get_can_dupe (self, (bool *) data);
-
-  case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
-    return get_content_directory (self, (const gchar **) data);
 
   case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
     return get_input_device_capabilities (self, (guint64 *) data);

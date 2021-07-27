@@ -30,7 +30,7 @@ struct _RetroCore
   gchar *filename;
   gchar *system_directory;
   gchar *libretro_path;
-  gchar *content_directory;
+  gchar *core_assets_directory;
   gchar *save_directory;
   gchar *user_name;
   gboolean is_initiated;

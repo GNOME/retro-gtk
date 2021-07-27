@@ -32,7 +32,7 @@ enum {
   PROP_API_VERSION,
   PROP_FILENAME,
   PROP_SYSTEM_DIRECTORY,
-  PROP_CONTENT_DIRECTORY,
+  PROP_CORE_ASSETS_DIRECTORY,
   PROP_SAVE_DIRECTORY,
   PROP_USER_NAME,
   PROP_IS_INITIATED,
@@ -130,7 +130,7 @@ retro_core_finalize (GObject *object)
   g_free (self->filename);
   g_free (self->system_directory);
   g_free (self->libretro_path);
-  g_free (self->content_directory);
+  g_free (self->core_assets_directory);
   g_free (self->save_directory);
   g_clear_object (&self->renderer);
 
@@ -158,8 +158,8 @@ retro_core_get_property (GObject    *object,
     g_value_set_string (value, retro_core_get_system_directory (self));
 
     break;
-  case PROP_CONTENT_DIRECTORY:
-    g_value_set_string (value, retro_core_get_content_directory (self));
+  case PROP_CORE_ASSETS_DIRECTORY:
+    g_value_set_string (value, retro_core_get_core_assets_directory (self));
 
     break;
   case PROP_SAVE_DIRECTORY:
@@ -214,8 +214,8 @@ retro_core_set_property (GObject      *object,
     retro_core_set_system_directory (self, g_value_get_string (value));
 
     break;
-  case PROP_CONTENT_DIRECTORY:
-    retro_core_set_content_directory (self, g_value_get_string (value));
+  case PROP_CORE_ASSETS_DIRECTORY:
+    retro_core_set_core_assets_directory (self, g_value_get_string (value));
 
     break;
   case PROP_SAVE_DIRECTORY:
@@ -302,11 +302,10 @@ retro_core_class_init (RetroCoreClass *klass)
                          G_PARAM_STATIC_NICK |
                          G_PARAM_STATIC_BLURB);
 
-  // FIXME This should be removed as it is deprecated by Libretro.
-  properties[PROP_CONTENT_DIRECTORY] =
-    g_param_spec_string ("content-directory",
-                         "Content directory",
-                         "The content directory",
+  properties[PROP_CORE_ASSETS_DIRECTORY] =
+    g_param_spec_string ("core-assets-directory",
+                         "Core assets directory",
+                         "The core assets directory",
                          NULL,
                          G_PARAM_READWRITE |
                          G_PARAM_STATIC_NAME |
@@ -1109,28 +1108,26 @@ retro_core_get_libretro_path (RetroCore *self)
   return self->libretro_path;
 }
 
-// FIXME This should be removed as it is deprecated by Libretro.
 const gchar *
-retro_core_get_content_directory (RetroCore *self)
+retro_core_get_core_assets_directory (RetroCore *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE (self), NULL);
 
-  return self->content_directory;
+  return self->core_assets_directory;
 }
 
-// FIXME This should be removed as it is deprecated by Libretro.
 void
-retro_core_set_content_directory (RetroCore   *self,
-                                  const gchar *content_directory)
+retro_core_set_core_assets_directory (RetroCore   *self,
+                                      const gchar *core_assets_directory)
 {
   g_return_if_fail (RETRO_IS_CORE (self));
 
-  if (g_strcmp0 (content_directory, retro_core_get_content_directory (self)) == 0)
+  if (g_strcmp0 (core_assets_directory, retro_core_get_core_assets_directory (self)) == 0)
     return;
 
-  g_free (self->content_directory);
-  self->content_directory = g_strdup (content_directory);
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CONTENT_DIRECTORY]);
+  g_free (self->core_assets_directory);
+  self->core_assets_directory = g_strdup (core_assets_directory);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CORE_ASSETS_DIRECTORY]);
 }
 
 /**

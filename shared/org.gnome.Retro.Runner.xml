@@ -5,7 +5,7 @@
   <interface name="org.gnome.Retro.Runner">
     <property name="ApiVersion" type="u" access="read"/>
     <property name="SystemDirectory" type="s" access="readwrite"/>
-    <property name="ContentDirectory" type="s" access="readwrite"/>
+    <property name="CoreAssetsDirectory" type="s" access="readwrite"/>
     <property name="SaveDirectory" type="s" access="readwrite"/>
     <property name="UserName" type="s" access="readwrite"/>
     <property name="GameLoaded" type="b" access="read"/>

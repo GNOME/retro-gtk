@@ -248,7 +248,7 @@ get_core_assets_directory (RetroCore    *self,
   g_assert (self);
   g_return_val_if_fail (core_assets_directory, FALSE);
 
-  *(core_assets_directory) = retro_core_get_content_directory (self);
+  *(core_assets_directory) = retro_core_get_core_assets_directory (self);
   retro_sanitize_string (core_assets_directory);
 
   retro_debug ("Get core assets directory: %s", *core_assets_directory);

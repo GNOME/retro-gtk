@@ -472,8 +472,8 @@ ipc_runner_impl_constructed (GObject *object)
   g_object_bind_property (self->core, "system-directory",
                           self,       "system-directory",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
-  g_object_bind_property (self->core, "content-directory",
-                          self,       "content-directory",
+  g_object_bind_property (self->core, "core-assets-directory",
+                          self,       "core-assets-directory",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   g_object_bind_property (self->core, "save-directory",
                           self,       "save-directory",

@@ -22,9 +22,9 @@ const gchar *retro_core_get_filename (RetroCore *self);
 const gchar *retro_core_get_system_directory (RetroCore *self);
 void retro_core_set_system_directory (RetroCore   *self,
                                       const gchar *system_directory);
-const gchar *retro_core_get_content_directory (RetroCore *self);
-void retro_core_set_content_directory (RetroCore   *self,
-                                       const gchar *content_directory);
+const gchar *retro_core_get_core_assets_directory (RetroCore *self);
+void retro_core_set_core_assets_directory (RetroCore   *self,
+                                           const gchar *core_assets_directory);
 const gchar *retro_core_get_save_directory (RetroCore *self);
 void retro_core_set_save_directory (RetroCore   *self,
                                     const gchar *save_directory);

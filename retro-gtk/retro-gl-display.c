@@ -85,7 +85,7 @@ set_pixdata (RetroGLDisplay *self,
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-static void
+static gboolean
 get_video_box (RetroGLDisplay *self,
                gdouble        *width,
                gdouble        *height,
@@ -108,6 +108,9 @@ get_video_box (RetroGLDisplay *self,
   w = (gdouble) gtk_widget_get_allocated_width (GTK_WIDGET (self)) * scale;
   h = (gdouble) gtk_widget_get_allocated_height (GTK_WIDGET (self)) * scale;
 
+  if (self->aspect_ratio <= 0 || w <= 0 || h <= 0)
+    return FALSE;
+
   // Set the size of the display.
   display_ratio = (gdouble) self->aspect_ratio;
   allocated_ratio = w / h;
@@ -125,6 +128,8 @@ get_video_box (RetroGLDisplay *self,
   // Set the position of the display.
   *x = (w - *width) / 2;
   *y = (h - *height) / 2;
+
+  return TRUE;
 }
 
 static gboolean
@@ -502,7 +507,8 @@ retro_gl_display_get_coordinates_on_display (RetroGLDisplay *self,
   g_return_val_if_fail (display_x != NULL, FALSE);
   g_return_val_if_fail (display_y != NULL, FALSE);
 
-  get_video_box (self, &w, &h, &x, &y);
+  if (!get_video_box (self, &w, &h, &x, &y))
+    return FALSE;
 
   scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
   widget_x *= scale_factor;

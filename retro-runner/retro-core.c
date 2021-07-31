@@ -5,6 +5,7 @@
 #include <gio/gio.h>
 #include <string.h>
 #include "retro-error-private.h"
+#include "retro-environment-private.h"
 #include "retro-input-private.h"
 #include "retro-main-loop-source-private.h"
 #include "retro-memfd-private.h"
@@ -74,8 +75,6 @@ retro_core_get_instance (void)
 
   return retro_core_instance;
 }
-
-void retro_core_set_callbacks (RetroCore *self);
 
 static void
 retro_core_constructed (GObject *object)
@@ -953,8 +952,6 @@ load_medias (RetroCore  *self,
       load_discs (self, &catch);
     }, catch, error);
 }
-
-void retro_core_set_environment_interface (RetroCore *self);
 
 /* FIXME: this is partially copied from retro_option_new() */
 static gchar *

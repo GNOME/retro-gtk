@@ -1,8 +1,9 @@
 // This file is part of retro-gtk. License: GPL-3.0+.
 
-#include "retro-core-private.h"
+#include "retro-environment-private.h"
 
 #include <stdbool.h>
+#include "retro-core-private.h"
 #include "retro-debug-private.h"
 #include "retro-input-private.h"
 #include "retro-gl-renderer-private.h"
@@ -954,7 +955,6 @@ input_state_cb (guint port,
   return retro_core_get_controller_input_state (self, port, &input);
 }
 
-// TODO This is internal, make it private as soon as possible.
 void
 retro_core_set_environment_interface (RetroCore *self)
 {
@@ -966,7 +966,6 @@ retro_core_set_environment_interface (RetroCore *self)
   set_environment (environment_interface_cb);
 }
 
-// TODO This is internal, make it private as soon as possible.
 void
 retro_core_set_callbacks (RetroCore *self)
 {

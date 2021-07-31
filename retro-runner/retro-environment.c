@@ -899,13 +899,6 @@ video_refresh_cb (guint8 *data,
     g_signal_emit_by_name (self, "video-output");
 }
 
-// TODO This is internal, make it private as soon as possible.
-gpointer
-retro_core_get_module_video_refresh_cb (RetroCore *self)
-{
-  return video_refresh_cb;
-}
-
 static void
 audio_sample_cb (gint16 left,
                  gint16 right)

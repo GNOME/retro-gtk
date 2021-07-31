@@ -863,9 +863,10 @@ load_discs (RetroCore  *self,
   }, catch, error);
 }
 
-static gboolean
-load_game (RetroCore     *self,
-           RetroGameInfo *game)
+static void
+load_game (RetroCore      *self,
+           RetroGameInfo  *game,
+           GError        **error)
 {
   RetroUnloadGame unload_game;
   RetroLoadGame load_game;
@@ -882,13 +883,28 @@ load_game (RetroCore     *self,
   game_loaded = load_game (game);
   set_game_loaded (self, game_loaded);
 
+  if (G_UNLIKELY (!game_loaded)) {
+    if (game == NULL)
+      g_set_error_literal (error,
+                           RETRO_CORE_ERROR,
+                           RETRO_CORE_ERROR_COULDNT_LOAD_NO_GAME,
+                           "Coulnd't load no game.");
+    else
+      g_set_error_literal (error,
+                           RETRO_CORE_ERROR,
+                           RETRO_CORE_ERROR_COULDNT_LOAD_GAME,
+                           "Coulnd't load the game.");
+
+    return;
+  }
+
+  /* We must get the system AV info *only* once loading the game *succeeded*,
+   * not just once it completed. */
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
   if (self->renderer)
     retro_renderer_realize (self->renderer, info.geometry.max_width, info.geometry.max_height);
-
-  return game_loaded;
 }
 
 static void
@@ -901,7 +917,9 @@ load_medias (RetroCore  *self,
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
   if (length == 0) {
-    load_game (self, NULL);
+    retro_try_propagate ({
+      load_game (self, NULL, &catch);
+    }, catch, error);
 
     return;
   }
@@ -912,8 +930,9 @@ load_medias (RetroCore  *self,
                                      &catch);
   }, catch, error);
 
-  if (!load_game (self, game_info))
-    return;
+  retro_try_propagate ({
+    load_game (self, game_info, &catch);
+  }, catch, error);
 
   if (self->disk_control_callback != NULL)
     retro_try_propagate ({

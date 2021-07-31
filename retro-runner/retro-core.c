@@ -873,8 +873,6 @@ load_game (RetroCore     *self,
   gboolean game_loaded;
   RetroSystemAvInfo info = {{ 0 }};
 
-  g_assert (game != NULL);
-
   if (retro_core_get_game_loaded (self)) {
     unload_game = retro_module_get_unload_game (self->module);
     unload_game ();
@@ -883,25 +881,7 @@ load_game (RetroCore     *self,
   load_game = retro_module_get_load_game (self->module);
   game_loaded = load_game (game);
   set_game_loaded (self, game_loaded);
-  get_system_av_info = retro_module_get_get_system_av_info (self->module);
-  get_system_av_info (&info);
-  retro_core_set_system_av_info (self, &info);
-  if (self->renderer)
-    retro_renderer_realize (self->renderer, info.geometry.max_width, info.geometry.max_height);
 
-  return game_loaded;
-}
-
-static gboolean
-prepare (RetroCore *self) {
-  RetroLoadGame load_game;
-  RetroGetSystemAvInfo get_system_av_info;
-  gboolean game_loaded;
-  RetroSystemAvInfo info = {{ 0 }};
-
-  load_game = retro_module_get_load_game (self->module);
-  game_loaded = load_game (NULL);
-  set_game_loaded (self, game_loaded);
   get_system_av_info = retro_module_get_get_system_av_info (self->module);
   get_system_av_info (&info);
   retro_core_set_system_av_info (self, &info);
@@ -921,7 +901,7 @@ load_medias (RetroCore  *self,
   length = self->media_uris == NULL ? 0 : g_strv_length (self->media_uris);
 
   if (length == 0) {
-    prepare (self);
+    load_game (self, NULL);
 
     return;
   }

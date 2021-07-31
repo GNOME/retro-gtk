@@ -76,7 +76,6 @@ enum RetroLanguage {
   RETRO_LANGUAGE_POLISH,
   RETRO_LANGUAGE_VIETNAMESE,
   RETRO_LANGUAGE_ARABIC,
-  RETRO_LANGUAGE_DEFAULT = RETRO_LANGUAGE_ENGLISH,
 };
 
 enum RetroLogLevel {
@@ -294,7 +293,7 @@ get_language (RetroCore *self,
     { "zh_HK", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
     { "zh_SG", RETRO_LANGUAGE_CHINESE_SIMPLIFIED },
     { "zh_TW", RETRO_LANGUAGE_CHINESE_TRADITIONAL },
-    { "C", RETRO_LANGUAGE_DEFAULT },
+    { "C", RETRO_LANGUAGE_ENGLISH },
   };
 
   const gchar * const *locales = g_get_language_names ();

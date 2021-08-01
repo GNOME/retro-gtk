@@ -78,3 +78,17 @@ Then compile:
 ## Installing
 
 `ninja -C build install`
+
+## Implemented
+
+The Libretro API extracted from RetroArch 1.7.2 can be found in
+`libretro/libretro.h`. `libretro/implemented.h` is a version of this file
+containing only the parts that have been implemented in RetroGTK.
+
+To know what is yet to be implemented, run the following command:
+`diff libretro/implemented.h libretro/libretro.h`
+
+Parts which have been partially implemented can be found by looking for the
+`UNIMPLEMENTED` keyword in the code base, typically found in comments or macros.
+To do so, run the following command:
+`git grep UNIMPLEMENTED`

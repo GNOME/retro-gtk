@@ -1,0 +1,26 @@
+// This file is part of retro-gtk. License: GPL-3.0+.
+
+#pragma once
+
+#if !defined(__RETRO_GTK_INSIDE__) && !defined(RETRO_GTK_COMPILATION)
+# error "Only <retro-gtk.h> can be included directly."
+#endif
+
+#include <glib.h>
+
+G_BEGIN_DECLS
+
+#define RETRO_CORE_ERROR (retro_core_error_quark ())
+
+enum {
+  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
+  RETRO_CORE_ERROR_COULDNT_SERIALIZE,
+  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
+  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+  RETRO_CORE_ERROR_NO_CALLBACK,
+  RETRO_CORE_ERROR_NO_MEMORY_REGION,
+  RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
+  RETRO_CORE_ERROR_SIZE_MISMATCH,
+};
+
+G_END_DECLS

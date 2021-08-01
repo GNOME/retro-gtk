@@ -17,6 +17,7 @@
 #include "retro-controller-iterator-private.h"
 #include "retro-controller-state-private.h"
 #include "retro-controller-type.h"
+#include "retro-core-error-private.h"
 #include "retro-error-private.h"
 #include "retro-framebuffer-private.h"
 #include "retro-input-private.h"
@@ -29,21 +30,6 @@
 #include "retro-runner-process-private.h"
 
 #define RETRO_CONTROLLER_TYPE_COUNT (RETRO_CONTROLLER_TYPE_POINTER + 1)
-
-#define RETRO_CORE_ERROR (retro_core_error_quark ())
-
-enum {
-  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-  RETRO_CORE_ERROR_COULDNT_SERIALIZE,
-  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-  RETRO_CORE_ERROR_NO_CALLBACK,
-  RETRO_CORE_ERROR_NO_MEMORY_REGION,
-  RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
-  RETRO_CORE_ERROR_SIZE_MISMATCH,
-};
-
-G_DEFINE_QUARK (retro-core-error, retro_core_error)
 
 typedef struct {
   RetroController *controller;

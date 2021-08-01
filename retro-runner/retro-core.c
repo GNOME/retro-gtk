@@ -4,25 +4,13 @@
 
 #include <gio/gio.h>
 #include <string.h>
+#include "retro-core-error-private.h"
 #include "retro-error-private.h"
 #include "retro-environment-private.h"
 #include "retro-input-private.h"
 #include "retro-main-loop-source-private.h"
 #include "retro-memfd-private.h"
 #include "retro-rumble-effect.h"
-
-#define RETRO_CORE_ERROR (retro_core_error_quark ())
-
-enum {
-  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-  RETRO_CORE_ERROR_COULDNT_SERIALIZE,
-  RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-  RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-  RETRO_CORE_ERROR_NO_CALLBACK,
-  RETRO_CORE_ERROR_NO_MEMORY_REGION,
-  RETRO_CORE_ERROR_UNEXPECTED_MEMORY_REGION,
-  RETRO_CORE_ERROR_SIZE_MISMATCH,
-};
 
 G_DEFINE_QUARK (retro-core-error, retro_core_error)
 

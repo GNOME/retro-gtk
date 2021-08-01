@@ -493,6 +493,8 @@ set_hw_render (RetroCore             *self,
   g_assert (self);
   g_return_val_if_fail (callback, FALSE);
 
+  g_clear_object (&self->renderer);
+
   switch (callback->context_type) {
   case RETRO_HW_CONTEXT_OPENGL:
   case RETRO_HW_CONTEXT_OPENGL_CORE:

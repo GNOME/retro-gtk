@@ -7,6 +7,7 @@
 #endif
 
 #include <glib.h>
+#include <stdbool.h>
 
 G_BEGIN_DECLS
 
@@ -14,11 +15,11 @@ typedef struct _RetroSystemInfo RetroSystemInfo;
 
 struct _RetroSystemInfo
 {
-  gchar *library_name;
-  gchar *library_version;
-  gchar *valid_extensions;
-  gboolean need_fullpath;
-  gboolean block_extract;
+  const gchar *library_name;
+  const gchar *library_version;
+  const gchar *valid_extensions;
+  bool need_fullpath;
+  bool block_extract;
 };
 
 G_END_DECLS

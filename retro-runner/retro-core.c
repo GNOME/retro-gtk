@@ -1669,10 +1669,10 @@ retro_core_save_state (RetroCore    *self,
   size = serialize_size ();
 
   if (size <= 0) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-                 "Couldn't serialize the internal state: serialization not supported.");
+    g_set_error_literal (error,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+                         "Couldn't serialize the internal state: serialization not supported.");
 
     return;
   }
@@ -1683,10 +1683,10 @@ retro_core_save_state (RetroCore    *self,
   success = serialize (data, size);
 
   if (!success) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_SERIALIZE,
-                 "Couldn't serialize the internal state: serialization failed.");
+    g_set_error_literal (error,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_COULDNT_SERIALIZE,
+                         "Couldn't serialize the internal state: serialization failed.");
 
     return;
   }
@@ -1697,7 +1697,8 @@ retro_core_save_state (RetroCore    *self,
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't serialize the internal state: %s", catch->message);
+                 "Couldn't serialize the internal state: %s",
+                 catch->message);
 
     return;
   });
@@ -1731,7 +1732,8 @@ retro_core_load_state (RetroCore    *self,
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't deserialize the internal state: %s", catch->message);
+                 "Couldn't deserialize the internal state: %s",
+                 catch->message);
 
     return;
   });
@@ -1754,10 +1756,10 @@ retro_core_load_state (RetroCore    *self,
   expected_size = serialize_size ();
 
   if (expected_size == 0) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
-                 "Couldn't deserialize the internal state: serialization not supported.");
+    g_set_error_literal (error,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_SERIALIZATION_NOT_SUPPORTED,
+                         "Couldn't deserialize the internal state: serialization not supported.");
 
     return;
   }
@@ -1773,10 +1775,10 @@ retro_core_load_state (RetroCore    *self,
   success = unserialize ((guint8 *) data, data_size);
 
   if (!success) {
-    g_set_error (error,
-                 RETRO_CORE_ERROR,
-                 RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
-                 "Couldn't deserialize the internal state: deserialization failed.");
+    g_set_error_literal (error,
+                         RETRO_CORE_ERROR,
+                         RETRO_CORE_ERROR_COULDNT_DESERIALIZE,
+                         "Couldn't deserialize the internal state: deserialization failed.");
   }
 }
 
@@ -1836,7 +1838,8 @@ retro_core_save_memory (RetroCore        *self,
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't save the memory state: %s", catch->message);
+                 "Couldn't save the memory state: %s",
+                 catch->message);
 
     return;
   });
@@ -1878,7 +1881,8 @@ retro_core_load_memory (RetroCore        *self,
     g_set_error (error,
                  RETRO_CORE_ERROR,
                  RETRO_CORE_ERROR_COULDNT_ACCESS_FILE,
-                 "Couldn't load the memory state: %s", catch->message);
+                 "Couldn't load the memory state: %s",
+                 catch->message);
 
     return;
   });

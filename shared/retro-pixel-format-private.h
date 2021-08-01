@@ -25,7 +25,7 @@ typedef enum
   RETRO_PIXEL_FORMAT_XRGB1555,
   RETRO_PIXEL_FORMAT_XRGB8888,
   RETRO_PIXEL_FORMAT_RGB565,
-  RETRO_PIXEL_FORMAT_UNKNOWN = -1,
+  RETRO_PIXEL_FORMAT_UNKNOWN = G_MAXINT,
 } RetroPixelFormat;
 
 gboolean retro_pixel_format_to_gl (RetroPixelFormat  pixel_format,

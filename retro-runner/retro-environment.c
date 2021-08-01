@@ -496,6 +496,11 @@ set_hw_render (RetroCore             *self,
   g_clear_object (&self->renderer);
 
   switch (callback->context_type) {
+  case RETRO_HW_CONTEXT_NONE:
+    retro_debug ("Set hardware render callback: none, use software rendering");
+
+    return TRUE;
+
   case RETRO_HW_CONTEXT_OPENGL:
   case RETRO_HW_CONTEXT_OPENGL_CORE:
   case RETRO_HW_CONTEXT_OPENGLES2:

@@ -127,7 +127,7 @@ test_get_game_loaded (RetroCore     **core_pointer,
   retro_core_boot (core, &error);
   g_assert_no_error (error);
 
-  g_assert_false (retro_core_get_game_loaded (core));
+  g_assert_true (retro_core_get_game_loaded (core));
 }
 
 static void

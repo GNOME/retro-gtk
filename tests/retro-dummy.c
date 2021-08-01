@@ -137,7 +137,7 @@ retro_run (void)
 bool
 retro_load_game (const struct retro_game_info *info)
 {
-  return false;
+  return true;
 }
 
 void
@@ -156,7 +156,7 @@ retro_load_game_special (unsigned                      type,
                          const struct retro_game_info *info,
                          size_t                        num)
 {
-  return false;
+  return true;
 }
 
 size_t

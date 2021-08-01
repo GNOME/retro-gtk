@@ -428,6 +428,9 @@ get_variable (RetroCore     *self,
   gchar *value;
 
   g_assert (self);
+
+  self->variable_updated = FALSE;
+
   g_return_val_if_fail (variable, FALSE);
 
   value = g_hash_table_lookup (self->variables, variable->key);

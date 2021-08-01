@@ -980,12 +980,7 @@ retro_core_get_variable_update (RetroCore *self)
 {
   g_return_val_if_fail (RETRO_IS_CORE (self), FALSE);
 
-  if (!self->variable_updated)
-    return FALSE;
-
-  self->variable_updated = FALSE;
-
-  return TRUE;
+  return self->variable_updated;
 }
 
 gdouble

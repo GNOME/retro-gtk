@@ -13,6 +13,7 @@ libexecdir = prefix / get_option('libexecdir')
 datadir = prefix / get_option('datadir')
 
 confinc = include_directories('.')
+libretro_inc = include_directories('libretro')
 shared_inc = include_directories('shared')
 
 retro_gtk_version = meson.project_version()

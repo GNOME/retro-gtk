@@ -22,6 +22,7 @@ retro_reftest = executable('retro-reftest',
 retro_dummy_lib = shared_library(
   'retro-dummy',
   'retro-dummy.c',
+  include_directories: [ libretro_inc ],
   install: get_option('install-tests'),
   install_dir: testlibretrodir,
   soversion: 0,

@@ -21,7 +21,7 @@
 G_BEGIN_DECLS
 
 typedef struct {
-  void (*callback) (guchar down, guint keycode, guint32 character, guint16 key_modifiers);
+  void (*callback) (bool down, guint keycode, guint32 character, guint16 key_modifiers);
 } RetroKeyboardCallback;
 
 struct _RetroCore

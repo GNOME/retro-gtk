@@ -69,7 +69,7 @@ RetroCore *retro_core_get_instance (void);
 const gchar *retro_core_get_libretro_path (RetroCore *self);
 void retro_core_set_support_no_game (RetroCore *self,
                                      gboolean   support_no_game);
-gchar *retro_core_get_name (RetroCore *self);
+const gchar *retro_core_get_name (RetroCore *self);
 void retro_core_set_system_av_info (RetroCore         *self,
                                     RetroSystemAvInfo *system_av_info);
 void retro_core_set_geometry (RetroCore         *self,

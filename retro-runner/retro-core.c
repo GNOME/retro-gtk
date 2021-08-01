@@ -696,7 +696,7 @@ retro_core_set_geometry (RetroCore         *self,
  *
  * Returns: (transfer none): the name of @self
  */
-gchar *
+const gchar *
 retro_core_get_name (RetroCore *self)
 {
   RetroSystemInfo system_info = { 0 };

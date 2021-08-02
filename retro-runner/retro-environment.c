@@ -122,18 +122,6 @@ typedef struct {
   gpointer set_rumble_state;
 } RetroRumbleCallback;
 
-#define retro_sanitize_string(pp)                        \
-  G_STMT_START                                           \
-  {                                                      \
-    G_STATIC_ASSERT (sizeof *(pp) == sizeof (gpointer)); \
-    glib_typeof ((pp)) _pp = (pp);                       \
-    glib_typeof (*(pp)) _ptr = *_pp;                     \
-    *_pp = NULL;                                         \
-    if (g_strcmp0 (_ptr, "") == 0)                       \
-      *(_pp) = NULL;                                     \
-  }                                                      \
-  G_STMT_END
-
 static gboolean
 rumble_callback_set_rumble_state (guint             port,
                                   RetroRumbleEffect effect,
@@ -272,7 +260,6 @@ get_core_assets_directory (RetroCore    *self,
   g_return_val_if_fail (core_assets_directory, FALSE);
 
   *(core_assets_directory) = retro_core_get_core_assets_directory (self);
-  retro_sanitize_string (core_assets_directory);
 
   retro_debug ("Get core assets directory: %s", *core_assets_directory);
 
@@ -350,7 +337,6 @@ get_libretro_path (RetroCore    *self,
   g_return_val_if_fail (libretro_directory, FALSE);
 
   *(libretro_directory) = retro_core_get_libretro_path (self);
-  retro_sanitize_string (libretro_directory);
 
   retro_debug ("Get libretro directory: %s", *libretro_directory);
 
@@ -407,7 +393,6 @@ get_save_directory (RetroCore    *self,
   g_return_val_if_fail (save_directory, FALSE);
 
   *(save_directory) = retro_core_get_save_directory (self);
-  retro_sanitize_string (save_directory);
 
   retro_debug ("Get save directory: %s", *save_directory);
 
@@ -422,7 +407,6 @@ get_system_directory (RetroCore    *self,
   g_return_val_if_fail (system_directory, FALSE);
 
   *(system_directory) = retro_core_get_system_directory (self);
-  retro_sanitize_string (system_directory);
 
   retro_debug ("Get system directory: %s", *system_directory);
 
@@ -437,7 +421,9 @@ get_username (RetroCore    *self,
   g_return_val_if_fail (username, FALSE);
 
   *(username) = retro_core_get_user_name (self);
-  retro_sanitize_string (username);
+
+  if (g_strcmp0 (*username, "") == 0)
+    *(username) = NULL;
 
   retro_debug ("Get username: %s", *username);
 

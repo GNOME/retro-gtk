@@ -18,7 +18,7 @@ lint:
     - tools/check-api-visibility.sh
 
 dependencies:
-  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
+  image: quay.io/gnome_infrastructure/gnome-runtime-images:gnome-master
   stage: pre
   tags:
     - flatpak
@@ -29,7 +29,7 @@ dependencies:
       - ${FLATPAK_BUILD_DIR}
 
 unit-tests:
-  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
+  image: quay.io/gnome_infrastructure/gnome-runtime-images:gnome-master
   stage: build
   tags:
     - flatpak
@@ -46,7 +46,7 @@ unit-tests:
     - xvfb-run -a -s "-screen 0 1024x768x24" flatpak-builder --disable-rofiles-fuse --run ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH} retro-unit-tests
 
 doc:
-  image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:master
+  image: quay.io/gnome_infrastructure/gnome-runtime-images:gnome-master
   stage: build
   dependencies:
     - dependencies

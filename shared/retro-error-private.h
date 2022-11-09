@@ -170,7 +170,7 @@ G_BEGIN_DECLS
  * ]|
  */
 #define retro_try_propagate(try, catch, dest) \
-  retro_try (try, catch, { g_propagate_error (dest, catch); return; })
+  retro_try (try, catch, { g_propagate_error (dest, g_steal_pointer (&catch)); return; })
 
 /**
  * retro_try_propagate_val:
@@ -251,6 +251,6 @@ G_BEGIN_DECLS
  * ]|
  */
 #define retro_try_propagate_val(try, catch, dest, val) \
-  retro_try (try, catch, { g_propagate_error (dest, catch); return (val); })
+  retro_try (try, catch, { g_propagate_error (dest, g_steal_pointer (&catch)); return (val); })
 
 G_END_DECLS
